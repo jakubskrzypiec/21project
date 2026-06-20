@@ -1,11 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
-  document.body.classList.add("is-loading");
-
   const loader = document.querySelector(".intro-loader");
-  setTimeout(() => {
-    loader?.classList.add("is-hidden");
-    document.body.classList.remove("is-loading");
-  }, 2450);
+
+  if (loader) {
+    document.body.classList.add("is-loading");
+
+    setTimeout(() => {
+      loader.classList.add("is-hidden");
+      document.body.classList.remove("is-loading");
+    }, 2450);
+  }
 
   const revealItems = document.querySelectorAll(".reveal");
   const revealObserver = new IntersectionObserver((entries) => {
@@ -19,16 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   revealItems.forEach((item) => revealObserver.observe(item));
 
-  document.querySelectorAll('a[href^="#"]').forEach((link) => {
-    link.addEventListener("click", (event) => {
-      const target = document.querySelector(link.getAttribute("href"));
-      if (!target) return;
-
-      event.preventDefault();
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  });
-
   const header = document.querySelector(".site-header");
   let lastY = window.scrollY;
 
@@ -36,43 +29,48 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!header) return;
 
     const currentY = window.scrollY;
-    if (currentY > lastY && currentY > 120) {
+    if (currentY > lastY && currentY > 130) {
       header.style.transform = "translateX(-50%) translateY(-135%)";
       header.style.opacity = "0";
     } else {
       header.style.transform = "translateX(-50%) translateY(0)";
       header.style.opacity = "1";
     }
+
     lastY = Math.max(currentY, 0);
   }, { passive: true });
 
-  const portalSection = document.querySelector(".portal-section");
+  const portalSection = document.querySelector(".portfolio-portal");
   const portalCard = document.querySelector("#portalCard");
-  const cases = document.querySelector("#cases");
-  const portalCopy = document.querySelector(".portal-copy");
+  const portalCases = document.querySelector("#portalCases");
+  const portalIntro = document.querySelector(".portal-intro");
 
   const updatePortal = () => {
-    if (!portalSection || !portalCard || !cases || !portalCopy) return;
+    if (!portalSection || !portalCard || !portalCases || !portalIntro) return;
 
     const rect = portalSection.getBoundingClientRect();
     const total = portalSection.offsetHeight - window.innerHeight;
     const progress = Math.min(Math.max(-rect.top / total, 0), 1);
 
-    const copyOpacity = Math.max(0, 1 - progress * 2.2);
-    portalCopy.style.opacity = copyOpacity;
-    portalCopy.style.transform = `translateY(${-progress * 36}px)`;
+    const scaleDesktop = 0.7 + progress * 3.15;
+    const shiftDesktop = 16 - progress * 16;
+    const scaleMobile = 0.76 + progress * 2.65;
+    const shiftMobile = 10 - progress * 10;
 
     if (window.innerWidth > 1060) {
-      const scale = 0.72 + progress * 3.25;
-      const shift = 16 - progress * 16;
-      portalCard.style.transform = `translateX(${shift}vw) scale(${scale})`;
+      portalCard.style.transform = `translateX(${shiftDesktop}vw) scale(${scaleDesktop})`;
     } else {
-      const scale = 0.78 + progress * 2.7;
-      const shiftY = 10 - progress * 10;
-      portalCard.style.transform = `translateY(${shiftY}vh) scale(${scale})`;
+      portalCard.style.transform = `translateY(${shiftMobile}vh) scale(${scaleMobile})`;
     }
 
-    cases.classList.toggle("is-visible", progress > 0.62);
+    portalIntro.style.opacity = Math.max(0, 1 - progress * 2.3);
+    portalIntro.style.transform = `translateY(${-progress * 38}px)`;
+
+    if (progress > 0.63) {
+      portalCases.classList.add("is-visible");
+    } else {
+      portalCases.classList.remove("is-visible");
+    }
   };
 
   window.addEventListener("scroll", updatePortal, { passive: true });
