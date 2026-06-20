@@ -5,28 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>21project | Projektowanie stron internetowych</title>
-  <meta name="description" content="21project tworzy nowoczesne strony internetowe, identyfikacje wizualne i rozwiązania digital dla firm, które chcą wyglądać profesjonalnie online.">
+  <meta name="description" content="21project projektuje nowoczesne strony internetowe, identyfikacje wizualne i rozwiązania digital dla firm.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div class="noise"></div>
+  <div class="grain"></div>
 
-  <div class="loader" aria-hidden="true">
-    <div class="loader-inner">
-      <div class="loader-logo">
-        <img src="logomale.png" alt="">
-      </div>
-      <div class="loader-word">
-        <span>PROJECT</span>
-      </div>
+  <div class="intro-loader" aria-hidden="true">
+    <div class="intro-logo">
+      <img src="logoduze.png" alt="">
     </div>
-    <div class="loader-line"></div>
+    <div class="intro-sub">WEB DESIGN</div>
+    <div class="intro-progress"></div>
   </div>
 
   <header class="site-header">
@@ -36,13 +32,12 @@
 
     <nav class="nav" aria-label="Menu główne">
       <a href="#start">Start</a>
-      <a href="#studio">Studio</a>
       <a href="#oferta">Oferta</a>
       <a href="#realizacje">Realizacje</a>
       <a href="#kontakt">Kontakt</a>
     </nav>
 
-    <div class="socials" aria-label="Social media">
+    <div class="header-socials">
       <a href="#" aria-label="Instagram">IG</a>
       <a href="#" aria-label="Facebook">FB</a>
     </div>
@@ -53,198 +48,126 @@
       <div class="hero-bg">
         <img src="hero.png" alt="">
       </div>
+      <div class="hero-overlay"></div>
 
-      <div class="hero-shade"></div>
+      <div class="hero-inner">
+        <div class="hero-logo reveal">
+          <img src="logoduze.png" alt="21project">
+        </div>
 
-      <div class="hero-content">
-        <p class="eyebrow reveal">Digital studio / Web design</p>
+        <p class="hero-sub reveal">WEB DESIGN</p>
 
-        <h1 class="reveal">
-          21project<br>
-          <span>projektowanie stron internetowych</span>
-        </h1>
-
-        <p class="hero-lead reveal">
-          21project tworzy nowoczesne strony internetowe dla firm, które chcą wyglądać
-          profesjonalnie, działać szybciej i wyróżnić się w sieci.
+        <p class="hero-text reveal">
+          Nowoczesne strony internetowe dla firm, które chcą wyglądać profesjonalnie,
+          działać szybko i wyróżnić się w sieci.
         </p>
 
         <div class="hero-actions reveal">
-          <a href="#oferta" class="btn btn-light">Zobacz ofertę</a>
-          <a href="#kontakt" class="btn btn-dark">Rozpocznij projekt</a>
+          <a href="#oferta" class="btn btn-light">Oferta</a>
+          <a href="#kontakt" class="btn btn-outline">Kontakt</a>
         </div>
       </div>
 
-      <div class="hero-index reveal">
-        <span>01</span>
-        <span>Minimal design</span>
-        <span>Web / SEO / Branding</span>
+      <div class="hero-footer reveal">
+        <span>Design</span>
+        <span>Websites</span>
+        <span>Branding</span>
+        <span>SEO</span>
       </div>
     </section>
 
-    <section class="intro section" id="studio">
-      <div class="intro-left reveal">
-        <p class="eyebrow">O marce</p>
-        <h2>Strony, które wyglądają jak marka — nie jak szablon.</h2>
-      </div>
+    <section class="minimal-section" id="oferta">
+      <div class="section-label reveal">Oferta</div>
 
-      <div class="intro-right reveal">
-        <p>
-          21project projektuje strony internetowe, które łączą minimalistyczną estetykę,
-          szybkie działanie i czytelny przekaz. Każdy projekt ma wzmacniać wizerunek firmy
-          i prowadzić użytkownika do konkretnego kontaktu.
-        </p>
+      <div class="offer-layout">
+        <div class="offer-title reveal">
+          <h1>Strony, które nie wyglądają jak gotowy szablon.</h1>
+        </div>
 
-        <p>
-          Marka skupia się na stronach dla lokalnych firm, landing page’ach, reworkach
-          starych witryn, podstawowym brandingu oraz przygotowaniu strony pod widoczność
-          w Google.
-        </p>
-      </div>
-    </section>
-
-    <section class="image-strip">
-      <div class="strip-image reveal">
-        <img src="macbook.png" alt="Nowoczesna przestrzeń pracy">
-      </div>
-      <div class="strip-image reveal">
-        <img src="klawiatura.png" alt="Detal biurka i klawiatury">
-      </div>
-    </section>
-
-    <section class="scroll-lab" id="oferta">
-      <div class="scroll-copy">
-        <p class="eyebrow">Oferta</p>
-        <h2>Projekt, który rośnie razem ze scrollowaniem.</h2>
-        <p>
-          Strona może być spokojna, techniczna i minimalistyczna, ale nadal robić mocne
-          pierwsze wrażenie. 21project stawia na estetykę, ruch i prostą ścieżkę do kontaktu.
-        </p>
-      </div>
-
-      <div class="zoom-stage">
-        <article class="zoom-card active" data-card>
-          <img src="3d.png" alt="">
-          <div>
+        <div class="offer-list reveal">
+          <article>
             <span>01</span>
-            <h3>Strony internetowe</h3>
-            <p>Nowoczesne strony wizytówki, landing page’e i rozbudowane strony firmowe.</p>
-          </div>
-        </article>
+            <h2>Strony internetowe</h2>
+            <p>Wizytówki, landing page’e i strony firmowe o nowoczesnym, minimalistycznym charakterze.</p>
+          </article>
 
-        <article class="zoom-card" data-card>
-          <img src="biurko.png" alt="">
-          <div>
+          <article>
             <span>02</span>
-            <h3>Rework starej strony</h3>
-            <p>Odświeżenie wyglądu, poprawa układu, mobile fix i mocniejszy pierwszy ekran.</p>
-          </div>
-        </article>
+            <h2>Rework strony</h2>
+            <p>Odświeżenie starej strony, poprawa pierwszego wrażenia, mobile i czytelności oferty.</p>
+          </article>
 
-        <article class="zoom-card" data-card>
-          <img src="macbook.png" alt="">
-          <div>
+          <article>
             <span>03</span>
-            <h3>SEO lokalne</h3>
-            <p>Podstawowa struktura pod pozycjonowanie, szybkość, treści i lokalne frazy.</p>
-          </div>
-        </article>
-      </div>
-    </section>
+            <h2>Branding digital</h2>
+            <p>Podstawowy kierunek wizualny, logo, kolory, typografia i spójność marki w internecie.</p>
+          </article>
 
-    <section class="section services">
-      <div class="section-head reveal">
-        <p class="eyebrow">Zakres</p>
-        <h2>Co może zrobić 21project?</h2>
-      </div>
-
-      <div class="services-grid">
-        <article class="service-card reveal">
-          <span>01</span>
-          <h3>Strona wizytówka</h3>
-          <p>Elegancka strona dla firmy, która potrzebuje mocnej obecności online.</p>
-        </article>
-
-        <article class="service-card reveal">
-          <span>02</span>
-          <h3>Landing page</h3>
-          <p>Strona pod jedną usługę, kampanię, reklamę lub konkretny cel sprzedażowy.</p>
-        </article>
-
-        <article class="service-card reveal">
-          <span>03</span>
-          <h3>Branding podstawowy</h3>
-          <p>Logo, kolorystyka, układ wizualny i spójny kierunek komunikacji.</p>
-        </article>
-
-        <article class="service-card reveal">
-          <span>04</span>
-          <h3>Wdrożenie</h3>
-          <p>Publikacja strony, domena, hosting, konfiguracja i przygotowanie do działania.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="showcase" id="realizacje">
-      <div class="showcase-bg">
-        <img src="biurko.png" alt="">
-      </div>
-
-      <div class="showcase-content reveal">
-        <p class="eyebrow">Realizacje</p>
-        <h2>Portfolio budowane na prawdziwych projektach.</h2>
-        <p>
-          W tej sekcji pojawią się wybrane realizacje: strony dla lokalnych firm,
-          reworki, identyfikacje wizualne i projekty wykonane od pomysłu do publikacji.
-        </p>
-
-        <div class="case-list">
-          <a href="#"><span>01</span> Paintball Żory</a>
-          <a href="#"><span>02</span> MS Remonty</a>
-          <a href="#"><span>03</span> Studio projektowania wnętrz</a>
-          <a href="#"><span>04</span> Architektura / usługi lokalne</a>
+          <article>
+            <span>04</span>
+            <h2>Widoczność</h2>
+            <p>Struktura strony przygotowana pod SEO lokalne, szybkość i przejrzystą komunikację.</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="section process">
-      <div class="section-head reveal">
-        <p class="eyebrow">Proces</p>
-        <h2>Prosto, konkretnie, bez chaosu.</h2>
-      </div>
+    <section class="visual-break">
+      <img src="macbook.png" alt="Nowoczesne stanowisko pracy">
+    </section>
 
-      <div class="process-grid">
-        <article class="process-step reveal">
-          <span>01</span>
-          <h3>Analiza</h3>
-          <p>Określenie celu strony, grupy klientów, stylu i najważniejszych informacji.</p>
-        </article>
+    <section class="portal-section" id="realizacje">
+      <div class="portal-sticky">
+        <div class="portal-copy">
+          <p class="section-label">Realizacje</p>
+          <h2>Scroll prowadzi do projektów.</h2>
+          <p>
+            21project buduje portfolio na prawdziwych realizacjach dla lokalnych firm,
+            marek usługowych i projektów tworzonych od zera.
+          </p>
+        </div>
 
-        <article class="process-step reveal">
-          <span>02</span>
-          <h3>Projekt</h3>
-          <p>Układ, treści, animacje, mobile i kierunek wizualny dopasowany do marki.</p>
-        </article>
+        <div class="portal-card" id="portalCard">
+          <img src="3d.png" alt="">
+          <div class="portal-card-content">
+            <span>Enter portfolio</span>
+            <strong>Realizacje</strong>
+          </div>
+        </div>
 
-        <article class="process-step reveal">
-          <span>03</span>
-          <h3>Wdrożenie</h3>
-          <p>Przygotowanie plików, publikacja, domena, hosting i podstawowe SEO.</p>
-        </article>
+        <div class="cases" id="cases">
+          <article>
+            <span>01</span>
+            <h3>Paintball Żory</h3>
+            <p>Strona lokalnej atrakcji z mocnym klimatem, ofertą, cennikiem i galerią.</p>
+          </article>
+
+          <article>
+            <span>02</span>
+            <h3>MS Remonty</h3>
+            <p>Wizytówka usług remontowych z prostym kontaktem i czytelnym zakresem prac.</p>
+          </article>
+
+          <article>
+            <span>03</span>
+            <h3>Studio wnętrz</h3>
+            <p>Elegancka strona premium dla branży projektowania wnętrz.</p>
+          </article>
+        </div>
       </div>
     </section>
 
     <section class="contact" id="kontakt">
-      <div class="contact-visual reveal">
+      <div class="contact-image reveal">
         <img src="klawiatura.png" alt="">
       </div>
 
-      <div class="contact-panel reveal">
-        <p class="eyebrow">Kontakt</p>
-        <h2>Projekt zaczyna się od jednej wiadomości.</h2>
+      <div class="contact-content reveal">
+        <p class="section-label">Kontakt</p>
+        <h2>Projekt może zacząć się od jednej wiadomości.</h2>
         <p>
-          21project przygotowuje strony dla firm, które chcą odświeżyć wizerunek,
-          uporządkować ofertę i zdobywać więcej zapytań z internetu.
+          21project przygotowuje nowoczesne strony internetowe dla firm, które chcą
+          wyglądać lepiej online i zdobywać więcej zapytań.
         </p>
 
         <div class="contact-links">
@@ -256,10 +179,32 @@
     </section>
   </main>
 
-  <footer class="footer">
-    <img src="logoduze.png" alt="21project">
-    <p>21project — projektowanie stron internetowych, branding i widoczność online.</p>
-    <span>© 2026</span>
+  <footer class="site-footer">
+    <div class="footer-logo">
+      <img src="logoduze.png" alt="21project">
+      <p>Projektowanie stron internetowych, branding digital i widoczność online.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Oferta</h4>
+      <a href="#oferta">Strony internetowe</a>
+      <a href="#oferta">Landing page</a>
+      <a href="#oferta">Rework strony</a>
+      <a href="#oferta">Branding</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Kontakt</h4>
+      <a href="mailto:kontakt@21project.pl">kontakt@21project.pl</a>
+      <a href="#" target="_blank" rel="noopener">Instagram</a>
+      <a href="#" target="_blank" rel="noopener">Facebook</a>
+      <p>Żory / Śląsk / online</p>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 21project</span>
+      <span>WEB DESIGN • BRANDING • SEO</span>
+    </div>
   </footer>
 
   <script src="script.js"></script>
