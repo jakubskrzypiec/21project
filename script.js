@@ -37,42 +37,40 @@ document.addEventListener("DOMContentLoaded", () => {
     lastY = Math.max(currentY, 0);
   }, { passive: true });
 
-  const shapeSection = document.querySelector(".shape-portal");
-  const shape = document.querySelector("#rotatingShape");
-  const shapeContact = document.querySelector("#shapeContact");
-  const shapeCopy = document.querySelector(".shape-copy");
+  const deskSection = document.querySelector(".desk-portal");
+  const deskFrame = document.querySelector("#deskFrame");
+  const deskScreen = document.querySelector("#deskScreen");
+  const deskCopy = document.querySelector(".desk-copy");
 
-  const updateShape = () => {
-    if (!shapeSection || !shape || !shapeContact || !shapeCopy) return;
-
-    const rect = shapeSection.getBoundingClientRect();
-    const total = shapeSection.offsetHeight - window.innerHeight;
-    const progress = Math.min(Math.max(-rect.top / total, 0), 1);
-
-    const rotation = progress * 220;
-    const opacityCopy = Math.max(0, 1 - progress * 2.2);
-
-    if (window.innerWidth > 1060) {
-      const shift = 18 - progress * 18;
-      const scale = 0.75 + progress * 2.65;
-      shape.style.transform = `translateX(${shift}vw) scale(${scale}) rotate(${rotation}deg)`;
-    } else {
-      const shift = 10 - progress * 10;
-      const scale = 0.72 + progress * 2.45;
-      shape.style.transform = `translateY(${shift}vh) scale(${scale}) rotate(${rotation}deg)`;
+  const updateDeskPortal = () => {
+    if (!deskSection || !deskFrame || !deskScreen || !deskCopy) return;
+    if (window.innerWidth <= 720) {
+      deskScreen.classList.add("is-visible");
+      deskCopy.style.opacity = "1";
+      deskCopy.style.transform = "translateY(0)";
+      return;
     }
 
-    shapeCopy.style.opacity = opacityCopy;
-    shapeCopy.style.transform = `translateY(${-progress * 36}px)`;
+    const rect = deskSection.getBoundingClientRect();
+    const total = deskSection.offsetHeight - window.innerHeight;
+    const progress = Math.min(Math.max(-rect.top / total, 0), 1);
 
-    if (progress > 0.62) {
-      shapeContact.classList.add("is-visible");
+    const scale = 0.68 + progress * 0.54;
+    const shift = 10 - progress * 10;
+    const copyOpacity = Math.max(0, 1 - progress * 1.65);
+
+    deskFrame.style.transform = `translateY(${shift}vh) scale(${scale})`;
+    deskCopy.style.opacity = copyOpacity;
+    deskCopy.style.transform = `translateY(${-progress * 36}px)`;
+
+    if (progress > 0.45) {
+      deskScreen.classList.add("is-visible");
     } else {
-      shapeContact.classList.remove("is-visible");
+      deskScreen.classList.remove("is-visible");
     }
   };
 
-  window.addEventListener("scroll", updateShape, { passive: true });
-  window.addEventListener("resize", updateShape);
-  updateShape();
+  window.addEventListener("scroll", updateDeskPortal, { passive: true });
+  window.addEventListener("resize", updateDeskPortal);
+  updateDeskPortal();
 });
