@@ -573,3 +573,353 @@ img{display:block;max-width:100%}
     justify-content: center;
   }
 }
+
+
+/* === 21PROJECT PORTFOLIO ZOOM V2 — CINEMATIC SMOOTH === */
+/* Tekst nie nachodzi już na zdjęcie. Fotka jest głównym elementem, a label siedzi poza kadrem. */
+
+.portfolio-zoom {
+  --zoomProgress: 0;
+  --zoomEase: 0;
+  --zoomEnter: 0;
+  --zoomExit: 0;
+  position: relative;
+  height: 285vh;
+  min-height: 1800px;
+  background: #040404;
+  isolation: isolate;
+  overflow: clip;
+}
+
+.portfolio-zoom-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: clamp(18px, 4vw, 70px);
+}
+
+.portfolio-zoom-sticky::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.12), transparent 34%),
+    radial-gradient(circle at 18% 80%, rgba(255,255,255,.04), transparent 38%),
+    #040404;
+}
+
+.portfolio-zoom-sticky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 45%, transparent 34%, rgba(0,0,0,.52) 86%),
+    linear-gradient(180deg, rgba(0,0,0,.64), transparent 22%, transparent 72%, rgba(0,0,0,.72));
+  opacity: calc(.42 + (var(--zoomEase) * .20));
+}
+
+.portfolio-zoom-stage {
+  position: relative;
+  width: min(1320px, 88vw);
+  height: min(760px, 76vh);
+  display: grid;
+  place-items: center;
+  perspective: 1200px;
+}
+
+.portfolio-zoom-frame {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255, calc(.18 - (var(--zoomEase) * .12)));
+  background: #060606;
+  box-shadow:
+    0 34px 120px rgba(0,0,0,.82),
+    inset 0 0 0 1px rgba(255,255,255,.045);
+  transform:
+    translate3d(
+      calc((.5 - var(--zoomProgress)) * 1.6vw),
+      calc(5vh - (var(--zoomEase) * 8vh)),
+      0
+    )
+    scale(calc(.74 + (var(--zoomEase) * .98)))
+    rotateX(calc((1 - var(--zoomEase)) * 2.4deg));
+  transform-origin: 52% 46%;
+  will-change: transform, border-color;
+}
+
+.portfolio-zoom-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter:
+    grayscale(1)
+    contrast(calc(1.04 + (var(--zoomEase) * .18)))
+    brightness(calc(.72 + (var(--zoomEase) * .28)));
+  transform:
+    translate3d(
+      calc(var(--zoomEase) * -5.4%),
+      calc(var(--zoomEase) * -3.1%),
+      0
+    )
+    scale(calc(1.02 + (var(--zoomEase) * .32)));
+  transform-origin: 51% 45%;
+  will-change: transform, filter;
+}
+
+.portfolio-zoom-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.35), transparent 30%, transparent 64%, rgba(0,0,0,.44)),
+    radial-gradient(circle at 50% 46%, transparent 0%, transparent 38%, rgba(0,0,0,.52) 88%);
+  opacity: calc(.62 - (var(--zoomEase) * .34));
+}
+
+.portfolio-zoom-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0%, rgba(255,255,255,.18) 46%, transparent 58%);
+  transform: translateX(calc(-120% + (var(--zoomProgress) * 260%))) skewX(-12deg);
+  opacity: calc(.08 + (var(--zoomEnter) * .22));
+  mix-blend-mode: screen;
+}
+
+.screen-focus {
+  position: absolute;
+  z-index: 5;
+  inset: 15% 18% 18% 24%;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow:
+    0 0 0 999px rgba(0,0,0, calc(var(--zoomEase) * .16)),
+    inset 0 0 80px rgba(255,255,255,.04);
+  opacity: calc(var(--zoomEase) * .55);
+  transform: scale(calc(1 + (var(--zoomEase) * .16)));
+  pointer-events: none;
+}
+
+.zoom-side-label {
+  position: absolute;
+  right: 0;
+  bottom: -54px;
+  z-index: 10;
+  display: grid;
+  gap: 6px;
+  text-align: right;
+  opacity: calc(1 - (var(--zoomProgress) * 1.8));
+  transform: translateY(calc(var(--zoomProgress) * 20px));
+  pointer-events: none;
+}
+
+.zoom-side-label span {
+  color: rgba(255,255,255,.42);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.zoom-side-label strong {
+  color: rgba(255,255,255,.82);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.zoom-progress-line {
+  position: absolute;
+  left: 0;
+  bottom: -36px;
+  z-index: 10;
+  width: min(360px, 42vw);
+  height: 1px;
+  background: rgba(255,255,255,.14);
+  overflow: hidden;
+  opacity: calc(1 - (var(--zoomProgress) * 1.4));
+}
+
+.zoom-progress-line span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #f4f4f4;
+  transform-origin: left;
+  transform: scaleX(var(--zoomProgress));
+}
+
+.home-portfolio-preview {
+  position: relative;
+  z-index: 4;
+  margin-top: -1px;
+  padding-top: 132px;
+  background:
+    linear-gradient(180deg, #040404 0%, #070707 50%, #040404 100%);
+}
+
+.portfolio-reveal-head {
+  max-width: 1030px;
+  margin-bottom: 58px;
+}
+
+.portfolio-reveal-head h2 {
+  margin-top: 18px;
+  font-size: clamp(52px, 8vw, 128px);
+  font-weight: 800;
+  line-height: .84;
+  letter-spacing: -.09em;
+}
+
+.portfolio-reveal-head p {
+  margin-top: 24px;
+  max-width: 760px;
+  color: var(--muted);
+  line-height: 1.78;
+  font-size: 17px;
+}
+
+.portfolio-showcase {
+  display: grid;
+  gap: 18px;
+}
+
+.portfolio-tile a {
+  min-height: 290px;
+  padding: clamp(28px, 4.2vw, 56px);
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 30px;
+  align-items: end;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.085), rgba(255,255,255,.018));
+  position: relative;
+  overflow: hidden;
+}
+
+.portfolio-tile a::after {
+  content: "↗";
+  position: absolute;
+  top: 28px;
+  right: 30px;
+  color: rgba(255,255,255,.34);
+  font-size: 28px;
+  transition: transform .26s ease, color .26s ease;
+}
+
+.portfolio-tile a:hover::after {
+  transform: translate(4px, -4px);
+  color: #fff;
+}
+
+.portfolio-tile span {
+  color: rgba(255,255,255,.46);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .18em;
+}
+
+.portfolio-tile h3 {
+  font-size: clamp(38px, 5.8vw, 86px);
+  line-height: .86;
+  letter-spacing: -.08em;
+}
+
+.portfolio-tile p {
+  margin-top: 16px;
+  max-width: 760px;
+  color: var(--muted);
+  line-height: 1.74;
+}
+
+@media(max-width:1060px){
+  .portfolio-zoom {
+    height: 235vh;
+    min-height: 1500px;
+  }
+
+  .portfolio-zoom-stage {
+    width: calc(100vw - 44px);
+    height: 70vh;
+  }
+
+  .zoom-side-label {
+    right: 0;
+    bottom: -46px;
+  }
+
+  .zoom-progress-line {
+    bottom: -28px;
+  }
+}
+
+@media(max-width:620px){
+  .portfolio-zoom {
+    height: 210vh;
+    min-height: 1260px;
+  }
+
+  .portfolio-zoom-sticky {
+    padding: 14px;
+  }
+
+  .portfolio-zoom-stage {
+    width: calc(100vw - 28px);
+    height: 66vh;
+  }
+
+  .portfolio-zoom-frame {
+    transform:
+      translate3d(
+        calc((.5 - var(--zoomProgress)) * 2vw),
+        calc(6vh - (var(--zoomEase) * 8vh)),
+        0
+      )
+      scale(calc(.82 + (var(--zoomEase) * .84)));
+  }
+
+  .zoom-side-label {
+    left: 0;
+    right: auto;
+    text-align: left;
+    bottom: -58px;
+  }
+
+  .zoom-side-label strong {
+    font-size: 12px;
+  }
+
+  .zoom-progress-line {
+    width: 52vw;
+    bottom: -34px;
+  }
+
+  .portfolio-reveal-head h2 {
+    font-size: 44px;
+  }
+
+  .portfolio-tile a {
+    min-height: 245px;
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .portfolio-tile h3 {
+    font-size: 40px;
+  }
+}

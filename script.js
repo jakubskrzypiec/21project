@@ -36,30 +36,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     lastY = Math.max(currentY, 0);
   }, { passive: true });
+zoomTicking = false;
+      });
+      zoomTicking = true;
+    }
+  }, { passive: true });
+
+  window.addEventListener("resize", updatePortfolioZoom);
+  updatePortfolioZoom();
+
   const portfolioZoom = document.querySelector(".portfolio-zoom");
   const portfolioZoomFrame = document.querySelector("#portfolioZoomFrame");
 
   const clampValue = (value, min, max) => Math.min(Math.max(value, min), max);
+  const smoothStep = (value) => value * value * (3 - 2 * value);
+  const easeOutCubic = (value) => 1 - Math.pow(1 - value, 3);
 
   const updatePortfolioZoom = () => {
     if (!portfolioZoom || !portfolioZoomFrame) return;
 
     const rect = portfolioZoom.getBoundingClientRect();
     const scrollable = portfolioZoom.offsetHeight - window.innerHeight;
-    const progress = scrollable > 0 ? clampValue(-rect.top / scrollable, 0, 1) : 0;
+    const rawProgress = scrollable > 0 ? clampValue(-rect.top / scrollable, 0, 1) : 0;
 
-    portfolioZoom.style.setProperty("--zoomProgress", progress.toFixed(3));
+    const enter = clampValue(rawProgress / 0.38, 0, 1);
+    const main = clampValue((rawProgress - 0.12) / 0.72, 0, 1);
+    const exit = clampValue((rawProgress - 0.70) / 0.30, 0, 1);
+
+    const eased = easeOutCubic(smoothStep(main));
+
+    portfolioZoom.style.setProperty("--zoomProgress", rawProgress.toFixed(4));
+    portfolioZoom.style.setProperty("--zoomEnter", smoothStep(enter).toFixed(4));
+    portfolioZoom.style.setProperty("--zoomEase", eased.toFixed(4));
+    portfolioZoom.style.setProperty("--zoomExit", smoothStep(exit).toFixed(4));
   };
 
-  let zoomTicking = false;
+  let portfolioZoomTicking = false;
 
   window.addEventListener("scroll", () => {
-    if (!zoomTicking) {
+    if (!portfolioZoomTicking) {
       window.requestAnimationFrame(() => {
         updatePortfolioZoom();
-        zoomTicking = false;
+        portfolioZoomTicking = false;
       });
-      zoomTicking = true;
+      portfolioZoomTicking = true;
     }
   }, { passive: true });
 
