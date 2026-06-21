@@ -40,37 +40,59 @@ document.addEventListener("DOMContentLoaded", () => {
   const deskSection = document.querySelector(".desk-portal");
   const deskFrame = document.querySelector("#deskFrame");
   const deskScreen = document.querySelector("#deskScreen");
-  const deskCopy = document.querySelector(".desk-copy");
+  const deskCopy = document.querySelector(".desk-side-copy");
+  const screenHotspot = document.querySelector("#screenHotspot");
 
-  const updateDeskPortal = () => {
+  const smooth = {
+    progress: 0,
+    target: 0
+  };
+
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const calculateTarget = () => {
+    if (!deskSection) return;
+    const rect = deskSection.getBoundingClientRect();
+    const total = deskSection.offsetHeight - window.innerHeight;
+    smooth.target = clamp(-rect.top / total, 0, 1);
+  };
+
+  const renderDeskPortal = () => {
     if (!deskSection || !deskFrame || !deskScreen || !deskCopy) return;
-    if (window.innerWidth <= 720) {
-      deskScreen.classList.add("is-visible");
+
+    smooth.progress += (smooth.target - smooth.progress) * 0.085;
+    const p = smooth.progress;
+
+    if (window.innerWidth <= 620) {
+      deskFrame.style.transform = "scale(1)";
       deskCopy.style.opacity = "1";
       deskCopy.style.transform = "translateY(0)";
+      deskScreen.classList.toggle("is-visible", p > 0.48);
+      if (screenHotspot) screenHotspot.classList.toggle("is-visible", p > 0.34);
+      requestAnimationFrame(renderDeskPortal);
       return;
     }
 
-    const rect = deskSection.getBoundingClientRect();
-    const total = deskSection.offsetHeight - window.innerHeight;
-    const progress = Math.min(Math.max(-rect.top / total, 0), 1);
+    const scale = 0.78 + p * 0.78;
+    const xShift = 12 - p * 12;
+    const rotate = p * -1.25;
+    const copyOpacity = clamp(1 - p * 1.85, 0, 1);
 
-    const scale = 0.68 + progress * 0.54;
-    const shift = 10 - progress * 10;
-    const copyOpacity = Math.max(0, 1 - progress * 1.65);
-
-    deskFrame.style.transform = `translateY(${shift}vh) scale(${scale})`;
+    deskFrame.style.transform = `translateX(${xShift}vw) scale(${scale}) rotate(${rotate}deg)`;
     deskCopy.style.opacity = copyOpacity;
-    deskCopy.style.transform = `translateY(${-progress * 36}px)`;
+    deskCopy.style.transform = `translateY(${-p * 44}px)`;
 
-    if (progress > 0.45) {
-      deskScreen.classList.add("is-visible");
-    } else {
-      deskScreen.classList.remove("is-visible");
+    if (screenHotspot) {
+      screenHotspot.classList.toggle("is-visible", p > 0.30 && p < 0.72);
     }
+
+    deskScreen.classList.toggle("is-visible", p > 0.58);
+
+    requestAnimationFrame(renderDeskPortal);
   };
 
-  window.addEventListener("scroll", updateDeskPortal, { passive: true });
-  window.addEventListener("resize", updateDeskPortal);
-  updateDeskPortal();
+  window.addEventListener("scroll", calculateTarget, { passive: true });
+  window.addEventListener("resize", calculateTarget);
+  calculateTarget();
+  renderDeskPortal();
 });
