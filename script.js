@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const deskScreen = document.querySelector("#deskScreen");
   const deskCopy = document.querySelector(".desk-side-copy");
   const screenHotspot = document.querySelector("#screenHotspot");
+  let glowTriggered = false;
 
   const smooth = {
     progress: 0,
@@ -73,9 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const scale = 0.78 + p * 0.78;
-    const xShift = 12 - p * 12;
-    const rotate = p * -1.25;
+    const scale = 0.72 + p * 1.05;
+    const xShift = 16 - p * 16;
+    const rotate = p * -2.6;
     const copyOpacity = clamp(1 - p * 1.85, 0, 1);
 
     deskFrame.style.transform = `translateX(${xShift}vw) scale(${scale}) rotate(${rotate}deg)`;
@@ -86,7 +87,17 @@ document.addEventListener("DOMContentLoaded", () => {
       screenHotspot.classList.toggle("is-visible", p > 0.30 && p < 0.72);
     }
 
-    deskScreen.classList.toggle("is-visible", p > 0.58);
+    deskScreen.classList.toggle("is-visible", p > 0.60);
+
+    if (p > 0.36 && !glowTriggered) {
+      deskFrame.classList.add("is-glowing");
+      glowTriggered = true;
+      setTimeout(() => deskFrame.classList.remove("is-glowing"), 1300);
+    }
+
+    if (p < 0.22) {
+      glowTriggered = false;
+    }
 
     requestAnimationFrame(renderDeskPortal);
   };
