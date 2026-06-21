@@ -1,31 +1,56 @@
 document.addEventListener("DOMContentLoaded", () => {
   const loader = document.querySelector(".intro-loader");
 
+  // Loader — znika zawsze, nawet gdy coś na stronie wolniej się ładuje.
   if (loader) {
     document.body.classList.add("is-loading");
-    setTimeout(() => {
+
+    window.setTimeout(() => {
       loader.classList.add("is-hidden");
       document.body.classList.remove("is-loading");
-    }, 2450);
+    }, 1850);
+
+    window.setTimeout(() => {
+      loader.remove();
+    }, 2750);
+  } else {
+    document.body.classList.remove("is-loading");
   }
 
-  const revealItems = document.querySelectorAll(".reveal");
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.14 });
+  // Failsafe — gdyby przeglądarka zablokowała animację, loader i tak znika.
+  window.setTimeout(() => {
+    const fallbackLoader = document.querySelector(".intro-loader");
+    if (fallbackLoader) {
+      fallbackLoader.classList.add("is-hidden");
+      document.body.classList.remove("is-loading");
+      window.setTimeout(() => fallbackLoader.remove(), 600);
+    }
+  }, 3600);
 
-  revealItems.forEach((item) => revealObserver.observe(item));
+  const revealItems = document.querySelectorAll(".reveal");
+
+  if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14 });
+
+    revealItems.forEach((item) => revealObserver.observe(item));
+  } else {
+    revealItems.forEach((item) => item.classList.add("visible"));
+  }
 
   const header = document.querySelector(".site-header");
   let lastY = window.scrollY;
+  let headerTicking = false;
 
-  window.addEventListener("scroll", () => {
+  const updateHeader = () => {
     if (!header) return;
+
     const currentY = window.scrollY;
     if (currentY > lastY && currentY > 130) {
       header.style.transform = "translateX(-50%) translateY(-135%)";
@@ -34,16 +59,17 @@ document.addEventListener("DOMContentLoaded", () => {
       header.style.transform = "translateX(-50%) translateY(0)";
       header.style.opacity = "1";
     }
+
     lastY = Math.max(currentY, 0);
-  }, { passive: true });
-zoomTicking = false;
-      });
-      zoomTicking = true;
+    headerTicking = false;
+  };
+
+  window.addEventListener("scroll", () => {
+    if (!headerTicking) {
+      window.requestAnimationFrame(updateHeader);
+      headerTicking = true;
     }
   }, { passive: true });
-
-  window.addEventListener("resize", updatePortfolioZoom);
-  updatePortfolioZoom();
 
   const portfolioZoom = document.querySelector(".portfolio-zoom");
   const portfolioZoomFrame = document.querySelector("#portfolioZoomFrame");
@@ -85,5 +111,4 @@ zoomTicking = false;
 
   window.addEventListener("resize", updatePortfolioZoom);
   updatePortfolioZoom();
-
 });
