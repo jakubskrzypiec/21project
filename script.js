@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (loader) {
     document.body.classList.add("is-loading");
-    setTimeout(() => {
+    window.setTimeout(() => {
       loader.classList.add("is-hidden");
       document.body.classList.remove("is-loading");
     }, 3400);
@@ -26,7 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("scroll", () => {
     if (!header) return;
+
     const currentY = window.scrollY;
+
     if (currentY > lastY && currentY > 130) {
       header.style.transform = "translateX(-50%) translateY(-135%)";
       header.style.opacity = "0";
@@ -34,76 +36,94 @@ document.addEventListener("DOMContentLoaded", () => {
       header.style.transform = "translateX(-50%) translateY(0)";
       header.style.opacity = "1";
     }
+
     lastY = Math.max(currentY, 0);
   }, { passive: true });
 
   const deskSection = document.querySelector(".desk-portal");
   const deskFrame = document.querySelector("#deskFrame");
   const deskScreen = document.querySelector("#deskScreen");
-  const deskCopy = document.querySelector(".desk-side-copy");
   const screenHotspot = document.querySelector("#screenHotspot");
-  let glowTriggered = false;
 
-  const smooth = {
-    progress: 0,
-    target: 0
-  };
+  let targetProgress = 0;
+  let currentProgress = 0;
+  let ticking = false;
+  let glowReady = true;
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-  const calculateTarget = () => {
-    if (!deskSection) return;
+  const getProgress = () => {
+    if (!deskSection) return 0;
+
     const rect = deskSection.getBoundingClientRect();
-    const total = deskSection.offsetHeight - window.innerHeight;
-    smooth.target = clamp(-rect.top / total, 0, 1);
+    const total = Math.max(deskSection.offsetHeight - window.innerHeight, 1);
+
+    return clamp(-rect.top / total, 0, 1);
   };
 
-  const renderDeskPortal = () => {
-    if (!deskSection || !deskFrame || !deskScreen || !deskCopy) return;
+  const renderDesk = () => {
+    if (!deskSection || !deskFrame || !deskScreen) return;
 
-    smooth.progress += (smooth.target - smooth.progress) * 0.052;
-    const p = smooth.progress;
+    currentProgress += (targetProgress - currentProgress) * 0.14;
 
-    if (window.innerWidth <= 620) {
-      deskFrame.style.transform = "scale(1)";
-      deskCopy.style.opacity = "1";
-      deskCopy.style.transform = "translateY(0)";
-      deskScreen.classList.toggle("is-visible", p > 0.48);
-      if (screenHotspot) screenHotspot.classList.toggle("is-visible", p > 0.34);
-      requestAnimationFrame(renderDeskPortal);
-      return;
+    const p = currentProgress;
+    const isMobile = window.innerWidth <= 620;
+
+    if (isMobile) {
+      const mobileScale = 1 + p * 0.12;
+      deskFrame.style.transform = `scale(${mobileScale})`;
+      deskScreen.classList.toggle("is-visible", p > 0.50);
+      if (screenHotspot) screenHotspot.classList.toggle("is-visible", p > 0.30 && p < 0.78);
+    } else {
+      const scale = 0.68 + p * 1.42;
+      const xShift = 24 - p * 24;
+      const yShift = 8 - p * 8;
+      const rotate = -5 + p * 5;
+      const blur = p > 0.85 ? (p - 0.85) * 10 : 0;
+
+      deskFrame.style.transform = `translate3d(${xShift}vw, ${yShift}vh, 0) scale(${scale}) rotate(${rotate}deg)`;
+      deskFrame.style.filter = `blur(${blur}px)`;
+
+      const showHotspot = p > 0.26 && p < 0.72;
+      if (screenHotspot) screenHotspot.classList.toggle("is-visible", showHotspot);
+
+      const showScreen = p > 0.58;
+      deskScreen.classList.toggle("is-visible", showScreen);
+
+      if (p > 0.34 && glowReady) {
+        deskFrame.classList.add("is-glowing");
+        glowReady = false;
+
+        window.setTimeout(() => {
+          deskFrame.classList.remove("is-glowing");
+        }, 1250);
+      }
+
+      if (p < 0.18) {
+        glowReady = true;
+      }
     }
 
-    const scale = 0.64 + p * 1.34;
-    const xShift = 22 - p * 22;
-    const rotate = -6 + p * 6;
-    const copyOpacity = clamp(1 - p * 1.85, 0, 1);
-
-    deskFrame.style.transform = `translateX(${xShift}vw) scale(${scale}) rotate(${rotate}deg)`;
-    deskCopy.style.opacity = copyOpacity;
-    deskCopy.style.transform = `translateY(${-p * 44}px)`;
-
-    if (screenHotspot) {
-      screenHotspot.classList.toggle("is-visible", p > 0.30 && p < 0.72);
+    if (Math.abs(targetProgress - currentProgress) > 0.001) {
+      window.requestAnimationFrame(renderDesk);
+    } else {
+      ticking = false;
     }
-
-    deskScreen.classList.toggle("is-visible", p > 0.62);
-
-    if (p > 0.34 && !glowTriggered) {
-      deskFrame.classList.add("is-glowing");
-      glowTriggered = true;
-      setTimeout(() => deskFrame.classList.remove("is-glowing"), 1300);
-    }
-
-    if (p < 0.20) {
-      glowTriggered = false;
-    }
-
-    requestAnimationFrame(renderDeskPortal);
   };
 
-  window.addEventListener("scroll", calculateTarget, { passive: true });
-  window.addEventListener("resize", calculateTarget);
-  calculateTarget();
-  renderDeskPortal();
+  const updateDesk = () => {
+    targetProgress = getProgress();
+
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(renderDesk);
+    }
+  };
+
+  updateDesk();
+  window.addEventListener("scroll", updateDesk, { passive: true });
+  window.addEventListener("resize", updateDesk);
+  window.addEventListener("orientationchange", () => {
+    window.setTimeout(updateDesk, 250);
+  });
 });
