@@ -36,43 +36,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     lastY = Math.max(currentY, 0);
   }, { passive: true });
+  const portfolioZoom = document.querySelector(".portfolio-zoom");
+  const portfolioZoomFrame = document.querySelector("#portfolioZoomFrame");
 
-  const shapeSection = document.querySelector(".shape-portal");
-  const shape = document.querySelector("#rotatingShape");
-  const shapeContact = document.querySelector("#shapeContact");
-  const shapeCopy = document.querySelector(".shape-copy");
+  const clampValue = (value, min, max) => Math.min(Math.max(value, min), max);
 
-  const updateShape = () => {
-    if (!shapeSection || !shape || !shapeContact || !shapeCopy) return;
+  const updatePortfolioZoom = () => {
+    if (!portfolioZoom || !portfolioZoomFrame) return;
 
-    const rect = shapeSection.getBoundingClientRect();
-    const total = shapeSection.offsetHeight - window.innerHeight;
-    const progress = Math.min(Math.max(-rect.top / total, 0), 1);
+    const rect = portfolioZoom.getBoundingClientRect();
+    const scrollable = portfolioZoom.offsetHeight - window.innerHeight;
+    const progress = scrollable > 0 ? clampValue(-rect.top / scrollable, 0, 1) : 0;
 
-    const rotation = progress * 220;
-    const opacityCopy = Math.max(0, 1 - progress * 2.2);
-
-    if (window.innerWidth > 1060) {
-      const shift = 18 - progress * 18;
-      const scale = 0.75 + progress * 2.65;
-      shape.style.transform = `translateX(${shift}vw) scale(${scale}) rotate(${rotation}deg)`;
-    } else {
-      const shift = 10 - progress * 10;
-      const scale = 0.72 + progress * 2.45;
-      shape.style.transform = `translateY(${shift}vh) scale(${scale}) rotate(${rotation}deg)`;
-    }
-
-    shapeCopy.style.opacity = opacityCopy;
-    shapeCopy.style.transform = `translateY(${-progress * 36}px)`;
-
-    if (progress > 0.62) {
-      shapeContact.classList.add("is-visible");
-    } else {
-      shapeContact.classList.remove("is-visible");
-    }
+    portfolioZoom.style.setProperty("--zoomProgress", progress.toFixed(3));
   };
 
-  window.addEventListener("scroll", updateShape, { passive: true });
-  window.addEventListener("resize", updateShape);
-  updateShape();
+  let zoomTicking = false;
+
+  window.addEventListener("scroll", () => {
+    if (!zoomTicking) {
+      window.requestAnimationFrame(() => {
+        updatePortfolioZoom();
+        zoomTicking = false;
+      });
+      zoomTicking = true;
+    }
+  }, { passive: true });
+
+  window.addEventListener("resize", updatePortfolioZoom);
+  updatePortfolioZoom();
+
 });
