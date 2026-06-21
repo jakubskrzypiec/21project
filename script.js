@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const renderDeskPortal = () => {
     if (!deskSection || !deskFrame || !deskScreen || !deskCopy) return;
 
-    smooth.progress += (smooth.target - smooth.progress) * 0.065;
+    smooth.progress += (smooth.target - smooth.progress) * 0.052;
     const p = smooth.progress;
 
     if (window.innerWidth <= 620) {
@@ -74,9 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const scale = 0.72 + p * 1.05;
-    const xShift = 16 - p * 16;
-    const rotate = p * -2.6;
+    const scale = 0.64 + p * 1.34;
+    const xShift = 22 - p * 22;
+    const rotate = -6 + p * 6;
     const copyOpacity = clamp(1 - p * 1.85, 0, 1);
 
     deskFrame.style.transform = `translateX(${xShift}vw) scale(${scale}) rotate(${rotate}deg)`;
@@ -87,15 +87,15 @@ document.addEventListener("DOMContentLoaded", () => {
       screenHotspot.classList.toggle("is-visible", p > 0.30 && p < 0.72);
     }
 
-    deskScreen.classList.toggle("is-visible", p > 0.60);
+    deskScreen.classList.toggle("is-visible", p > 0.62);
 
-    if (p > 0.36 && !glowTriggered) {
+    if (p > 0.34 && !glowTriggered) {
       deskFrame.classList.add("is-glowing");
       glowTriggered = true;
       setTimeout(() => deskFrame.classList.remove("is-glowing"), 1300);
     }
 
-    if (p < 0.22) {
+    if (p < 0.20) {
       glowTriggered = false;
     }
 
