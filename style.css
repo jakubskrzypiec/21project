@@ -1453,3 +1453,74 @@ img{display:block;max-width:100%}
     font-size: 40px;
   }
 }
+
+
+/* === V5 NO-FREEZE LOADER SAFETY === */
+/* Loader znika nawet wtedy, gdy JavaScript się wywali albo przeglądarka przytnie animację. */
+
+.intro-loader {
+  animation: loaderAutoHide .55s ease 2.35s forwards !important;
+}
+
+.intro-loader.is-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+@keyframes loaderAutoHide {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+/* Bezpieczniejsza wersja końcowej animacji — lżejsza dla przeglądarki. */
+.cinematic-portfolio {
+  --p: 0;
+  --e: 0;
+  height: 260vh !important;
+  min-height: 1600px !important;
+}
+
+.cinematic-sticky::before {
+  opacity: .10 !important;
+  transform: none !important;
+}
+
+.cinematic-orbit {
+  display: none !important;
+}
+
+.cinematic-screen {
+  transform:
+    translate3d(0, calc(5vh - var(--e) * 8vh), 0)
+    scale(calc(.76 + var(--e) * .92)) !important;
+  rotate: 0deg !important;
+  will-change: transform !important;
+}
+
+.screen-ui {
+  transform:
+    translate3d(calc(var(--e) * -3.2%), calc(var(--e) * -2.2%), 0)
+    scale(calc(1 + var(--e) * .18)) !important;
+}
+
+.cinematic-screen::after,
+.screen-glass {
+  display: none !important;
+}
+
+@media(max-width:620px){
+  .cinematic-portfolio {
+    height: 210vh !important;
+    min-height: 1240px !important;
+  }
+
+  .cinematic-screen {
+    transform:
+      translate3d(0, calc(6vh - var(--e) * 8vh), 0)
+      scale(calc(.82 + var(--e) * .78)) !important;
+  }
+}
