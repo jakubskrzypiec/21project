@@ -70,40 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
       headerTicking = true;
     }
   }, { passive: true });
-
-  const portfolioZoom = document.querySelector(".portfolio-zoom");
-  const portfolioZoomFrame = document.querySelector("#portfolioZoomFrame");
-
-  const clampValue = (value, min, max) => Math.min(Math.max(value, min), max);
-  const smoothStep = (value) => value * value * (3 - 2 * value);
-  const easeOutCubic = (value) => 1 - Math.pow(1 - value, 3);
-
-  const updatePortfolioZoom = () => {
-    if (!portfolioZoom || !portfolioZoomFrame) return;
-
-    const rect = portfolioZoom.getBoundingClientRect();
-    const scrollable = portfolioZoom.offsetHeight - window.innerHeight;
-    const rawProgress = scrollable > 0 ? clampValue(-rect.top / scrollable, 0, 1) : 0;
-
-    const enter = clampValue(rawProgress / 0.38, 0, 1);
-    const main = clampValue((rawProgress - 0.12) / 0.72, 0, 1);
-    const exit = clampValue((rawProgress - 0.70) / 0.30, 0, 1);
-
-    const eased = easeOutCubic(smoothStep(main));
-
-    portfolioZoom.style.setProperty("--zoomProgress", rawProgress.toFixed(4));
-    portfolioZoom.style.setProperty("--zoomEnter", smoothStep(enter).toFixed(4));
-    portfolioZoom.style.setProperty("--zoomEase", eased.toFixed(4));
-    portfolioZoom.style.setProperty("--zoomExit", smoothStep(exit).toFixed(4));
-  };
-
-  let portfolioZoomTicking = false;
-
-  window.addEventListener("scroll", () => {
-    if (!portfolioZoomTicking) {
-      window.requestAnimationFrame(() => {
-        updatePortfolioZoom();
-        portfolioZoomTicking = false;
+portfolioZoomTicking = false;
       });
       portfolioZoomTicking = true;
     }
@@ -111,4 +78,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("resize", updatePortfolioZoom);
   updatePortfolioZoom();
+  const cinematicSection = document.querySelector(".cinematic-portfolio");
+
+  const clampValue = (value, min, max) => Math.min(Math.max(value, min), max);
+  const smoothStep = (value) => value * value * (3 - 2 * value);
+  const easeOutQuart = (value) => 1 - Math.pow(1 - value, 4);
+
+  let targetProgress = 0;
+  let currentProgress = 0;
+  let cinematicTicking = false;
+
+  const calculateCinematicTarget = () => {
+    if (!cinematicSection) return 0;
+
+    const rect = cinematicSection.getBoundingClientRect();
+    const scrollable = cinematicSection.offsetHeight - window.innerHeight;
+    return scrollable > 0 ? clampValue(-rect.top / scrollable, 0, 1) : 0;
+  };
+
+  const renderCinematic = () => {
+    if (!cinematicSection) return;
+
+    targetProgress = calculateCinematicTarget();
+    currentProgress += (targetProgress - currentProgress) * 0.085;
+
+    if (Math.abs(targetProgress - currentProgress) < 0.0005) {
+      currentProgress = targetProgress;
+    }
+
+    const enter = smoothStep(clampValue(currentProgress / 0.32, 0, 1));
+    const main = clampValue((currentProgress - 0.08) / 0.78, 0, 1);
+    const eased = easeOutQuart(smoothStep(main));
+    const exit = smoothStep(clampValue((currentProgress - 0.72) / 0.28, 0, 1));
+
+    cinematicSection.style.setProperty("--p", currentProgress.toFixed(4));
+    cinematicSection.style.setProperty("--enter", enter.toFixed(4));
+    cinematicSection.style.setProperty("--e", eased.toFixed(4));
+    cinematicSection.style.setProperty("--exit", exit.toFixed(4));
+
+    if (Math.abs(targetProgress - currentProgress) > 0.0006) {
+      window.requestAnimationFrame(renderCinematic);
+    } else {
+      cinematicTicking = false;
+    }
+  };
+
+  const requestCinematicRender = () => {
+    if (!cinematicTicking) {
+      cinematicTicking = true;
+      window.requestAnimationFrame(renderCinematic);
+    }
+  };
+
+  window.addEventListener("scroll", requestCinematicRender, { passive: true });
+  window.addEventListener("resize", requestCinematicRender);
+  requestCinematicRender();
+
 });
