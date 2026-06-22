@@ -148,3 +148,18 @@ document.addEventListener("DOMContentLoaded", () => {
     window.setTimeout(updateDesk, 250);
   });
 });
+
+
+// V11: active case cards get tiny mouse glow, harmless if unsupported
+document.querySelectorAll(".v11-work-card, .v11-package-grid article, .v11-audience-grid article").forEach((card) => {
+  card.addEventListener("mousemove", (event) => {
+    const rect = card.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    card.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,.10), rgba(255,255,255,.025) 42%)`;
+  });
+
+  card.addEventListener("mouseleave", () => {
+    card.style.background = "";
+  });
+});
