@@ -1535,3 +1535,90 @@ p{font-size:18px;line-height:1.8}
     padding: 24px !important;
   }
 }
+
+
+/* === V8 SAFE FIX: PORTFOLIO + MOBILE DESK CONTACT === */
+
+/* Portfolio cards: still V7 style, only a bit more stable with 4 different projects */
+.compact-cases-page {
+  align-items: stretch !important;
+}
+
+.compact-case-info p {
+  max-width: 620px;
+}
+
+/* Mobile: sticky scroll animation is disabled only on small screens, because iOS/Android can break it.
+   Desktop animation stays untouched. */
+@media(max-width:760px) {
+  .desk-portal {
+    min-height: auto !important;
+    height: auto !important;
+    padding: 78px 0 88px !important;
+  }
+
+  .desk-sticky {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    padding: 0 18px !important;
+    align-items: stretch !important;
+  }
+
+  .desk-side-card {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .desk-stage {
+    display: grid !important;
+    gap: 16px !important;
+    min-height: auto !important;
+    width: 100% !important;
+  }
+
+  .desk-frame {
+    width: 100% !important;
+    max-width: 100% !important;
+    aspect-ratio: 16 / 10 !important;
+    border-radius: 22px !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .desk-photo {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .screen-hotspot {
+    display: none !important;
+  }
+
+  .desk-screen,
+  .desk-screen.is-visible {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  .desk-topbar strong {
+    max-width: 72vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

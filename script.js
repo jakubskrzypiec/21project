@@ -64,10 +64,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const renderDesk = () => {
     if (!deskSection || !deskFrame || !deskScreen) return;
 
+    if (window.innerWidth <= 760) {
+      deskFrame.style.transform = "";
+      deskFrame.style.filter = "";
+      deskScreen.classList.add("is-visible");
+      if (screenHotspot) screenHotspot.classList.remove("is-visible");
+      ticking = false;
+      return;
+    }
+
     currentProgress += (targetProgress - currentProgress) * 0.14;
 
     const p = currentProgress;
-    const isMobile = window.innerWidth <= 620;
+    const isMobile = false;
 
     if (isMobile) {
       const mobileScale = 1 + p * 0.12;
@@ -112,6 +121,18 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const updateDesk = () => {
+    if (window.innerWidth <= 760) {
+      targetProgress = 0;
+      if (deskFrame) {
+        deskFrame.style.transform = "";
+        deskFrame.style.filter = "";
+      }
+      if (deskScreen) deskScreen.classList.add("is-visible");
+      if (screenHotspot) screenHotspot.classList.remove("is-visible");
+      ticking = false;
+      return;
+    }
+
     targetProgress = getProgress();
 
     if (!ticking) {
