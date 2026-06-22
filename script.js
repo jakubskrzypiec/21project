@@ -3,10 +3,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (loader) {
     document.body.classList.add("is-loading");
-    window.setTimeout(() => {
+    setTimeout(() => {
       loader.classList.add("is-hidden");
       document.body.classList.remove("is-loading");
-    }, 3400);
+    }, 2450);
   }
 
   const revealItems = document.querySelectorAll(".reveal");
@@ -26,9 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("scroll", () => {
     if (!header) return;
-
     const currentY = window.scrollY;
-
     if (currentY > lastY && currentY > 130) {
       header.style.transform = "translateX(-50%) translateY(-135%)";
       header.style.opacity = "0";
@@ -36,94 +34,46 @@ document.addEventListener("DOMContentLoaded", () => {
       header.style.transform = "translateX(-50%) translateY(0)";
       header.style.opacity = "1";
     }
-
     lastY = Math.max(currentY, 0);
   }, { passive: true });
 
-  const deskSection = document.querySelector(".desk-portal");
-  const deskFrame = document.querySelector("#deskFrame");
-  const deskScreen = document.querySelector("#deskScreen");
-  const screenHotspot = document.querySelector("#screenHotspot");
+  const shapeSection = document.querySelector(".shape-portal");
+  const shape = document.querySelector("#rotatingShape");
+  const shapeContact = document.querySelector("#shapeContact");
+  const shapeCopy = document.querySelector(".shape-copy");
 
-  let targetProgress = 0;
-  let currentProgress = 0;
-  let ticking = false;
-  let glowReady = true;
+  const updateShape = () => {
+    if (!shapeSection || !shape || !shapeContact || !shapeCopy) return;
 
-  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    if (window.innerWidth <= 1060) {
+      shape.style.transform = "";
+      shapeCopy.style.opacity = "";
+      shapeCopy.style.transform = "";
+      shapeContact.classList.add("is-visible");
+      return;
+    }
 
-  const getProgress = () => {
-    if (!deskSection) return 0;
+    const rect = shapeSection.getBoundingClientRect();
+    const total = shapeSection.offsetHeight - window.innerHeight;
+    const progress = Math.min(Math.max(-rect.top / total, 0), 1);
 
-    const rect = deskSection.getBoundingClientRect();
-    const total = Math.max(deskSection.offsetHeight - window.innerHeight, 1);
+    const rotation = progress * 220;
+    const opacityCopy = Math.max(0, 1 - progress * 2.2);
+    const shift = 18 - progress * 18;
+    const scale = 0.75 + progress * 2.65;
 
-    return clamp(-rect.top / total, 0, 1);
-  };
+    shape.style.transform = `translateX(${shift}vw) scale(${scale}) rotate(${rotation}deg)`;
+    shapeCopy.style.opacity = opacityCopy;
+    shapeCopy.style.transform = `translateY(${-progress * 36}px)`;
 
-  const renderDesk = () => {
-    if (!deskSection || !deskFrame || !deskScreen) return;
-
-    currentProgress += (targetProgress - currentProgress) * 0.14;
-
-    const p = currentProgress;
-    const isMobile = window.innerWidth <= 620;
-
-    if (isMobile) {
-      const mobileScale = 1 + p * 0.12;
-      deskFrame.style.transform = `scale(${mobileScale})`;
-      deskScreen.classList.toggle("is-visible", p > 0.50);
-      if (screenHotspot) screenHotspot.classList.toggle("is-visible", p > 0.30 && p < 0.78);
+    if (progress > 0.62) {
+      shapeContact.classList.add("is-visible");
     } else {
-      const scale = 0.68 + p * 1.42;
-      const xShift = 24 - p * 24;
-      const yShift = 8 - p * 8;
-      const rotate = -5 + p * 5;
-      const blur = p > 0.85 ? (p - 0.85) * 10 : 0;
-
-      deskFrame.style.transform = `translate3d(${xShift}vw, ${yShift}vh, 0) scale(${scale}) rotate(${rotate}deg)`;
-      deskFrame.style.filter = `blur(${blur}px)`;
-
-      const showHotspot = p > 0.26 && p < 0.72;
-      if (screenHotspot) screenHotspot.classList.toggle("is-visible", showHotspot);
-
-      const showScreen = p > 0.58;
-      deskScreen.classList.toggle("is-visible", showScreen);
-
-      if (p > 0.34 && glowReady) {
-        deskFrame.classList.add("is-glowing");
-        glowReady = false;
-
-        window.setTimeout(() => {
-          deskFrame.classList.remove("is-glowing");
-        }, 1250);
-      }
-
-      if (p < 0.18) {
-        glowReady = true;
-      }
-    }
-
-    if (Math.abs(targetProgress - currentProgress) > 0.001) {
-      window.requestAnimationFrame(renderDesk);
-    } else {
-      ticking = false;
+      shapeContact.classList.remove("is-visible");
     }
   };
 
-  const updateDesk = () => {
-    targetProgress = getProgress();
-
-    if (!ticking) {
-      ticking = true;
-      window.requestAnimationFrame(renderDesk);
-    }
-  };
-
-  updateDesk();
-  window.addEventListener("scroll", updateDesk, { passive: true });
-  window.addEventListener("resize", updateDesk);
-  window.addEventListener("orientationchange", () => {
-    window.setTimeout(updateDesk, 250);
-  });
+  window.addEventListener("scroll", updateShape, { passive: true });
+  window.addEventListener("resize", updateShape);
+  updateShape();
 });
