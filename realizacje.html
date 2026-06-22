@@ -9,121 +9,135 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="grain"></div>
-<header class="site-header">
-  <a href="index.html" class="brand" aria-label="21project">
-    <img src="logomale.png" alt="21project">
-  </a>
 
-  <nav class="nav" aria-label="Menu główne">
-    <a href="index.html">Start</a>
-    <a href="oferta.html">Oferta</a>
-    <a href="realizacje.html">Realizacje</a>
-    <a href="kontakt.html">Kontakt</a>
-  </nav>
+  <header class="site-header">
+    <a href="index.html" class="brand" aria-label="21project">
+      <img src="logomale.png" alt="21project">
+    </a>
 
-  <div class="header-socials">
-    <a href="#" aria-label="Instagram">IG</a>
-    <a href="#" aria-label="Facebook">FB</a>
+    <nav class="nav" aria-label="Menu główne">
+      <a href="index.html">Start</a>
+      <a href="oferta.html">Oferta</a>
+      <a href="realizacje.html">Realizacje</a>
+      <a href="kontakt.html">Kontakt</a>
+    </nav>
+  <div class="header-contact">
+    <a href="tel:+48601863788">601 863 788</a>
   </div>
-</header>
-<main>
-  <section class="subhero">
-    <p class="section-label reveal">Realizacje</p>
-    <h1 class="reveal">Portfolio budowane na realnych projektach.</h1>
-    <p class="reveal">W tej sekcji pojawią się strony wykonane dla lokalnych firm, marek usługowych i projektów tworzonych od pomysłu do publikacji.</p>
+  </header>
+
+  <main>
+    <section class="subhero subhero-cases compact-subhero">
+      <p class="section-label reveal">Realizacje</p>
+      <h1 class="reveal">Wybrane projekty stron.</h1>
+      <p class="reveal">
+        Krótkie podglądy działających stron, które można od razu otworzyć i sprawdzić na żywo.
+      </p>
+    </section>
+
+    <section class="section compact-cases-page">
+      <a class="compact-case reveal" href="https://jakubskrzypiec.github.io/studio/" target="_blank" rel="noopener">
+        <div class="mini-browser">
+          <div class="browser-bar"><span></span><span></span><span></span><strong>studio</strong></div>
+          <iframe src="https://jakubskrzypiec.github.io/studio/" loading="lazy" title="Studio"></iframe>
+        </div>
+        <div class="compact-case-info">
+          <span>01</span>
+          <h2>Studio projektowe</h2>
+          <p>Strona wizerunkowa dla marki premium.</p>
+        </div>
+      </a>
+
+      <a class="compact-case reveal" href="https://jakubskrzypiec.github.io/cosarchitekt/" target="_blank" rel="noopener">
+        <div class="mini-browser">
+          <div class="browser-bar"><span></span><span></span><span></span><strong>cosarchitekt</strong></div>
+          <iframe src="https://jakubskrzypiec.github.io/cosarchitekt/" loading="lazy" title="COS Architekt"></iframe>
+        </div>
+        <div class="compact-case-info">
+          <span>02</span>
+          <h2>COS Architekt</h2>
+          <p>Elegancka strona dla pracowni wnętrz.</p>
+        </div>
+      </a>
+
+      <a class="compact-case reveal" href="https://jakubskrzypiec.github.io/2kpracownia/" target="_blank" rel="noopener">
+        <div class="mini-browser">
+          <div class="browser-bar"><span></span><span></span><span></span><strong>2kpracownia</strong></div>
+          <iframe src="https://jakubskrzypiec.github.io/2kpracownia/" loading="lazy" title="2K Pracownia"></iframe>
+        </div>
+        <div class="compact-case-info">
+          <span>03</span>
+          <h2>2K Pracownia</h2>
+          <p>Minimalistyczna strona architektoniczna.</p>
+        </div>
+      </a>
+
+      <a class="compact-case reveal" href="https://msremonty.pl/" target="_blank" rel="noopener">
+        <div class="mini-browser">
+          <div class="browser-bar"><span></span><span></span><span></span><strong>msremonty.pl</strong></div>
+          <iframe src="https://msremonty.pl/" loading="lazy" title="MS Remonty"></iframe>
+        </div>
+        <div class="compact-case-info">
+          <span>04</span>
+          <h2>MS Remonty</h2>
+          <p>Strona firmowa dla usług remontowych.</p>
+        </div>
+      </a>
+    </section>
+  </main>
+
+  <section class="contact-strip">
+    <div>
+      <span>Kontakt</span>
+      <strong>jakubskrzypiec.dev@gmail.com</strong>
+    <small>601 863 788</small>
+    </div>
+    <div class="contact-actions">
+    <a href="mailto:jakubskrzypiec.dev@gmail.com">Napisz wiadomość</a>
+    <a href="tel:+48601863788">Zadzwoń</a>
+  </div>
   </section>
 
-  <section class="section cases-page">
-    <article class="case-card reveal">
-      <img src="macbook.png" alt="">
-      <div>
-        <span>01</span>
-        <h2>Paintball Żory</h2>
-        <p>Strona dla lokalnej atrakcji z mocnym klimatem, cennikiem, galerią i szybkim kontaktem.</p>
-        <a href="https://www.paintballzory.pl/" target="_blank" rel="noopener" class="case-link">Zobacz projekt</a>
-      </div>
-    </article>
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <img src="logoduze.png" alt="21project">
+      <p>Nowoczesne strony internetowe, branding digital i widoczność online dla firm, które chcą wyglądać profesjonalnie w sieci.</p>
+    </div>
 
-    <article class="case-card reveal">
-      <img src="biurko.png" alt="">
-      <div>
-        <span>02</span>
-        <h2>Werka Bramy</h2>
-        <p>Prezentacja realizacji i usług dla marki technicznej związanej z bramami oraz automatyką.</p>
-        <a href="https://jakubskrzypiec.github.io/werkabramy/realizacje.html" target="_blank" rel="noopener" class="case-link">Zobacz projekt</a>
-      </div>
-    </article>
+    <div class="footer-col">
+      <h4>Menu</h4>
+      <a href="index.html">Start</a>
+      <a href="oferta.html">Oferta</a>
+      <a href="realizacje.html">Realizacje</a>
+      <a href="kontakt.html">Kontakt</a>
+    </div>
 
-    <article class="case-card reveal">
-      <img src="hero.png" alt="">
-      <div>
-        <span>03</span>
-        <h2>EcoVolt</h2>
-        <p>Nowoczesna strona dla branży energii odnawialnej, oparta na czystym układzie i technologicznym charakterze.</p>
-        <a href="https://jakubskrzypiec.github.io/ecovolt/" target="_blank" rel="noopener" class="case-link">Zobacz projekt</a>
-      </div>
-    </article>
+    <div class="footer-col">
+      <h4>Usługi</h4>
+      <a href="oferta.html">Strony internetowe</a>
+      <a href="oferta.html">Landing page</a>
+      <a href="oferta.html">Rework strony</a>
+      <a href="oferta.html">Branding digital</a>
+    </div>
 
-    <article class="case-card reveal">
-      <img src="klawiatura.png" alt="">
-      <div>
-        <span>04</span>
-        <h2>MS Remonty</h2>
-        <p>Wizytówka firmy usługowej z prostym przekazem, czytelnym zakresem prac i kontaktem.</p>
-        <a href="#" class="case-link">Projekt w portfolio</a>
-      </div>
-    </article>
-  </section>
-</main>
-<section class="contact-strip">
-  <div>
-    <span>Kontakt</span>
-    <strong>kontakt@21project.pl</strong>
-  </div>
-  <a href="mailto:kontakt@21project.pl">Napisz wiadomość</a>
-</section>
+    <div class="footer-col">
+      <h4>Kontakt</h4>
+      <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
+      <p>Cała Polska / online</p>
+    </div>
 
-<footer class="site-footer">
-  <div class="footer-brand">
-    <img src="logoduze.png" alt="21project">
-    <p>Nowoczesne strony internetowe, branding digital i widoczność online dla firm, które chcą wyglądać profesjonalnie w sieci.</p>
-  </div>
+    <div class="footer-bottom">
+      <span>© 2026 21project</span>
+      <span>WEB DESIGN • BRANDING • SEO</span>
+    </div>
+  </footer>
 
-  <div class="footer-col">
-    <h4>Menu</h4>
-    <a href="index.html">Start</a>
-    <a href="oferta.html">Oferta</a>
-    <a href="realizacje.html">Realizacje</a>
-    <a href="kontakt.html">Kontakt</a>
-  </div>
-
-  <div class="footer-col">
-    <h4>Usługi</h4>
-    <a href="oferta.html">Strony internetowe</a>
-    <a href="oferta.html">Landing page</a>
-    <a href="oferta.html">Rework strony</a>
-    <a href="oferta.html">Branding digital</a>
-  </div>
-
-  <div class="footer-col">
-    <h4>Kontakt</h4>
-    <a href="mailto:kontakt@21project.pl">kontakt@21project.pl</a>
-    <a href="#" target="_blank" rel="noopener">Instagram</a>
-    <a href="#" target="_blank" rel="noopener">Facebook</a>
-    <p>Żory / Śląsk / online</p>
-  </div>
-
-  <div class="footer-bottom">
-    <span>© 2026 21project</span>
-    <span>WEB DESIGN • BRANDING • SEO</span>
-  </div>
-</footer>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
