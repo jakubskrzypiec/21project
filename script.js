@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -13,8 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (intro && !reduceMotion) {
     body.classList.add('is-loading');
     requestAnimationFrame(() => intro.classList.add('is-ready'));
-    window.setTimeout(hideIntro, 1650);
-    window.setTimeout(hideIntro, 2600);
+    window.setTimeout(hideIntro, 1500);
+    window.setTimeout(hideIntro, 2500);
     intro.addEventListener('click', hideIntro, { once: true });
   } else if (intro) {
     intro.remove();
