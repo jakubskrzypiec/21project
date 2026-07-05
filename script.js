@@ -1,84 +1,47 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  body.classList.add('js-ready');
-
-  const splash = document.querySelector('.splash');
-  const isHome = body.classList.contains('home-page');
-
-  const closeSplash = () => {
-    if (!splash) return;
-    splash.classList.add('is-leaving');
+  body.classList.add('js');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const intro = document.querySelector('.intro');
+  const closeIntro = () => {
+    if (!intro) return;
+    intro.classList.add('done');
     body.classList.remove('is-loading');
-    window.setTimeout(() => splash.remove(), 650);
+    setTimeout(() => intro.remove(), 650);
   };
-
-  if (splash) {
-    if (!isHome || reduceMotion) {
-      splash.remove();
-      body.classList.remove('is-loading');
-    } else {
-      body.classList.add('is-loading');
-      requestAnimationFrame(() => splash.classList.add('is-ready'));
-      window.setTimeout(closeSplash, 2050);
-      window.setTimeout(closeSplash, 2900);
-      splash.addEventListener('click', closeSplash, { once: true });
-    }
+  if (intro && !reduce) {
+    body.classList.add('is-loading');
+    requestAnimationFrame(() => intro.classList.add('ready'));
+    setTimeout(closeIntro, 1450);
+    setTimeout(closeIntro, 2400);
+  } else if (intro) {
+    intro.remove();
   }
-
   const header = document.querySelector('.site-header');
-  const updateHeader = () => {
-    if (!header) return;
-    header.classList.toggle('is-scrolled', window.scrollY > 20);
-  };
+  const updateHeader = () => header && header.classList.toggle('scrolled', window.scrollY > 20);
   updateHeader();
   window.addEventListener('scroll', updateHeader, { passive: true });
-
   const navToggle = document.querySelector('.nav-toggle');
-  const nav = document.querySelector('.site-nav');
-  if (navToggle && nav) {
+  if (navToggle) {
     navToggle.addEventListener('click', () => {
       const open = body.classList.toggle('nav-open');
       navToggle.setAttribute('aria-expanded', String(open));
     });
-    nav.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        body.classList.remove('nav-open');
-        navToggle.setAttribute('aria-expanded', 'false');
-      });
-    });
   }
-
-  document.querySelectorAll('a[href^="#"]').forEach((link) => {
-    link.addEventListener('click', (event) => {
-      const target = document.querySelector(link.getAttribute('href'));
-      if (!target) return;
-      event.preventDefault();
-      target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-    });
-  });
-
-  const revealItems = document.querySelectorAll('.reveal, .case-row, .service-card, .process-card, .offer-box, .inner-card, .contact-page-main, .side-box, .case-visual, .note-box');
-  if ('IntersectionObserver' in window && !reduceMotion) {
+  document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', () => body.classList.remove('nav-open')));
+  const reveal = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduce) {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
+          entry.target.classList.add('visible');
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.16, rootMargin: '0px 0px -30px 0px' });
-    revealItems.forEach((item) => observer.observe(item));
+    }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+    reveal.forEach(el => observer.observe(el));
   } else {
-    revealItems.forEach((item) => item.classList.add('is-visible'));
+    reveal.forEach(el => el.classList.add('visible'));
   }
-
-  document.querySelectorAll('.faq-button').forEach((button) => {
-    button.addEventListener('click', () => {
-      const item = button.closest('.faq-item');
-      if (!item) return;
-      item.classList.toggle('is-open');
-    });
-  });
 });

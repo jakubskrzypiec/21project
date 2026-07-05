@@ -4,263 +4,243 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f5f2ec" />
+  <meta name="theme-color" content="#ebe2d4" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=21rework2" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=21final1" />
 
-  <title>21project — strony internetowe, które ustawiają poziom marki</title>
-  <meta name="description" content="21project tworzy minimalistyczne strony internetowe, landing page i reworki dla firm, które chcą wyglądać premium i lepiej konwertować." />
-  <meta property="og:title" content="21project — strony internetowe, które ustawiają poziom marki" />
-  <meta property="og:description" content="Minimalistyczny web design, sprzedażowy układ i portfolio pokazane jak produkt digitalowy." />
-  <meta property="og:image" content="hero.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"21project","url":"https://21project.pl/","email":"jakubskrzypiec.dev@gmail.com","telephone":"+48601863788","description":"Projektowanie stron internetowych, landing page, rework stron i SEO start dla firm.","areaServed":"PL","serviceType":["projektowanie stron internetowych","landing page","web design","rework strony internetowej"]}</script>
+  <title>21project — minimalistyczne strony internetowe dla firm</title>
+  <meta name="description" content="21project tworzy minimalistyczne strony internetowe, landing page i reworki dla firm. Premium wygląd, prosta oferta, szybki kontakt i ceny od 799 zł." />
+  <meta property="og:title" content="21project — strony internetowe, które wyglądają jak marka" />
+  <meta property="og:description" content="Minimalistyczne strony internetowe, landing page, rework strony i portfolio online." />
+  <meta property="og:image" content="assets/hero-studio.png" />
 </head>
 <body class="home-page">
-  <div class="splash" aria-hidden="true">
-    <div class="splash-inner">
-      <div class="splash-badge">21</div>
-      <div class="splash-wordmark">21project</div>
-      <div class="splash-subtitle">digital presence / web design / visual direction</div>
-    </div>
+  <div class="intro" aria-hidden="true">
+    <div class="intro-line"></div>
+    <img src="assets/logo-white.svg" alt="">
+    <p>web design / visual direction</p>
   </div>
 
   <header class="site-header">
     <div class="header-inner">
-      <a href="index.html" class="logo" aria-label="21project — start">
-        <img src="logomaleczarne.png" alt="21project">
-        <span>21project</span>
+      <a class="brand" href="index.html" aria-label="21project start">
+        <img src="assets/logo-black.svg" alt="21project">
       </a>
-      <nav class="site-nav" aria-label="Menu główne">
-        <a href="index.html" class="is-active">Start</a>
-        <a href="oferta.html" class="">Oferta</a>
-        <a href="realizacje.html" class="">Portfolio</a>
-        <a href="kontakt.html" class="">Kontakt</a>
+      <nav class="nav" aria-label="Menu główne">
+        <a class="is-active" href="index.html">Start</a>
+        <a class="" href="oferta.html">Oferta</a>
+        <a class="" href="realizacje.html">Portfolio</a>
+        <a class="" href="kontakt.html">Kontakt</a>
       </nav>
-      <a class="header-cta" href="kontakt.html">Zacznij projekt</a>
-      <button class="nav-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+      <a class="nav-contact" href="kontakt.html">Zacznij</a>
+      <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
     </div>
   </header>
 
   <main>
-    <section class="hero" id="start">
-      <div class="hero-media"><img src="hero.png" alt="Ciemna minimalistyczna scena hero dla 21project"></div>
-      <div class="hero-overlay"></div>
-      <div class="hero-inner">
-        <div class="hero-frame">
-          <div class="hero-copy reveal">
-            <p class="kicker">21project / strony internetowe / web design</p>
-            <h1>Strony, które ustawiają poziom marki.</h1>
-            <p class="lead">21project tworzy minimalistyczne strony dla firm, które chcą wyglądać profesjonalnie od pierwszego ekranu, budzić zaufanie i prowadzić klienta prosto do kontaktu.</p>
-            <div class="hero-actions btn-row">
-              <a class="button button-dark" href="kontakt.html">Zacznij projekt</a>
-              <a class="button button-light" href="realizacje.html">Zobacz portfolio</a>
-            </div>
-            <div class="hero-bottom">
-              <span>minimalizm</span>
-              <span>sprzedażowy układ</span>
-              <span>mobile first</span>
-            </div>
-          </div>
-          <aside class="hero-note reveal">
-            <span class="mini-label">first impression</span>
-            <p>Pierwszy ekran ma sprzedać poziom firmy.</p>
-          </aside>
+    <section class="hero hero-home">
+      <div class="hero-bg"><img src="assets/hero-studio.png" alt="Minimalistyczne studio 21project"></div>
+      <div class="hero-shade"></div>
+      <div class="hero-content reveal">
+        <p class="eyebrow light">21project / strony internetowe</p>
+        <h1>Strony, które nie wyglądają jak szablon.</h1>
+        <p>Minimalistyczny web design dla firm, które chcą wyglądać premium, jasno pokazać ofertę i dostać więcej konkretnych zapytań.</p>
+        <div class="hero-actions">
+          <a class="btn btn-light" href="oferta.html">Zobacz ofertę</a>
+          <a class="btn btn-ghost" href="realizacje.html">Portfolio</a>
         </div>
+      </div>
+      <div class="hero-bottom-note">strony internetowe / landing page / rework</div>
+    </section>
+
+    <section class="quote-strip dark-strip">
+      <p class="reveal">Dobra strona nie musi mówić dużo. Musi wyglądać tak, żeby klient został.</p>
+    </section>
+
+    <section class="section section-offer" id="oferta">
+      <div class="shell">
+        <div class="section-title reveal">
+          <span>Oferta</span>
+          <h2>Prosto. Estetycznie. Z ceną od początku.</h2>
+        </div>
+        <div class="price-grid">
+          <article class="price-card reveal">
+            <span>01</span><h3>One page</h3><p>Krótka strona startowa dla małej firmy lub marki osobistej.</p><strong>od 799 zł</strong>
+          </article>
+          <article class="price-card featured reveal">
+            <span>02</span><h3>Landing page</h3><p>Mocna strona pod jedną usługę, kampanię albo sprzedaż.</p><strong>od 1199 zł</strong>
+          </article>
+          <article class="price-card reveal">
+            <span>03</span><h3>Strona firmowa</h3><p>Start, oferta, portfolio, proces i kontakt w spójnym układzie.</p><strong>od 1699 zł</strong>
+          </article>
+          <article class="price-card reveal">
+            <span>04</span><h3>Rework</h3><p>Poprawa istniejącej strony: wygląd, proporcje, treść i mobile.</p><strong>od 699 zł</strong>
+          </article>
+        </div>
+        <p class="small-note reveal">Ceny są startowe. Dokładna kwota zależy od liczby sekcji, materiałów, podstron i tego, czy strona wymaga dodatkowych integracji.</p>
       </div>
     </section>
 
-    <section class="quote-band">
-      <div class="page-shell">
-        <p class="eyebrow reveal">Manifest</p>
-        <p class="reveal">Dobra strona nie musi krzyczeć. Ma sprawić, że firma wygląda jak oczywisty wybór.</p>
+    <section class="image-text-section">
+      <div class="image-panel reveal"><img src="assets/photo-stilllife.png" alt="Minimalistyczne materiały i światło"></div>
+      <div class="text-panel reveal">
+        <p class="eyebrow">Kierunek</p>
+        <h2>Mało tekstu. Dużo kontroli nad pierwszym wrażeniem.</h2>
+        <p>21project układa stronę jak scenę: mocny pierwszy ekran, krótka oferta, dowód jakości i kontakt. Bez losowych bloków i bez taniego efektu „AI template”.</p>
       </div>
     </section>
 
-    <section class="section" id="oferta">
-      <div class="page-shell">
-        <div class="section-head">
-          <p class="eyebrow reveal">Oferta</p>
-          <div>
-            <h2 class="reveal">Web design z artystycznym klimatem, ale z celem sprzedażowym.</h2>
-            <p class="lead reveal">21project projektuje strony internetowe, landing page i reworki istniejących witryn. Forma jest czysta, ale każdy ekran ma swoją funkcję: zaufanie, oferta, argumenty i kontakt.</p>
-          </div>
+    <section class="section portfolio-section">
+      <div class="shell">
+        <div class="section-title reveal">
+          <span>Portfolio</span>
+          <h2>Wybrane realizacje w desktopie i mobile.</h2>
         </div>
-        <div class="service-grid">
-          <article class="service-card reveal">
-            <small>01 / strony dla firm</small>
-            <img src="biurko.png" alt="Minimalistyczny projekt strony internetowej przy biurku">
-            <h3>Strona firmowa</h3>
-            <p>Dla marek usługowych, które potrzebują nowoczesnego wizerunku, jasnej oferty i szybkiego kontaktu.</p>
-          </article>
-          <article class="service-card reveal">
-            <small>02 / landing page</small>
-            <img src="animacja.png" alt="Nowoczesny landing page 21project">
-            <h3>Landing page</h3>
-            <p>Jedna mocna strona pod konkretną usługę, produkt lub kampanię. Z naciskiem na pierwszy ekran i konwersję.</p>
-          </article>
-          <article class="service-card reveal">
-            <small>03 / rework</small>
-            <img src="3d.png" alt="Rework istniejącej strony internetowej">
-            <h3>Rework strony</h3>
-            <p>Dla stron, które już istnieją, ale wyglądają za zwyczajnie, mają słabe proporcje albo nie prowadzą do zapytania.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section portfolio-section" id="portfolio">
-      <div class="page-shell">
-        <div class="section-head">
-          <p class="eyebrow reveal">Portfolio</p>
-          <div>
-            <h2 class="reveal">Wyselekcjonowane realizacje pokazane w desktopie i mobile.</h2>
-            <p class="lead reveal">Każdy projekt jest pokazany jak produkt digitalowy — tak, żeby od razu było widać klimat strony na komputerze i telefonie.</p>
-          </div>
-        </div>
-
         <div class="case-list">
-          <article class="case-row reveal">
+
+          <article class="case-card reveal">
             <div class="case-copy">
-              <div class="case-top">
-                <div class="case-meta"><span>wnętrza</span><span>premium</span><span>portfolio</span></div>
-                <h3>Pani Projekt</h3>
-                <p>Spokojna, elegancka strona dla projektantki wnętrz. Dużo oddechu, jasna typografia i obrazowe prowadzenie użytkownika przez ofertę oraz realizacje.</p>
+              <p class="case-meta">wnętrza / premium</p>
+              <h3>Pani Projekt</h3>
+              <p>Strona dla projektantki wnętrz. Jasny klimat, spokojny rytm i portfolio, które wygląda jak część marki.</p>
+              <div class="case-actions">
+                <a href="case-paniprojekt.html">Case study</a>
+                <a href="https://jakubskrzypiec.github.io/paniprojekt/" target="_blank" rel="noopener">Live</a>
               </div>
-              <a class="case-link" href="case-paniprojekt.html">Zobacz case study →</a>
             </div>
-            <div class="device-scene theme-paniprojekt" aria-hidden="true">
-              <div class="laptop"><div class="screen"><div class="site-preview"><div class="preview-nav"></div><div class="preview-main"><div class="preview-hero tall"></div><div class="preview-title"></div><div class="preview-text"></div><div class="preview-text short"></div><div class="preview-grid"><span></span><span></span><span></span></div></div><div class="preview-footer"></div></div></div></div>
-              <div class="phone"><div class="phone-screen"><div class="phone-inner"><div class="phone-card hero"></div><span class="phone-line dark"></span><span class="phone-line"></span><div class="phone-card"></div></div></div></div>
-            </div>
+
+              <div class="mockup-scene theme-beige">
+                <div class="desktop-device">
+                  <iframe title="Podgląd strony" src="https://jakubskrzypiec.github.io/paniprojekt/" loading="lazy"></iframe>
+                </div>
+                <div class="mobile-device">
+                  <iframe title="Podgląd mobile" src="https://jakubskrzypiec.github.io/paniprojekt/" loading="lazy"></iframe>
+                </div>
+              </div>
           </article>
 
-          <article class="case-row reveal">
+          <article class="case-card reveal">
             <div class="case-copy">
-              <div class="case-top">
-                <div class="case-meta"><span>architektura</span><span>editorial</span><span>wizerunek</span></div>
-                <h3>COS Architekt</h3>
-                <p>Strona o bardziej editorialowym rytmie: minimalistyczny header, mocne zdjęcia i spokojne cytaty, które budują charakter studia.</p>
+              <p class="case-meta">architektura / editorial</p>
+              <h3>COS Architekt</h3>
+              <p>Minimalistyczna strona w stylu atelier. Duże obrazy, cisza, czarny przerywnik i mniej przypadkowych sekcji.</p>
+              <div class="case-actions">
+                <a href="case-cos.html">Case study</a>
+                <a href="https://jakubskrzypiec.github.io/cosarchitekt/" target="_blank" rel="noopener">Live</a>
               </div>
-              <a class="case-link" href="case-cos.html">Zobacz case study →</a>
             </div>
-            <div class="device-scene theme-cos" aria-hidden="true">
-              <div class="laptop"><div class="screen"><div class="site-preview"><div class="preview-nav"></div><div class="preview-main"><div class="preview-hero"></div><div class="preview-title"></div><div class="preview-text"></div><div class="preview-stack"><div class="preview-card"></div><div class="preview-card"></div></div></div><div class="preview-footer"></div></div></div></div>
-              <div class="phone"><div class="phone-screen"><div class="phone-inner"><div class="phone-card hero"></div><span class="phone-line dark"></span><span class="phone-line"></span><div class="phone-card"></div></div></div></div>
-            </div>
+
+              <div class="mockup-scene theme-warm">
+                <div class="desktop-device">
+                  <iframe title="Podgląd strony" src="https://jakubskrzypiec.github.io/cosarchitekt/" loading="lazy"></iframe>
+                </div>
+                <div class="mobile-device">
+                  <iframe title="Podgląd mobile" src="https://jakubskrzypiec.github.io/cosarchitekt/" loading="lazy"></iframe>
+                </div>
+              </div>
           </article>
 
-          <article class="case-row reveal">
+          <article class="case-card reveal">
             <div class="case-copy">
-              <div class="case-top">
-                <div class="case-meta"><span>firma remontowa</span><span>oferta</span><span>zaufanie</span></div>
-                <h3>MS Remonty</h3>
-                <p>Układ pod konkretną usługę: szybkie zrozumienie zakresu prac, realizacje, sekcja zaufania i czytelne przejście do kontaktu.</p>
+              <p class="case-meta">usługi lokalne</p>
+              <h3>MS Remonty</h3>
+              <p>Strona dla firmy remontowej: konkretna oferta, realizacje i prosty kontakt bez zbędnego chaosu.</p>
+              <div class="case-actions">
+                <a href="case-msremonty.html">Case study</a>
+                <a href="https://msremonty.pl/" target="_blank" rel="noopener">Live</a>
               </div>
-              <a class="case-link" href="case-msremonty.html">Zobacz case study →</a>
             </div>
-            <div class="device-scene theme-dark theme-ms" aria-hidden="true">
-              <div class="laptop"><div class="screen"><div class="site-preview"><div class="preview-nav"></div><div class="preview-main"><div class="preview-hero"></div><div class="preview-title"></div><div class="preview-text"></div><div class="preview-text short"></div><div class="preview-grid"><span></span><span></span><span></span></div></div><div class="preview-footer"></div></div></div></div>
-              <div class="phone"><div class="phone-screen"><div class="phone-inner"><div class="phone-card hero"></div><span class="phone-line dark"></span><span class="phone-line"></span><div class="phone-card"></div></div></div></div>
-            </div>
+
+              <div class="mockup-scene theme-dark">
+                <div class="desktop-device">
+                  <iframe title="Podgląd strony" src="https://msremonty.pl/" loading="lazy"></iframe>
+                </div>
+                <div class="mobile-device">
+                  <iframe title="Podgląd mobile" src="https://msremonty.pl/" loading="lazy"></iframe>
+                </div>
+              </div>
           </article>
 
-          <article class="case-row reveal">
+          <article class="case-card reveal">
             <div class="case-copy">
-              <div class="case-top">
-                <div class="case-meta"><span>beauty</span><span>rezerwacje</span><span>lokalna marka</span></div>
-                <h3>Glam Studio</h3>
-                <p>Delikatniejszy, kobiecy kierunek z bardziej miękką kolorystyką, ale dalej z jasnym układem usług i szybką ścieżką do zapisu.</p>
+              <p class="case-meta">beauty / zapisy</p>
+              <h3>Glam Studio</h3>
+              <p>Delikatniejszy kierunek dla branży beauty. Estetyka, oferta i szybka ścieżka do kontaktu.</p>
+              <div class="case-actions">
+                <a href="case-glamstudio.html">Case study</a>
+                <a href="https://jakubskrzypiec.github.io/glamstudio/" target="_blank" rel="noopener">Live</a>
               </div>
-              <a class="case-link" href="case-glamstudio.html">Zobacz case study →</a>
             </div>
-            <div class="device-scene theme-glam" aria-hidden="true">
-              <div class="laptop"><div class="screen"><div class="site-preview"><div class="preview-nav"></div><div class="preview-main"><div class="preview-hero"></div><div class="preview-title"></div><div class="preview-text"></div><div class="preview-text short"></div><div class="preview-grid"><span></span><span></span><span></span></div></div><div class="preview-footer"></div></div></div></div>
-              <div class="phone"><div class="phone-screen"><div class="phone-inner"><div class="phone-card hero"></div><span class="phone-line dark"></span><span class="phone-line"></span><div class="phone-card"></div></div></div></div>
-            </div>
+
+              <div class="mockup-scene theme-soft">
+                <div class="desktop-device">
+                  <iframe title="Podgląd strony" src="https://jakubskrzypiec.github.io/glamstudio/" loading="lazy"></iframe>
+                </div>
+                <div class="mobile-device">
+                  <iframe title="Podgląd mobile" src="https://jakubskrzypiec.github.io/glamstudio/" loading="lazy"></iframe>
+                </div>
+              </div>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="section" id="kierunek">
-      <div class="page-shell manifest-wrap">
-        <div class="manifest-panel reveal">
-          <p class="eyebrow">Kierunek</p>
-          <h2>Minimalizm, który dalej sprzedaje.</h2>
-          <p class="lead">21project nie buduje stron z przypadkowych sekcji. Najpierw powstaje scenografia: pierwszy ekran, tempo przewijania, argumenty i moment, w którym użytkownik ma kliknąć kontakt.</p>
-          <div class="principles">
-            <article><span>01</span><strong>Wrażenie</strong><p>Strona ma od razu wyglądać lepiej niż konkurencja w tej samej branży.</p></article>
-            <article><span>02</span><strong>Treść</strong><p>Mniej tekstu na ekranie, ale każdy blok ma konkretny cel i miejsce.</p></article>
-            <article><span>03</span><strong>Kontakt</strong><p>Użytkownik nie szuka drogi. Układ prowadzi go naturalnie do kolejnego kroku.</p></article>
-          </div>
+    <section class="quote-image">
+      <img src="assets/photo-dark-divider.png" alt="Ciemny minimalistyczny przerywnik">
+      <div class="quote-image-content reveal">
+        <p>Strona ma być cicha w formie, ale pewna w odbiorze.</p>
+      </div>
+    </section>
+
+    <section class="section process-section">
+      <div class="shell process-layout">
+        <div class="section-title reveal">
+          <span>Proces</span>
+          <h2>Trzy kroki do strony, która wygląda lepiej.</h2>
         </div>
-        <div class="manifest-visual reveal">
-          <img src="hero-alt.png" alt="Alternatywna ciemna scena 21project">
-          <div class="overlay-tag"><strong>digital presence</strong><p>Forma buduje zaufanie zanim klient przeczyta ofertę.</p></div>
+        <div class="process-list reveal">
+          <article><span>01</span><h3>Kierunek</h3><p>Ustalamy styl, cel strony, branżę i materiały.</p></article>
+          <article><span>02</span><h3>Projekt</h3><p>Powstaje układ, teksty i wizualny rytm strony.</p></article>
+          <article><span>03</span><h3>Wdrożenie</h3><p>Kod, mobile, publikacja i podstawowe SEO.</p></article>
         </div>
       </div>
     </section>
 
-    <section class="contact-band">
-      <div class="page-shell-wide">
-        <div class="contact-card reveal">
-          <div>
-            <p class="eyebrow">Kontakt</p>
-            <h2>Zacznij od kierunku strony.</h2>
-            <p class="lead">Wyślij nazwę firmy, branżę i to, jaki efekt ma zrobić strona. 21project przygotuje mocniejszy kierunek wizualny, układ sekcji i plan wdrożenia.</p>
-            <div class="contact-links btn-row">
-              <a class="contact-pill" href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
-              <a class="contact-pill" href="tel:+48601863788">601 863 788</a>
-            </div>
-          </div>
-          <div class="contact-side">
-            <div class="contact-block"><span>Mail</span><strong>jakubskrzypiec.dev@gmail.com</strong></div>
-            <div class="contact-block"><span>Telefon</span><strong>601 863 788</strong></div>
-            <div class="contact-block"><span>Zakres</span><strong>strony internetowe / landing page / rework</strong></div>
-          </div>
+    <section class="contact-section">
+      <div class="contact-box reveal">
+        <p class="eyebrow light">Kontakt</p>
+        <h2>Zróbmy stronę, która nie wygląda jak reszta.</h2>
+        <div class="contact-links">
+          <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
+          <a href="tel:+48601863788">601 863 788</a>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <div class="footer-grid">
+    <div class="footer-inner">
       <div class="footer-brand">
-        <img src="logomale.png" alt="21project">
-        <p>21project tworzy strony internetowe z minimalistycznym klimatem, mocnym pierwszym ekranem i układem, który prowadzi do kontaktu.</p>
+        <img src="assets/logo-black.svg" alt="21project">
+        <p>Minimalistyczne strony internetowe dla firm, które chcą wyglądać lepiej niż konkurencja.</p>
       </div>
-      <div class="footer-links">
-        <div>
-          <strong>Menu</strong>
-          <a href="index.html">Start</a>
-          <a href="oferta.html">Oferta</a>
-          <a href="realizacje.html">Portfolio</a>
-          <a href="kontakt.html">Kontakt</a>
-        </div>
-        <div>
-          <strong>Wybrane realizacje</strong>
-          <a href="case-paniprojekt.html">Pani Projekt</a>
-          <a href="case-cos.html">COS Architekt</a>
-          <a href="case-msremonty.html">MS Remonty</a>
-          <a href="case-glamstudio.html">Glam Studio</a>
-        </div>
-        <div>
-          <strong>Kontakt</strong>
-          <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
-          <a href="tel:+48601863788">601 863 788</a>
-          <a href="https://www.instagram.com/21project.pl/" target="_blank" rel="noopener">Instagram</a>
-        </div>
+      <div class="footer-col">
+        <span>Menu</span>
+        <a href="index.html">Start</a>
+        <a href="oferta.html">Oferta</a>
+        <a href="realizacje.html">Portfolio</a>
+        <a href="kontakt.html">Kontakt</a>
       </div>
-      <div class="footer-note">
-        <p>© 2026<br>21project / web design / strony internetowe</p>
+      <div class="footer-col">
+        <span>Kontakt</span>
+        <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
+        <a href="tel:+48601863788">601 863 788</a>
       </div>
+      <div class="footer-note">© 2026<br>21project</div>
     </div>
   </footer>
-  <script src="script.js?v=21rework2"></script>
-
+  <script src="script.js?v=21final1"></script>
 </body>
 </html>
