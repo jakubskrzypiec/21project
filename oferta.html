@@ -3,202 +3,103 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Oferta | 21project</title>
-  <meta name="description" content="Oferta 21project — strony internetowe, landing page, rework strony, branding digital i podstawowe SEO.">
-
+  <meta name="theme-color" content="#f4f2ed" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=21rework1" />
+  <title>Oferta — 21project | strony internetowe, landing page, rework</title>
+  <meta name="description" content="Oferta 21project: strony internetowe dla firm, landing page, rework istniejącej strony, portfolio online, podstawowe SEO i wdrożenie techniczne." />
 </head>
 <body>
-  <div class="grain"></div>
-
-  <header class="site-header">
-    <a href="index.html" class="brand" aria-label="21project">
-      <img src="logomale.png" alt="21project">
-    </a>
-
-    <nav class="nav" aria-label="Menu główne">
-      <a href="index.html">Start</a>
-      <a href="oferta.html">Oferta</a>
-      <a href="realizacje.html">Realizacje</a>
-      <a href="kontakt.html">Kontakt</a>
-    </nav>
-  <div class="header-contact">
-    <a href="tel:+48601863788">601 863 788</a>
+  <div class="splash" aria-hidden="true">
+    <div class="splash-bg"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="splash-inner">
+      <div class="splash-mark"><img src="logomale.png" alt=""></div>
+      <div class="splash-line"></div>
+      <div class="splash-title">21project</div>
+      <div class="splash-subtitle">digital presence / web design / visual direction</div>
+    </div>
   </div>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo" aria-label="21project — start">
+        <img src="logomaleczarne.png" alt="21project">
+        <span>21project</span>
+      </a>
+      <nav class="site-nav" aria-label="Menu główne">
+        <a href="index.html" class="">Start</a>
+        <a href="oferta.html" class="is-active">Oferta</a>
+        <a href="realizacje.html" class="">Portfolio</a>
+        <a href="kontakt.html" class="">Kontakt</a>
+      </nav>
+      <a class="header-cta" href="kontakt.html">Zacznij projekt</a>
+      <button class="nav-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </header>
 
   <main>
-    <section class="subhero">
-      <p class="section-label reveal">Oferta</p>
-      <h1 class="reveal">Pakiety stron dopasowane do etapu firmy.</h1>
-      <p class="reveal">
-        21project przygotowuje projekt wstępny bez opłaty. Dopiero po zobaczeniu kierunku klient decyduje,
-        czy chce rozpocząć współpracę.
-      </p>
-    </section>
-
-    <section class="section pricing-section">
-      <div class="section-head reveal">
-        <p class="section-label">Cennik</p>
-        <h2>Prosty wybór. Jasny zakres.</h2>
-        <p>
-          Pakiety można dopasować do branży, ilości treści i oczekiwanego efektu.
-          Każdy wariant obejmuje dopracowanie mobile i przygotowanie strony do publikacji.
-        </p>
-      </div>
-
-      <div class="pricing-grid">
-        <article class="price-card reveal">
-          <span>Minimal</span>
-          <h3>400 zł</h3>
-          <p class="price-sub">Prosta strona typu one page / home page.</p>
-          <ul>
-            <li>1 strona bez podstron</li>
-            <li>nowoczesny pierwszy ekran</li>
-            <li>sekcja oferty i kontaktu</li>
-            <li>dostosowanie do telefonu</li>
-            <li>podstawowe wdrożenie</li>
-          </ul>
-        </article>
-
-        <article class="price-card featured reveal">
-          <span>Standard</span>
-          <h3>750 zł</h3>
-          <p class="price-sub">Najlepszy wybór dla firmy, która chce pełną stronę z podstronami.</p>
-          <ul>
-            <li>strona główna + podstrony</li>
-            <li>oferta, realizacje i kontakt</li>
-            <li>spójny układ graficzny</li>
-            <li>animacje i dopracowany mobile</li>
-            <li>publikacja i podstawowe SEO</li>
-          </ul>
-        </article>
-
-        <article class="price-card reveal">
-          <span>Premium</span>
-          <h3>1000 zł</h3>
-          <p class="price-sub">Rozbudowana strona z mocniejszym efektem wizualnym.</p>
-          <ul>
-            <li>pełniejszy projekt graficzny</li>
-            <li>niestandardowe animacje</li>
-            <li>bardziej zaawansowany hero / scroll</li>
-            <li>lepsza prezentacja realizacji</li>
-            <li>bardziej dopracowany branding online</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <section class="section offer-page">
-      <div class="offer-row reveal">
-        <span>01</span>
-        <div>
-          <h2>Darmowy projekt wstępny</h2>
-          <p>Klient może zobaczyć kierunek wizualny strony w maksymalnie 2 dni robocze i dopiero później zdecydować o współpracy.</p>
+    <section class="inner-hero">
+      <div class="page-shell inner-hero-grid">
+        <div class="reveal">
+          <p class="kicker">Oferta / web design</p>
+          <h1>Strona, która wygląda dobrze i pracuje na zapytania.</h1>
+          <p class="lead">21project tworzy strony internetowe dla firm, które potrzebują lepszego pierwszego wrażenia, jasnej oferty i prostego kontaktu.</p>
         </div>
-      </div>
-
-      <div class="offer-row reveal">
-        <span>02</span>
-        <div>
-          <h2>Strona internetowa</h2>
-          <p>Wizytówka, strona firmowa lub rozbudowany landing page z nowoczesnym pierwszym ekranem, ofertą, kontaktem i pełnym dopasowaniem do telefonu.</p>
-        </div>
-      </div>
-
-      <div class="offer-row reveal">
-        <span>03</span>
-        <div>
-          <h2>Rework obecnej strony</h2>
-          <p>Poprawa starej witryny: nowy wygląd, lepszy układ, czytelniejsze teksty, nowoczesne animacje, mobile fix i przygotowanie do dalszego pozycjonowania.</p>
-        </div>
-      </div>
-
-      <div class="offer-row reveal">
-        <span>04</span>
-        <div>
-          <h2>Publikacja i SEO startowe</h2>
-          <p>Wdrożenie strony na hosting, podpięcie domeny, podstawowa optymalizacja, struktura nagłówków, szybkość i przygotowanie pod lokalne frazy.</p>
+        <div class="inner-card reveal">
+          <img src="biurko.png" alt="Oferta projektowania stron internetowych 21project">
+          <p>Najczęstszy zakres: projekt, copy, kod, responsywność, podstawowe SEO, publikacja i późniejsze poprawki.</p>
         </div>
       </div>
     </section>
-  
-  <section class="v11-offer-detail">
-    <div class="v11-section-head reveal">
-      <p class="v11-kicker">Jak wygląda współpraca</p>
-      <h2>Bez chaosu: kierunek, projekt, wdrożenie.</h2>
-    </div>
-
-    <div class="v11-process-line">
-      <article class="reveal"><span>01</span><h3>Kierunek</h3><p>Określenie celu strony, stylu, branży i tego, co klient ma zrobić po wejściu.</p></article>
-      <article class="reveal"><span>02</span><h3>Projekt</h3><p>Układ, teksty, sekcje, pierwszy ekran, animacje i wersja mobilna.</p></article>
-      <article class="reveal"><span>03</span><h3>Wdrożenie</h3><p>Pliki, hosting, domena, formularz, podstawowe SEO i przygotowanie do publikacji.</p></article>
-    </div>
-  </section>
-
-  <section class="v11-free-project v11-free-project-subpage">
-    <div class="v11-free-inner reveal">
-      <span>Opcja na start</span>
-      <h2>Pierwszy kierunek strony w 48 godzin.</h2>
-      <p>To najprostszy sposób, żeby zobaczyć potencjał marki online bez zaczynania od długich ustaleń.</p>
-      <a href="kontakt.html" class="v11-cta">Zapytaj o kierunek</a>
-    </div>
-  </section>
-
-
-</main>
-
-  <section class="contact-strip">
-    <div>
-      <span>Kontakt</span>
-      <strong>jakubskrzypiec.dev@gmail.com</strong>
-    <small>601 863 788</small>
-    </div>
-    <div class="contact-actions">
-    <a href="mailto:jakubskrzypiec.dev@gmail.com">Napisz wiadomość</a>
-    <a href="tel:+48601863788">Zadzwoń</a>
-  </div>
-  </section>
-
-  <footer class="site-footer">
-    <div class="footer-brand">
-      <img src="logoduze.png" alt="21project">
-      <p>Nowoczesne strony internetowe, branding digital i widoczność online dla firm, które chcą wyglądać profesjonalnie w sieci.</p>
-    </div>
-
-    <div class="footer-col">
-      <h4>Menu</h4>
-      <a href="index.html">Start</a>
-      <a href="oferta.html">Oferta</a>
-      <a href="realizacje.html">Realizacje</a>
-      <a href="kontakt.html">Kontakt</a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Usługi</h4>
-      <a href="oferta.html">Strony internetowe</a>
-      <a href="oferta.html">Landing page</a>
-      <a href="oferta.html">Rework strony</a>
-      <a href="oferta.html">Branding digital</a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Kontakt</h4>
-      <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
-      <p>Cała Polska / online</p>
-    </div>
-
-    <div class="footer-bottom">
-      <span>© 2026 21project</span>
-      <span>WEB DESIGN • BRANDING • SEO</span>
+    <section class="quote-band"><div class="page-shell"><p class="eyebrow reveal">Zasada</p><p class="reveal">Strona nie ma opowiadać wszystkiego. Ma powiedzieć dokładnie tyle, żeby klient zrobił następny krok.</p></div></section>
+    <section class="section" id="strony">
+      <div class="page-shell split-section">
+        <div><p class="eyebrow reveal">Zakres</p><h2 class="reveal">Trzy kierunki współpracy.</h2></div>
+        <div class="offer-detail">
+          <article class="offer-box reveal" id="landing"><span class="tag">01 / landing page</span><h3>Landing page</h3><p>Jedna mocna strona pod usługę, produkt, kampanię albo zapis. Idealna, gdy celem jest konkretna akcja.</p><ul><li>strategiczny pierwszy ekran</li><li>sekcje z ofertą, zaufaniem i FAQ</li><li>copy sprzedażowe</li><li>formularz lub kontakt mailowy</li><li>mobile-first i SEO start</li></ul></article>
+          <article class="offer-box reveal"><span class="tag">02 / strona firmowa</span><h3>Strona internetowa dla firmy</h3><p>Pełniejsza strona dla marki usługowej: start, oferta, portfolio, proces, kontakt i treści pod wyszukiwarkę.</p><ul><li>projekt graficzny i layout</li><li>kilka podstron lub strona one-page</li><li>portfolio / realizacje</li><li>podstawowa optymalizacja SEO</li><li>publikacja na domenie</li></ul></article>
+          <article class="offer-box reveal" id="rework"><span class="tag">03 / rework</span><h3>Rework istniejącej strony</h3><p>Dla firm, które już mają stronę, ale wygląda zbyt zwyczajnie, wolno działa albo nie prowadzi klienta do kontaktu.</p><ul><li>nowy układ i język marki</li><li>poprawa pierwszego ekranu</li><li>uporządkowanie treści</li><li>lepszy mobile</li><li>techniczne odświeżenie kodu</li></ul></article>
+        </div>
+      </div>
+    </section>
+    <section class="section"><div class="page-shell"><div class="section-head"><p class="eyebrow reveal">Proces</p><div><h2 class="reveal">Od kierunku do publikacji.</h2><p class="lead reveal">Każdy projekt zaczyna się od prostego celu: co klient ma poczuć na pierwszym ekranie i co ma zrobić później.</p></div></div><div class="process-grid"><article class="process-card"><span>01</span><div><h3>Brief</h3><p>Branża, cel, styl, konkurencja i materiały.</p></div></article><article class="process-card"><span>02</span><div><h3>Układ</h3><p>Sekcje, treść i kolejność argumentów.</p></div></article><article class="process-card"><span>03</span><div><h3>Design</h3><p>Klimat wizualny, typografia i portfolio.</p></div></article><article class="process-card"><span>04</span><div><h3>Wdrożenie</h3><p>Kod, mobile, domena, SEO i publikacja.</p></div></article></div></div></section>
+    <section class="cta-section"><div class="cta-card"><div><p class="eyebrow">Start projektu</p><h2>Najpierw kierunek. Potem strona.</h2><p>Wyślij kilka zdań o firmie i cel strony. 21project może przygotować pierwszy kierunek wizualny oraz układ strony.</p><div class="btn-row" style="margin-top:30px"><a class="button button-dark" href="kontakt.html">Przejdź do kontaktu</a><a class="button button-light" href="realizacje.html">Zobacz realizacje</a></div></div><div class="cta-side"><a href="mailto:jakubskrzypiec5@gmail.com">jakubskrzypiec5@gmail.com</a><a href="index.html">21project.pl</a></div></div></section>
+  </main>
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="logomale.png" alt="21project">
+        <p>21project tworzy strony internetowe, które łączą minimalistyczny design, sprzedażowy układ i techniczną jakość.</p>
+      </div>
+      <div class="footer-links">
+        <div>
+          <strong>Menu</strong>
+          <a href="index.html">Start</a>
+          <a href="oferta.html">Oferta</a>
+          <a href="realizacje.html">Portfolio</a>
+          <a href="kontakt.html">Kontakt</a>
+        </div>
+        <div>
+          <strong>Usługi</strong>
+          <a href="oferta.html#strony">Strony internetowe</a>
+          <a href="oferta.html#landing">Landing page</a>
+          <a href="oferta.html#rework">Rework strony</a>
+        </div>
+        <div>
+          <strong>Kontakt</strong>
+          <a href="mailto:jakubskrzypiec5@gmail.com">jakubskrzypiec5@gmail.com</a>
+          <a href="https://www.instagram.com/21project.pl/" target="_blank" rel="noopener">Instagram</a>
+          <a href="kontakt.html">Brief projektu</a>
+        </div>
+      </div>
+      <div class="footer-note">
+        <p>© 2026<br>strony internetowe / web design / branding startowy</p>
+      </div>
     </div>
   </footer>
-
-  <script src="script.js"></script>
+  <script src="script.js?v=21rework1"></script>
 </body>
 </html>

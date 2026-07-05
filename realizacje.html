@@ -3,153 +3,281 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Realizacje | 21project</title>
-  <meta name="description" content="Realizacje 21project — wybrane strony internetowe i projekty digital.">
-
+  <meta name="theme-color" content="#f4f2ed" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=21rework1" />
+  <title>Portfolio — 21project | realizacje stron internetowych</title>
+  <meta name="description" content="Portfolio 21project: strony internetowe, landing page i reworki dla firm usługowych, wnętrzarskich, remontowych i lokalnych marek." />
 </head>
 <body>
-  <div class="grain"></div>
-
-  <header class="site-header">
-    <a href="index.html" class="brand" aria-label="21project">
-      <img src="logomale.png" alt="21project">
-    </a>
-
-    <nav class="nav" aria-label="Menu główne">
-      <a href="index.html">Start</a>
-      <a href="oferta.html">Oferta</a>
-      <a href="realizacje.html">Realizacje</a>
-      <a href="kontakt.html">Kontakt</a>
-    </nav>
-  <div class="header-contact">
-    <a href="tel:+48601863788">601 863 788</a>
+  <div class="splash" aria-hidden="true">
+    <div class="splash-bg"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="splash-inner">
+      <div class="splash-mark"><img src="logomale.png" alt=""></div>
+      <div class="splash-line"></div>
+      <div class="splash-title">21project</div>
+      <div class="splash-subtitle">digital presence / web design / visual direction</div>
+    </div>
   </div>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo" aria-label="21project — start">
+        <img src="logomaleczarne.png" alt="21project">
+        <span>21project</span>
+      </a>
+      <nav class="site-nav" aria-label="Menu główne">
+        <a href="index.html" class="">Start</a>
+        <a href="oferta.html" class="">Oferta</a>
+        <a href="realizacje.html" class="is-active">Portfolio</a>
+        <a href="kontakt.html" class="">Kontakt</a>
+      </nav>
+      <a class="header-cta" href="kontakt.html">Zacznij projekt</a>
+      <button class="nav-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </header>
 
   <main>
-    <section class="subhero subhero-cases compact-subhero">
-      <p class="section-label reveal">Realizacje</p>
-      <h1 class="reveal">Wybrane projekty stron.</h1>
-      <p class="reveal">
-        Krótkie podglądy działających stron, które można od razu otworzyć i sprawdzić na żywo.
-      </p>
+    <section class="case-hero-page">
+      <div class="page-shell case-hero-grid">
+        <div class="reveal">
+          <p class="kicker">Portfolio / case studies</p>
+          <h1>Realizacje w wersji desktop i mobile.</h1>
+          <p class="lead">Portfolio 21project pokazuje strony jako gotowy produkt digitalowy: pierwsze wrażenie, układ sprzedażowy i responsywny wygląd.</p>
+        </div>
+        <div class="device-scene case-werka" aria-hidden="true">
+          <div class="laptop">
+            <div class="screen">
+              <div class="site-preview">
+                <div class="preview-nav"></div>
+                <div class="preview-hero">
+                  <span class="preview-block"></span>
+                  <span class="preview-line"></span>
+                  <span class="preview-line"></span>
+                </div>
+                <div class="preview-grid"><span></span><span></span><span></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="phone">
+            <div class="phone-screen">
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-card"></span>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
-
-    <section class="section compact-cases-page">
-      <a class="compact-case reveal" href="case-werkabramy.html">
-        <div class="mini-browser">
-          <div class="browser-bar"><span></span><span></span><span></span><strong>werkabramy</strong></div>
-          <iframe src="https://jakubskrzypiec.github.io/werkabramy/realizacje.html" loading="lazy" title="Werka Bramy"></iframe>
+    <section class="section portfolio-section">
+      <div class="page-shell">
+        <div class="case-list">
+      <article class="case-row case-werka">
+        <div class="case-copy">
+          <div class="case-top">
+            <div class="case-meta"><span>strona usługowa</span><span>lokalne SEO</span><span>kontakt</span></div>
+            <h3>Werka Bramy</h3>
+            <p>Strona dla usługi lokalnej, która od razu prowadzi użytkownika do konkretnego kontaktu i pokazuje firmę jako pewny wybór.</p>
+          </div>
+          <a class="case-link" href="case-werkabramy.html">Zobacz case study →</a>
         </div>
-        <div class="compact-case-info">
-          <span>01</span>
-          <h2>Werka Bramy</h2>
-          <p>Prezentacja realizacji i usług dla marki technicznej związanej z bramami, automatyką oraz montażem.</p>
+        <div class="device-scene case-werka" aria-hidden="true">
+          <div class="laptop">
+            <div class="screen">
+              <div class="site-preview">
+                <div class="preview-nav"></div>
+                <div class="preview-hero">
+                  <span class="preview-block"></span>
+                  <span class="preview-line"></span>
+                  <span class="preview-line"></span>
+                </div>
+                <div class="preview-grid"><span></span><span></span><span></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="phone">
+            <div class="phone-screen">
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-card"></span>
+            </div>
+          </div>
         </div>
-      </a>
-
-      <a class="compact-case reveal" href="case-msremonty.html">
-        <div class="mini-browser">
-          <div class="browser-bar"><span></span><span></span><span></span><strong>msremonty.pl</strong></div>
-          <iframe src="https://msremonty.pl/" loading="lazy" title="MS Remonty"></iframe>
+      </article>
+      <article class="case-row case-ms">
+        <div class="case-copy">
+          <div class="case-top">
+            <div class="case-meta"><span>firma remontowa</span><span>oferta</span><span>zaufanie</span></div>
+            <h3>MS Remonty</h3>
+            <p>Układ zaprojektowany pod szybkie zrozumienie zakresu usług, realizacji i następnego kroku.</p>
+          </div>
+          <a class="case-link" href="case-msremonty.html">Zobacz case study →</a>
         </div>
-        <div class="compact-case-info">
-          <span>02</span>
-          <h2>MS Remonty</h2>
-          <p>Strona firmowa dla usług remontowych z prostym przekazem, czytelnym zakresem prac i szybkim kontaktem.</p>
+        <div class="device-scene case-ms" aria-hidden="true">
+          <div class="laptop">
+            <div class="screen">
+              <div class="site-preview">
+                <div class="preview-nav"></div>
+                <div class="preview-hero">
+                  <span class="preview-block"></span>
+                  <span class="preview-line"></span>
+                  <span class="preview-line"></span>
+                </div>
+                <div class="preview-grid"><span></span><span></span><span></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="phone">
+            <div class="phone-screen">
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-card"></span>
+            </div>
+          </div>
         </div>
-      </a>
-
-      <a class="compact-case reveal" href="case-cos.html">
-        <div class="mini-browser">
-          <div class="browser-bar"><span></span><span></span><span></span><strong>COS Architekt</strong></div>
-          <iframe src="https://jakubskrzypiec.github.io/cosarchitekt/" loading="lazy" title="COS Architekt"></iframe>
+      </article>
+      <article class="case-row case-cos">
+        <div class="case-copy">
+          <div class="case-top">
+            <div class="case-meta"><span>wnętrza</span><span>premium</span><span>portfolio</span></div>
+            <h3>COS Interiors</h3>
+            <p>Spokojna, obrazowa strona dla branży wnętrzarskiej — mniej hałasu, więcej klimatu i jakości pierwszego wrażenia.</p>
+          </div>
+          <a class="case-link" href="case-cos.html">Zobacz case study →</a>
         </div>
-        <div class="compact-case-info">
-          <span>03</span>
-          <h2>COS Architekt</h2>
-          <p>Elegancka strona dla pracowni projektowej z jasnym układem, ofertą i nowoczesną prezentacją marki.</p>
+        <div class="device-scene case-cos" aria-hidden="true">
+          <div class="laptop">
+            <div class="screen">
+              <div class="site-preview">
+                <div class="preview-nav"></div>
+                <div class="preview-hero">
+                  <span class="preview-block"></span>
+                  <span class="preview-line"></span>
+                  <span class="preview-line"></span>
+                </div>
+                <div class="preview-grid"><span></span><span></span><span></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="phone">
+            <div class="phone-screen">
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-card"></span>
+            </div>
+          </div>
         </div>
-      </a>
-
-      <a class="compact-case reveal" href="case-archiss.html">
-        <div class="mini-browser">
-          <div class="browser-bar"><span></span><span></span><span></span><strong>ARCHISS Studio</strong></div>
-          <iframe src="https://jakubskrzypiec.github.io/archisstudio/" loading="lazy" title="ARCHISS Studio"></iframe>
+      </article>
+      <article class="case-row case-swierk">
+        <div class="case-copy">
+          <div class="case-top">
+            <div class="case-meta"><span>noclegi</span><span>klimat</span><span>rezerwacje</span></div>
+            <h3>Czarny Świerk</h3>
+            <p>Ciemniejszy, bardziej atmosferyczny kierunek dla miejsca, które ma sprzedawać doświadczenie, nie tylko nocleg.</p>
+          </div>
+          <a class="case-link" href="case-czarnyswierk.html">Zobacz case study →</a>
         </div>
-        <div class="compact-case-info">
-          <span>04</span>
-          <h2>ARCHISS Studio</h2>
-          <p>Nowoczesna strona dla pracowni architektonicznej z mocnym, technicznym charakterem i czytelną ofertą.</p>
+        <div class="device-scene case-swierk" aria-hidden="true">
+          <div class="laptop">
+            <div class="screen">
+              <div class="site-preview">
+                <div class="preview-nav"></div>
+                <div class="preview-hero">
+                  <span class="preview-block"></span>
+                  <span class="preview-line"></span>
+                  <span class="preview-line"></span>
+                </div>
+                <div class="preview-grid"><span></span><span></span><span></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="phone">
+            <div class="phone-screen">
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-card"></span>
+            </div>
+          </div>
         </div>
-      </a>
-
-      <a class="compact-case reveal featured-case" href="case-czarnyswierk.html">
-        <div class="mini-browser">
-          <div class="browser-bar"><span></span><span></span><span></span><strong>Czarny Świerk</strong></div>
-          <iframe src="https://jakubskrzypiec.github.io/czarnyswierk/" loading="lazy" title="Czarny Świerk"></iframe>
+      </article>
+      <article class="case-row case-archiss">
+        <div class="case-copy">
+          <div class="case-top">
+            <div class="case-meta"><span>architektura</span><span>minimal</span><span>wizerunek</span></div>
+            <h3>Archiss</h3>
+            <p>Minimalistyczny wizerunek, w którym projekty i przestrzeń dostają więcej miejsca niż przypadkowe ozdobniki.</p>
+          </div>
+          <a class="case-link" href="case-archiss.html">Zobacz case study →</a>
         </div>
-        <div class="compact-case-info">
-          <span>05</span>
-          <h2>Czarny Świerk</h2>
-          <p>Projekt koncepcyjny restauracji w lesie — bardziej premium, odważny i animowany przykład możliwości 21project.</p>
+        <div class="device-scene case-archiss" aria-hidden="true">
+          <div class="laptop">
+            <div class="screen">
+              <div class="site-preview">
+                <div class="preview-nav"></div>
+                <div class="preview-hero">
+                  <span class="preview-block"></span>
+                  <span class="preview-line"></span>
+                  <span class="preview-line"></span>
+                </div>
+                <div class="preview-grid"><span></span><span></span><span></span></div>
+              </div>
+            </div>
+          </div>
+          <div class="phone">
+            <div class="phone-screen">
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-line"></span>
+              <span class="phone-card"></span>
+            </div>
+          </div>
         </div>
-      </a>
+      </article>
+        </div>
+      </div>
     </section>
+    <section class="cta-section"><div class="cta-card"><div><p class="eyebrow">Podobny projekt?</p><h2>21project może przygotować stronę w podobnym standardzie.</h2><p>Najlepiej wysłać branżę, link do obecnej strony i 2–3 przykłady klimatu, który pasuje do marki.</p><div class="btn-row" style="margin-top:30px"><a class="button button-dark" href="kontakt.html">Napisz w sprawie strony</a></div></div><div class="cta-side"><a href="mailto:jakubskrzypiec5@gmail.com">Mail</a><a href="oferta.html">Oferta</a></div></div></section>
   </main>
-
-  <section class="contact-strip">
-    <div>
-      <span>Kontakt</span>
-      <strong>jakubskrzypiec.dev@gmail.com</strong>
-    <small>601 863 788</small>
-    </div>
-    <div class="contact-actions">
-    <a href="mailto:jakubskrzypiec.dev@gmail.com">Napisz wiadomość</a>
-    <a href="tel:+48601863788">Zadzwoń</a>
-  </div>
-  </section>
-
-  <footer class="site-footer">
-    <div class="footer-brand">
-      <img src="logoduze.png" alt="21project">
-      <p>Nowoczesne strony internetowe, branding digital i widoczność online dla firm, które chcą wyglądać profesjonalnie w sieci.</p>
-    </div>
-
-    <div class="footer-col">
-      <h4>Menu</h4>
-      <a href="index.html">Start</a>
-      <a href="oferta.html">Oferta</a>
-      <a href="realizacje.html">Realizacje</a>
-      <a href="kontakt.html">Kontakt</a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Usługi</h4>
-      <a href="oferta.html">Strony internetowe</a>
-      <a href="oferta.html">Landing page</a>
-      <a href="oferta.html">Rework strony</a>
-      <a href="oferta.html">Branding digital</a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Kontakt</h4>
-      <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
-      <p>Cała Polska / online</p>
-    </div>
-
-    <div class="footer-bottom">
-      <span>© 2026 21project</span>
-      <span>WEB DESIGN • BRANDING • SEO</span>
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="logomale.png" alt="21project">
+        <p>21project tworzy strony internetowe, które łączą minimalistyczny design, sprzedażowy układ i techniczną jakość.</p>
+      </div>
+      <div class="footer-links">
+        <div>
+          <strong>Menu</strong>
+          <a href="index.html">Start</a>
+          <a href="oferta.html">Oferta</a>
+          <a href="realizacje.html">Portfolio</a>
+          <a href="kontakt.html">Kontakt</a>
+        </div>
+        <div>
+          <strong>Usługi</strong>
+          <a href="oferta.html#strony">Strony internetowe</a>
+          <a href="oferta.html#landing">Landing page</a>
+          <a href="oferta.html#rework">Rework strony</a>
+        </div>
+        <div>
+          <strong>Kontakt</strong>
+          <a href="mailto:jakubskrzypiec5@gmail.com">jakubskrzypiec5@gmail.com</a>
+          <a href="https://www.instagram.com/21project.pl/" target="_blank" rel="noopener">Instagram</a>
+          <a href="kontakt.html">Brief projektu</a>
+        </div>
+      </div>
+      <div class="footer-note">
+        <p>© 2026<br>strony internetowe / web design / branding startowy</p>
+      </div>
     </div>
   </footer>
-
-  <script src="script.js"></script>
+  <script src="script.js?v=21rework1"></script>
 </body>
 </html>
