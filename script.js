@@ -1,63 +1,54 @@
-
 document.documentElement.classList.add('js');
-
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const splash = document.querySelector('.splash');
   const closeSplash = () => {
     if (!splash) return;
-    splash.classList.add('is-hidden');
+    splash.classList.add('is-leaving');
     body.classList.remove('no-scroll');
-    window.setTimeout(() => splash.remove(), 750);
+    setTimeout(() => splash.remove(), 650);
   };
-
-  if (splash && !reduceMotion) {
+  if (splash && !reduce) {
     body.classList.add('no-scroll');
-    window.setTimeout(closeSplash, 1350);
-    window.setTimeout(closeSplash, 2400);
-    splash.addEventListener('click', closeSplash, { once: true });
+    requestAnimationFrame(() => splash.classList.add('is-ready'));
+    setTimeout(closeSplash, 1550);
+    setTimeout(closeSplash, 2500);
+    splash.addEventListener('click', closeSplash, { once:true });
   } else if (splash) {
     splash.remove();
   }
 
   const header = document.querySelector('.site-header');
-  const onScroll = () => {
-    if (!header) return;
-    header.classList.toggle('is-scrolled', window.scrollY > 12);
-  };
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
+  const updateHeader = () => header && header.classList.toggle('is-scrolled', window.scrollY > 16);
+  updateHeader();
+  window.addEventListener('scroll', updateHeader, { passive:true });
 
-  const toggle = document.querySelector('.nav-toggle');
+  const navToggle = document.querySelector('.nav-toggle');
   const nav = document.querySelector('.site-nav');
-  if (toggle && nav) {
-    toggle.addEventListener('click', () => {
+  if (navToggle && nav) {
+    navToggle.addEventListener('click', () => {
       const open = body.classList.toggle('nav-open');
-      toggle.setAttribute('aria-expanded', String(open));
+      navToggle.setAttribute('aria-expanded', String(open));
     });
-
-    nav.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        body.classList.remove('nav-open');
-        toggle.setAttribute('aria-expanded', 'false');
-      });
-    });
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      body.classList.remove('nav-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }));
   }
 
-  const revealItems = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window && !reduceMotion) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
+  const reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduce) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
       });
-    }, { threshold: 0.14, rootMargin: '0px 0px -50px 0px' });
-
-    revealItems.forEach((item) => observer.observe(item));
+    }, { threshold: .12, rootMargin: '0px 0px -30px 0px' });
+    reveals.forEach(el => observer.observe(el));
   } else {
-    revealItems.forEach((item) => item.classList.add('is-visible'));
+    reveals.forEach(el => el.classList.add('is-visible'));
   }
 });

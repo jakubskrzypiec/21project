@@ -3,118 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0b0f14" />
+  <meta name="theme-color" content="#0a0e13" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=21graphite2" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=21editorial5" />
+
   <title>Glam Studio — case study | 21project</title>
-  <meta name="description" content="Delikatniejszy kierunek dla branży beauty, ale nadal oparty o przejrzystą strukturę, widoczną ofertę i szybki krok do zapisu." />
-  <meta property="og:title" content="Glam Studio — case study | 21project" />
-  <meta property="og:description" content="Delikatniejszy kierunek dla branży beauty, ale nadal oparty o przejrzystą strukturę, widoczną ofertę i szybki krok do zapisu." />
-  <meta property="og:image" content="hero-digital.png" />
+  <meta name="description" content="Case study Glam Studio — realizacja strony internetowej 21project." />
 </head>
 <body>
-  <div class="splash" aria-hidden="true">
-  <div class="splash-noise"></div>
-  <div class="splash-line"></div>
-  <img class="splash-logo" src="logo.png" alt="" />
+<div class="splash" aria-hidden="true">
+  <div class="splash-grid"></div>
+  <div class="splash-glow"></div>
+  <img src="logo.png" alt="" class="splash-logo">
+  <div class="splash-scan"></div>
 </div>
-  <header class="site-header">
+<header class="site-header">
   <div class="header-inner">
-    <a class="brand" href="index.html" aria-label="21project — strona główna">
-      <img src="logo.png" alt="21project" />
-    </a>
-
+    <div class="header-empty" aria-hidden="true"></div>
     <nav class="site-nav" aria-label="Menu główne">
       <a class="" href="index.html">Start</a>
       <a class="" href="oferta.html">Oferta</a>
       <a class="is-active" href="realizacje.html">Portfolio</a>
       <a class="" href="kontakt.html">Kontakt</a>
     </nav>
-
     <a class="header-cta" href="kontakt.html">Zacznij</a>
-
-    <button class="nav-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false">
-      <span></span><span></span>
-    </button>
+    <button class="nav-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span></button>
   </div>
 </header>
-
-  <main>
-    <section class="case-hero-page">
-      <div class="shell case-page-grid">
-        <div class="case-page-copy reveal">
-          <p class="eyebrow">Case study / beauty / oferta / zapisy</p>
-          <h1>Glam Studio</h1>
-          <p>Delikatniejszy kierunek dla branży beauty, ale nadal oparty o przejrzystą strukturę, widoczną ofertę i szybki krok do zapisu.</p>
-          <div class="case-actions">
-            <a class="button button-light" href="#" target="_blank" rel="noopener">Zobacz live</a>
-            <a class="button button-outline-light" href="realizacje.html">Wróć do portfolio</a>
-          </div>
-        </div>
-        <div class="reveal">
-          <div class="device-stage case-page-device">
-  <div class="device-laptop">
-    <div class="device-bar"></div>
-    <div class="device-screen">
-      <img src="glamstudiopc.png" alt="Glam Studio — widok desktop" loading="lazy">
-    </div>
-  </div>
-  <div class="device-phone">
-    <div class="phone-notch"></div>
-    <div class="phone-screen">
-      <img src="glamstudiotelefon.jfif" alt="Glam Studio — widok telefonu" loading="lazy">
-    </div>
-  </div>
-</div>
+<main>
+  <section class="case-hero">
+    <div class="shell case-grid">
+      <div class="case-head reveal">
+        <p class="eyebrow">case study / Beauty / zapisy / lokalna marka</p>
+        <h1>Glam Studio</h1>
+        <p>Delikatniejszy kierunek wizualny dla marki beauty, z naciskiem na usługi i szybki kontakt.</p>
+        <div class="case-actions">
+          <a class="button button-light" href="#" target="_blank" rel="noopener">Zobacz live</a>
+          <a class="button button-ghost" href="realizacje.html">Wróć</a>
         </div>
       </div>
-    </section>
-
-    <section class="section case-notes-section">
-      <div class="shell note-grid">
-        <article class="note-card reveal">
-          <span>Cel</span>
-          <h2>Pokazać stronę tak, jak widzi ją klient.</h2>
-          <p>Desktop i telefon są pokazane razem, bo dobra strona musi trzymać poziom nie tylko na dużym ekranie, ale też na mobile.</p>
-        </article>
-        <article class="note-card reveal">
-          <span>Kierunek</span>
-          <h2>Estetyka + czytelność.</h2>
-          <p>Projekt nie jest galerią efektów. Najważniejsze są proporcje, pierwszy ekran, klarowna oferta i naturalny krok do kontaktu.</p>
-        </article>
+      <div class="case-device reveal"><div class="device-combo">
+      <div class="desktop-frame">
+        <div class="device-top"><span></span><span></span><span></span></div>
+        <div class="desktop-screen"><img src="glamstudiopc.png" alt="Podgląd strony na komputerze"></div>
       </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <img src="logo.png" alt="21project" />
-      <p>Strony internetowe, landing page i reworki dla firm, które chcą wyglądać nowocześnie i prowadzić klienta do kontaktu.</p>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen"><img src="glamstudiotelefon.jfif" alt="Podgląd strony na telefonie"></div>
+      </div>
+    </div></div>
     </div>
-
-    <div class="footer-col">
-      <span>Menu</span>
+  </section>
+  <section class="section case-info">
+    <div class="shell editorial-split">
+      <div class="intro-copy reveal"><p class="eyebrow">kierunek</p><h2>Realizacja pokazana jako desktop i telefon.</h2></div>
+      <div class="scope-list reveal">
+        <div><strong>01 / cel</strong><p>Ustawić wizerunek marki tak, żeby pierwszy ekran budował zaufanie i nie wyglądał jak gotowy szablon.</p></div>
+        <div><strong>02 / układ</strong><p>Pokazać zakres, klimat i szybkie przejście do kontaktu bez przeładowania treścią.</p></div>
+        <div><strong>03 / mobile</strong><p>Widok telefonu jest traktowany jako główny odbiór strony, nie jako dodatek.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="site-footer">
+  <div class="footer-top">
+    <div>
+      <p class="footer-kicker">21project / digital studio</p>
+      <h2>Strona nie musi mówić dużo. Musi wyglądać pewnie.</h2>
+    </div>
+    <a class="button button-light" href="kontakt.html">Napisz</a>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-brand-text">21project</div>
+    <div class="footer-links">
       <a href="index.html">Start</a>
       <a href="oferta.html">Oferta</a>
       <a href="realizacje.html">Portfolio</a>
       <a href="kontakt.html">Kontakt</a>
     </div>
-
-    <div class="footer-col">
-      <span>Kontakt</span>
+    <div class="footer-contact">
       <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
       <a href="tel:+48601863788">601 863 788</a>
     </div>
-
-    <div class="footer-note">
-      <span>21project</span>
-      <p>digital presence / web design / visual direction</p>
-    </div>
   </div>
 </footer>
-<script src="script.js?v=21graphite2"></script>
+<script src="script.js?v=21editorial5"></script>
 </body>
 </html>
