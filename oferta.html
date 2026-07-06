@@ -1,58 +1,181 @@
-<!DOCTYPE html><html lang="pl"><head>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f4f1ea" />
+  <meta name="theme-color" content="#0b0f14" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=21graphic1" />
-<title>Oferta — 21project</title><meta name="description" content="Oferta 21project: strony firmowe, landing page, rework strony i pakiety z cenami." /></head><body>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=21graphite2" />
+  <title>Oferta — 21project | strony internetowe, landing page, rework</title>
+  <meta name="description" content="Oferta 21project: prosta strona, landing page, strona firmowa i rework. Ceny startowe, jasny zakres i minimalistyczny digital design." />
+  <meta property="og:title" content="Oferta — 21project | strony internetowe, landing page, rework" />
+  <meta property="og:description" content="Oferta 21project: prosta strona, landing page, strona firmowa i rework. Ceny startowe, jasny zakres i minimalistyczny digital design." />
+  <meta property="og:image" content="hero-digital.png" />
+</head>
+<body>
   <div class="splash" aria-hidden="true">
-    <div class="splash-grid"></div>
-    <div class="splash-inner">
-      <img class="splash-logo" src="logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-      <div class="splash-word">21project</div>
-      <div class="splash-line"></div>
-      <div class="splash-sub">web design / digital presence / front-end</div>
+  <div class="splash-noise"></div>
+  <div class="splash-line"></div>
+  <img class="splash-logo" src="logo.png" alt="" />
+</div>
+  <header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html" aria-label="21project — strona główna">
+      <img src="logo.png" alt="21project" />
+    </a>
+
+    <nav class="site-nav" aria-label="Menu główne">
+      <a class="" href="index.html">Start</a>
+      <a class="is-active" href="oferta.html">Oferta</a>
+      <a class="" href="realizacje.html">Portfolio</a>
+      <a class="" href="kontakt.html">Kontakt</a>
+    </nav>
+
+    <a class="header-cta" href="kontakt.html">Zacznij</a>
+
+    <button class="nav-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
+</header>
+
+  <main>
+    <section class="subhero dark-subhero">
+      <div class="shell subhero-grid">
+        <div class="subhero-copy reveal">
+          <p class="eyebrow">Oferta</p>
+          <h1>Ceny bez ukrywania. Zakres bez chaosu.</h1>
+          <p>Poniżej są pakiety startowe. Finalna kwota zależy od liczby sekcji, materiałów, podstron i tego, czy robimy projekt od zera, czy rework.</p>
+        </div>
+        <div class="subhero-image reveal">
+          <img src="workspace-dark.png" alt="Ciemny monitor z minimalistycznym projektem strony">
+        </div>
+      </div>
+    </section>
+
+    <section class="section pricing-section">
+      <div class="shell">
+        <div class="section-row reveal">
+          <p class="eyebrow">Pakiety</p>
+          <h2>Najczęstsze zakresy współpracy.</h2>
+        </div>
+
+        <div class="pricing-grid">
+          <article class="price-card reveal">
+            <div class="price-top">
+              <span>Start</span>
+              <h3>Prosta strona</h3>
+              <strong>od 799 zł</strong>
+            </div>
+            <p>Dla małej firmy, usługi albo szybkiego startu w internecie.</p>
+            <ul>
+              <li>1 strona / landing wizytówkowy</li>
+              <li>sekcje: start, oferta, kontakt</li>
+              <li>responsywność na telefonie</li>
+              <li>publikacja na GitHub Pages</li>
+            </ul>
+          </article>
+
+          <article class="price-card featured reveal">
+            <div class="price-top">
+              <span>Landing</span>
+              <h3>Landing page</h3>
+              <strong>od 999 zł</strong>
+            </div>
+            <p>Dla jednej usługi, kampanii, produktu albo oferty, która ma prowadzić do kontaktu.</p>
+            <ul>
+              <li>mocny pierwszy ekran</li>
+              <li>sekcje sprzedażowe i FAQ</li>
+              <li>copy w lekkiej formie</li>
+              <li>CTA i szybki kontakt</li>
+            </ul>
+          </article>
+
+          <article class="price-card reveal">
+            <div class="price-top">
+              <span>Firma</span>
+              <h3>Strona firmowa</h3>
+              <strong>od 1499 zł</strong>
+            </div>
+            <p>Dla firm, które potrzebują pełniejszego układu, podstron i lepszej prezentacji marki.</p>
+            <ul>
+              <li>kilka sekcji lub podstron</li>
+              <li>oferta, proces, realizacje, kontakt</li>
+              <li>podstawowe SEO techniczne</li>
+              <li>spójny kierunek wizualny</li>
+            </ul>
+          </article>
+
+          <article class="price-card reveal">
+            <div class="price-top">
+              <span>Rework</span>
+              <h3>Odświeżenie</h3>
+              <strong>od 699 zł</strong>
+            </div>
+            <p>Dla strony, która już istnieje, ale wygląda słabo albo nie prowadzi użytkownika.</p>
+            <ul>
+              <li>lepsze proporcje i typografia</li>
+              <li>poprawa hero i układu</li>
+              <li>oczyszczenie sekcji</li>
+              <li>mobile i cache-busting</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="quote-section simple-quote">
+      <div class="shell reveal">
+        <p class="eyebrow">Zasada</p>
+        <h2>Najpierw poziom marki. Potem cena. Klient musi wiedzieć, za co płaci.</h2>
+      </div>
+    </section>
+
+    <section class="section included-section">
+      <div class="shell included-grid">
+        <div class="included-copy reveal">
+          <p class="eyebrow">W każdym projekcie</p>
+          <h2>Nie tylko „ładny wygląd”.</h2>
+          <p>Każda strona dostaje strukturę, responsywność, dopracowany pierwszy ekran i techniczne przygotowanie do wrzucenia na hosting.</p>
+        </div>
+        <div class="included-list">
+          <article class="included-item reveal"><span>01</span><h3>Strategia sekcji</h3><p>Ustalamy, co użytkownik ma zobaczyć jako pierwsze i jaki ma zrobić kolejny krok.</p></article>
+          <article class="included-item reveal"><span>02</span><h3>Mobile</h3><p>Header, hero, portfolio i kontakt mają działać dobrze na telefonie, bez rozjeżdżania.</p></article>
+          <article class="included-item reveal"><span>03</span><h3>Wdrożenie</h3><p>Gotowe pliki HTML, CSS i JS z cache-bustingiem pod GitHub Pages.</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="logo.png" alt="21project" />
+      <p>Strony internetowe, landing page i reworki dla firm, które chcą wyglądać nowocześnie i prowadzić klienta do kontaktu.</p>
+    </div>
+
+    <div class="footer-col">
+      <span>Menu</span>
+      <a href="index.html">Start</a>
+      <a href="oferta.html">Oferta</a>
+      <a href="realizacje.html">Portfolio</a>
+      <a href="kontakt.html">Kontakt</a>
+    </div>
+
+    <div class="footer-col">
+      <span>Kontakt</span>
+      <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
+      <a href="tel:+48601863788">601 863 788</a>
+    </div>
+
+    <div class="footer-note">
+      <span>21project</span>
+      <p>digital presence / web design / visual direction</p>
     </div>
   </div>
-
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="index.html" aria-label="21project — start">
-        <img src="logo.png" alt="21project" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
-        <span class="brand-fallback">21project</span>
-      </a>
-      <nav class="nav" aria-label="Menu główne">
-        <a class="" href="index.html">Start</a>
-        <a class="active" href="oferta.html">Oferta</a>
-        <a class="" href="realizacje.html">Portfolio</a>
-        <a class="" href="kontakt.html">Kontakt</a>
-      </nav>
-      <a class="btn btn-line header-cta" href="kontakt.html">Zacznij</a>
-      <button class="menu-btn" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span><span></span></button>
-    </div>
-  </header>
-<main>
-<section class="inner-hero"><div class="shell inner-grid"><div class="reveal"><p class="kicker">Oferta</p><h1>Ceny bez ukrywania, zakres bez chaosu.</h1><p class="lead">Poniżej są startowe pakiety. Finalna kwota zależy od liczby sekcji, materiałów, podstron i tego, czy robimy projekt od zera, czy rework.</p></div><div class="inner-visual reveal"><img src="workspace-dark.png" alt="Ciemne biurko i projekt strony"></div></div></section>
-<section class="section"><div class="shell"><div class="pricing">
-<article class="price-card reveal"><p class="kicker">Start</p><h3>Prosta strona</h3><div class="price">od 799 zł</div><ul><li>1 strona</li><li>podstawowa oferta</li><li>kontakt</li><li>mobile</li></ul></article>
-<article class="price-card reveal"><p class="kicker">Landing</p><h3>Landing page</h3><div class="price">od 999 zł</div><ul><li>mocny pierwszy ekran</li><li>sekcje sprzedażowe</li><li>FAQ / obiekcje</li><li>CTA i kontakt</li></ul></article>
-<article class="price-card reveal"><p class="kicker">Firma</p><h3>Strona firmowa</h3><div class="price">od 1499 zł</div><ul><li>kilka sekcji</li><li>oferta / proces / realizacje</li><li>podstawowe SEO</li><li>wdrożenie</li></ul></article>
-<article class="price-card reveal"><p class="kicker">Rework</p><h3>Odświeżenie</h3><div class="price">od 699 zł</div><ul><li>lepsze proporcje</li><li>nowy hero</li><li>porządek w treści</li><li>poprawki mobile</li></ul></article>
-</div></div></section>
-<section class="statement has-bg dark"><div class="statement-bg"><img src="divider-dark.png" alt="Abstrakcja digital"></div><div class="statement-inner shell reveal"><p class="kicker dark">Zakres</p><h2>Najpierw kierunek. Potem dopiero cena końcowa.</h2><p>Pakiety dają punkt startowy, ale każda strona musi pasować do branży i celu. Nie ma sensu pakować klientowi sekcji, które nic nie robią.</p></div></section>
-<section class="contact-slab"><div class="shell contact-grid"><div class="reveal"><p class="kicker dark">Start</p><h2>Wyślij nazwę firmy i cel strony.</h2></div><div class="contact-lines reveal"><a class="contact-line" href="mailto:jakubskrzypiec.dev@gmail.com"><span>Mail</span><strong>jakubskrzypiec.dev@gmail.com</strong></a><a class="contact-line" href="tel:+48601863788"><span>Telefon</span><strong>601 863 788</strong></a></div></div></section>
-</main>
-  <footer class="footer">
-    <div class="shell footer-grid">
-      <div>
-        <a class="brand" href="index.html"><img src="logo.png" alt="21project" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'"><span class="brand-fallback">21project</span></a>
-        <p style="margin-top:18px;max-width:440px">Minimalistyczne strony internetowe dla firm, które chcą wyglądać lepiej niż konkurencja i prowadzić klienta do kontaktu.</p>
-      </div>
-      <div class="footer-col"><strong>Menu</strong><a href="index.html">Start</a><a href="oferta.html">Oferta</a><a href="realizacje.html">Portfolio</a><a href="kontakt.html">Kontakt</a></div>
-      <div class="footer-col"><strong>Kontakt</strong><a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a><a href="tel:+48601863788">601 863 788</a><p>© 2026 / 21project</p></div>
-    </div>
-  </footer>
-  <script src="script.js?v=21graphic1"></script>
-</body></html>
+</footer>
+<script src="script.js?v=21graphite2"></script>
+</body>
+</html>
