@@ -23,25 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const phrases = [
     'wygląda lepiej niż konkurencja.',
-    'buduje zaufanie od pierwszego ekranu.',
     'prowadzi klienta do kontaktu.',
-    'nie wygląda jak gotowy szablon.'
+    'buduje zaufanie od pierwszego ekranu.'
   ];
   const rotator = document.querySelector('[data-rotator]');
   if (rotator && !reduce) {
     let i = 0;
     setInterval(() => {
       i = (i + 1) % phrases.length;
-      rotator.animate(
-        [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(18px)' }],
-        { duration: 240, easing: 'ease', fill: 'forwards' }
-      ).onfinish = () => {
+      rotator.classList.add('is-changing');
+      window.setTimeout(() => {
         rotator.textContent = phrases[i];
-        rotator.animate(
-          [{ opacity: 0, transform: 'translateY(-18px)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' }
-        );
-      };
+        rotator.classList.remove('is-changing');
+      }, 260);
     }, 3300);
   }
 
