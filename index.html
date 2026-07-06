@@ -3,175 +3,158 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0a0e13" />
+  <meta name="theme-color" content="#07090c" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=21editorial5" />
-
-  <title>21project — minimalistyczne strony internetowe dla firm</title>
-  <meta name="description" content="21project tworzy strony internetowe, landing page i reworki stron. Minimalistyczny web design, grafitowy digital vibe, układ pod kontakt i czyste wdrożenie." />
-  <meta property="og:title" content="21project — minimalistyczne strony internetowe dla firm" />
-  <meta property="og:description" content="Strony internetowe, które wyglądają profesjonalnie i prowadzą klienta do kontaktu." />
-  <meta property="og:image" content="hero-digital.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Inter+Tight:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=21rotating1" />
+  <title>21project — strony internetowe dla firm</title>
+  <meta name="description" content="21project projektuje minimalistyczne strony internetowe dla firm: home page, strony z podstronami, SEO i opieka po wdrożeniu." />
 </head>
-<body class="home-page">
-<div class="splash" aria-hidden="true">
-  <div class="splash-grid"></div>
-  <div class="splash-glow"></div>
-  <img src="logo.png" alt="" class="splash-logo">
-  <div class="splash-scan"></div>
-</div>
-<header class="site-header">
-  <div class="header-inner">
-    <div class="header-empty" aria-hidden="true"></div>
-    <nav class="site-nav" aria-label="Menu główne">
-      <a class="is-active" href="index.html">Start</a>
-      <a class="" href="oferta.html">Oferta</a>
-      <a class="" href="realizacje.html">Portfolio</a>
-      <a class="" href="kontakt.html">Kontakt</a>
-    </nav>
-    <a class="header-cta" href="kontakt.html">Zacznij</a>
-    <button class="nav-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span></button>
+<body>
+  <div class="splash" aria-hidden="true">
+    <img class="splash-logo" src="logo.png" alt="">
   </div>
-</header>
-<main>
-  <section class="hero-home">
-    <div class="hero-media"><img src="hero-digital.png" alt="Minimalistyczny laptop z projektem strony internetowej"></div>
-    <div class="hero-grid-overlay"></div>
-    <div class="hero-content">
-      <p class="eyebrow reveal">web design / digital presence</p>
-      <h1 class="reveal">Strona, która wygląda lepiej niż konkurencja.</h1>
-      <p class="hero-lead reveal">21project projektuje minimalistyczne strony dla firm, które chcą wyglądać profesjonalnie od pierwszego ekranu.</p>
-      <div class="hero-actions reveal">
-        <a class="button button-light" href="kontakt.html">Zacznij projekt</a>
-        <a class="button button-ghost" href="oferta.html">Oferta</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-empty"></div>
+      <nav class="nav" aria-label="Menu">
+        <a class="active" href="index.html">Start</a>
+        <a class="" href="oferta.html">Oferta</a>
+        <a class="" href="realizacje.html">Portfolio</a>
+        <a class="" href="kontakt.html">Kontakt</a>
+      </nav>
+      <a class="btn header-cta" href="kontakt.html">Zacznij</a>
+      <button class="menu-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-bg"><img src="hero-digital.png" alt="Minimalistyczne stanowisko z projektem strony internetowej"></div>
+      <div class="hero-grid-overlay"></div>
+      <div class="hero-inner shell-wide">
+        <div class="hero-content reveal">
+          <p class="kicker dark">Web design / digital presence</p>
+          <h1>Strona, która <span class="hero-rotator" data-rotator>wygląda lepiej niż konkurencja.</span></h1>
+          <p class="hero-sub">21project projektuje strony internetowe dla firm, które chcą wyglądać profesjonalnie od pierwszego ekranu.</p>
+          <div class="btn-row hero-actions">
+            <a class="btn btn-light" href="kontakt.html">Zacznij projekt</a>
+            <a class="btn btn-ghost" href="oferta.html">Oferta</a>
+          </div>
+        </div>
+        <aside class="hero-note reveal">
+          <b>01</b>
+          <p>pierwszy ekran ma zatrzymać użytkownika, zanim zacznie porównywać Cię z resztą.</p>
+        </aside>
       </div>
-    </div>
-    <div class="hero-side-note reveal">
-      <span>01</span>
-      <p>design, który buduje zaufanie zanim klient przeczyta ofertę</p>
-    </div>
-  </section>
+    </section>
 
-  <section class="black-statement statement-lower">
-    <div class="statement-bg"><img src="divider-dark.png" alt=""></div>
-    <div class="statement-inner reveal">
-      <p class="eyebrow">manifest</p>
-      <h2>Strona internetowa ma przyciągać uwagę, ale nie może wyglądać jak gotowy szablon.</h2>
-    </div>
-  </section>
-
-  <section class="section approach-section">
-    <div class="shell">
-      <div class="editorial-split">
+    <section class="section intro-panel">
+      <div class="shell intro-layout">
+        <div class="reveal">
+          <p class="kicker">Podejście</p>
+          <h2 class="intro-title">Strona ma zrobić jedno: dać poczucie, że klient trafił dobrze.</h2>
+        </div>
         <div class="intro-copy reveal">
-          <p class="eyebrow">czemu 21project</p>
-          <h2>Nie chodzi o większą liczbę sekcji. Chodzi o lepsze pierwsze wrażenie.</h2>
-        </div>
-        <div class="approach-lines reveal">
-          <div class="line-item"><span>01</span><strong>Poziom marki</strong><p>Pierwszy ekran ma od razu pokazać, że firma jest dopracowana i godna zaufania.</p></div>
-          <div class="line-item"><span>02</span><strong>Układ pod decyzję</strong><p>Treść prowadzi od zainteresowania, przez argumenty, do kontaktu — bez przypadkowych bloków.</p></div>
-          <div class="line-item"><span>03</span><strong>Mobile jako priorytet</strong><p>Telefon jest głównym widokiem. Strona musi wyglądać dobrze tam, gdzie klient faktycznie ją ogląda.</p></div>
-          <div class="line-item"><span>04</span><strong>Czyste wdrożenie</strong><p>Lekki kod, szybkie ładowanie, responsywność i struktura gotowa pod dalszy rozwój.</p></div>
+          <p class="lead">21project buduje strony z jasnym rytmem: mocny pierwszy ekran, konkretna oferta, argumenty, realizacje i prosty kontakt. Bez chaosu, bez przypadkowych sekcji i bez wyglądu gotowego szablonu.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="feature-band">
-    <div class="feature-image reveal"><img src="workspace-dark.png" alt="Ciemne stanowisko z projektem strony internetowej"></div>
-    <div class="feature-copy reveal">
-      <p class="eyebrow">proces wizualny</p>
-      <h2>Najpierw klimat i kierunek. Dopiero potem kod.</h2>
-      <p>21project zaczyna od tego, jak strona ma być odebrana: premium, technicznie, lokalnie, spokojnie albo sprzedażowo. Dopiero później powstaje układ, copy i wdrożenie.</p>
-      <div class="micro-list">
-        <span>strategia pierwszego ekranu</span>
-        <span>copy pod klienta</span>
-        <span>design mobile-first</span>
-        <span>publikacja i poprawki</span>
+    <section class="dark-quote">
+      <img src="divider-dark.png" alt="">
+      <div class="quote-inner shell">
+        <p class="kicker dark reveal">Manifest</p>
+        <h2 class="reveal">Pierwszy ekran nie jest dekoracją. To moment decyzji.</h2>
+        <p class="reveal">Dlatego strona zaczyna się od wrażenia, a dopiero potem tłumaczy szczegóły.</p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section conversion-section">
-    <div class="shell">
-      <div class="wide-heading reveal">
-        <p class="eyebrow">bez AI-kafelków</p>
-        <h2>Każdy blok na stronie musi mieć powód.</h2>
-      </div>
-      <div class="conversion-layout">
-        <div class="conversion-number reveal">21</div>
-        <div class="conversion-text reveal">
-          <p>Nie dokładamy sekcji tylko po to, żeby strona była dłuższa. Jeżeli blok nie buduje zaufania, nie pokazuje zakresu albo nie prowadzi do kontaktu — wypada.</p>
-          <a class="text-link" href="oferta.html">Zobacz jak wygląda zakres →</a>
+    <section class="section">
+      <div class="shell why-layout">
+        <div class="sticky-copy reveal">
+          <p class="kicker">Dlaczego 21project</p>
+          <h2>Nie więcej elementów. Lepsza kolejność.</h2>
+          <p class="lead">Strona ma prowadzić użytkownika spokojnie — od pierwszego wrażenia, przez zaufanie, do kontaktu.</p>
         </div>
-        <div class="conversion-points reveal">
-          <div><span>estetyka</span><strong>mocny pierwszy ekran</strong></div>
-          <div><span>sprzedaż</span><strong>jasna ścieżka do kontaktu</strong></div>
-          <div><span>technika</span><strong>lekki kod i responsywność</strong></div>
+        <div class="editorial-list">
+          <article class="editorial-item"><span class="num">01</span><div><h3>Pierwszy ekran</h3><p>Najpierw ustawiamy odbiór marki. Użytkownik ma od razu poczuć, że firma wygląda profesjonalnie.</p></div></article>
+          <article class="editorial-item"><span class="num">02</span><div><h3>Oferta bez chaosu</h3><p>Treść jest krótka, ale celna. Klient szybko rozumie, co robisz i dlaczego warto napisać.</p></div></article>
+          <article class="editorial-item"><span class="num">03</span><div><h3>Telefon jako główny widok</h3><p>Mobile nie jest dodatkiem. To często pierwszy kontakt klienta z Twoją firmą.</p></div></article>
+          <article class="editorial-item"><span class="num">04</span><div><h3>Wdrożenie gotowe do publikacji</h3><p>Czysty HTML, CSS i JS, szybkie działanie i komplet plików do wrzucenia na hosting.</p></div></article>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="black-statement small-statement">
-    <div class="statement-bg"><img src="architecture-dark.png" alt=""></div>
-    <div class="statement-inner reveal">
-      <p class="eyebrow">digital direction</p>
-      <h2>Klient nie porównuje kodu. Klient porównuje wrażenie.</h2>
-    </div>
-  </section>
-
-  <section class="section process-editorial">
-    <div class="shell">
-      <div class="editorial-split reverse">
-        <div class="intro-copy reveal">
-          <p class="eyebrow">proces</p>
-          <h2>Prosto, bez przeciągania i bez chaosu.</h2>
-          <p>Na start wystarczy branża, cel strony, inspiracje i materiały. Resztę układamy w konkretny kierunek.</p>
-        </div>
-        <div class="timeline reveal">
-          <div><span>01</span><strong>Kierunek</strong><p>Ustalamy styl, cel, grupę odbiorców i to, co ma zrobić pierwszy ekran.</p></div>
-          <div><span>02</span><strong>Projekt</strong><p>Powstaje układ strony, treści i rytm przewijania — bez przypadkowych sekcji.</p></div>
-          <div><span>03</span><strong>Wdrożenie</strong><p>Kod, mobile, publikacja, poprawki i przygotowanie strony do działania.</p></div>
+    <section class="section-tight">
+      <div class="shell process-split">
+        <div class="process-visual reveal"><img src="workspace-dark.png" alt="Ciemne biurko z projektem strony"></div>
+        <div class="reveal">
+          <p class="kicker">Proces</p>
+          <h2 class="intro-title">Od kierunku do gotowej strony.</h2>
+          <div class="step-stack">
+            <article class="step"><span>01</span><div><h3>Kierunek</h3><p>Ustalamy klimat, cel strony, branżę i materiały.</p></div></article>
+            <article class="step"><span>02</span><div><h3>Projekt</h3><p>Powstaje układ, treść i rytm strony — bez losowych bloków.</p></div></article>
+            <article class="step"><span>03</span><div><h3>Publikacja</h3><p>Dostajesz komplet plików i stronę gotową do wrzucenia online.</p></div></article>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="home-cta">
-    <div class="home-cta-bg"><img src="divider-light.png" alt=""></div>
-    <div class="home-cta-card reveal">
-      <p class="eyebrow">start</p>
-      <h2>Masz firmę i chcesz wyglądać w internecie poważniej?</h2>
-      <p>Wyślij nazwę firmy, branżę i aktualną stronę, jeżeli istnieje. 21project przygotuje kierunek, który nie wygląda jak kolejny szablon.</p>
-      <a class="button button-dark" href="kontakt.html">Napisz do 21project</a>
+    <section class="dark-quote tall">
+      <img src="architecture-dark.png" alt="">
+      <div class="quote-inner shell">
+        <p class="kicker dark reveal">Wrażenie</p>
+        <h2 class="reveal">Wygląd strony to nie dodatek. To pierwsza opinia o firmie.</h2>
+      </div>
+    </section>
+
+    <section class="section offer-teaser">
+      <div class="shell-wide teaser-box reveal">
+        <div>
+          <p class="kicker dark">Oferta</p>
+          <h2>Pakiety od prostego home page po stronę z opieką.</h2>
+          <p>Minimum, Standard, Premium i Premium+ — ceny są jasne, a zakres dobierany pod realny cel strony.</p>
+          <div class="btn-row" style="margin-top:30px">
+            <a class="btn btn-light" href="oferta.html">Zobacz pakiety</a>
+            <a class="btn btn-ghost" href="kontakt.html">Napisz</a>
+          </div>
+        </div>
+        <div class="package-mini">
+          <div><span>Minimum</span><strong>900 zł</strong></div>
+          <div><span>Standard</span><strong>1500 zł</strong></div>
+          <div><span>Premium</span><strong>2000 zł</strong></div>
+          <div><span>Premium+</span><strong>3000 zł</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="shell cta-grid">
+        <div class="reveal">
+          <p class="kicker dark">Kontakt</p>
+          <h2>Zróbmy stronę, która wygląda jak marka.</h2>
+          <p>Wyślij nazwę firmy, branżę i krótko napisz, czego potrzebujesz. 21project odezwie się z kierunkiem i propozycją zakresu.</p>
+        </div>
+        <div class="contact-lines reveal">
+          <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
+          <a href="tel:+48601863788">601 863 788</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="shell footer-grid">
+      <div class="footer-logo"><img src="logo.png" alt="21project"></div>
+      <div class="footer-links">
+        <a href="index.html">Start</a>
+        <a href="oferta.html">Oferta</a>
+        <a href="realizacje.html">Portfolio</a>
+        <a href="kontakt.html">Kontakt</a>
+      </div>
+      <div class="footer-note">21project / strony internetowe<br>jakubskrzypiec.dev@gmail.com<br>601 863 788</div>
     </div>
-  </section>
-</main>
-<footer class="site-footer">
-  <div class="footer-top">
-    <div>
-      <p class="footer-kicker">21project / digital studio</p>
-      <h2>Strona nie musi mówić dużo. Musi wyglądać pewnie.</h2>
-    </div>
-    <a class="button button-light" href="kontakt.html">Napisz</a>
-  </div>
-  <div class="footer-bottom">
-    <div class="footer-brand-text">21project</div>
-    <div class="footer-links">
-      <a href="index.html">Start</a>
-      <a href="oferta.html">Oferta</a>
-      <a href="realizacje.html">Portfolio</a>
-      <a href="kontakt.html">Kontakt</a>
-    </div>
-    <div class="footer-contact">
-      <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
-      <a href="tel:+48601863788">601 863 788</a>
-    </div>
-  </div>
-</footer>
-<script src="script.js?v=21editorial5"></script>
+  </footer>
+  <script src="script.js?v=21rotating1"></script>
 </body>
 </html>

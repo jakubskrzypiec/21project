@@ -3,166 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0a0e13" />
+  <meta name="theme-color" content="#07090c" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=21editorial5" />
-
-  <title>Portfolio — 21project | desktop i mobile</title>
-  <meta name="description" content="Portfolio 21project: realizacje stron internetowych pokazane jako desktop i telefon bez iframe." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Inter+Tight:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=21rotating1" />
+  <title>Portfolio — 21project</title>
+  <meta name="description" content="Portfolio 21project: strony pokazane na komputerze i telefonie." />
 </head>
 <body>
-<div class="splash" aria-hidden="true">
-  <div class="splash-grid"></div>
-  <div class="splash-glow"></div>
-  <img src="logo.png" alt="" class="splash-logo">
-  <div class="splash-scan"></div>
-</div>
-<header class="site-header">
-  <div class="header-inner">
-    <div class="header-empty" aria-hidden="true"></div>
-    <nav class="site-nav" aria-label="Menu główne">
-      <a class="" href="index.html">Start</a>
-      <a class="" href="oferta.html">Oferta</a>
-      <a class="is-active" href="realizacje.html">Portfolio</a>
-      <a class="" href="kontakt.html">Kontakt</a>
-    </nav>
-    <a class="header-cta" href="kontakt.html">Zacznij</a>
-    <button class="nav-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span></button>
+  <div class="splash" aria-hidden="true">
+    <img class="splash-logo" src="logo.png" alt="">
   </div>
-</header>
-<main>
-  <section class="subhero portfolio-subhero">
-    <div class="subhero-inner two-col">
-      <div class="subhero-copy reveal">
-        <p class="eyebrow">portfolio</p>
-        <h1>Desktop i telefon. Bez scrollowania w ramce.</h1>
-        <p>Podglądy są statyczne i większe, żeby dało się zobaczyć realny kierunek strony na komputerze i telefonie.</p>
-      </div>
-      <div class="subhero-card reveal"><img src="architecture-dark.png" alt="Ciemna grafika digital"></div>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-empty"></div>
+      <nav class="nav" aria-label="Menu">
+        <a class="" href="index.html">Start</a>
+        <a class="" href="oferta.html">Oferta</a>
+        <a class="active" href="realizacje.html">Portfolio</a>
+        <a class="" href="kontakt.html">Kontakt</a>
+      </nav>
+      <a class="btn header-cta" href="kontakt.html">Zacznij</a>
+      <button class="menu-toggle" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
-  </section>
-
-  <section class="section portfolio-section">
-    <div class="shell portfolio-list">
-      <article class="portfolio-case reveal">
-      <div class="portfolio-copy">
-        <p class="eyebrow">Wnętrza / premium / portfolio</p>
+  </header>
+  <main class="portfolio-page">
+    <section class="page-hero">
+      <div class="shell">
+        <p class="kicker reveal">Portfolio</p>
+        <h1 class="reveal">Strony pokazane tak, jak widzi je klient.</h1>
+        <p class="lead reveal">Desktop i telefon obok siebie. Bez przewijania w ramce — po prostu realny podgląd kierunku strony.</p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="shell work-list">
+        <article class="work-card">
+      <div class="work-copy">
+        <div class="tags"><span>Wnętrza</span><span>premium</span><span>portfolio</span></div>
         <h2>Pani Projekt</h2>
-        <p>Spokojna strona dla projektantki wnętrz. Duże kadry, dużo oddechu i mocniejszy wizerunek marki.</p>
-        <div class="case-actions">
-          <a class="button button-dark" href="case-paniprojekt.html">Case study</a>
-          <a class="button button-outline-dark" href="https://jakubskrzypiec.github.io/paniprojekt/" target="_blank" rel="noopener">Live</a>
-        </div>
+        <p>Strona dla projektantki wnętrz z naciskiem na spokojny odbiór, zdjęcia i zaufanie.</p>
+        <div class="btn-row" style="margin-top:24px"><a class="btn btn-dark" href="case-paniprojekt.html">Zobacz case</a></div>
       </div>
-      <div class="portfolio-visual">
-        <div class="device-combo">
-      <div class="desktop-frame">
-        <div class="device-top"><span></span><span></span><span></span></div>
-        <div class="desktop-screen"><img src="paniprojektpc.png" alt="Podgląd strony na komputerze"></div>
-      </div>
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <div class="phone-screen"><img src="paniprojekttelefon.jfif" alt="Podgląd strony na telefonie"></div>
-      </div>
+      <div class="devices" aria-label="Pani Projekt">
+      <div class="desktop-frame"><img src="paniprojektpc.png" alt="Pani Projekt — widok desktop"></div>
+      <div class="phone-frame"><img src="paniprojekttelefon.jfif" alt="Pani Projekt — widok mobile"></div>
     </div>
-      </div>
     </article>
-<article class="portfolio-case reveal">
-      <div class="portfolio-copy">
-        <p class="eyebrow">Architektura / atelier / minimalizm</p>
+<article class="work-card">
+      <div class="work-copy">
+        <div class="tags"><span>Architektura</span><span>editorial</span><span>wizerunek</span></div>
         <h2>COS Architekt</h2>
-        <p>Strona w klimacie studia projektowego: jasna typografia, czysty układ i editorialowy rytm.</p>
-        <div class="case-actions">
-          <a class="button button-dark" href="case-cos.html">Case study</a>
-          <a class="button button-outline-dark" href="https://jakubskrzypiec.github.io/cosarchitekt/" target="_blank" rel="noopener">Live</a>
-        </div>
+        <p>Minimalistyczna strona w stylu atelier: duże obrazy, prosty rytm i spokojny kontakt.</p>
+        <div class="btn-row" style="margin-top:24px"><a class="btn btn-dark" href="case-cos.html">Zobacz case</a></div>
       </div>
-      <div class="portfolio-visual">
-        <div class="device-combo">
-      <div class="desktop-frame">
-        <div class="device-top"><span></span><span></span><span></span></div>
-        <div class="desktop-screen"><img src="cospc.png" alt="Podgląd strony na komputerze"></div>
-      </div>
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <div class="phone-screen"><img src="costelefon.jfif" alt="Podgląd strony na telefonie"></div>
-      </div>
+      <div class="devices" aria-label="COS Architekt">
+      <div class="desktop-frame"><img src="cospc.png" alt="COS Architekt — widok desktop"></div>
+      <div class="phone-frame"><img src="costelefon.jfif" alt="COS Architekt — widok mobile"></div>
     </div>
-      </div>
     </article>
-<article class="portfolio-case reveal">
-      <div class="portfolio-copy">
-        <p class="eyebrow">Usługi / kontakt / zaufanie</p>
+<article class="work-card">
+      <div class="work-copy">
+        <div class="tags"><span>Usługi lokalne</span><span>oferta</span><span>kontakt</span></div>
         <h2>MS Remonty</h2>
-        <p>Układ dla firmy usługowej. Oferta, realizacje i szybka ścieżka do kontaktu bez zbędnego chaosu.</p>
-        <div class="case-actions">
-          <a class="button button-dark" href="case-msremonty.html">Case study</a>
-          <a class="button button-outline-dark" href="https://msremonty.pl/" target="_blank" rel="noopener">Live</a>
-        </div>
+        <p>Strona usługowa, która szybko pokazuje zakres prac i prowadzi do zapytania.</p>
+        <div class="btn-row" style="margin-top:24px"><a class="btn btn-dark" href="case-msremonty.html">Zobacz case</a></div>
       </div>
-      <div class="portfolio-visual">
-        <div class="device-combo">
-      <div class="desktop-frame">
-        <div class="device-top"><span></span><span></span><span></span></div>
-        <div class="desktop-screen"><img src="msremontypc.png" alt="Podgląd strony na komputerze"></div>
-      </div>
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <div class="phone-screen"><img src="msremontytelefon.jfif" alt="Podgląd strony na telefonie"></div>
-      </div>
+      <div class="devices" aria-label="MS Remonty">
+      <div class="desktop-frame"><img src="msremontypc.png" alt="MS Remonty — widok desktop"></div>
+      <div class="phone-frame"><img src="msremontytelefon.jfif" alt="MS Remonty — widok mobile"></div>
     </div>
-      </div>
     </article>
-<article class="portfolio-case reveal">
-      <div class="portfolio-copy">
-        <p class="eyebrow">Beauty / zapisy / lokalna marka</p>
+<article class="work-card">
+      <div class="work-copy">
+        <div class="tags"><span>Beauty</span><span>zapisy</span><span>lokalna marka</span></div>
         <h2>Glam Studio</h2>
-        <p>Delikatniejszy kierunek wizualny dla marki beauty, z naciskiem na usługi i szybki kontakt.</p>
-        <div class="case-actions">
-          <a class="button button-dark" href="case-glamstudio.html">Case study</a>
-          <a class="button button-outline-dark" href="#" target="_blank" rel="noopener">Live</a>
-        </div>
+        <p>Delikatniejszy kierunek dla branży beauty z prostą prezentacją usług i kontaktu.</p>
+        <div class="btn-row" style="margin-top:24px"><a class="btn btn-dark" href="case-glamstudio.html">Zobacz case</a></div>
       </div>
-      <div class="portfolio-visual">
-        <div class="device-combo">
-      <div class="desktop-frame">
-        <div class="device-top"><span></span><span></span><span></span></div>
-        <div class="desktop-screen"><img src="glamstudiopc.png" alt="Podgląd strony na komputerze"></div>
-      </div>
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <div class="phone-screen"><img src="glamstudiotelefon.jfif" alt="Podgląd strony na telefonie"></div>
-      </div>
+      <div class="devices" aria-label="Glam Studio">
+      <div class="desktop-frame"><img src="glamstudiopc.png" alt="Glam Studio — widok desktop"></div>
+      <div class="phone-frame"><img src="glamstudiotelefon.jfif" alt="Glam Studio — widok mobile"></div>
     </div>
-      </div>
     </article>
+      </div>
+    </section>
+    <section class="cta">
+      <div class="shell cta-grid">
+        <div class="reveal"><p class="kicker dark">Nowy projekt</p><h2>Twoja strona może wyglądać podobnie mocno.</h2><p>Wyślij branżę i cel strony, a 21project przygotuje kierunek i zakres.</p></div>
+        <div class="contact-lines reveal"><a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a><a href="tel:+48601863788">601 863 788</a></div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="shell footer-grid">
+      <div class="footer-logo"><img src="logo.png" alt="21project"></div>
+      <div class="footer-links">
+        <a href="index.html">Start</a>
+        <a href="oferta.html">Oferta</a>
+        <a href="realizacje.html">Portfolio</a>
+        <a href="kontakt.html">Kontakt</a>
+      </div>
+      <div class="footer-note">21project / strony internetowe<br>jakubskrzypiec.dev@gmail.com<br>601 863 788</div>
     </div>
-  </section>
-</main>
-<footer class="site-footer">
-  <div class="footer-top">
-    <div>
-      <p class="footer-kicker">21project / digital studio</p>
-      <h2>Strona nie musi mówić dużo. Musi wyglądać pewnie.</h2>
-    </div>
-    <a class="button button-light" href="kontakt.html">Napisz</a>
-  </div>
-  <div class="footer-bottom">
-    <div class="footer-brand-text">21project</div>
-    <div class="footer-links">
-      <a href="index.html">Start</a>
-      <a href="oferta.html">Oferta</a>
-      <a href="realizacje.html">Portfolio</a>
-      <a href="kontakt.html">Kontakt</a>
-    </div>
-    <div class="footer-contact">
-      <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
-      <a href="tel:+48601863788">601 863 788</a>
-    </div>
-  </div>
-</footer>
-<script src="script.js?v=21editorial5"></script>
+  </footer>
+  <script src="script.js?v=21rotating1"></script>
 </body>
 </html>
