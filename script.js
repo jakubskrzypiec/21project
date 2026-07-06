@@ -1,51 +1,54 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-  const body = document.body;
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  body.classList.add('js-ready');
-
-  const intro = document.querySelector('.intro');
-  const hideIntro = () => {
-    if (!intro) return;
-    intro.classList.add('is-hidden');
-    body.classList.remove('is-loading');
-    window.setTimeout(() => intro.remove(), 650);
+  document.body.classList.add('js');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const splash = document.querySelector('.splash');
+  const hideSplash = () => {
+    if (!splash) return;
+    splash.classList.add('is-hidden');
+    document.body.classList.remove('is-loading');
+    setTimeout(() => splash.remove(), 650);
   };
-  if (intro && !reduceMotion) {
-    body.classList.add('is-loading');
-    requestAnimationFrame(() => intro.classList.add('is-ready'));
-    window.setTimeout(hideIntro, 1500);
-    window.setTimeout(hideIntro, 2500);
-    intro.addEventListener('click', hideIntro, { once: true });
-  } else if (intro) {
-    intro.remove();
+  if (splash && !reduce) {
+    document.body.classList.add('is-loading');
+    requestAnimationFrame(() => splash.classList.add('is-ready'));
+    setTimeout(hideSplash, 1850);
+    setTimeout(hideSplash, 2800);
+    splash.addEventListener('click', hideSplash, { once: true });
+  } else if (splash) {
+    splash.remove();
   }
-
-  const navToggle = document.querySelector('.nav-toggle');
+  const header = document.querySelector('.site-header');
+  const onScroll = () => header && header.classList.toggle('is-scrolled', window.scrollY > 20);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  const menu = document.querySelector('.menu-btn');
   const nav = document.querySelector('.nav');
-  if (navToggle && nav) {
-    navToggle.addEventListener('click', () => {
-      const open = body.classList.toggle('nav-open');
-      navToggle.setAttribute('aria-expanded', String(open));
+  if (menu && nav) {
+    menu.addEventListener('click', () => {
+      const open = document.body.classList.toggle('nav-open');
+      menu.setAttribute('aria-expanded', String(open));
     });
-    nav.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
-      body.classList.remove('nav-open');
-      navToggle.setAttribute('aria-expanded', 'false');
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      document.body.classList.remove('nav-open');
+      menu.setAttribute('aria-expanded', 'false');
     }));
   }
-
-  const revealItems = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window && !reduceMotion) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
+  document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('error', () => img.classList.add('broken'));
+  });
+  const reveal = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduce) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.14, rootMargin: '0px 0px -30px 0px' });
-    revealItems.forEach((item) => observer.observe(item));
+    }, { threshold: 0.15, rootMargin: '0px 0px -30px 0px' });
+    reveal.forEach(el => io.observe(el));
   } else {
-    revealItems.forEach((item) => item.classList.add('is-visible'));
+    reveal.forEach(el => el.classList.add('visible'));
   }
 });

@@ -1,36 +1,101 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
+<!DOCTYPE html><html lang="pl"><head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>21project — strona przechodzi renowację</title>
-  <meta name="robots" content="noindex, nofollow" />
-  <meta name="description" content="21project — strona przechodzi renowację. Wróć wkrótce." />
-  <meta name="theme-color" content="#0b0b0b" />
-  <link rel="stylesheet" href="maintenance.css?v=1" />
-</head>
-<body>
-  <main class="page">
-    <section class="card" aria-label="Strona w trakcie renowacji">
-      <div class="brand">
-        <div class="brand-mark">21</div>
-        <div class="brand-name">project</div>
+  <meta name="theme-color" content="#f4f1ea" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=21graphic1" />
+<title>Portfolio — 21project</title><meta name="description" content="Portfolio 21project: realizacje stron internetowych pokazane w widoku desktop i telefon." /></head><body>
+  <div class="splash" aria-hidden="true">
+    <div class="splash-grid"></div>
+    <div class="splash-inner">
+      <img class="splash-logo" src="logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+      <div class="splash-word">21project</div>
+      <div class="splash-line"></div>
+      <div class="splash-sub">web design / digital presence / front-end</div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="21project — start">
+        <img src="logo.png" alt="21project" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'">
+        <span class="brand-fallback">21project</span>
+      </a>
+      <nav class="nav" aria-label="Menu główne">
+        <a class="" href="index.html">Start</a>
+        <a class="" href="oferta.html">Oferta</a>
+        <a class="active" href="realizacje.html">Portfolio</a>
+        <a class="" href="kontakt.html">Kontakt</a>
+      </nav>
+      <a class="btn btn-line header-cta" href="kontakt.html">Zacznij</a>
+      <button class="menu-btn" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+<main>
+<section class="inner-hero"><div class="shell inner-grid"><div class="reveal"><p class="kicker">Portfolio</p><h1>Desktop i telefon. Bez scrollowania w ramce.</h1><p class="lead">Tutaj pokazujemy, jak strona wygląda w realnym odbiorze: na komputerze i na telefonie. Krótko, czysto i bez bugujących iframe.</p></div><div class="inner-visual reveal"><img src="architecture-dark.png" alt="Portfolio 21project"></div></div></section>
+<section class="section portfolio"><div class="shell"><div class="work-list">
+          <article class="work-card light-stage reveal">
+            <div class="work-copy">
+              <div class="tags"><span>wnętrza</span><span>premium</span><span>portfolio</span></div>
+              <h3>Pani Projekt</h3>
+              <p>Jasna, spokojna strona dla projektantki wnętrz. Nacisk na obraz, przestrzeń i eleganckie prowadzenie użytkownika.</p>
+              <a class="work-link" href="case-paniprojekt.html">Zobacz case →</a>
+            </div>
+            <div class="device-stage">
+              <div class="laptop"><div class="laptop-screen"><img src="paniprojektpc.png" alt="Pani Projekt — widok desktop"><div class="image-fallback">Pani Projekt<br>desktop</div></div></div>
+              <div class="phone"><div class="phone-screen"><img src="paniprojekttelefon.jfif" alt="Pani Projekt — widok mobile"><div class="image-fallback">Pani Projekt<br>mobile</div></div></div>
+            </div>
+          </article>
+          <article class="work-card reveal">
+            <div class="work-copy">
+              <div class="tags"><span>architektura</span><span>atelier</span><span>minimal</span></div>
+              <h3>COS Architekt</h3>
+              <p>Strona o bardziej niszowym, editorialowym rytmie. Duże kadry, spokojne przewijanie i mocny pierwszy ekran.</p>
+              <a class="work-link" href="case-cos.html">Zobacz case →</a>
+            </div>
+            <div class="device-stage">
+              <div class="laptop"><div class="laptop-screen"><img src="cospc.png" alt="COS Architekt — widok desktop"><div class="image-fallback">COS Architekt<br>desktop</div></div></div>
+              <div class="phone"><div class="phone-screen"><img src="costelefon.jfif" alt="COS Architekt — widok mobile"><div class="image-fallback">COS Architekt<br>mobile</div></div></div>
+            </div>
+          </article>
+          <article class="work-card reveal">
+            <div class="work-copy">
+              <div class="tags"><span>remonty</span><span>usługi</span><span>kontakt</span></div>
+              <h3>MS Remonty</h3>
+              <p>Strona usługowa nastawiona na szybkie zrozumienie oferty, wiarygodność i prosty kontakt bez chaosu.</p>
+              <a class="work-link" href="case-msremonty.html">Zobacz case →</a>
+            </div>
+            <div class="device-stage">
+              <div class="laptop"><div class="laptop-screen"><img src="msremontypc.png" alt="MS Remonty — widok desktop"><div class="image-fallback">MS Remonty<br>desktop</div></div></div>
+              <div class="phone"><div class="phone-screen"><img src="msremontytelefon.jfif" alt="MS Remonty — widok mobile"><div class="image-fallback">MS Remonty<br>mobile</div></div></div>
+            </div>
+          </article>
+          <article class="work-card light-stage reveal">
+            <div class="work-copy">
+              <div class="tags"><span>beauty</span><span>local brand</span><span>mobile</span></div>
+              <h3>Glam Studio</h3>
+              <p>Miękki, estetyczny kierunek dla marki beauty. Prosty układ usług i szybka ścieżka do zapisu.</p>
+              <a class="work-link" href="case-glamstudio.html">Zobacz case →</a>
+            </div>
+            <div class="device-stage">
+              <div class="laptop"><div class="laptop-screen"><img src="glamstudiopc.png" alt="Glam Studio — widok desktop"><div class="image-fallback">Glam Studio<br>desktop</div></div></div>
+              <div class="phone"><div class="phone-screen"><img src="glamstudiotelefon.jfif" alt="Glam Studio — widok mobile"><div class="image-fallback">Glam Studio<br>mobile</div></div></div>
+            </div>
+          </article>
+</div></div></section>
+<section class="contact-slab"><div class="shell contact-grid"><div class="reveal"><p class="kicker dark">Nowy projekt</p><h2>Twoja strona może wyglądać równie mocno.</h2></div><div class="contact-lines reveal"><a class="contact-line" href="mailto:jakubskrzypiec.dev@gmail.com"><span>Mail</span><strong>jakubskrzypiec.dev@gmail.com</strong></a><a class="contact-line" href="tel:+48601863788"><span>Telefon</span><strong>601 863 788</strong></a></div></div></section>
+</main>
+  <footer class="footer">
+    <div class="shell footer-grid">
+      <div>
+        <a class="brand" href="index.html"><img src="logo.png" alt="21project" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-block'"><span class="brand-fallback">21project</span></a>
+        <p style="margin-top:18px;max-width:440px">Minimalistyczne strony internetowe dla firm, które chcą wyglądać lepiej niż konkurencja i prowadzić klienta do kontaktu.</p>
       </div>
-      <p class="kicker">Strona przechodzi renowację</p>
-      <h1>Wracamy wkrótce z nową wersją.</h1>
-      <p class="lead">Strona 21project jest chwilowo niedostępna, bo przechodzi dopracowanie i rework. Jeżeli chcesz się skontaktować, napisz maila albo zadzwoń — wrócimy z nową odsłoną za kilka dni.</p>
-      <div class="meta">
-        <div class="meta-box">
-          <span>Kontakt</span>
-          <strong>jakubskrzypiec.dev@gmail.com</strong>
-        </div>
-        <div class="meta-box">
-          <span>Telefon</span>
-          <strong>601 863 788</strong>
-        </div>
-      </div>
-      <p class="footer-note">Dzięki za cierpliwość. 21project / web design / strony internetowe.</p>
-    </section>
-  </main>
-</body>
-</html>
+      <div class="footer-col"><strong>Menu</strong><a href="index.html">Start</a><a href="oferta.html">Oferta</a><a href="realizacje.html">Portfolio</a><a href="kontakt.html">Kontakt</a></div>
+      <div class="footer-col"><strong>Kontakt</strong><a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a><a href="tel:+48601863788">601 863 788</a><p>© 2026 / 21project</p></div>
+    </div>
+  </footer>
+  <script src="script.js?v=21graphic1"></script>
+</body></html>
