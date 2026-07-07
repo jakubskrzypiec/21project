@@ -3,6 +3,24 @@ document.addEventListener('DOMContentLoaded', () => {
   body.classList.add('js');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const intro = document.querySelector('.intro-screen');
+  const closeIntro = () => {
+    if (!intro) return;
+    intro.classList.add('is-done');
+    body.classList.remove('is-loading');
+    setTimeout(() => intro.remove(), 850);
+  };
+  if (intro && !reduce) {
+    body.classList.add('is-loading');
+    requestAnimationFrame(() => intro.classList.add('is-ready'));
+    setTimeout(closeIntro, 1850);
+    setTimeout(closeIntro, 2800);
+    intro.addEventListener('click', closeIntro, { once: true });
+  } else if (intro) {
+    intro.remove();
+  }
+
+
   const phrases = [
     'wygląda lepiej niż konkurencja.',
     'prowadzi klienta do kontaktu.',
