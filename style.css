@@ -1427,3 +1427,63 @@ body.is-loading{overflow:auto}
     min-height:82px;
   }
 }
+
+
+/* --- 21seo7: intro only homepage + smaller mobile text fix --- */
+
+/* Na podstronach nie ma intro w HTML, ale ten zapis zabezpiecza cache/stare wersje */
+body:not(.home-page) .intro-kinetic{
+  display:none !important;
+}
+
+/* mniejsze intro na telefonie, żeby nie ucinało */
+@media(max-width:820px){
+  .intro-wordmark{
+    width:92vw;
+    gap:14px;
+  }
+
+  .intro-21{
+    font-size:clamp(72px,22vw,118px);
+    letter-spacing:-.08em;
+  }
+
+  .intro-project{
+    font-size:clamp(44px,13vw,78px);
+    letter-spacing:-.075em;
+  }
+
+  .intro-divider{
+    width:min(280px,64vw);
+  }
+
+  .hero-minimal .hero-only h1{
+    font-size:clamp(34px,10.4vw,46px);
+    line-height:.92;
+    max-width:9.8ch;
+  }
+
+  .hero-minimal .hero-rotator{
+    min-height:2.78em;
+    max-width:9.8ch;
+  }
+}
+
+@media(max-width:420px){
+  .intro-21{
+    font-size:clamp(62px,20vw,92px);
+  }
+
+  .intro-project{
+    font-size:clamp(38px,12vw,62px);
+  }
+
+  .intro-wordmark{
+    gap:12px;
+  }
+
+  .hero-minimal .hero-only h1{
+    font-size:36px;
+    max-width:9.4ch;
+  }
+}
