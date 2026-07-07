@@ -9,13 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!splash) return;
     splash.classList.add('done');
     body.classList.remove('is-loading');
-    setTimeout(() => splash.remove(), 800);
+    setTimeout(() => splash.remove(), 1050);
   };
   if (splash && !reduce) {
     body.classList.add('is-loading');
     requestAnimationFrame(() => splash.classList.add('ready'));
-    setTimeout(closeSplash, 2400);
-    setTimeout(closeSplash, 3600);
+    setTimeout(closeSplash, 2300);
+    setTimeout(closeSplash, 3500);
     splash.addEventListener('click', closeSplash, { once: true });
   } else if (splash) {
     splash.remove();
