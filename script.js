@@ -1,25 +1,7 @@
-
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
   body.classList.add('js');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const splash = document.querySelector('.splash');
-  const closeSplash = () => {
-    if (!splash) return;
-    splash.classList.add('done');
-    body.classList.remove('is-loading');
-    setTimeout(() => splash.remove(), 1050);
-  };
-  if (splash && !reduce) {
-    body.classList.add('is-loading');
-    requestAnimationFrame(() => splash.classList.add('ready'));
-    setTimeout(closeSplash, 2300);
-    setTimeout(closeSplash, 3500);
-    splash.addEventListener('click', closeSplash, { once: true });
-  } else if (splash) {
-    splash.remove();
-  }
 
   const phrases = [
     'wygląda lepiej niż konkurencja.',
@@ -35,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
       window.setTimeout(() => {
         rotator.textContent = phrases[i];
         rotator.classList.remove('is-changing');
-      }, 260);
-    }, 3300);
+      }, 220);
+    }, 3200);
   }
 
   const header = document.querySelector('.site-header');
@@ -47,14 +29,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('.nav');
   if (toggle && nav) {
+    const closeNav = () => {
+      body.classList.remove('nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
     toggle.addEventListener('click', () => {
       const open = body.classList.toggle('nav-open');
       toggle.setAttribute('aria-expanded', String(open));
     });
-    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-      body.classList.remove('nav-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }));
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeNav();
+    });
   }
 
   const items = document.querySelectorAll('.reveal,.editorial-item,.price-row,.work-card');
