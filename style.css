@@ -384,3 +384,252 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
   .hero-minimal .hero-only h1{font-size:38px}
   .price-row p{font-size:15px}
 }
+
+
+/* --- 21seo1: premium intro, footer, SEO blocks --- */
+.splash{
+  background:#050608;
+  overflow:hidden;
+}
+.splash::before,
+.splash::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.splash::before{
+  background:
+    radial-gradient(circle at 50% 45%, rgba(143,183,255,.16), transparent 34%),
+    linear-gradient(90deg, transparent, rgba(255,255,255,.04), transparent);
+  opacity:0;
+  transition:opacity .7s ease;
+}
+.splash::after{
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:72px 72px;
+  opacity:.32;
+  transform:scale(1.06);
+}
+.splash-stage{
+  position:relative;
+  z-index:2;
+  width:min(620px,78vw);
+  min-height:260px;
+  display:grid;
+  place-items:center;
+}
+.splash-logo{
+  width:min(430px,62vw);
+  max-height:180px;
+  object-fit:contain;
+  filter:brightness(0) invert(1);
+  opacity:0;
+  transform:translateY(14px) scale(.9);
+  transition:opacity .7s ease .22s, transform .9s cubic-bezier(.16,1,.3,1) .22s, filter .8s ease .3s;
+}
+.splash-line{
+  display:block;
+  position:absolute;
+  left:50%;
+  width:min(560px,74vw);
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),rgba(143,183,255,.92),rgba(255,255,255,.72),transparent);
+  transform:translateX(-50%) scaleX(0);
+  transform-origin:center;
+  transition:transform .85s cubic-bezier(.16,1,.3,1);
+}
+.splash-line-top{top:62px}
+.splash-line-bottom{bottom:78px;transition-delay:.18s}
+.splash-subtitle{
+  position:absolute;
+  bottom:28px;
+  left:0;
+  right:0;
+  text-align:center;
+  color:rgba(248,251,255,.72);
+  font-size:11px;
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  font-weight:850;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity .55s ease .65s, transform .55s ease .65s;
+}
+.splash.ready::before{opacity:1}
+.splash.ready .splash-logo{opacity:1;transform:translateY(0) scale(1);filter:brightness(0) invert(1) drop-shadow(0 0 28px rgba(143,183,255,.16))}
+.splash.ready .splash-line{transform:translateX(-50%) scaleX(1)}
+.splash.ready .splash-subtitle{opacity:1;transform:translateY(0)}
+.splash.done{
+  transform:translateY(-100%);
+  opacity:1;
+  transition:transform .78s cubic-bezier(.76,0,.24,1), visibility .78s;
+}
+
+/* SEO copy section */
+.seo-copy-section{
+  background:linear-gradient(180deg,#edf2f6,#f7f9fb);
+  border-top:1px solid rgba(8,13,19,.08);
+  border-bottom:1px solid rgba(8,13,19,.08);
+}
+.seo-copy-grid{
+  display:grid;
+  grid-template-columns:minmax(120px,.22fr) minmax(0,.72fr) minmax(320px,.66fr);
+  gap:clamp(28px,5vw,72px);
+  align-items:start;
+}
+.seo-number{
+  font-family:var(--display);
+  font-size:clamp(64px,10vw,150px);
+  font-weight:900;
+  letter-spacing:-.08em;
+  line-height:.8;
+  color:rgba(8,13,19,.055);
+}
+.seo-copy-grid h2{
+  font-size:clamp(38px,5.2vw,82px);
+  line-height:.9;
+  letter-spacing:-.07em;
+  max-width:780px;
+}
+.seo-text{
+  border-left:1px solid var(--line);
+  padding-left:clamp(22px,4vw,46px);
+}
+.seo-text p{
+  color:var(--muted);
+  font-size:17px;
+  line-height:1.85;
+}
+.seo-text p + p{margin-top:18px}
+
+/* premium footer */
+.footer-premium{
+  position:relative;
+  overflow:hidden;
+  padding:0;
+  background:
+    radial-gradient(circle at 70% 0%, rgba(143,183,255,.14), transparent 32%),
+    linear-gradient(180deg,#07090c,#090d12);
+  color:rgba(248,251,255,.72);
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.footer-premium::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:92px 92px;
+  mask-image:linear-gradient(180deg,#000,transparent 85%);
+  opacity:.45;
+}
+.footer-cta,
+.footer-main,
+.footer-bottom{
+  position:relative;
+  z-index:2;
+}
+.footer-cta{
+  min-height:420px;
+  display:grid;
+  align-content:end;
+  justify-items:start;
+  padding:clamp(70px,9vw,130px) 0 clamp(44px,6vw,74px);
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.footer-cta h2{
+  margin-top:18px;
+  margin-bottom:30px;
+  max-width:940px;
+  font-size:clamp(54px,8vw,132px);
+  line-height:.86;
+  letter-spacing:-.08em;
+  color:#fff;
+}
+.footer-main{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(260px,.58fr);
+  gap:clamp(28px,6vw,80px);
+  align-items:start;
+  padding:38px 0;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.footer-brand img{
+  width:170px;
+  max-height:72px;
+  object-fit:contain;
+  object-position:left center;
+  filter:brightness(0) invert(1);
+  margin-bottom:20px;
+}
+.footer-brand p{
+  max-width:360px;
+  color:rgba(248,251,255,.62);
+  line-height:1.75;
+}
+.footer-nav{
+  display:grid;
+  gap:12px;
+  min-width:150px;
+}
+.footer-nav a,
+.footer-contact a{
+  color:#fff;
+  font-weight:850;
+}
+.footer-nav a{
+  font-size:12px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(248,251,255,.72);
+}
+.footer-nav a:hover,
+.footer-contact a:hover{color:var(--accent)}
+.footer-contact{
+  display:grid;
+  justify-items:end;
+  gap:10px;
+  text-align:right;
+}
+.footer-contact a{
+  font-size:clamp(18px,2vw,28px);
+  letter-spacing:-.04em;
+  overflow-wrap:anywhere;
+}
+.footer-contact span{
+  color:rgba(248,251,255,.55);
+  font-size:14px;
+}
+.footer-bottom{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  padding:18px 0 24px;
+  font-size:12px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(248,251,255,.45);
+}
+
+/* Better footer on contact page too */
+.contact-page + .footer-premium .footer-cta{display:none}
+
+@media(max-width:980px){
+  .seo-copy-grid{grid-template-columns:1fr}
+  .seo-text{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:26px}
+  .footer-main{grid-template-columns:1fr}
+  .footer-contact{justify-items:start;text-align:left}
+  .footer-bottom{display:grid}
+}
+@media(max-width:560px){
+  .splash-stage{min-height:220px}
+  .splash-logo{width:min(310px,70vw)}
+  .splash-subtitle{font-size:9px;letter-spacing:.22em}
+  .footer-cta{min-height:340px}
+  .footer-cta h2{font-size:44px}
+  .footer-main{padding:30px 0}
+}

@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (splash && !reduce) {
     body.classList.add('is-loading');
     requestAnimationFrame(() => splash.classList.add('ready'));
-    setTimeout(closeSplash, 1650);
-    setTimeout(closeSplash, 2600);
+    setTimeout(closeSplash, 2400);
+    setTimeout(closeSplash, 3600);
     splash.addEventListener('click', closeSplash, { once: true });
   } else if (splash) {
     splash.remove();

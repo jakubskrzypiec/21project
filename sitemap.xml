@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://21project.pl/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://21project.pl/oferta.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://21project.pl/realizacje.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://21project.pl/kontakt.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://21project.pl/case-paniprojekt.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://21project.pl/case-cos.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://21project.pl/case-msremonty.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://21project.pl/case-glamstudio.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+</urlset>
