@@ -1,0 +1,21 @@
+21project — SEO podstrony v2
+
+Dodane nowe podstrony SEO:
+- strony-internetowe-dla-firm.html
+- strony-internetowe-katowice.html
+- strony-internetowe-slask.html
+- landing-page.html
+- strona-wizytowka.html
+- rework-strony-internetowej.html
+
+Dodatkowo:
+- dopisane linki do nowych podstron w stopce,
+- dodana sekcja linków do usług na stronie głównej i ofercie,
+- sitemap.xml zawiera nowe podstrony,
+- cache CSS/JS podbite do 21seo9,
+- każda nowa podstrona ma title, description, canonical, Open Graph i Schema.org Service.
+
+Po wrzuceniu:
+1. Wejdź na https://21project.pl/sitemap.xml i sprawdź, czy widać nowe adresy.
+2. W Search Console ponownie prześlij sitemapę.
+3. W Sprawdzeniu adresu URL zgłoś nowe podstrony do indeksowania.
