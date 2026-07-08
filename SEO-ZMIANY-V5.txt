@@ -1,0 +1,9 @@
+21project — v5 arch intro
+
+Zmienione:
+- nowa animacja wejścia w klimacie architekt / COS:
+  cienka ramka, linie konstrukcyjne, subtelny grid, mały napis digital studio i 21 | project,
+- bez dużego loadera i bez przekombinowanych efektów,
+- cache CSS/JS podbite do 21seo12.
+
+Reszta SEO i podstron zostaje jak w v3/v4.
