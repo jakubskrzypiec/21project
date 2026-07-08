@@ -1,0 +1,10 @@
+21project — v7 czarne abstrakcyjne intro
+
+Zmiana:
+- całkowicie nowe intro,
+- czarne tło,
+- zero logo,
+- zero kratek,
+- abstrakcyjna minimalistyczna animacja z cienkimi liniami i punktem,
+- krótkie wejście ~2s,
+- cache CSS/JS: 21seo14.
