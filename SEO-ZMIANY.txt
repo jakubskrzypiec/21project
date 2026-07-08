@@ -1,0 +1,23 @@
+21project — SEO techniczne v1
+
+Zmienione:
+- poprawione meta title i meta description na wszystkich głównych podstronach oraz case studies,
+- poprawiony canonical na stronie głównej: https://21project.pl/,
+- dodane canonicale do case studies, które ich nie miały,
+- dodane/ujednolicone Open Graph i Twitter Card,
+- dodane robots index/follow,
+- dodane favicon/apple-touch-icon na bazie logo.png,
+- dodane dane strukturalne Schema.org: ProfessionalService, WebSite, WebPage, BreadcrumbList,
+- poprawiony sitemap.xml z lastmod i wszystkimi aktualnymi podstronami,
+- poprawiony robots.txt,
+- podbite cache CSS/JS do 21seo8.
+
+Po wrzuceniu do GitHuba:
+1. Poczekaj aż GitHub Pages się odświeży.
+2. Wejdź w Search Console > Mapy witryn > dodaj sitemap.xml.
+3. W Sprawdzeniu adresu URL zgłoś do indeksowania:
+   - https://21project.pl/
+   - https://21project.pl/oferta.html
+   - https://21project.pl/realizacje.html
+   - https://21project.pl/kontakt.html
+4. Potem zgłoś case studies z sitemap.xml.
