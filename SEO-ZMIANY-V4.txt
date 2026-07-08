@@ -1,0 +1,9 @@
+21project — v4 simple intro
+
+Zmienione:
+- animacja wejścia uproszczona: małe logo, subtelny napis 21project i cienka linia,
+- usunięte gridy, pulsy i karta z poprzedniej wersji,
+- skrócony czas animacji,
+- cache CSS/JS podbite do 21seo11.
+
+Reszta SEO i podstron z v3 zostaje bez zmian.
