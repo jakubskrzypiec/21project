@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (intro && !reduce) {
     body.classList.add('is-loading');
     requestAnimationFrame(() => intro.classList.add('is-ready'));
-    setTimeout(closeIntro, 2600);
-    setTimeout(closeIntro, 2600);
+    setTimeout(closeIntro, 2200);
     intro.addEventListener('click', closeIntro, { once: true });
   } else if (intro) {
     intro.remove();

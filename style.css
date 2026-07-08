@@ -386,7 +386,7 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
 }
 
 
-/* --- 21seo12: premium intro, footer, SEO blocks --- */
+/* --- 21seo13: premium intro, footer, SEO blocks --- */
 .splash{
   background:#050608;
   overflow:hidden;
@@ -635,7 +635,7 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
 }
 
 
-/* --- 21seo12: new cinematic intro, footer mail fix, mobile nav, portfolio live links --- */
+/* --- 21seo13: new cinematic intro, footer mail fix, mobile nav, portfolio live links --- */
 .splash-cinematic{
   background:#050608;
   overflow:hidden;
@@ -918,7 +918,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo12: simple premium intro --- */
+/* --- 21seo13: simple premium intro --- */
 .intro-screen{
   position:fixed;
   inset:0;
@@ -994,7 +994,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo12: kinetic intro + darker full-width footer --- */
+/* --- 21seo13: kinetic intro + darker full-width footer --- */
 
 /* old intro disabled if cached somewhere */
 .intro-screen{display:none !important}
@@ -1274,7 +1274,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo12: mobile menu dark bar, text pushed to edges --- */
+/* --- 21seo13: mobile menu dark bar, text pushed to edges --- */
 @media(max-width:820px){
   .site-header{
     height:78px;
@@ -1429,7 +1429,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo12: intro only homepage + smaller mobile text fix --- */
+/* --- 21seo13: intro only homepage + smaller mobile text fix --- */
 
 /* Na podstronach nie ma intro w HTML, ale ten zapis zabezpiecza cache/stare wersje */
 body:not(.home-page) .intro-kinetic{
@@ -2315,5 +2315,120 @@ body:not(.home-page) .intro-kinetic{
   .intro-arch-kicker{
     font-size:9px;
     letter-spacing:.28em;
+  }
+}
+
+
+/* v6: minimalistyczna animacja wejścia z własnym logo */
+.intro-kinetic{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:9999 !important;
+  display:grid !important;
+  place-items:center !important;
+  background:#080a0d !important;
+  overflow:hidden !important;
+  transition:opacity .55s ease, visibility .55s ease !important;
+}
+.intro-kinetic::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255,255,255,.06), transparent 36%),
+    linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+  opacity:1 !important;
+}
+.intro-arch,
+.intro-arch-content,
+.intro-arch-line,
+.intro-simple,
+.intro-grid,
+.intro-pulse,
+.intro-card-clean,
+.intro-wordmark,
+.intro-scan{
+  display:none !important;
+}
+.intro-logo-scene{
+  position:relative;
+  z-index:2;
+  width:min(560px, calc(100vw - 56px));
+  min-height:250px;
+  display:grid;
+  justify-items:center;
+  align-content:center;
+  gap:18px;
+}
+.intro-logo-border{
+  position:absolute;
+  inset:16px 0;
+  border:1px solid rgba(255,255,255,.08);
+  border-left:none;
+  border-right:none;
+  transform:scaleX(.88);
+  opacity:0;
+  transition:transform .85s cubic-bezier(.22,1,.36,1), opacity .5s ease;
+}
+.intro-logo-mark{
+  width:90px;
+  max-width:28vw;
+  height:auto;
+  opacity:0;
+  transform:translateY(12px) scale(.94);
+  filter:drop-shadow(0 10px 28px rgba(0,0,0,.26));
+  transition:opacity .45s ease .08s, transform .78s cubic-bezier(.22,1,.36,1) .08s;
+}
+.intro-logo-wordmark{
+  width:min(420px, 74vw);
+  height:auto;
+  opacity:0;
+  transform:translateY(10px) scale(.965);
+  filter:drop-shadow(0 16px 34px rgba(0,0,0,.34));
+  transition:opacity .5s ease .16s, transform .82s cubic-bezier(.22,1,.36,1) .16s;
+}
+.intro-logo-line{
+  width:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.78), transparent);
+  opacity:.95;
+  transition:width .82s cubic-bezier(.22,1,.36,1) .28s;
+}
+.intro-kinetic.is-ready .intro-logo-border{
+  transform:scaleX(1);
+  opacity:1;
+}
+.intro-kinetic.is-ready .intro-logo-mark,
+.intro-kinetic.is-ready .intro-logo-wordmark{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+.intro-kinetic.is-ready .intro-logo-line{
+  width:min(150px, 34vw);
+}
+.intro-kinetic.is-done{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+.intro-kinetic.is-done .intro-logo-scene{
+  transform:translateY(-6px) scale(.992);
+  opacity:0;
+  transition:transform .42s ease, opacity .42s ease;
+}
+@media(max-width:640px){
+  .intro-logo-scene{
+    width:min(340px, calc(100vw - 40px));
+    min-height:210px;
+    gap:15px;
+  }
+  .intro-logo-mark{
+    width:70px;
+  }
+  .intro-logo-wordmark{
+    width:min(280px, 76vw);
+  }
+  .intro-logo-border{
+    inset:22px 0;
   }
 }

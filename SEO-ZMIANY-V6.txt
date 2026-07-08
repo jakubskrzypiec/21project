@@ -1,0 +1,10 @@
+21project — v6 minimalistyczna animacja z logo
+
+Zmiana:
+- wywalona poprzednia animacja intro,
+- nowa, bardzo prosta animacja oparta na Twoim logo:
+  - znak 21 (logomale.png),
+  - pełne logo (logo-white.png),
+  - delikatne wejście + cienka linia,
+  - ciemne tło, premium / clean,
+- CSS/JS cache ustawione na 21seo13.
