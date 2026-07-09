@@ -386,7 +386,7 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
 }
 
 
-/* --- 21seo22: premium intro, footer, SEO blocks --- */
+/* --- 21seo23: premium intro, footer, SEO blocks --- */
 .splash{
   background:#050608;
   overflow:hidden;
@@ -635,7 +635,7 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
 }
 
 
-/* --- 21seo22: new cinematic intro, footer mail fix, mobile nav, portfolio live links --- */
+/* --- 21seo23: new cinematic intro, footer mail fix, mobile nav, portfolio live links --- */
 .splash-cinematic{
   background:#050608;
   overflow:hidden;
@@ -918,7 +918,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo22: simple premium intro --- */
+/* --- 21seo23: simple premium intro --- */
 .intro-screen{
   position:fixed;
   inset:0;
@@ -994,7 +994,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo22: kinetic intro + darker full-width footer --- */
+/* --- 21seo23: kinetic intro + darker full-width footer --- */
 
 /* old intro disabled if cached somewhere */
 .intro-screen{display:none !important}
@@ -1274,7 +1274,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo22: mobile menu dark bar, text pushed to edges --- */
+/* --- 21seo23: mobile menu dark bar, text pushed to edges --- */
 @media(max-width:820px){
   .site-header{
     height:78px;
@@ -1429,7 +1429,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo22: intro only homepage + smaller mobile text fix --- */
+/* --- 21seo23: intro only homepage + smaller mobile text fix --- */
 
 /* Na podstronach nie ma intro w HTML, ale ten zapis zabezpiecza cache/stare wersje */
 body:not(.home-page) .intro-kinetic{
@@ -3219,5 +3219,86 @@ body.intro-active{
 @media(max-width:560px){
   .intro-bounce-logo__stage{
     width:min(58px, 15vw) !important;
+  }
+}
+
+
+/* v16: super płynne intro — logo + curtain reveal, bez lagów */
+body.intro-active{
+  overflow:hidden;
+}
+
+.intro-curtain{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:grid;
+  place-items:center;
+  background:#000;
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translate3d(0,0,0);
+  will-change:transform, opacity;
+  transition:
+    transform .78s cubic-bezier(.76,0,.24,1),
+    opacity .42s ease,
+    visibility .42s ease;
+}
+
+/* wyłącz stare elementy intro, gdyby zostały z cache */
+.intro-logo-loader,
+.intro-kinetic,
+.intro-21{
+  display:none !important;
+}
+
+.intro-curtain__mark{
+  width:min(62px, 10vw);
+  opacity:0;
+  transform:translate3d(0,26px,0) scale(.92);
+  will-change:transform, opacity;
+  transition:
+    opacity .38s ease,
+    transform .62s cubic-bezier(.22,1,.36,1);
+}
+
+.intro-curtain__mark img{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+/* delikatne wejście logo */
+.intro-curtain.is-ready .intro-curtain__mark{
+  opacity:1;
+  transform:translate3d(0,0,0) scale(1);
+}
+
+/* wyjście: cały czarny ekran jedzie do góry, odsłaniając stronę */
+.intro-curtain.is-done{
+  transform:translate3d(0,-100%,0);
+  opacity:1;
+  visibility:visible;
+  pointer-events:none;
+}
+
+.intro-curtain.is-done .intro-curtain__mark{
+  opacity:0;
+  transform:translate3d(0,-18px,0) scale(.96);
+  transition:
+    opacity .22s ease,
+    transform .42s cubic-bezier(.76,0,.24,1);
+}
+
+@media(max-width:560px){
+  .intro-curtain__mark{
+    width:min(54px, 15vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .intro-curtain{
+    display:none !important;
   }
 }

@@ -1,0 +1,10 @@
+21project — v16 smooth curtain intro
+
+Zmienione:
+- usunięty lagujący bounce/blur,
+- nowe intro jest lekkie: tylko transform + opacity,
+- logo delikatnie wchodzi na środku,
+- po chwili cały czarny ekran płynnie odjeżdża do góry i odsłania stronę,
+- brak filter/blur/drop-shadow w animacji,
+- fail-safe w JS, żeby intro nie mogło zablokować strony,
+- cache CSS/JS: 21seo23.

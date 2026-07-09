@@ -3,26 +3,27 @@ document.addEventListener('DOMContentLoaded', () => {
   body.classList.add('js');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const logoIntro = document.querySelector('.intro-logo-loader');
-  let logoIntroClosed = false;
+  const curtainIntro = document.querySelector('.intro-curtain');
+  let curtainIntroClosed = false;
 
-  const closeLogoIntro = () => {
-    if (!logoIntro || logoIntroClosed) return;
-    logoIntroClosed = true;
-    logoIntro.classList.add('is-done');
+  const closeCurtainIntro = () => {
+    if (!curtainIntro || curtainIntroClosed) return;
+    curtainIntroClosed = true;
+    curtainIntro.classList.add('is-done');
     body.classList.remove('intro-active');
-    setTimeout(() => logoIntro.remove(), 1350);
+    setTimeout(() => curtainIntro.remove(), 950);
   };
 
-  if (logoIntro && !reduce) {
+  if (curtainIntro && !reduce) {
     body.classList.add('intro-active');
-    requestAnimationFrame(() => logoIntro.classList.add('is-ready'));
-    setTimeout(closeLogoIntro, 2450);
-    setTimeout(closeLogoIntro, 4200);
-    logoIntro.addEventListener('click', closeLogoIntro, { once: true });
-  } else if (logoIntro) {
-    logoIntro.remove();
+    requestAnimationFrame(() => curtainIntro.classList.add('is-ready'));
+    setTimeout(closeCurtainIntro, 1550);
+    setTimeout(closeCurtainIntro, 2800);
+    curtainIntro.addEventListener('click', closeCurtainIntro, { once: true });
+  } else if (curtainIntro) {
+    curtainIntro.remove();
   }
+
 
 
 
