@@ -3,6 +3,29 @@ document.addEventListener('DOMContentLoaded', () => {
   body.classList.add('js');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const logoIntro = document.querySelector('.intro-logo-loader');
+  let logoIntroClosed = false;
+
+  const closeLogoIntro = () => {
+    if (!logoIntro || logoIntroClosed) return;
+    logoIntroClosed = true;
+    logoIntro.classList.add('is-done');
+    body.classList.remove('intro-active');
+    setTimeout(() => logoIntro.remove(), 520);
+  };
+
+  if (logoIntro && !reduce) {
+    body.classList.add('intro-active');
+    requestAnimationFrame(() => logoIntro.classList.add('is-ready'));
+    setTimeout(closeLogoIntro, 1450);
+    setTimeout(closeLogoIntro, 2200);
+    window.addEventListener('load', () => setTimeout(closeLogoIntro, 250), { once: true });
+    logoIntro.addEventListener('click', closeLogoIntro, { once: true });
+  } else if (logoIntro) {
+    logoIntro.remove();
+  }
+
+
 
 
 

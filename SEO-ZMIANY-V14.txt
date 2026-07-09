@@ -1,0 +1,8 @@
+21project — v14 safe intro fix
+
+Naprawa:
+- intro nie powinno już blokować strony,
+- dodane awaryjne zamknięcie intro po czasie i po załadowaniu strony,
+- logo jeszcze mniejsze,
+- animacja: mały bounce z dołu + szybkie zniknięcie,
+- cache CSS/JS: 21seo21.
