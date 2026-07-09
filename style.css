@@ -386,7 +386,7 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
 }
 
 
-/* --- 21seo23: premium intro, footer, SEO blocks --- */
+/* --- 21seo24: premium intro, footer, SEO blocks --- */
 .splash{
   background:#050608;
   overflow:hidden;
@@ -635,7 +635,7 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
 }
 
 
-/* --- 21seo23: new cinematic intro, footer mail fix, mobile nav, portfolio live links --- */
+/* --- 21seo24: new cinematic intro, footer mail fix, mobile nav, portfolio live links --- */
 .splash-cinematic{
   background:#050608;
   overflow:hidden;
@@ -918,7 +918,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo23: simple premium intro --- */
+/* --- 21seo24: simple premium intro --- */
 .intro-screen{
   position:fixed;
   inset:0;
@@ -994,7 +994,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo23: kinetic intro + darker full-width footer --- */
+/* --- 21seo24: kinetic intro + darker full-width footer --- */
 
 /* old intro disabled if cached somewhere */
 .intro-screen{display:none !important}
@@ -1274,7 +1274,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo23: mobile menu dark bar, text pushed to edges --- */
+/* --- 21seo24: mobile menu dark bar, text pushed to edges --- */
 @media(max-width:820px){
   .site-header{
     height:78px;
@@ -1429,7 +1429,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo23: intro only homepage + smaller mobile text fix --- */
+/* --- 21seo24: intro only homepage + smaller mobile text fix --- */
 
 /* Na podstronach nie ma intro w HTML, ale ten zapis zabezpiecza cache/stare wersje */
 body:not(.home-page) .intro-kinetic{
@@ -3300,5 +3300,270 @@ body.intro-active{
 @media (prefers-reduced-motion: reduce){
   .intro-curtain{
     display:none !important;
+  }
+}
+
+
+/* v17: rozbudowane case studies SEO */
+.case-seo-hero .lead{
+  max-width:760px;
+}
+.case-seo-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:24px;
+}
+.case-seo-meta span{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,.5);
+}
+.case-seo-overview{
+  padding:22px 0;
+  background:#07090c;
+  color:var(--white);
+}
+.case-seo-overview-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.12);
+}
+.case-seo-stat{
+  min-height:178px;
+  padding:26px;
+  background:#0b0f14;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.case-seo-stat span{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--accent);
+}
+.case-seo-stat p{
+  color:rgba(248,251,255,.78);
+  font-size:18px;
+  line-height:1.55;
+  margin-top:24px;
+}
+.case-seo-story{
+  background:var(--bg);
+}
+.case-seo-story-grid{
+  display:grid;
+  grid-template-columns:.85fr 1.15fr;
+  gap:clamp(34px,6vw,86px);
+  align-items:start;
+}
+.case-seo-sticky{
+  position:sticky;
+  top:116px;
+}
+.case-seo-sticky h2{
+  margin-top:18px;
+  font-family:var(--display);
+  font-size:clamp(38px,5vw,72px);
+  line-height:.96;
+  letter-spacing:-.06em;
+}
+.case-seo-sticky p:not(.kicker){
+  margin-top:22px;
+  color:var(--muted);
+  line-height:1.85;
+}
+.case-seo-text-stack{
+  display:grid;
+  gap:16px;
+}
+.case-seo-text{
+  padding:30px;
+  border:1px solid var(--line);
+  background:rgba(247,249,251,.72);
+}
+.case-seo-text h2{
+  margin-top:14px;
+  font-size:28px;
+  letter-spacing:-.04em;
+}
+.case-seo-text p:not(.kicker){
+  margin-top:14px;
+  color:var(--muted);
+  line-height:1.82;
+}
+.case-seo-quote h2{
+  max-width:1040px;
+}
+.case-seo-scope{
+  background:#dfe8f0;
+}
+.case-seo-scope-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+}
+.case-seo-scope-card{
+  min-height:240px;
+  padding:26px;
+  background:var(--paper);
+  border:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.case-seo-scope-card h3{
+  font-size:23px;
+  line-height:1.05;
+  letter-spacing:-.04em;
+}
+.case-seo-scope-card p{
+  margin-top:20px;
+  color:var(--muted);
+  line-height:1.72;
+}
+.case-seo-details{
+  background:var(--bg);
+}
+.case-seo-details-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+}
+.case-seo-list{
+  padding:34px;
+  border:1px solid var(--line);
+  background:var(--paper);
+}
+.case-seo-list h2{
+  margin-top:16px;
+  font-family:var(--display);
+  font-size:clamp(34px,4vw,56px);
+  line-height:.98;
+  letter-spacing:-.055em;
+}
+.case-seo-list ul{
+  margin:26px 0 0;
+  padding:0;
+  list-style:none;
+  display:grid;
+  gap:14px;
+}
+.case-seo-list li{
+  position:relative;
+  padding-left:24px;
+  color:var(--muted);
+  line-height:1.72;
+}
+.case-seo-list li::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:.72em;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--accent);
+}
+.case-seo-internal{
+  padding:90px 0;
+  background:#07090c;
+  color:var(--white);
+}
+.case-seo-internal-box{
+  padding:42px;
+  border:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
+}
+.case-seo-internal h2{
+  margin-top:18px;
+  font-family:var(--display);
+  font-size:clamp(40px,6vw,82px);
+  line-height:.92;
+  letter-spacing:-.065em;
+  max-width:980px;
+}
+.case-seo-internal p:not(.kicker){
+  margin-top:20px;
+  max-width:760px;
+  color:rgba(248,251,255,.68);
+  line-height:1.8;
+}
+.case-seo-link-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:28px 0 30px;
+}
+.case-seo-link-row a{
+  display:inline-flex;
+  min-height:40px;
+  align-items:center;
+  padding:0 14px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:999px;
+  color:rgba(248,251,255,.82);
+  font-size:13px;
+  font-weight:800;
+}
+.case-seo-link-row a:hover{
+  background:rgba(255,255,255,.08);
+  color:#fff;
+}
+@media(max-width:1080px){
+  .case-seo-scope-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+@media(max-width:860px){
+  .case-seo-overview-grid,
+  .case-seo-story-grid,
+  .case-seo-details-grid{
+    grid-template-columns:1fr;
+  }
+  .case-seo-sticky{
+    position:static;
+  }
+}
+@media(max-width:560px){
+  .case-seo-meta{
+    gap:6px;
+  }
+  .case-seo-meta span{
+    font-size:10px;
+    min-height:30px;
+    padding:0 10px;
+  }
+  .case-seo-stat{
+    min-height:auto;
+    padding:22px;
+  }
+  .case-seo-stat p{
+    font-size:16px;
+  }
+  .case-seo-text,
+  .case-seo-list,
+  .case-seo-internal-box{
+    padding:24px 20px;
+  }
+  .case-seo-scope-grid{
+    grid-template-columns:1fr;
+  }
+  .case-seo-scope-card{
+    min-height:auto;
+    padding:24px 20px;
   }
 }

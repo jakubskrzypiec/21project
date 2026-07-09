@@ -1,0 +1,25 @@
+21project — v17 rozbudowane case studies SEO
+
+Rozbudowane case studies:
+- case-paniprojekt.html
+- case-cos.html
+- case-msremonty.html
+- case-glamstudio.html
+
+Co dodano:
+- dłuższe, naturalne treści pod SEO i sprzedaż,
+- sekcje: branża/cel/kierunek, problem, rozwiązanie, mobile, zakres, struktura, efekt,
+- linkowanie wewnętrzne do podstron SEO,
+- mocniejsze title/meta description,
+- Schema.org CreativeWork dla case studies,
+- alt texty bardziej opisowe,
+- style CSS dla nowych sekcji,
+- cache CSS/JS: 21seo24.
+
+Po wrzuceniu:
+1. Wejdź w Search Console.
+2. Zgłoś ponownie 4 adresy case studies do indeksowania:
+   - https://21project.pl/case-paniprojekt.html
+   - https://21project.pl/case-cos.html
+   - https://21project.pl/case-msremonty.html
+   - https://21project.pl/case-glamstudio.html
