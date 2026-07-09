@@ -1,0 +1,20 @@
+21project — v18 blog SEO + globalny fix procesu
+
+Zrobione:
+- dodana baza wiedzy: blog.html,
+- dodane 5 artykułów SEO:
+  1. ile-kosztuje-strona-internetowa.html
+  2. strona-internetowa-dla-malej-firmy.html
+  3. landing-page-czy-strona-firmowa.html
+  4. jak-przygotowac-materialy-do-strony.html
+  5. czy-warto-odswiezyc-stara-strone.html
+- dodane linkowanie wewnętrzne z artykułów do oferty, kontaktu i podstron SEO,
+- dodany link "Baza wiedzy" w menu i stopce,
+- dodane Schema.org Article / CollectionPage,
+- sitemap.xml uzupełniony o blog i artykuły,
+- globalnie poprawiona sekcja "Jak wygląda współpraca?", żeby nagłówek nie nachodził na kroki,
+- cache CSS/JS: 21seo25.
+
+Po wrzuceniu na GitHuba:
+- sprawdź https://21project.pl/blog.html
+- potem w Search Console zgłoś blog.html i 5 artykułów.
