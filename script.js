@@ -3,24 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
   body.classList.add('js');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const logoIntro = document.querySelector('.intro-logo-loader');
-  const closeLogoIntro = () => {
-    if (!logoIntro) return;
-    logoIntro.classList.add('is-done');
-    body.classList.remove('intro-active');
-    setTimeout(() => logoIntro.remove(), 820);
-  };
-
-  if (logoIntro && !reduce) {
-    body.classList.add('intro-active');
-    requestAnimationFrame(() => logoIntro.classList.add('is-ready'));
-    setTimeout(closeLogoIntro, 3000);
-    setTimeout(closeLogoIntro, 2300);
-    logoIntro.addEventListener('click', closeLogoIntro, { once: true });
-  } else if (logoIntro) {
-    logoIntro.remove();
-  }
-
 
 
 

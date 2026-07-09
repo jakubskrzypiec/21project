@@ -1,0 +1,9 @@
+21project — v13 small bounce logo intro
+
+Zmienione:
+- logo intro dużo mniejsze,
+- nowe czyste PNG: intro-logo-21-clean.png,
+- usunięty efekt mask reveal,
+- animacja: logo wskakuje z dołu z małym bounce,
+- potem szybko znika i otwiera stronę,
+- cache CSS/JS: 21seo20.

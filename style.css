@@ -386,7 +386,7 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
 }
 
 
-/* --- 21seo19: premium intro, footer, SEO blocks --- */
+/* --- 21seo20: premium intro, footer, SEO blocks --- */
 .splash{
   background:#050608;
   overflow:hidden;
@@ -635,7 +635,7 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
 }
 
 
-/* --- 21seo19: new cinematic intro, footer mail fix, mobile nav, portfolio live links --- */
+/* --- 21seo20: new cinematic intro, footer mail fix, mobile nav, portfolio live links --- */
 .splash-cinematic{
   background:#050608;
   overflow:hidden;
@@ -918,7 +918,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo19: simple premium intro --- */
+/* --- 21seo20: simple premium intro --- */
 .intro-screen{
   position:fixed;
   inset:0;
@@ -994,7 +994,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo19: kinetic intro + darker full-width footer --- */
+/* --- 21seo20: kinetic intro + darker full-width footer --- */
 
 /* old intro disabled if cached somewhere */
 .intro-screen{display:none !important}
@@ -1274,7 +1274,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo19: mobile menu dark bar, text pushed to edges --- */
+/* --- 21seo20: mobile menu dark bar, text pushed to edges --- */
 @media(max-width:820px){
   .site-header{
     height:78px;
@@ -1429,7 +1429,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo19: intro only homepage + smaller mobile text fix --- */
+/* --- 21seo20: intro only homepage + smaller mobile text fix --- */
 
 /* Na podstronach nie ma intro w HTML, ale ten zapis zabezpiecza cache/stare wersje */
 body:not(.home-page) .intro-kinetic{
@@ -2959,6 +2959,107 @@ body.intro-active{
 
   .intro-logo-loader.is-ready .intro-mask-reveal__line{
     width:92px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .intro-logo-loader{
+    display:none !important;
+  }
+}
+
+
+/* v13: małe czyste logo + bounce z dołu + szybkie zniknięcie */
+body.intro-active{
+  overflow:hidden;
+}
+
+.intro-logo-loader.intro-bounce-logo{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:grid;
+  place-items:center;
+  background:#000;
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition:opacity .42s ease, visibility .42s ease;
+}
+
+/* wyłączenie elementów ze starszych wersji intro */
+.intro-mask-reveal__stage,
+.intro-mask-reveal__line,
+.intro-mask-reveal__logo,
+.intro-mask-reveal__scan{
+  display:none !important;
+}
+
+.intro-bounce-logo__stage{
+  width:min(82px, 13vw);
+  display:grid;
+  place-items:center;
+  opacity:0;
+  transform:translateY(76px) scale(.72);
+  filter:blur(9px);
+  will-change:transform, opacity, filter;
+}
+
+.intro-bounce-logo__stage img{
+  width:100%;
+  height:auto;
+  display:block;
+  filter:
+    drop-shadow(0 0 10px rgba(255,255,255,.10))
+    drop-shadow(0 12px 26px rgba(0,0,0,.55));
+}
+
+.intro-logo-loader.is-ready .intro-bounce-logo__stage{
+  opacity:1;
+  filter:blur(0);
+  animation:introLogoBounceIn 1.05s cubic-bezier(.2,1.35,.34,1) forwards;
+}
+
+.intro-logo-loader.is-done{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.intro-logo-loader.is-done .intro-bounce-logo__stage{
+  opacity:0;
+  transform:translateY(-24px) scale(.86);
+  filter:blur(7px);
+  transition:
+    opacity .18s ease,
+    transform .28s cubic-bezier(.7,0,.84,0),
+    filter .18s ease;
+}
+
+@keyframes introLogoBounceIn{
+  0%{
+    opacity:0;
+    transform:translateY(76px) scale(.72);
+  }
+  48%{
+    opacity:1;
+    transform:translateY(-10px) scale(1.04);
+  }
+  68%{
+    transform:translateY(4px) scale(.985);
+  }
+  84%{
+    transform:translateY(-3px) scale(1.01);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+@media(max-width:560px){
+  .intro-bounce-logo__stage{
+    width:min(66px, 18vw);
   }
 }
 
