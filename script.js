@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (logoIntro && !reduce) {
     body.classList.add('intro-active');
     requestAnimationFrame(() => logoIntro.classList.add('is-ready'));
-    setTimeout(closeLogoIntro, 1650);
-    setTimeout(closeLogoIntro, 2600);
+    setTimeout(closeLogoIntro, 1500);
+    setTimeout(closeLogoIntro, 2300);
     logoIntro.addEventListener('click', closeLogoIntro, { once: true });
   } else if (logoIntro) {
     logoIntro.remove();

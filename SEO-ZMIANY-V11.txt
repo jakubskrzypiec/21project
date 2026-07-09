@@ -1,0 +1,8 @@
+21project — v11 small logo intro
+
+Zmienione:
+- logo w intro zmniejszone z ok. 220px do ok. 124px na desktopie,
+- na telefonie ok. 108px,
+- dodana mała animacja: wejście z dołu, lekki bounce/float, cienka linia pod logo, potem wyjście do góry,
+- czarne tło zostaje,
+- cache CSS/JS: 21seo18.
