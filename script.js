@@ -11,19 +11,19 @@ document.addEventListener('DOMContentLoaded', () => {
     logoIntroClosed = true;
     logoIntro.classList.add('is-done');
     body.classList.remove('intro-active');
-    setTimeout(() => logoIntro.remove(), 520);
+    setTimeout(() => logoIntro.remove(), 1350);
   };
 
   if (logoIntro && !reduce) {
     body.classList.add('intro-active');
     requestAnimationFrame(() => logoIntro.classList.add('is-ready'));
-    setTimeout(closeLogoIntro, 1450);
-    setTimeout(closeLogoIntro, 2200);
-    window.addEventListener('load', () => setTimeout(closeLogoIntro, 250), { once: true });
+    setTimeout(closeLogoIntro, 2450);
+    setTimeout(closeLogoIntro, 4200);
     logoIntro.addEventListener('click', closeLogoIntro, { once: true });
   } else if (logoIntro) {
     logoIntro.remove();
   }
+
 
 
 

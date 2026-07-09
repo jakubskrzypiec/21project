@@ -1,0 +1,9 @@
+21project — v15 intro hold + exit animation
+
+Zmienione:
+- logo nie znika już od razu,
+- po wskoczeniu zostaje około 1 sekundę,
+- potem ma animację znikania: lekki ruch do góry, scale, blur i fade,
+- overlay znika po animacji,
+- zostaje awaryjne zamknięcie, żeby intro nie mogło zablokować strony,
+- cache CSS/JS: 21seo22.
