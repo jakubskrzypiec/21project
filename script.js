@@ -3,21 +3,24 @@ document.addEventListener('DOMContentLoaded', () => {
   body.classList.add('js');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const intro = document.querySelector('.intro-kinetic');
-  const closeIntro = () => {
-    if (!intro) return;
-    intro.classList.add('is-done');
-    body.classList.remove('is-loading');
-    setTimeout(() => intro.remove(), 950);
+  const logoIntro = document.querySelector('.intro-logo-loader');
+  const closeLogoIntro = () => {
+    if (!logoIntro) return;
+    logoIntro.classList.add('is-done');
+    body.classList.remove('intro-active');
+    setTimeout(() => logoIntro.remove(), 720);
   };
-  if (intro && !reduce) {
-    body.classList.add('is-loading');
-    requestAnimationFrame(() => intro.classList.add('is-ready'));
-    setTimeout(closeIntro, 2000);
-    intro.addEventListener('click', closeIntro, { once: true });
-  } else if (intro) {
-    intro.remove();
+
+  if (logoIntro && !reduce) {
+    body.classList.add('intro-active');
+    requestAnimationFrame(() => logoIntro.classList.add('is-ready'));
+    setTimeout(closeLogoIntro, 1650);
+    setTimeout(closeLogoIntro, 2600);
+    logoIntro.addEventListener('click', closeLogoIntro, { once: true });
+  } else if (logoIntro) {
+    logoIntro.remove();
   }
+
 
 
 

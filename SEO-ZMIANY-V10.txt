@@ -1,0 +1,12 @@
+21project — v10 logo jump intro
+
+Zmienione:
+- dodane intro wejścia na stronie głównej,
+- czarne tło na cały ekran,
+- użyte logo.png z projektu,
+- logo zostało powiększone do pliku intro-logo-21.png,
+- animacja: logo wskakuje na środek, chwilę zostaje, wyskakuje i otwiera stronę,
+- bez kratek, bez tekstów, bez abstrakcyjnych ramek,
+- cache CSS/JS: 21seo17.
+
+Reszta SEO, podstron i sitemap zostaje bez zmian.

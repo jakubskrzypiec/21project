@@ -1,0 +1,13 @@
+21project — v8 no intro clean
+
+Zmiana:
+- usunięta pełnoekranowa animacja wejścia,
+- zamiast tego jest subtelne wejście strony:
+  - header lekko wchodzi z góry,
+  - hero delikatnie się pojawia,
+  - tekst ma mały fade/blur,
+  - cienka linia przed tekstem,
+- brak loga, brak kratek, brak czarnego overlayu,
+- cache CSS/JS: 21seo15.
+
+To jest bezpieczniejszy, bardziej premium kierunek niż pełnoekranowy loader.

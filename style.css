@@ -386,7 +386,7 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
 }
 
 
-/* --- 21seo14: premium intro, footer, SEO blocks --- */
+/* --- 21seo17: premium intro, footer, SEO blocks --- */
 .splash{
   background:#050608;
   overflow:hidden;
@@ -635,7 +635,7 @@ body.js .is-visible{opacity:1;transform:translateY(0)}
 }
 
 
-/* --- 21seo14: new cinematic intro, footer mail fix, mobile nav, portfolio live links --- */
+/* --- 21seo17: new cinematic intro, footer mail fix, mobile nav, portfolio live links --- */
 .splash-cinematic{
   background:#050608;
   overflow:hidden;
@@ -918,7 +918,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo14: simple premium intro --- */
+/* --- 21seo17: simple premium intro --- */
 .intro-screen{
   position:fixed;
   inset:0;
@@ -994,7 +994,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo14: kinetic intro + darker full-width footer --- */
+/* --- 21seo17: kinetic intro + darker full-width footer --- */
 
 /* old intro disabled if cached somewhere */
 .intro-screen{display:none !important}
@@ -1274,7 +1274,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo14: mobile menu dark bar, text pushed to edges --- */
+/* --- 21seo17: mobile menu dark bar, text pushed to edges --- */
 @media(max-width:820px){
   .site-header{
     height:78px;
@@ -1429,7 +1429,7 @@ body.is-loading{overflow:auto}
 }
 
 
-/* --- 21seo14: intro only homepage + smaller mobile text fix --- */
+/* --- 21seo17: intro only homepage + smaller mobile text fix --- */
 
 /* Na podstronach nie ma intro w HTML, ale ten zapis zabezpiecza cache/stare wersje */
 body:not(.home-page) .intro-kinetic{
@@ -2572,4 +2572,145 @@ body:not(.home-page) .intro-kinetic{
     width:min(270px, 72vw);
   }
   .intro-dot{ width:7px; height:7px; }
+}
+
+
+/* v8: bez pełnoekranowego intro — clean page reveal */
+.intro-kinetic{
+  display:none !important;
+}
+
+body.home-page .site-header{
+  opacity:0;
+  transform:translateY(-14px);
+  animation:pageHeaderIn .7s cubic-bezier(.22,1,.36,1) .12s forwards;
+}
+
+body.home-page .hero-bg,
+body.home-page .hero-grid-overlay{
+  opacity:0;
+  transform:scale(1.018);
+  animation:pageHeroMediaIn 1.05s cubic-bezier(.22,1,.36,1) .04s forwards;
+}
+
+body.home-page .hero-content{
+  opacity:0;
+  transform:translateY(22px);
+  filter:blur(8px);
+  animation:pageHeroCopyIn .85s cubic-bezier(.22,1,.36,1) .28s forwards;
+}
+
+body.home-page .hero-content::before{
+  content:"";
+  display:block;
+  width:0;
+  height:1px;
+  margin-bottom:22px;
+  background:linear-gradient(90deg, rgba(143,183,255,.95), rgba(248,251,255,.45), transparent);
+  animation:pageHeroLineIn .78s cubic-bezier(.22,1,.36,1) .48s forwards;
+}
+
+@keyframes pageHeaderIn{
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes pageHeroMediaIn{
+  to{opacity:1;transform:scale(1)}
+}
+@keyframes pageHeroCopyIn{
+  to{opacity:1;transform:translateY(0);filter:blur(0)}
+}
+@keyframes pageHeroLineIn{
+  to{width:132px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  body.home-page .site-header,
+  body.home-page .hero-bg,
+  body.home-page .hero-grid-overlay,
+  body.home-page .hero-content{
+    opacity:1 !important;
+    transform:none !important;
+    filter:none !important;
+    animation:none !important;
+  }
+  body.home-page .hero-content::before{
+    width:132px !important;
+    animation:none !important;
+  }
+}
+
+
+/* v10: intro z logo 21 — czarne tło, jump in / jump out */
+body.intro-active{
+  overflow:hidden;
+}
+
+.intro-logo-loader{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:grid;
+  place-items:center;
+  background:#000;
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition:opacity .62s ease, visibility .62s ease;
+}
+
+.intro-logo-loader__inner{
+  width:min(220px, 38vw);
+  display:grid;
+  place-items:center;
+  opacity:0;
+  transform:translateY(34px) scale(.78);
+  filter:blur(10px);
+  transition:
+    opacity .38s ease,
+    transform .88s cubic-bezier(.18, 1.45, .32, 1),
+    filter .7s ease;
+}
+
+.intro-logo-loader__inner img{
+  width:100%;
+  height:auto;
+  display:block;
+  filter:
+    drop-shadow(0 0 18px rgba(255,255,255,.16))
+    drop-shadow(0 18px 38px rgba(0,0,0,.45));
+  transform:translateZ(0);
+}
+
+.intro-logo-loader.is-ready .intro-logo-loader__inner{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  filter:blur(0);
+}
+
+.intro-logo-loader.is-done{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.intro-logo-loader.is-done .intro-logo-loader__inner{
+  opacity:0;
+  transform:translateY(-32px) scale(.82);
+  filter:blur(8px);
+  transition:
+    opacity .34s ease,
+    transform .58s cubic-bezier(.7, 0, .84, 0),
+    filter .34s ease;
+}
+
+@media (max-width:560px){
+  .intro-logo-loader__inner{
+    width:min(180px, 44vw);
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .intro-logo-loader{
+    display:none !important;
+  }
 }
