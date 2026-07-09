@@ -8,13 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!logoIntro) return;
     logoIntro.classList.add('is-done');
     body.classList.remove('intro-active');
-    setTimeout(() => logoIntro.remove(), 720);
+    setTimeout(() => logoIntro.remove(), 820);
   };
 
   if (logoIntro && !reduce) {
     body.classList.add('intro-active');
     requestAnimationFrame(() => logoIntro.classList.add('is-ready'));
-    setTimeout(closeLogoIntro, 1500);
+    setTimeout(closeLogoIntro, 3000);
     setTimeout(closeLogoIntro, 2300);
     logoIntro.addEventListener('click', closeLogoIntro, { once: true });
   } else if (logoIntro) {

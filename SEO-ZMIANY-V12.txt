@@ -1,0 +1,9 @@
+21project — v12 mask reveal intro
+
+Zmienione:
+- intro z logo + maską reveal,
+- czarne tło,
+- logo odsłania się przechodzącym światłem/maską,
+- po odsłonięciu pojawia się cienka linia,
+- całość delikatnie trzyma moment i znika,
+- cache CSS/JS: 21seo19.
