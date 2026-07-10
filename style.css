@@ -4276,3 +4276,265 @@ h1, h2, h3{
 .home-funnel__card:hover .home-funnel__arrow{transform:translate(4px,-4px)}
 @media(max-width:960px){.home-funnel__head{grid-template-columns:1fr;align-items:start}.home-funnel__grid{grid-template-columns:1fr}.home-funnel__card{min-height:260px}.home-funnel__card h3{max-width:none}}
 @media(max-width:560px){.home-funnel{padding:64px 0}.home-funnel__head h2{font-size:clamp(42px,13vw,64px)}.home-funnel__card{min-height:235px;padding:24px 20px}.home-funnel__arrow{right:20px;top:20px}}
+
+
+/* v21: FINAL INTRO — lekkie, premium, bez bitmapowego logo i bez lagów */
+body.intro-active{
+  overflow:hidden !important;
+}
+
+.intro-21studio{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  background:#050607;
+  color:#f5f7fa;
+  pointer-events:auto;
+  transform:translate3d(0,0,0);
+  will-change:transform;
+  transition:transform .86s cubic-bezier(.76,0,.24,1);
+}
+
+.intro-21studio__content{
+  width:min(260px, 68vw);
+  display:grid;
+  justify-items:center;
+  text-align:center;
+  opacity:0;
+  transform:translate3d(0,18px,0);
+  will-change:transform, opacity;
+  transition:
+    opacity .42s ease,
+    transform .62s cubic-bezier(.22,1,.36,1);
+}
+
+.intro-21studio__number{
+  font-family:var(--display, "Inter Tight", sans-serif);
+  font-size:clamp(72px, 8vw, 116px);
+  font-weight:900;
+  line-height:.76;
+  letter-spacing:-.105em;
+  transform:translateX(-.045em);
+}
+
+.intro-21studio__line{
+  width:100%;
+  height:1px;
+  margin-top:24px;
+  background:rgba(255,255,255,.42);
+  transform:scaleX(0);
+  transform-origin:left center;
+  will-change:transform;
+  transition:transform .62s cubic-bezier(.22,1,.36,1) .24s;
+}
+
+.intro-21studio__label{
+  margin-top:13px;
+  font-family:var(--body, "Inter", sans-serif);
+  font-size:10px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.28em;
+  color:rgba(255,255,255,.55);
+  opacity:0;
+  transform:translate3d(0,7px,0);
+  will-change:transform, opacity;
+  transition:
+    opacity .34s ease .42s,
+    transform .42s ease .42s;
+}
+
+.intro-21studio.is-visible .intro-21studio__content{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+
+.intro-21studio.is-visible .intro-21studio__line{
+  transform:scaleX(1);
+}
+
+.intro-21studio.is-visible .intro-21studio__label{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+
+/* Wyjście: cały czarny ekran odjeżdża do góry i odsłania stronę */
+.intro-21studio.is-leaving{
+  transform:translate3d(0,-100%,0);
+  pointer-events:none;
+}
+
+.intro-21studio.is-leaving .intro-21studio__content{
+  opacity:.92;
+  transform:translate3d(0,12px,0);
+  transition-duration:.36s;
+}
+
+@media(max-width:560px){
+  .intro-21studio__content{
+    width:min(210px, 64vw);
+  }
+
+  .intro-21studio__number{
+    font-size:clamp(68px, 24vw, 92px);
+  }
+
+  .intro-21studio__line{
+    margin-top:20px;
+  }
+
+  .intro-21studio__label{
+    font-size:8px;
+    letter-spacing:.24em;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .intro-21studio{
+    display:none !important;
+  }
+}
+
+/* Ostatecznie wyłącz stare wersje intro, gdyby przeglądarka trzymała stary HTML/CSS */
+.intro-curtain,
+.intro-logo-loader,
+.intro-kinetic,
+.intro-21,
+.intro-bounce-logo{
+  display:none;
+}
+
+
+/* v22: liniowy lejek sprzedażowy — prosty pasek blue/black */
+.home-funnel{
+  display:none !important;
+}
+
+.journey-step{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg, rgba(83,148,255,.18), rgba(83,148,255,0) 42%),
+    #07090c;
+  color:#f7f9fc;
+  border-top:1px solid rgba(118,166,255,.22);
+  border-bottom:1px solid rgba(118,166,255,.18);
+}
+
+.journey-step::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:5px;
+  background:#79a8ff;
+}
+
+.journey-step__inner{
+  min-height:118px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:32px;
+}
+
+.journey-step__meta{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  flex:0 0 auto;
+}
+
+.journey-step__meta > span{
+  color:#82adff;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.18em;
+}
+
+.journey-step__meta p{
+  margin:0;
+  color:rgba(247,249,252,.62);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+}
+
+.journey-step__link{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:18px;
+  min-width:0;
+  color:#fff;
+  font-family:var(--display);
+  font-size:clamp(28px, 3.6vw, 54px);
+  font-weight:900;
+  line-height:.95;
+  letter-spacing:-.055em;
+  text-decoration:none;
+  transition:transform .28s ease, color .28s ease;
+}
+
+.journey-step__link:hover{
+  transform:translateX(8px);
+  color:#8db5ff;
+}
+
+.journey-step__arrow{
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  width:52px;
+  height:52px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:50%;
+  font-family:var(--body);
+  font-size:20px;
+  font-weight:500;
+  transition:background .28s ease, border-color .28s ease;
+}
+
+.journey-step__link:hover .journey-step__arrow{
+  background:#79a8ff;
+  border-color:#79a8ff;
+  color:#07090c;
+}
+
+.journey-step--portfolio{
+  margin-top:0;
+}
+
+.journey-step--offer{
+  margin-top:0;
+}
+
+@media(max-width:760px){
+  .journey-step__inner{
+    min-height:104px;
+    align-items:flex-start;
+    flex-direction:column;
+    justify-content:center;
+    gap:14px;
+    padding-top:22px;
+    padding-bottom:22px;
+  }
+
+  .journey-step__meta{
+    gap:12px;
+  }
+
+  .journey-step__link{
+    width:100%;
+    justify-content:space-between;
+    font-size:clamp(28px, 9vw, 42px);
+  }
+
+  .journey-step__arrow{
+    width:44px;
+    height:44px;
+  }
+}

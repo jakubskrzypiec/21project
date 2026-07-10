@@ -1,0 +1,28 @@
+21project — v22 prosty lejek sprzedażowy
+
+Usunięte:
+- stary kafelkowy lejek ze strony głównej.
+
+Dodane:
+1. Pod hero na stronie głównej:
+   Pierwszy krok → Zobacz portfolio
+
+2. Na stronie portfolio:
+   Następny krok → Zobacz ofertę
+
+3. Na stronie oferty:
+   Następny krok → Przejdź do kontaktu
+
+Styl:
+- czarno-niebieski pasek,
+- bez kart i przekombinowanych sekcji,
+- prosty kierunek użytkownika przez stronę,
+- mobile dopracowany.
+
+Wgraj i podmień tylko:
+- index.html
+- realizacje.html
+- oferta.html
+- style.css
+
+Cache CSS: 21seo29
