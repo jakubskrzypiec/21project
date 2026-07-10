@@ -1,0 +1,19 @@
+21project — v23 awaryjna naprawa intro
+
+Problem:
+- w poprzedniej paczce był nowy index.html i style.css, ale brakowało script.js,
+- stary skrypt nie usuwał nowego intro, dlatego zostawał czarny ekran.
+
+Naprawa:
+- intro działa teraz samo przez CSS,
+- nawet bez JavaScript automatycznie odsłania stronę,
+- dodatkowy fail-safe w index.html usuwa overlay,
+- script.js także sprząta intro,
+- kliknięcie pomija animację.
+
+Podmień wszystkie 3 pliki:
+- index.html
+- style.css
+- script.js
+
+Cache: 21seo30

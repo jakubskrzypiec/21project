@@ -3,34 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
   body.classList.add('js');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const curtainIntro = document.querySelector('.intro-curtain');
-  let curtainIntroClosed = false;
-
-  const closeCurtainIntro = () => {
-    if (!curtainIntro || curtainIntroClosed) return;
-    curtainIntroClosed = true;
-    curtainIntro.classList.add('is-done');
-    body.classList.remove('intro-active');
-    setTimeout(() => curtainIntro.remove(), 950);
-  };
-
-  if (curtainIntro && !reduce) {
-    body.classList.add('intro-active');
-    requestAnimationFrame(() => curtainIntro.classList.add('is-ready'));
-    setTimeout(closeCurtainIntro, 1550);
-    setTimeout(closeCurtainIntro, 2800);
-    curtainIntro.addEventListener('click', closeCurtainIntro, { once: true });
-  } else if (curtainIntro) {
-    curtainIntro.remove();
+  const studioIntro = document.querySelector('.intro-21studio');
+  if (studioIntro) {
+    const removeStudioIntro = () => {
+      studioIntro.remove();
+      body.classList.remove('intro-active');
+    };
+    studioIntro.addEventListener('click', removeStudioIntro, { once: true });
+    window.setTimeout(removeStudioIntro, 2450);
   }
 
-
-
-
-
-
-
-  const phrases = [
+const phrases = [
     'wygląda lepiej niż konkurencja.',
     'prowadzi klienta do kontaktu.',
     'buduje zaufanie od pierwszego ekranu.'

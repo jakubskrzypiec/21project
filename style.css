@@ -4538,3 +4538,57 @@ body.intro-active{
     height:44px;
   }
 }
+
+
+/* v23: intro niezależne od JS — nie może zablokować strony */
+.intro-21studio{
+  animation:introSafeExit 2.2s cubic-bezier(.76,0,.24,1) forwards !important;
+}
+
+.intro-21studio__content{
+  animation:introSafeContent .62s cubic-bezier(.22,1,.36,1) .08s forwards !important;
+}
+
+.intro-21studio__line{
+  animation:introSafeLine .58s cubic-bezier(.22,1,.36,1) .32s forwards !important;
+}
+
+.intro-21studio__label{
+  animation:introSafeLabel .38s ease .48s forwards !important;
+}
+
+@keyframes introSafeContent{
+  from{opacity:0;transform:translate3d(0,18px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+
+@keyframes introSafeLine{
+  from{transform:scaleX(0)}
+  to{transform:scaleX(1)}
+}
+
+@keyframes introSafeLabel{
+  from{opacity:0;transform:translate3d(0,7px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+
+@keyframes introSafeExit{
+  0%,58%{
+    transform:translate3d(0,0,0);
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
+  99%{
+    transform:translate3d(0,-100%,0);
+    opacity:1;
+    visibility:visible;
+    pointer-events:none;
+  }
+  100%{
+    transform:translate3d(0,-100%,0);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+  }
+}
