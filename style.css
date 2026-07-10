@@ -4592,3 +4592,82 @@ body.intro-active{
     pointer-events:none;
   }
 }
+
+
+/* v24: FINAL minimalistyczny pasek lejka */
+.journey-step{
+  background:#0b0d10 !important;
+  color:#f4f6f8 !important;
+  border-top:1px solid rgba(255,255,255,.08) !important;
+  border-bottom:1px solid rgba(255,255,255,.08) !important;
+}
+
+.journey-step::before{
+  width:2px !important;
+  background:rgba(142,181,255,.62) !important;
+}
+
+.journey-step__inner{
+  min-height:86px !important;
+  gap:24px !important;
+}
+
+.journey-step__meta{
+  gap:12px !important;
+}
+
+.journey-step__meta > span{
+  color:rgba(142,181,255,.84) !important;
+  font-size:10px !important;
+  letter-spacing:.16em !important;
+}
+
+.journey-step__meta p{
+  color:rgba(244,246,248,.48) !important;
+  font-size:9px !important;
+  letter-spacing:.18em !important;
+}
+
+.journey-step__link{
+  gap:14px !important;
+  font-size:clamp(22px, 2.3vw, 34px) !important;
+  line-height:1 !important;
+  letter-spacing:-.045em !important;
+  color:#f4f6f8 !important;
+}
+
+.journey-step__link:hover{
+  transform:translateX(4px) !important;
+  color:#a8c5ff !important;
+}
+
+.journey-step__arrow{
+  width:38px !important;
+  height:38px !important;
+  border-color:rgba(255,255,255,.13) !important;
+  font-size:15px !important;
+}
+
+.journey-step__link:hover .journey-step__arrow{
+  background:rgba(142,181,255,.12) !important;
+  border-color:rgba(142,181,255,.36) !important;
+  color:#c9dcff !important;
+}
+
+@media(max-width:760px){
+  .journey-step__inner{
+    min-height:82px !important;
+    padding-top:17px !important;
+    padding-bottom:17px !important;
+    gap:10px !important;
+  }
+
+  .journey-step__link{
+    font-size:clamp(24px, 8vw, 32px) !important;
+  }
+
+  .journey-step__arrow{
+    width:36px !important;
+    height:36px !important;
+  }
+}

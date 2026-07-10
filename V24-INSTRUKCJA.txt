@@ -1,0 +1,17 @@
+21project — v24 final minimalistyczny pasek
+
+Zmiany:
+- neutralny grafitowo-czarny kolor, żeby pasek zlewał się na każdej podstronie,
+- mniejszy tekst,
+- niższy pasek,
+- cieńszy akcent niebieski,
+- subtelniejsza strzałka i hover,
+- układ desktop/mobile bez zmian funkcjonalnych.
+
+Podmień:
+- index.html
+- realizacje.html
+- oferta.html
+- style.css
+
+Cache CSS: 21seo31
