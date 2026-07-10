@@ -3894,3 +3894,349 @@ body.intro-active{
     padding:24px 20px;
   }
 }
+
+
+/* v19: całościowy audyt layoutu — proporcje, overlap, szerokości */
+html, body{
+  max-width:100%;
+  overflow-x:clip;
+}
+body{
+  width:100%;
+}
+.site-header,
+main,
+.footer,
+section{
+  max-width:100%;
+}
+.shell,
+.shell > *,
+.grid,
+[class*="-grid"],
+[class*="-split"],
+[class*="-layout"]{
+  min-width:0;
+}
+img, svg, video, canvas{
+  max-width:100%;
+}
+h1, h2, h3{
+  text-wrap:balance;
+}
+.hero,
+.footer,
+.case-hero,
+.page-hero,
+.knowledge-hero,
+.seo-landing-hero,
+.offer-hero-wide{
+  overflow:hidden;
+}
+
+/* Case studies — fix ekranu/mockupu nachodzącego na wielki tytuł */
+.case-hero{
+  padding-top:clamp(118px, 11vw, 154px) !important;
+  padding-bottom:clamp(56px, 7vw, 86px) !important;
+}
+.case-grid{
+  grid-template-columns:minmax(0, .98fr) minmax(340px, .78fr) !important;
+  gap:clamp(34px, 5.2vw, 76px) !important;
+  align-items:center !important;
+}
+.case-grid > *{
+  min-width:0 !important;
+}
+.case-grid h1{
+  max-width:8.4ch !important;
+  font-size:clamp(48px, 5.25vw, 86px) !important;
+  line-height:.9 !important;
+  letter-spacing:-.067em !important;
+}
+.case-seo-hero .lead{
+  max-width:600px !important;
+  font-size:clamp(17px, 1.38vw, 21px) !important;
+  line-height:1.58 !important;
+}
+.case-seo-meta{
+  max-width:640px;
+}
+.case-seo-hero .devices{
+  justify-self:end !important;
+  width:100% !important;
+  max-width:540px !important;
+  min-height:clamp(318px, 32vw, 430px) !important;
+  padding:clamp(18px, 2.1vw, 28px) !important;
+  border-radius:28px !important;
+}
+.case-seo-hero .desktop-frame{
+  left:clamp(18px, 2vw, 28px) !important;
+  top:clamp(22px, 2.6vw, 36px) !important;
+  width:73% !important;
+  border-width:clamp(6px, .7vw, 9px) !important;
+}
+.case-seo-hero .phone-frame{
+  right:clamp(14px, 2vw, 28px) !important;
+  bottom:clamp(16px, 2vw, 24px) !important;
+  width:22% !important;
+  border-width:clamp(5px, .65vw, 8px) !important;
+}
+
+/* Hero / split layouts — wcześniejsze przejście na 1 kolumnę, zanim zacznie się ścisk */
+.page-hero-grid,
+.seo-hero-grid,
+.knowledge-hero-grid,
+.offer-hero-wide .edge-split,
+.edge-split,
+.intro-layout,
+.why-layout,
+.process-split,
+.cta-grid,
+.contact-page-grid{
+  min-width:0 !important;
+}
+.page-hero h1{
+  font-size:clamp(52px, 7vw, 108px) !important;
+  line-height:.88 !important;
+  max-width:11ch !important;
+}
+.seo-hero-copy h1{
+  font-size:clamp(44px, 6.4vw, 84px) !important;
+  line-height:.94 !important;
+  max-width:820px !important;
+}
+.knowledge-hero h1{
+  font-size:clamp(48px, 7.4vw, 110px) !important;
+  line-height:.88 !important;
+  max-width:1050px !important;
+}
+.offer-hero-wide h1{
+  font-size:clamp(48px, 6.4vw, 104px) !important;
+  max-width:760px !important;
+}
+.edge-copy h2,
+.process-redesign .edge-copy h2{
+  font-size:clamp(42px, 5.4vw, 88px) !important;
+  max-width:820px !important;
+}
+
+/* Portfolio cards */
+.work-card,
+.work-card:nth-child(even){
+  overflow:hidden;
+}
+.work-copy,
+.work-copy h2,
+.work-copy p{
+  min-width:0;
+}
+.work-copy h2{
+  font-size:clamp(38px, 4.6vw, 72px) !important;
+  line-height:.94 !important;
+}
+
+/* SEO process — dodatkowe zabezpieczenie przed nachodzeniem */
+.seo-process-grid{
+  grid-template-columns:minmax(0, .46fr) minmax(0, 1.54fr) !important;
+  gap:clamp(44px, 6vw, 92px) !important;
+}
+.seo-process-grid .section-head{
+  max-width:390px !important;
+}
+.seo-process-grid .section-head h2{
+  max-width:7.4ch !important;
+  font-size:clamp(40px, 3.7vw, 60px) !important;
+}
+.seo-steps article h3{
+  font-size:clamp(23px, 1.9vw, 32px) !important;
+}
+
+/* Footer — koniec z uciekającym mailem poza ekran */
+.footer-main{
+  grid-template-columns:minmax(0, .95fr) minmax(150px, .32fr) minmax(0, .62fr) !important;
+  gap:clamp(24px, 4.3vw, 76px) !important;
+}
+.footer-brand,
+.footer-nav,
+.footer-contact{
+  min-width:0 !important;
+  max-width:100% !important;
+}
+.footer-contact{
+  justify-self:end !important;
+}
+.footer-contact .footer-mail{
+  max-width:min(100%, 260px) !important;
+  font-size:clamp(13px, .98vw, 17px) !important;
+  line-height:1.08 !important;
+  letter-spacing:-.025em !important;
+  overflow-wrap:anywhere !important;
+  word-break:break-word !important;
+}
+.footer-contact .footer-mail span{
+  max-width:100% !important;
+}
+.footer-contact .footer-phone{
+  font-size:clamp(21px, 1.8vw, 34px) !important;
+}
+
+/* Mail i telefon w sekcjach CTA */
+.contact-lines{
+  min-width:0 !important;
+  max-width:100% !important;
+}
+.contact-lines .footer-mail{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-end !important;
+  width:100% !important;
+  max-width:100% !important;
+  font-size:clamp(20px, 2.25vw, 34px) !important;
+  line-height:1.08 !important;
+  overflow-wrap:anywhere !important;
+  word-break:break-word !important;
+  text-align:right !important;
+}
+.contact-lines .footer-mail span{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  overflow-wrap:anywhere !important;
+  word-break:break-word !important;
+  white-space:normal !important;
+}
+.contact-lines .footer-phone{
+  max-width:100% !important;
+  font-size:clamp(22px, 2.5vw, 36px) !important;
+  overflow-wrap:anywhere !important;
+}
+
+/* Footer mail hard clamp */
+.footer-contact .footer-mail{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-end !important;
+  width:min(100%, 260px) !important;
+  max-width:100% !important;
+  margin-left:auto !important;
+  text-align:right !important;
+}
+.footer-contact .footer-mail span{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  overflow-wrap:anywhere !important;
+  word-break:break-word !important;
+  white-space:normal !important;
+  text-align:inherit !important;
+}
+
+/* Breakpointy tabletowe — stack zanim elementy zaczną na siebie wchodzić */
+@media(max-width:1180px){
+  .case-grid{
+    grid-template-columns:1fr !important;
+    gap:34px !important;
+    align-items:start !important;
+  }
+  .case-grid h1{
+    max-width:11ch !important;
+    font-size:clamp(46px, 8vw, 76px) !important;
+  }
+  .case-seo-hero .lead{
+    max-width:760px !important;
+  }
+  .case-seo-hero .devices{
+    justify-self:start !important;
+    max-width:720px !important;
+    min-height:clamp(360px, 52vw, 460px) !important;
+  }
+  .page-hero-grid,
+  .seo-hero-grid,
+  .knowledge-hero-grid,
+  .offer-hero-wide .edge-split,
+  .edge-split,
+  .intro-layout,
+  .why-layout,
+  .process-split,
+  .cta-grid,
+  .contact-page-grid{
+    grid-template-columns:1fr !important;
+  }
+  .seo-process-grid{
+    grid-template-columns:1fr !important;
+  }
+  .seo-process-grid .section-head{
+    max-width:760px !important;
+  }
+  .seo-process-grid .section-head h2{
+    max-width:none !important;
+    font-size:clamp(44px, 8vw, 72px) !important;
+  }
+  .footer-main{
+    grid-template-columns:1fr !important;
+  }
+  .footer-contact{
+    justify-self:start !important;
+    text-align:left !important;
+    align-items:start !important;
+  }
+  .footer-contact .footer-mail{
+    max-width:100% !important;
+    font-size:18px !important;
+    align-items:flex-start !important;
+    margin-left:0 !important;
+    text-align:left !important;
+  }
+  .contact-lines .footer-mail{
+    align-items:flex-start !important;
+    text-align:left !important;
+  }
+}
+@media(max-width:720px){
+  .case-hero{
+    padding-top:112px !important;
+  }
+  .case-grid h1,
+  .page-hero h1,
+  .knowledge-hero h1{
+    font-size:clamp(40px, 13vw, 62px) !important;
+    line-height:.92 !important;
+    letter-spacing:-.055em !important;
+    max-width:100% !important;
+  }
+  .case-seo-hero .devices{
+    min-height:330px !important;
+    border-radius:22px !important;
+  }
+  .case-seo-hero .desktop-frame{
+    width:78% !important;
+  }
+  .case-seo-hero .phone-frame{
+    width:26% !important;
+  }
+  .work-copy h2,
+  .edge-copy h2,
+  .process-redesign .edge-copy h2{
+    font-size:clamp(34px, 11vw, 52px) !important;
+  }
+}
+@media(max-width:430px){
+  .case-seo-hero .devices{
+    min-height:285px !important;
+    padding:14px !important;
+  }
+  .case-seo-hero .desktop-frame{
+    left:14px !important;
+    top:18px !important;
+    width:79% !important;
+    border-width:5px !important;
+    border-radius:16px !important;
+  }
+  .case-seo-hero .phone-frame{
+    right:12px !important;
+    bottom:16px !important;
+    width:28% !important;
+    border-width:5px !important;
+    border-radius:20px !important;
+  }
+}

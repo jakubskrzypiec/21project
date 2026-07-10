@@ -1,0 +1,31 @@
+21project — v19 layout audit / patch
+
+To jest lekka paczka naprawcza. Zawiera tylko pliki potrzebne do poprawy layoutu:
+- style.css
+- wszystkie pliki HTML z podbitym cache CSS do 21seo26
+- ten plik instrukcyjny
+
+Nie zawiera obrazków, logo ani script.js, bo nie były zmieniane.
+
+Co poprawione:
+- case studies: mockup ekranu nie nachodzi już na duże tytuły,
+- lepsze proporcje hero w case studies,
+- wcześniejsze przechodzenie układów 2-kolumnowych na 1 kolumnę,
+- zabezpieczenie sekcji procesu przed nachodzeniem tekstu,
+- poprawione szerokości dużych nagłówków,
+- poprawiony footer i sekcje CTA z mailem/telefonem,
+- usunięte ryzyko poziomego scrolla przez zbyt szerokie elementy.
+
+Jak wgrać:
+1. Wgraj / podmień pliki z tej paczki w głównym folderze repozytorium.
+2. Nie usuwaj istniejących obrazków i pozostałych plików z repo.
+3. Po deployu sprawdź:
+   - case-cos.html
+   - case-paniprojekt.html
+   - case-msremonty.html
+   - case-glamstudio.html
+   - oferta.html
+   - realizacje.html
+   - blog.html
+
+Cache CSS: 21seo26
