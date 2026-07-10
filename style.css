@@ -4240,3 +4240,39 @@ h1, h2, h3{
     border-radius:20px !important;
   }
 }
+
+
+/* v20: bezpieczny proces na podstronach SEO */
+.seo-process-safe{background:#dfe8f0;overflow:hidden}
+.seo-process-safe__head{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.7fr);gap:clamp(28px,6vw,88px);align-items:end;padding-bottom:clamp(34px,5vw,62px);border-bottom:1px solid var(--line)}
+.seo-process-safe__head>div,.seo-process-safe__head>p{min-width:0}
+.seo-process-safe__head h2{margin-top:16px;max-width:760px;font-family:var(--display);font-size:clamp(46px,6.4vw,94px);line-height:.9;letter-spacing:-.067em;text-wrap:balance}
+.seo-process-safe__head>p{max-width:520px;color:var(--muted);font-size:clamp(16px,1.45vw,19px);line-height:1.75}
+.seo-process-safe__steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-left:1px solid var(--line)}
+.seo-process-safe__steps article{min-width:0;min-height:300px;padding:clamp(24px,3vw,38px);border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;gap:42px;background:rgba(255,255,255,.14)}
+.seo-process-safe__steps article span{font-size:13px;font-weight:900;letter-spacing:.16em;color:var(--accent)}
+.seo-process-safe__steps article div{min-width:0}
+.seo-process-safe__steps article h3{font-size:clamp(25px,2.5vw,38px);line-height:1;letter-spacing:-.045em;overflow-wrap:normal;word-break:normal}
+.seo-process-safe__steps article p{margin-top:16px;color:var(--muted);font-size:16px;line-height:1.72;overflow-wrap:break-word}
+@media(max-width:900px){.seo-process-safe__head{grid-template-columns:1fr;align-items:start}.seo-process-safe__head h2{font-size:clamp(44px,10vw,72px)}.seo-process-safe__steps{grid-template-columns:1fr}.seo-process-safe__steps article{min-height:auto;gap:26px}}
+@media(max-width:560px){.seo-process-safe__head h2{font-size:clamp(40px,13vw,58px)}.seo-process-safe__steps article{padding:24px 20px}.seo-process-safe__steps article h3{font-size:28px}}
+
+/* v20: lejek sprzedażowy bezpośrednio pod hero */
+.home-funnel{position:relative;padding:clamp(72px,8vw,112px) 0;background:#07090c;color:#f8fbff;overflow:hidden}
+.home-funnel:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 15%,rgba(102,164,255,.14),transparent 34%);pointer-events:none}
+.home-funnel__head{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.55fr);gap:clamp(30px,6vw,90px);align-items:end;margin-bottom:clamp(38px,5vw,64px)}
+.home-funnel__head>div,.home-funnel__head>p{min-width:0}
+.home-funnel__head h2{margin-top:18px;max-width:980px;font-family:var(--display);font-size:clamp(46px,6.8vw,102px);line-height:.89;letter-spacing:-.07em}
+.home-funnel__head>p{max-width:520px;color:rgba(248,251,255,.66);font-size:clamp(16px,1.45vw,19px);line-height:1.75}
+.home-funnel__grid{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid rgba(255,255,255,.14);border-left:1px solid rgba(255,255,255,.14)}
+.home-funnel__card{position:relative;min-width:0;min-height:330px;padding:clamp(24px,3vw,38px);border-right:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14);color:#f8fbff;display:flex;flex-direction:column;justify-content:space-between;gap:38px;background:rgba(255,255,255,.018);transition:background .25s ease,transform .25s ease}
+.home-funnel__card:hover{background:rgba(255,255,255,.06);transform:translateY(-4px)}
+.home-funnel__card--accent{background:linear-gradient(145deg,rgba(102,164,255,.18),rgba(255,255,255,.025))}
+.home-funnel__number{font-size:13px;font-weight:900;letter-spacing:.18em;color:#8eb8ff}
+.home-funnel__eyebrow{margin-bottom:12px;color:rgba(248,251,255,.48);font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+.home-funnel__card h3{max-width:8ch;font-family:var(--display);font-size:clamp(32px,3.3vw,54px);line-height:.94;letter-spacing:-.058em}
+.home-funnel__card div>p:last-child{max-width:390px;margin-top:18px;color:rgba(248,251,255,.66);line-height:1.7}
+.home-funnel__arrow{position:absolute;right:28px;top:28px;font-size:28px;color:rgba(248,251,255,.72);transition:transform .25s ease}
+.home-funnel__card:hover .home-funnel__arrow{transform:translate(4px,-4px)}
+@media(max-width:960px){.home-funnel__head{grid-template-columns:1fr;align-items:start}.home-funnel__grid{grid-template-columns:1fr}.home-funnel__card{min-height:260px}.home-funnel__card h3{max-width:none}}
+@media(max-width:560px){.home-funnel{padding:64px 0}.home-funnel__head h2{font-size:clamp(42px,13vw,64px)}.home-funnel__card{min-height:235px;padding:24px 20px}.home-funnel__arrow{right:20px;top:20px}}

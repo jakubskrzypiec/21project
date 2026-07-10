@@ -1,0 +1,9 @@
+21project — v20
+
+Zawartość:
+- naprawiona sekcja „Jak wygląda współpraca?” na wszystkich 6 podstronach SEO,
+- nowy lejek sprzedażowy pod hero na stronie głównej,
+- cache CSS podbite do 21seo27.
+
+Wgraj wszystkie pliki z tej paczki do głównego folderu repozytorium i podmień istniejące.
+Nie usuwaj pozostałych plików ze strony.
