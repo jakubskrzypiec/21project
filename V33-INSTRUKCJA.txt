@@ -1,0 +1,28 @@
+21PROJECT — V33 / PRZYWRÓCONA STARA OPRAWA
+
+Zrobione:
+- przywrócona poprzednia wersja wizualna strony,
+- nie przebudowywałem układu strony głównej,
+- dodałem nowe zdjęcia do istniejących miejsc,
+- usunąłem wyłącznie pełnoekranową animację wejścia,
+- delikatne animacje sekcji podczas scrollowania nadal działają,
+- rozbudowana podstrona strony-internetowe-slask.html,
+- dodane realizacje, lokalne SEO, dodatkowe FAQ i formularz,
+- rozwinięte pozostałe podstrony usługowe pod SEO,
+- dodana ankieta na kontakt.html.
+
+FORMULARZ:
+Wiadomości są kierowane na:
+jakubskrzypiec.dev@gmail.com
+
+Po pierwszym wysłaniu FormSubmit może przesłać wiadomość aktywacyjną.
+Trzeba raz kliknąć potwierdzenie na skrzynce.
+
+NOWE ZDJĘCIA:
+- studio-hero.webp
+- studio-workstation.webp
+- studio-cold.webp
+- studio-detail.webp
+- studio-desk.webp
+
+Najbezpieczniej wgrać pełną paczkę do głównego folderu repozytorium.
