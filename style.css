@@ -4991,3 +4991,221 @@ body.is-loading{
     min-height:380px;
   }
 }
+
+
+/* =========================================================
+   V35 — REFINED JOURNEY NAVIGATION
+   Replaces the old heavy black next-step bar.
+   ========================================================= */
+
+.journey-nav{
+  position:relative;
+  z-index:4;
+  color:#111820;
+  background:#f4f7fa;
+  border-top:1px solid rgba(8,13,19,.08);
+  border-bottom:1px solid rgba(8,13,19,.10);
+}
+
+.journey-nav--top{
+  margin-top:78px;
+}
+
+.journey-nav--home{
+  margin-top:-1px;
+}
+
+.journey-nav__inner{
+  min-height:92px;
+  display:grid;
+  grid-template-columns:minmax(190px,.5fr) minmax(0,1.5fr);
+  gap:clamp(24px,5vw,72px);
+  align-items:stretch;
+}
+
+.journey-nav__head{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:20px 0;
+}
+
+.journey-nav__head>span{
+  color:#37679f;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+
+.journey-nav__head p{
+  margin-top:7px;
+  color:#71808d;
+  font-size:12px;
+  line-height:1.45;
+}
+
+.journey-nav__steps{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  border-left:1px solid rgba(8,13,19,.09);
+}
+
+.journey-nav__step{
+  position:relative;
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:20px clamp(16px,2.3vw,30px);
+  color:#46535f;
+  border-right:1px solid rgba(8,13,19,.09);
+  background:transparent;
+  transition:background .24s ease,color .24s ease;
+}
+
+.journey-nav__step::before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:-1px;
+  height:2px;
+  background:#78a6e8;
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .25s ease;
+}
+
+.journey-nav__step:hover{
+  color:#0a1016;
+  background:#fff;
+}
+
+.journey-nav__step:hover::before,
+.journey-nav__step.is-active::before{
+  transform:scaleX(1);
+}
+
+.journey-nav__step.is-active{
+  color:#08111d;
+  background:#fff;
+}
+
+.journey-nav__number{
+  color:#78a6e8;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.15em;
+}
+
+.journey-nav__step strong{
+  min-width:0;
+  font-family:var(--display);
+  font-size:clamp(19px,1.7vw,25px);
+  line-height:1;
+  letter-spacing:-.045em;
+}
+
+.journey-nav__arrow{
+  display:grid;
+  place-items:center;
+  width:30px;
+  height:30px;
+  color:#64727e;
+  border:1px solid rgba(8,13,19,.12);
+  border-radius:50%;
+  font-size:12px;
+  transition:transform .24s ease,border-color .24s ease,color .24s ease;
+}
+
+.journey-nav__step:hover .journey-nav__arrow,
+.journey-nav__step.is-active .journey-nav__arrow{
+  color:#37679f;
+  border-color:rgba(55,103,159,.32);
+  transform:translate(2px,-2px);
+}
+
+/* Top placement on Portfolio / Offer / Contact */
+.journey-nav--top + .page-hero{
+  padding-top:72px;
+}
+
+.offer-page>.journey-nav--top + .page-hero{
+  padding-top:72px;
+}
+
+.contact-main>.journey-nav--top + .contact-page{
+  padding-top:62px;
+}
+
+/* Home version sits lower, after the first editorial section */
+.home-page .journey-nav--home{
+  background:#edf2f6;
+}
+
+@media(max-width:900px){
+  .journey-nav__inner{
+    grid-template-columns:1fr;
+    gap:0;
+  }
+
+  .journey-nav__head{
+    padding:18px 0 14px;
+  }
+
+  .journey-nav__steps{
+    border-top:1px solid rgba(8,13,19,.09);
+  }
+}
+
+@media(max-width:700px){
+  .journey-nav--top{
+    margin-top:72px;
+  }
+
+  .journey-nav__inner{
+    width:100%;
+  }
+
+  .journey-nav__head{
+    width:calc(100% - 36px);
+    margin-inline:auto;
+  }
+
+  .journey-nav__steps{
+    overflow-x:auto;
+    grid-template-columns:repeat(3,minmax(154px,1fr));
+    scrollbar-width:none;
+    scroll-snap-type:x mandatory;
+  }
+
+  .journey-nav__steps::-webkit-scrollbar{
+    display:none;
+  }
+
+  .journey-nav__step{
+    min-height:68px;
+    padding:15px 16px;
+    scroll-snap-align:start;
+  }
+
+  .journey-nav__step strong{
+    font-size:19px;
+  }
+
+  .journey-nav__arrow{
+    width:28px;
+    height:28px;
+  }
+
+  .journey-nav--top + .page-hero,
+  .offer-page>.journey-nav--top + .page-hero{
+    padding-top:54px;
+  }
+
+  .contact-main>.journey-nav--top + .contact-page{
+    padding-top:46px;
+  }
+}

@@ -1,0 +1,18 @@
+21PROJECT — V35 / NOWA ŚCIEŻKA STRON
+
+Usunięty został stary, ciężki czarny pasek widoczny na screenie.
+
+Nowy element:
+- jest jasny i znacznie bardziej minimalistyczny,
+- pokazuje całą ścieżkę: Portfolio → Oferta → Kontakt,
+- na Portfolio, Ofercie i Kontakcie znajduje się na samej górze treści,
+- na stronie głównej został przesunięty niżej, pod pierwszą sekcję opisową,
+- aktywna podstrona jest subtelnie zaznaczona,
+- na telefonie pasek można przesuwać poziomo.
+
+Podmień:
+- index.html
+- realizacje.html
+- oferta.html
+- kontakt.html
+- style.css
