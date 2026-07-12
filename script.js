@@ -1,40 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
   body.classList.add('js');
+  body.classList.remove('intro-active', 'is-loading');
+
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const studioIntro = document.querySelector('.intro-21studio');
-  if (studioIntro) {
-    const removeStudioIntro = () => {
-      studioIntro.remove();
-      body.classList.remove('intro-active');
-    };
-    studioIntro.addEventListener('click', removeStudioIntro, { once: true });
-    window.setTimeout(removeStudioIntro, 2450);
-  }
-
-const phrases = [
-    'wygląda lepiej niż konkurencja.',
+  const phrases = [
+    'wygląda jak mocna marka.',
     'prowadzi klienta do kontaktu.',
     'buduje zaufanie od pierwszego ekranu.'
   ];
+
   const rotator = document.querySelector('[data-rotator]');
   if (rotator && !reduce) {
-    let i = 0;
-    setInterval(() => {
-      i = (i + 1) % phrases.length;
+    let index = 0;
+    window.setInterval(() => {
+      index = (index + 1) % phrases.length;
       rotator.classList.add('is-changing');
       window.setTimeout(() => {
-        rotator.textContent = phrases[i];
+        rotator.textContent = phrases[index];
         rotator.classList.remove('is-changing');
       }, 220);
     }, 3200);
   }
 
   const header = document.querySelector('.site-header');
-  const setHeader = () => header && header.classList.toggle('is-scrolled', window.scrollY > 20);
-  setHeader();
-  window.addEventListener('scroll', setHeader, { passive: true });
+  const updateHeader = () => {
+    if (header) header.classList.toggle('is-scrolled', window.scrollY > 24);
+  };
+  updateHeader();
+  window.addEventListener('scroll', updateHeader, { passive: true });
 
   const toggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('.nav');
@@ -43,27 +38,33 @@ const phrases = [
       body.classList.remove('nav-open');
       toggle.setAttribute('aria-expanded', 'false');
     };
+
     toggle.addEventListener('click', () => {
       const open = body.classList.toggle('nav-open');
       toggle.setAttribute('aria-expanded', String(open));
     });
-    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeNav();
+
+    nav.querySelectorAll('a').forEach(link => link.addEventListener('click', closeNav));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeNav();
     });
   }
 
-  const items = document.querySelectorAll('.reveal,.editorial-item,.price-row,.work-card');
+  const items = document.querySelectorAll(
+    '.reveal,.editorial-item,.price-row,.work-card,.seo-case-card'
+  );
+
   if ('IntersectionObserver' in window && !reduce) {
-    const io = new IntersectionObserver(entries => {
+    const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if(entry.isIntersecting){
+        if (entry.isIntersecting) {
           entry.target.classList.add('is-visible');
-          io.unobserve(entry.target);
+          observer.unobserve(entry.target);
         }
       });
-    }, { threshold: .14, rootMargin: '0px 0px -40px 0px' });
-    items.forEach(item => io.observe(item));
+    }, { threshold: 0.12, rootMargin: '0px 0px -36px 0px' });
+
+    items.forEach(item => observer.observe(item));
   } else {
     items.forEach(item => item.classList.add('is-visible'));
   }

@@ -1,0 +1,29 @@
+21PROJECT — REWORK V32
+
+Najważniejsze zmiany:
+- usunięta pełnoekranowa animacja wejścia na wszystkich stronach,
+- zachowane delikatne animacje sekcji podczas scrollowania,
+- dodane i użyte nowe obrazy 21project:
+  studio-hero.webp
+  studio-workstation.webp
+  studio-cold.webp
+  studio-detail.webp
+  studio-desk.webp
+- przebudowana strona główna i dodana nowa sekcja wizualna,
+- mocno rozbudowana podstrona strony-internetowe-slask.html,
+- dodane przykłady realizacji i formularz leadowy na stronie Śląsk,
+- odświeżone pozostałe podstrony usługowe,
+- przebudowana strona kontaktowa,
+- dodana strona dziekuje.html,
+- poprawione wszystkie adresy e-mail na jakubskrzypiec.dev@gmail.com.
+
+FORMULARZ:
+Formularze wysyłają zgłoszenia przez FormSubmit bezpośrednio na:
+jakubskrzypiec.dev@gmail.com
+
+WAŻNE:
+Po pierwszym testowym wysłaniu formularza dostaniesz wiadomość aktywacyjną od FormSubmit.
+Kliknij w niej potwierdzenie. Od tego momentu kolejne zgłoszenia będą przychodziły normalnie.
+
+WGRYWANIE:
+To jest pełna paczka strony. Wgraj całą zawartość do głównego folderu repozytorium.
