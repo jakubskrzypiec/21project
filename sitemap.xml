@@ -79,6 +79,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://21project.pl/case-glamstudio.html</loc>
+    <lastmod>2026-07-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://21project.pl/case-archiss.html</loc>
     <lastmod>2026-07-08</lastmod>
     <changefreq>monthly</changefreq>
@@ -93,30 +99,6 @@
   <url>
     <loc>https://21project.pl/case-werkabramy.html</loc>
     <lastmod>2026-07-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://21project.pl/case-monika-serbista.html</loc>
-    <lastmod>2026-07-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://21project.pl/case-olimpia.html</loc>
-    <lastmod>2026-07-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://21project.pl/case-maciejewska-design.html</loc>
-    <lastmod>2026-07-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://21project.pl/case-tooniprojektuja.html</loc>
-    <lastmod>2026-07-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
