@@ -5999,3 +5999,85 @@ body.home-page .hero-devices .hero-content::before{
     transition:none;
   }
 }
+
+
+/* =========================================================
+   21BLUE — DARK CONTACT + FOOTER CONTRAST FIX
+   ========================================================= */
+
+.cta-image,
+.cta-image .contact-content,
+.contact-page-new,
+.contact-page-new .contact-card.large{
+  color:#fff;
+  background:#050607;
+}
+
+.cta-image .contact-content h2,
+.cta-image .contact-lines a,
+.contact-page-new h1,
+.contact-page-new .contact-lines a{
+  color:#fff;
+}
+
+.cta-image .kicker.dark,
+.contact-page-new .kicker.dark{
+  color:#7fc6ff;
+}
+
+.cta-image .contact-content p,
+.contact-page-new .lead,
+.contact-page-new .contact-small{
+  color:rgba(255,255,255,.66);
+}
+
+.cta-image .contact-lines.compact,
+.contact-page-new .contact-lines.compact{
+  border-top-color:rgba(255,255,255,.16);
+}
+
+.footer,
+.footer-premium{
+  color:rgba(248,251,255,.7);
+  border-top-color:rgba(255,255,255,.1);
+  background:
+    radial-gradient(circle at 8% 0%,rgba(74,156,229,.13),transparent 34%),
+    linear-gradient(180deg,#050709,#020304);
+}
+
+.footer-premium::before{
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+}
+
+.footer-cta,
+.footer-main,
+.footer-bottom{
+  border-color:rgba(255,255,255,.1);
+}
+
+.footer-cta h2,
+.footer-contact a{
+  color:#fff;
+}
+
+.footer-premium .kicker.dark{
+  color:#7fc6ff;
+}
+
+.footer-nav a,
+.footer-links a,
+.footer-brand p,
+.footer-contact > span{
+  color:rgba(248,251,255,.64);
+}
+
+.footer-bottom{
+  color:rgba(248,251,255,.46);
+}
+
+.footer-brand img,
+.footer-logo img{
+  filter:brightness(0) invert(1);
+}
