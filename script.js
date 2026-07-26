@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
-  body.classList.add('js', 'studio-site-v49');
+  body.classList.add('js');
+  if (!body.classList.contains('home-v51')) {
+    body.classList.add('studio-site-v49');
+  }
   body.classList.remove('intro-active', 'is-loading');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -84,6 +87,32 @@ const phrases = [
     }, { passive: true });
     stage.addEventListener('pointerleave', () => {
       laptop.style.transform = '';
+    });
+  }
+
+  const salesAccordion = document.querySelector('[data-v51-accordion]');
+  if (salesAccordion) {
+    const faqItems = [...salesAccordion.querySelectorAll('.v51-faq__item')];
+    const closeItem = item => {
+      const button = item.querySelector('button');
+      const answer = item.querySelector(':scope > div');
+      item.classList.remove('is-open');
+      button?.setAttribute('aria-expanded', 'false');
+      if (answer) answer.style.maxHeight = '0px';
+    };
+    faqItems.forEach(item => {
+      const button = item.querySelector('button');
+      const answer = item.querySelector(':scope > div');
+      if (!button || !answer) return;
+      button.addEventListener('click', () => {
+        const shouldOpen = !item.classList.contains('is-open');
+        faqItems.forEach(closeItem);
+        if (shouldOpen) {
+          item.classList.add('is-open');
+          button.setAttribute('aria-expanded', 'true');
+          answer.style.maxHeight = `${answer.scrollHeight}px`;
+        }
+      });
     });
   }
 });
