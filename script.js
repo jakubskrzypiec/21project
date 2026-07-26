@@ -1,8 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
-  body.classList.add('js');
+  body.classList.add('js', 'studio-site-v49');
   body.classList.remove('intro-active', 'is-loading');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const headerBrandSlot = document.querySelector('.header-empty');
+  if (headerBrandSlot && !headerBrandSlot.querySelector('.studio-brand')) {
+    const brand = document.createElement('a');
+    brand.className = 'studio-brand';
+    brand.href = 'index.html';
+    brand.setAttribute('aria-label', '21project — strona główna');
+    brand.innerHTML = '<span>21</span><i></i><b>project</b>';
+    headerBrandSlot.appendChild(brand);
+  }
 
 const phrases = [
     'wygląda lepiej niż konkurencja.',
@@ -57,5 +67,23 @@ const phrases = [
     items.forEach(item => io.observe(item));
   } else {
     items.forEach(item => item.classList.add('is-visible'));
+  }
+
+  const stage = document.querySelector('.device-stage');
+  const laptop = stage && stage.querySelector('.laptop-mockup');
+  if (stage && laptop && !reduce && window.matchMedia('(pointer:fine)').matches) {
+    let frame = 0;
+    stage.addEventListener('pointermove', event => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const rect = stage.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - .5;
+        const y = (event.clientY - rect.top) / rect.height - .5;
+        laptop.style.transform = `rotateY(${-6 + x * 2.2}deg) rotateX(${1.5 - y * 1.4}deg) translate3d(${x * 3}px,${y * 2}px,0)`;
+      });
+    }, { passive: true });
+    stage.addEventListener('pointerleave', () => {
+      laptop.style.transform = '';
+    });
   }
 });
