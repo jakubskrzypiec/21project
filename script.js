@@ -21,20 +21,19 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
 
-document.querySelectorAll('.device-showcase').forEach(stage => {
+document.querySelectorAll('.project-visual').forEach(stage => {
   stage.addEventListener('mousemove', event => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const rect = stage.getBoundingClientRect();
     const x = (event.clientX - rect.left) / rect.width - 0.5;
     const y = (event.clientY - rect.top) / rect.height - 0.5;
-    stage.style.setProperty('--desk-x', `${x * 8}px`);
-    stage.style.setProperty('--desk-y', `${y * 6}px`);
-    stage.style.setProperty('--phone-x', `${x * -18}px`);
-    stage.style.setProperty('--phone-y', `${y * -12}px`);
-    stage.style.setProperty('--tilt', `${x * 1.3}deg`);
+    stage.style.setProperty('--dx', `${x * 9}px`);
+    stage.style.setProperty('--dy', `${y * 6}px`);
+    stage.style.setProperty('--px', `${x * -18}px`);
+    stage.style.setProperty('--py', `${y * -12}px`);
   });
   stage.addEventListener('mouseleave', () => {
-    ['--desk-x','--desk-y','--phone-x','--phone-y','--tilt'].forEach(property => stage.style.removeProperty(property));
+    ['--dx','--dy','--px','--py'].forEach(property => stage.style.removeProperty(property));
   });
 });
 
