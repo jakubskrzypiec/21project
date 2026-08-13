@@ -1,46 +1,10 @@
-const menuButton = document.querySelector('.menu');
-const nav = document.querySelector('.nav');
-
-menuButton.addEventListener('click', () => {
-  const open = nav.classList.toggle('open');
-  menuButton.classList.toggle('active', open);
-  menuButton.setAttribute('aria-expanded', String(open));
-  menuButton.setAttribute('aria-label', open ? 'Zamknij menu' : 'Otwórz menu');
-});
-
-nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
-  nav.classList.remove('open');
-  menuButton.classList.remove('active');
-  menuButton.setAttribute('aria-expanded', 'false');
-}));
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
-  });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
-
-document.querySelectorAll('.project-visual').forEach(stage => {
-  stage.addEventListener('mousemove', event => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const rect = stage.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-    stage.style.setProperty('--dx', `${x * 9}px`);
-    stage.style.setProperty('--dy', `${y * 6}px`);
-    stage.style.setProperty('--px', `${x * -18}px`);
-    stage.style.setProperty('--py', `${y * -12}px`);
-  });
-  stage.addEventListener('mouseleave', () => {
-    ['--dx','--dy','--px','--py'].forEach(property => stage.style.removeProperty(property));
-  });
-});
-
-document.querySelector('#contact-form').addEventListener('submit', event => {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
-  const subject = `Zapytanie 21project — ${data.get('service')}`;
-  const body = [`Imię / firma: ${data.get('name')}`, `E-mail: ${data.get('email')}`, `Telefon: ${data.get('phone') || 'nie podano'}`, `Usługa: ${data.get('service')}`, '', data.get('message')].join('\n');
-  location.href = `mailto:jakubskrzypiec.dev@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-});
+const projects=[
+{name:'DRG Auto',sector:'Motoryzacja / detailing',desktop:'drg-desktop.webp',mobile:'drg-mobile.webp',href:'https://jakubskrzypiec.github.io/drgauto/',summary:'Strona, która łączy sprzedaż samochodów z ofertą detailingu i prowadzi prosto do telefonu.',challenge:'Dwie różne usługi musiały działać jako jedna spójna marka.',result:'Mocny pierwszy ekran, krótka ścieżka do oferty i wygodny kontakt na telefonie.',tags:['UX/UI','WDROŻENIE','MOBILE']},
+{name:'Pani Projekt',sector:'Projektowanie wnętrz',desktop:'pani-projekt-desktop.webp',mobile:'pani-projekt-mobile.webp',href:'https://jakubskrzypiec.github.io/paniprojekt/',summary:'Edytorialna strona dla studia wnętrz, która sprzedaje jakością realizacji, nie nadmiarem tekstu.',challenge:'Pokazać premium charakter marki bez przeładowania interfejsu.',result:'Spokojna hierarchia, duże kadry i czytelna droga do zapytania.',tags:['PROJEKT','FRONT-END','RWD']},
+{name:'Maciejewska Design',sector:'Architektura wnętrz',desktop:'maciejewska-desktop.webp',mobile:'maciejewska-mobile.webp',href:'https://jakubskrzypiec.github.io/maciejewskadesign/',summary:'Minimalistyczne portfolio, w którym realizacje grają pierwszoplanową rolę.',challenge:'Utrzymać klasę dużych zdjęć również na małym ekranie.',result:'Oszczędny interfejs, precyzyjna typografia i dopracowany mobile.',tags:['DESIGN','PORTFOLIO','MOBILE']},
+{name:'Werka Bramy',sector:'Usługi lokalne',desktop:'werka-desktop.webp',mobile:'werka-mobile.webp',href:'https://jakubskrzypiec.github.io/werkabramy/',summary:'Sprzedażowy landing page dla lokalnej firmy wykonującej bramy i ogrodzenia.',challenge:'W kilka sekund wyjaśnić zakres, obszar działania i przewagę oferty.',result:'Jednoznaczny komunikat, lokalne frazy i szybka bezpłatna wycena.',tags:['LANDING PAGE','COPY','LOCAL SEO']}];
+const list=document.querySelector('#project-list');list.innerHTML=projects.map((p,i)=>`<article class="project reveal"><div class="project-top"><span>0${i+1} / 04</span><span>${p.sector}</span></div><div class="device-stage"><div class="stage-grid"></div><div class="stage-mark">21</div><div class="laptop"><div class="laptop-lid"><span class="camera"></span><div class="laptop-screen"><img src="${p.desktop}" alt="${p.name} — widok desktop" loading="lazy"></div></div><div class="laptop-base"><i></i></div></div><div class="mobile"><div class="mobile-screen"><img src="${p.mobile}" alt="${p.name} — widok mobilny" loading="lazy"></div><span class="island"></span></div></div><div class="project-content"><div class="project-title"><small>REALIZACJA</small><h3>${p.name}</h3><p>${p.summary}</p></div><div class="case-detail"><small>WYZWANIE</small><p>${p.challenge}</p></div><div class="case-detail"><small>EFEKT</small><p>${p.result}</p></div></div><div class="project-bottom"><div>${p.tags.map(t=>`<span>${t}</span>`).join('')}</div><a href="${p.href}" target="_blank" rel="noreferrer">Zobacz stronę <span>↗</span></a></div></article>`).join('');
+const menu=document.querySelector('.menu'),nav=document.querySelector('.nav');menu.addEventListener('click',()=>{const open=nav.classList.toggle('open');menu.classList.toggle('active',open);menu.setAttribute('aria-expanded',open);menu.setAttribute('aria-label',open?'Zamknij menu':'Otwórz menu')});nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');menu.classList.remove('active')}));
+const observer=new IntersectionObserver(entries=>entries.forEach(entry=>entry.isIntersecting&&entry.target.classList.add('visible')),{threshold:.08});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+document.querySelectorAll('.device-stage').forEach(stage=>{stage.addEventListener('mousemove',e=>{if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;const r=stage.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;stage.style.setProperty('--desk-x',`${x*13}px`);stage.style.setProperty('--desk-y',`${y*8}px`);stage.style.setProperty('--phone-x',`${x*-23}px`);stage.style.setProperty('--phone-y',`${y*-15}px`);stage.style.setProperty('--screen-x',`${x*-8}px`);stage.style.setProperty('--screen-y',`${y*-5}px`)});stage.addEventListener('mouseleave',()=>['--desk-x','--desk-y','--phone-x','--phone-y','--screen-x','--screen-y'].forEach(v=>stage.style.removeProperty(v)))});
+document.querySelector('#contact-form').addEventListener('submit',e=>{e.preventDefault();const d=new FormData(e.currentTarget),s=`Zapytanie 21project — ${d.get('service')}`,b=[`Imię / firma: ${d.get('name')}`,`E-mail: ${d.get('email')}`,`Telefon: ${d.get('phone')||'nie podano'}`,`Usługa: ${d.get('service')}`,'',d.get('message')].join('\n');location.href=`mailto:jakubskrzypiec.dev@gmail.com?subject=${encodeURIComponent(s)}&body=${encodeURIComponent(b)}`});
