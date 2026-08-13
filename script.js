@@ -1,61 +1,33 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const body = document.body;
-  body.classList.add('js');
-  body.classList.remove('intro-active', 'is-loading');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const menuButton = document.querySelector('.menu-button');
+const nav = document.querySelector('.nav');
 
-const phrases = [
-    'wygląda lepiej niż konkurencja.',
-    'prowadzi klienta do kontaktu.',
-    'buduje zaufanie od pierwszego ekranu.'
-  ];
-  const rotator = document.querySelector('[data-rotator]');
-  if (rotator && !reduce) {
-    let i = 0;
-    setInterval(() => {
-      i = (i + 1) % phrases.length;
-      rotator.classList.add('is-changing');
-      window.setTimeout(() => {
-        rotator.textContent = phrases[i];
-        rotator.classList.remove('is-changing');
-      }, 220);
-    }, 3200);
-  }
+menuButton?.addEventListener('click', () => {
+  const open = nav.classList.toggle('nav-open');
+  menuButton.classList.toggle('menu-button-open', open);
+  menuButton.setAttribute('aria-expanded', String(open));
+  menuButton.setAttribute('aria-label', open ? 'Zamknij menu' : 'Otwórz menu');
+});
 
-  const header = document.querySelector('.site-header');
-  const setHeader = () => header && header.classList.toggle('is-scrolled', window.scrollY > 20);
-  setHeader();
-  window.addEventListener('scroll', setHeader, { passive: true });
+nav?.querySelectorAll('a').forEach((link) => {
+  link.addEventListener('click', () => {
+    nav.classList.remove('nav-open');
+    menuButton?.classList.remove('menu-button-open');
+    menuButton?.setAttribute('aria-expanded', 'false');
+    menuButton?.setAttribute('aria-label', 'Otwórz menu');
+  });
+});
 
-  const toggle = document.querySelector('.menu-toggle');
-  const nav = document.querySelector('.nav');
-  if (toggle && nav) {
-    const closeNav = () => {
-      body.classList.remove('nav-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    };
-    toggle.addEventListener('click', () => {
-      const open = body.classList.toggle('nav-open');
-      toggle.setAttribute('aria-expanded', String(open));
-    });
-    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeNav();
-    });
-  }
-
-  const items = document.querySelectorAll('.reveal,.editorial-item,.price-row,.work-card');
-  if ('IntersectionObserver' in window && !reduce) {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if(entry.isIntersecting){
-          entry.target.classList.add('is-visible');
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: .14, rootMargin: '0px 0px -40px 0px' });
-    items.forEach(item => io.observe(item));
-  } else {
-    items.forEach(item => item.classList.add('is-visible'));
-  }
+document.querySelector('.contact-form')?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
+  const subject = `Zapytanie ze strony 21project — ${data.get('service')}`;
+  const body = [
+    `Imię i firma: ${data.get('name')}`,
+    `E-mail: ${data.get('email')}`,
+    `Telefon: ${data.get('phone') || 'nie podano'}`,
+    `Usługa: ${data.get('service')}`,
+    '',
+    data.get('message')
+  ].join('\n');
+  window.location.href = `mailto:jakubskrzypiec.dev@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 });
