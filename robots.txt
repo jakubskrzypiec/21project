@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
 Sitemap: https://21project.pl/sitemap.xml
