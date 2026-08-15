@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Strony internetowe i SEO dla firm | 21project</title>
-  <meta name="description" content="21project tworzy indywidualne strony internetowe i SEO dla firm z całej Polski. Nowoczesny design, szybki kod, wersja mobilna i widoczność w Google.">
+  <title>Strony internetowe Katowice i SEO dla firm | 21project</title>
+  <meta name="description" content="Nowoczesne strony internetowe i SEO dla firm z Katowic, Śląska i całej Polski. Indywidualny projekt, szybki kod, wersja mobilna i wdrożenie.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="theme-color" content="#f5f4f0">
   <link rel="canonical" href="https://21project.pl/">
@@ -19,7 +19,7 @@
   <meta property="og:image" content="https://21project.pl/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preload" href="maciejewska-desktop.webp" as="image" fetchpriority="high">
-  <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="style.css?v=2">
 
   <script type="application/ld+json">
   {
@@ -32,9 +32,36 @@
     "founder": {"@type": "Person", "name": "Jakub Skrzypiec"},
     "telephone": "+48601863788",
     "email": "jakubskrzypiec.dev@gmail.com",
-    "areaServed": {"@type": "Country", "name": "Polska"},
+    "areaServed": [
+      {"@type": "City", "name": "Katowice"},
+      {"@type": "AdministrativeArea", "name": "Śląsk"},
+      {"@type": "Country", "name": "Polska"}
+    ],
     "priceRange": "1000–2500 PLN",
     "serviceType": ["Projektowanie stron internetowych", "Tworzenie stron internetowych", "SEO", "Optymalizacja stron"]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Ile kosztuje stworzenie strony internetowej dla firmy?",
+        "acceptedAnswer": {"@type": "Answer", "text": "Landing page w 21project kosztuje 1000 zł, pełna strona firmowa z trzema podstronami 2000 zł, a pakiet strony z SEO i wsparciem 2500 zł."}
+      },
+      {
+        "@type": "Question",
+        "name": "Czy 21project tworzy strony dla firm spoza Śląska?",
+        "acceptedAnswer": {"@type": "Answer", "text": "Tak. Współpraca może odbywać się całkowicie zdalnie, dlatego 21project obsługuje firmy z Katowic, całego Śląska oraz pozostałych regionów Polski."}
+      },
+      {
+        "@type": "Question",
+        "name": "Czy nowa strona będzie przygotowana pod SEO?",
+        "acceptedAnswer": {"@type": "Answer", "text": "Każda strona otrzymuje poprawną strukturę techniczną, metadane, wersję mobilną i przygotowanie do indeksacji. Rozszerzony pakiet SEO obejmuje także frazy lokalne, optymalizację treści i konfigurację Search Console."}
+      }
+    ]
   }
   </script>
 </head>
@@ -79,6 +106,7 @@
       <div class="hero__watermark" aria-hidden="true">21—PROJECT</div>
 
       <div class="hero__visual" aria-label="Przykład strony 21project na laptopie i telefonie">
+        <div class="hero__device-shadow" aria-hidden="true"></div>
         <div class="laptop">
           <div class="laptop__screen">
             <div class="browser-bar"><i></i><i></i><i></i><span>maciejewskadesign.pl</span></div>
@@ -111,76 +139,51 @@
       </div>
     </section>
 
-    <section class="projects section" id="realizacje" aria-labelledby="projects-title">
-      <div class="section-heading reveal">
-        <div>
-          <p class="eyebrow">02 / Wybrane realizacje</p>
-          <h2 id="projects-title">Jedna marka.<br>Dwa ekrany.</h2>
-        </div>
-        <p>Każdy projekt powstaje równolegle na desktop i telefon. Bez gotowych szablonów i bez przypadkowych kompromisów.</p>
+    <section class="projects" id="realizacje" aria-labelledby="projects-title">
+      <div class="projects__intro reveal">
+        <div><p class="eyebrow">02 / Wybrane realizacje</p><h2 id="projects-title">Desktop.<br>Mobile.</h2></div>
+        <p>Jedna strona zaprojektowana jako spójne doświadczenie na dużym i małym ekranie.</p>
       </div>
 
-      <article class="case case--featured reveal">
-        <div class="case__media case__media--light">
-          <div class="browser browser--large">
-            <div class="browser-bar"><i></i><i></i><i></i><span>maciejewskadesign.pl</span></div>
-            <img src="maciejewska-desktop.webp" alt="Maciejewska Design — strona desktopowa" width="1600" height="898" loading="lazy">
+      <div class="project-strips">
+        <article class="project-strip reveal">
+          <div class="project-strip__meta"><span>01 / Architektura wnętrz</span><h3>Maciejewska<br>Design</h3><a href="https://maciejewskadesign.pl/" target="_blank" rel="noopener">Zobacz stronę ↗</a></div>
+          <div class="project-strip__devices">
+            <div class="device-laptop"><div class="device-laptop__screen"><img src="maciejewska-desktop.webp" alt="Maciejewska Design — strona na laptopie" width="1600" height="898" loading="lazy"></div><div class="device-laptop__base"></div></div>
+            <div class="device-phone"><span></span><img src="maciejewska-mobile.webp" alt="Maciejewska Design — strona na telefonie" width="720" height="1558" loading="lazy"></div>
           </div>
-          <div class="phone phone--case">
-            <span class="phone__speaker"></span>
-            <img src="maciejewska-mobile.webp" alt="Maciejewska Design — strona mobilna" width="720" height="1558" loading="lazy">
-          </div>
-        </div>
-        <div class="case__copy">
-          <p>01 / Architektura wnętrz</p>
-          <h3>Maciejewska<br>Design</h3>
-          <ul><li>Projekt premium</li><li>Wersja desktop i mobile</li><li>Wdrożenie pod domenę</li></ul>
-          <a class="line-link" href="https://maciejewskadesign.pl/" target="_blank" rel="noopener">Zobacz stronę <span>↗</span></a>
-        </div>
-      </article>
-
-      <div class="case-grid">
-        <article class="case-card reveal">
-          <div class="case-card__media">
-            <div class="browser">
-              <div class="browser-bar"><i></i><i></i><i></i><span>werkabramy.pl</span></div>
-              <img src="werka-bramy-desktop.webp" alt="Werka Bramy — wersja desktopowa" width="1600" height="900" loading="lazy">
-            </div>
-            <div class="phone phone--small"><span class="phone__speaker"></span><img src="werka-bramy-mobile.webp" alt="Werka Bramy — wersja mobilna" width="720" height="1558" loading="lazy"></div>
-          </div>
-          <div class="case-card__meta"><span>02 / Bramy i ogrodzenia</span><h3>Werka Bramy</h3><a href="https://werkabramy.pl/" target="_blank" rel="noopener" aria-label="Zobacz stronę Werka Bramy">↗</a></div>
         </article>
 
-        <article class="case-card case-card--dark reveal">
-          <div class="case-card__media">
-            <div class="browser">
-              <div class="browser-bar"><i></i><i></i><i></i><span>DRG Auto</span></div>
-              <img src="drg-auto-desktop.webp" alt="DRG Auto — wersja desktopowa" width="1600" height="896" loading="lazy">
-            </div>
-            <div class="phone phone--small"><span class="phone__speaker"></span><img src="drg-auto-mobile.webp" alt="DRG Auto — wersja mobilna" width="720" height="1558" loading="lazy"></div>
+        <article class="project-strip project-strip--dark reveal">
+          <div class="project-strip__meta"><span>02 / Bramy i ogrodzenia</span><h3>Werka<br>Bramy</h3><a href="https://werkabramy.pl/" target="_blank" rel="noopener">Zobacz stronę ↗</a></div>
+          <div class="project-strip__devices">
+            <div class="device-laptop"><div class="device-laptop__screen"><img src="werka-bramy-desktop.webp" alt="Werka Bramy — strona na laptopie" width="1600" height="900" loading="lazy"></div><div class="device-laptop__base"></div></div>
+            <div class="device-phone"><span></span><img src="werka-bramy-mobile.webp" alt="Werka Bramy — strona na telefonie" width="720" height="1558" loading="lazy"></div>
           </div>
-          <div class="case-card__meta"><span>03 / Motoryzacja</span><h3>DRG Auto</h3><b>Projekt / kod</b></div>
         </article>
 
-        <article class="case-card case-card--dark reveal">
-          <div class="case-card__media">
-            <div class="browser">
-              <div class="browser-bar"><i></i><i></i><i></i><span>Pani Projekt</span></div>
-              <img src="pani-projekt-desktop.webp" alt="Pani Projekt — wersja desktopowa" width="1600" height="900" loading="lazy">
-            </div>
-            <div class="phone phone--small"><span class="phone__speaker"></span><img src="pani-projekt-mobile.webp" alt="Pani Projekt — wersja mobilna" width="720" height="1558" loading="lazy"></div>
+        <article class="project-strip reveal">
+          <div class="project-strip__meta"><span>03 / Motoryzacja</span><h3>DRG<br>Auto</h3><b>Projekt / kod</b></div>
+          <div class="project-strip__devices">
+            <div class="device-laptop"><div class="device-laptop__screen"><img src="drg-auto-desktop.webp" alt="DRG Auto — strona na laptopie" width="1600" height="896" loading="lazy"></div><div class="device-laptop__base"></div></div>
+            <div class="device-phone"><span></span><img src="drg-auto-mobile.webp" alt="DRG Auto — strona na telefonie" width="720" height="1558" loading="lazy"></div>
           </div>
-          <div class="case-card__meta"><span>04 / Architektura wnętrz</span><h3>Pani Projekt</h3><a href="https://jakubskrzypiec.github.io/paniprojekt/" target="_blank" rel="noopener" aria-label="Zobacz stronę Pani Projekt">↗</a></div>
         </article>
 
-        <article class="case-card reveal">
-          <div class="case-card__media case-card__media--single">
-            <div class="browser">
-              <div class="browser-bar"><i></i><i></i><i></i><span>monikaserbista.pl</span></div>
-              <img src="monika-serbista-desktop.webp" alt="Monika Serbista — strona desktopowa" width="1600" height="900" loading="lazy">
-            </div>
+        <article class="project-strip project-strip--dark reveal">
+          <div class="project-strip__meta"><span>04 / Architektura wnętrz</span><h3>Pani<br>Projekt</h3><a href="https://jakubskrzypiec.github.io/paniprojekt/" target="_blank" rel="noopener">Zobacz stronę ↗</a></div>
+          <div class="project-strip__devices">
+            <div class="device-laptop"><div class="device-laptop__screen"><img src="pani-projekt-desktop.webp" alt="Pani Projekt — strona na laptopie" width="1600" height="900" loading="lazy"></div><div class="device-laptop__base"></div></div>
+            <div class="device-phone"><span></span><img src="pani-projekt-mobile.webp" alt="Pani Projekt — strona na telefonie" width="720" height="1558" loading="lazy"></div>
           </div>
-          <div class="case-card__meta"><span>05 / Projektowanie wnętrz</span><h3>Monika Serbista</h3><a href="https://monikaserbista.pl/" target="_blank" rel="noopener" aria-label="Zobacz stronę Moniki Serbisty">↗</a></div>
+        </article>
+
+        <article class="project-strip reveal">
+          <div class="project-strip__meta"><span>05 / Projektowanie wnętrz</span><h3>Monika<br>Serbista</h3><a href="https://monikaserbista.pl/" target="_blank" rel="noopener">Zobacz stronę ↗</a></div>
+          <div class="project-strip__devices">
+            <div class="device-laptop"><div class="device-laptop__screen"><img src="monika-serbista-desktop.webp" alt="Monika Serbista — strona na laptopie" width="1600" height="900" loading="lazy"></div><div class="device-laptop__base"></div></div>
+            <div class="device-phone device-phone--crop"><span></span><img src="monika-serbista-desktop.webp" alt="Monika Serbista — podgląd strony na telefonie" width="1600" height="900" loading="lazy"></div>
+          </div>
         </article>
       </div>
     </section>
@@ -262,33 +265,38 @@
     </section>
 
     <section class="seo section section--black" id="seo" aria-labelledby="seo-title">
-      <div class="seo__layout">
-        <div class="seo__copy reveal">
-          <p class="eyebrow">06 / SEO i widoczność</p>
-          <h2 id="seo-title">Sama strona<br>nie wystarczy,<br>jeśli nikt jej<br>nie znajduje.</h2>
-          <p>SEO w 21project nie kończy się na wpisaniu kilku słów w kodzie. Porządkujemy stronę tak, aby Google mogło ją zrozumieć, zaindeksować i przypisać do właściwych usług oraz lokalizacji.</p>
-          <a class="button button--light" href="#kontakt">Chcę poprawić widoczność <span>↗</span></a>
-        </div>
+      <header class="seo-landing__head reveal">
+        <p class="eyebrow">06 / Strony internetowe i SEO</p>
+        <h2 id="seo-title">Strony internetowe<br>dla firm ze Śląska<br>i całej Polski.</h2>
+        <p>21project projektuje nowoczesne strony internetowe dla firm, które chcą wyglądać profesjonalnie, zdobywać zapytania i budować widoczność w Google. Pracujemy zdalnie z klientami z całej Polski, a lokalnie obsługujemy między innymi Katowice, Gliwice, Rybnik, Żory, Rudę Śląską, Bytom i Częstochowę.</p>
+      </header>
 
-        <div class="seo-console reveal" aria-label="Zakres technicznego SEO">
-          <div class="seo-console__head"><span>21PROJECT / SEO STATUS</span><b>LIVE</b></div>
-          <div class="seo-console__score"><span>TECHNICAL SETUP</span><strong>READY</strong><i></i></div>
-          <div class="seo-console__chart" aria-hidden="true">
-            <svg viewBox="0 0 720 240" role="img"><path d="M0 214 C70 210 76 188 132 190 S206 176 248 166 S327 158 361 130 S433 146 474 104 S544 112 580 68 S654 71 720 20"/><line x1="0" y1="214" x2="720" y2="214"/><line x1="0" y1="150" x2="720" y2="150"/><line x1="0" y1="86" x2="720" y2="86"/></svg>
-          </div>
-          <div class="seo-console__items">
-            <div><span>01</span><strong>Struktura i nagłówki</strong><b>OK</b></div>
-            <div><span>02</span><strong>Meta / schema / sitemap</strong><b>OK</b></div>
-            <div><span>03</span><strong>Frazy usługowe i lokalne</strong><b>PLAN</b></div>
-            <div><span>04</span><strong>Search Console i indeksacja</strong><b>READY</b></div>
-          </div>
-        </div>
+      <div class="seo-topics">
+        <article class="reveal">
+          <span>01 / Projektowanie stron</span>
+          <h3>Strony internetowe dopasowane do marki</h3>
+          <p>Tworzymy landing page oraz rozbudowane strony firmowe bez gotowych szablonów. Projekt obejmuje czytelny układ, indywidualną oprawę graficzną, wersję mobilną, formularz kontaktowy i wdrożenie pod domenę. Strona ma dobrze prezentować ofertę i prowadzić użytkownika do kontaktu.</p>
+        </article>
+        <article class="reveal">
+          <span>02 / Katowice i Śląsk</span>
+          <h3>Tworzenie stron internetowych na Śląsku</h3>
+          <p>Pomagamy lokalnym firmom wyróżnić się w internecie i docierać do klientów szukających usług w ich mieście. Budujemy strony internetowe dla firm z Katowic i całego Śląska, uwzględniając lokalne frazy, obszar działania oraz strukturę treści potrzebną do pozycjonowania.</p>
+        </article>
+        <article class="reveal">
+          <span>03 / Widoczność Google</span>
+          <h3>SEO i pozycjonowanie lokalne</h3>
+          <p>Optymalizujemy nagłówki, treści, metadane, szybkość i strukturę techniczną strony. Przygotowujemy sitemapę, dane uporządkowane oraz konfigurację Google Search Console. Dzięki temu wyszukiwarka może poprawnie odczytać stronę i powiązać ją z usługami oraz lokalizacjami firmy.</p>
+        </article>
+      </div>
+
+      <div class="seo-areas reveal" aria-label="Obsługiwane lokalizacje">
+        <span>Obsługujemy:</span><b>Katowice</b><b>Gliwice</b><b>Rybnik</b><b>Żory</b><b>Ruda Śląska</b><b>Bytom</b><b>Częstochowa</b><b>Cała Polska</b>
       </div>
 
       <div class="seo-faq">
-        <details class="reveal"><summary>Czy SEO daje efekt od razu?<span>+</span></summary><p>Poprawki techniczne i indeksacja zaczynają działać po ponownym odczytaniu strony przez Google. Wzrost pozycji jest procesem i zależy m.in. od konkurencji, historii domeny oraz jakości treści.</p></details>
-        <details class="reveal"><summary>Co otrzymuję w usłudze za 750 zł?<span>+</span></summary><p>Audyt, poprawę struktury i metadanych, plan fraz, optymalizację kluczowych treści, sitemap, robots.txt, dane strukturalne oraz konfigurację indeksacji w Search Console.</p></details>
-        <details class="reveal"><summary>Czy obsługujecie firmy z całej Polski?<span>+</span></summary><p>Tak. Cały proces może odbyć się zdalnie — od pierwszej rozmowy po publikację strony i dalsze wsparcie.</p></details>
+        <details class="reveal"><summary>Ile kosztuje stworzenie strony internetowej dla firmy?<span>+</span></summary><p>Landing page kosztuje 1000 zł, pełna strona firmowa z trzema podstronami 2000 zł, a pakiet strony z SEO i 30-dniowym wsparciem 2500 zł.</p></details>
+        <details class="reveal"><summary>Czy każda strona jest przygotowana pod Google?<span>+</span></summary><p>Tak. Każde wdrożenie otrzymuje semantyczną strukturę, poprawne metadane, wersję mobilną, sitemapę i przygotowanie do indeksacji. Rozszerzone SEO obejmuje także plan fraz, optymalizację treści i konfigurację Search Console.</p></details>
+        <details class="reveal"><summary>Czy współpraca jest możliwa poza Śląskiem?<span>+</span></summary><p>Tak. Cały proces może odbyć się zdalnie — od pierwszej rozmowy i projektu, przez poprawki, aż po publikację strony i dalsze wsparcie.</p></details>
       </div>
     </section>
 
@@ -368,6 +376,6 @@
 
   <div class="toast" data-toast role="status">Dziękujemy. Zapytanie zostało wysłane.</div>
 
-  <script src="app.js?v=1" defer></script>
+  <script src="app.js?v=2" defer></script>
 </body>
 </html>
