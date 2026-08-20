@@ -6,7 +6,7 @@
 <title>21 project — Strony internetowe Katowice i Śląsk | Jakub Skrzypiec</title>
 <meta name="description" content="21 project — projektowanie i wdrażanie stron internetowych dla firm. Landing page, strony wielopodstronowe, SEO i pozycjonowanie. Katowice, Śląsk. Zobacz realizacje.">
 <link rel="canonical" href="https://21project.pl/">
-<meta name="theme-color" content="#F7F5F1">
+<meta name="theme-color" content="#FAFAFA">
 
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pl_PL">
@@ -17,8 +17,8 @@
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/syne-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -91,6 +91,8 @@
         </div>
       </div>
 
+      <div class="hero__scroll" aria-hidden="true"><span>Scroll</span><i></i></div>
+
     </div>
   </section>
 
@@ -102,8 +104,8 @@
         <p class="eyebrow reveal">Realizacje</p>
         <h2 class="reveal">Wybrane projekty</h2>
         <p class="head__lead reveal">
-          Pełne zrzuty ekranu — nic nie jest przycięte. Po lewej strona na komputerze,
-          obok dokładnie ta sama strona na telefonie.
+          Każdy projekt to kompletna strona — projekt graficzny, treści, wdrożenie i publikacja.
+          Poniżej pełne zrzuty ekranu: komputer i telefon, ta sama strona.
         </p>
       </header>
 
@@ -304,7 +306,7 @@
             <li>Oferta i dane kontaktowe</li>
             <li>Wersja mobilna i desktopowa</li>
           </ul>
-          <p class="plan__price">Wycena indywidualna</p>
+          <p class="plan__price"><b>1500 zł</b></p>
           <a href="#kontakt" class="btn btn--line btn--full">Zapytaj o pakiet</a>
         </article>
 
@@ -320,7 +322,7 @@
             <li>Rozbudowana prezentacja usług</li>
             <li>Formularz kontaktowy</li>
           </ul>
-          <p class="plan__price">Wycena indywidualna</p>
+          <p class="plan__price"><b>2000 zł</b></p>
           <a href="#kontakt" class="btn btn--line btn--full">Zapytaj o pakiet</a>
         </article>
 
@@ -337,7 +339,7 @@
             <li>Optymalizacja SEO</li>
             <li>Pozycjonowanie strony</li>
           </ul>
-          <p class="plan__price">Wycena indywidualna</p>
+          <p class="plan__price"><b>3000 zł</b></p>
           <a href="#kontakt" class="btn btn--light btn--full">Zapytaj o pakiet</a>
         </article>
 
@@ -428,26 +430,34 @@
       </div>
 
       <form class="form reveal" id="form" novalidate>
+        <div class="form__head">
+          <p>Zapytanie</p>
+          <strong>Wypełnij w 30 sekund</strong>
+        </div>
+
         <div class="field">
+          <input id="f-name" name="name" type="text" placeholder=" " autocomplete="name" required>
           <label for="f-name">Imię i nazwisko</label>
-          <input id="f-name" name="name" type="text" autocomplete="name" required>
         </div>
         <div class="field">
+          <input id="f-contact" name="contact" type="text" placeholder=" " autocomplete="email" required>
           <label for="f-contact">Telefon lub e-mail</label>
-          <input id="f-contact" name="contact" type="text" autocomplete="email" required>
         </div>
-        <div class="field">
-          <label for="f-plan">Interesujący pakiet</label>
+        <div class="field field--select">
           <select id="f-plan" name="plan">
-            <option>Minimal</option><option>Standard</option>
-            <option selected>Premium</option><option>SEO</option>
+            <option>Minimal — 1500 zł</option>
+            <option>Standard — 2000 zł</option>
+            <option selected>Premium — 3000 zł</option>
+            <option>SEO — 1000 zł</option>
             <option>Jeszcze nie wiem</option>
           </select>
+          <label for="f-plan">Interesujący pakiet</label>
         </div>
         <div class="field">
+          <textarea id="f-msg" name="message" rows="3" placeholder=" " required></textarea>
           <label for="f-msg">Kilka słów o firmie i potrzebach</label>
-          <textarea id="f-msg" name="message" rows="4" required></textarea>
         </div>
+
         <button type="submit" class="btn btn--dark btn--full">Wyślij zapytanie</button>
         <p class="form__note" id="form-note" role="status">
           Formularz otworzy Twój program pocztowy z gotową wiadomością.
@@ -462,8 +472,8 @@
 <footer class="footer">
   <div class="shell footer__inner">
     <div class="footer__brand">
-      <a class="logo logo--inv" href="#top" aria-label="21 project — strona główna">
-        <img src="assets/img/logo.svg" width="4616" height="1360" alt="21 project">
+      <a class="logo logo--inv logo--mark" href="#top" aria-label="21 project — strona główna">
+        <img src="assets/img/logo-mark.svg" width="1588" height="1356" alt="21 project">
       </a>
       <p>Strony internetowe dla firm.<br>Katowice, Śląsk i cała Polska.</p>
     </div>
