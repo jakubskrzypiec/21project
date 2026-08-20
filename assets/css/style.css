@@ -214,10 +214,13 @@ h3{font-size:clamp(1.18rem,1.55vw,1.4rem);letter-spacing:-.024em;font-weight:700
 h1 .ln{display:block}
 
 /* --- rotator --- */
-.rot{position:relative;display:inline-block;vertical-align:baseline;white-space:nowrap}
+/* inline-grid: duch i wszystkie warianty leza w tej samej komorce siatki,
+   wiec maja identyczna geometrie i wspolna linie bazowa z tekstem obok */
+.rot{position:relative;display:inline-grid;vertical-align:baseline;white-space:nowrap}
+.rot > *{grid-area:1/1;min-width:0}
 .rot__ghost{visibility:hidden;font-weight:inherit}
 .rot em{
-  position:absolute;left:0;top:0;font-style:normal;white-space:nowrap;
+  font-style:normal;white-space:nowrap;
   opacity:0;animation:rot 17.5s var(--ease) infinite;will-change:transform,opacity,filter;
 }
 .rot em:nth-of-type(1){animation-delay:0s}
@@ -234,7 +237,7 @@ h1 .ln{display:block}
 }
 /* kreska pod rotatorem — „pisze się” w rytm zmian */
 .rot::after{
-  content:"";position:absolute;left:0;right:0;bottom:-.07em;height:2px;background:var(--ink);
+  content:"";position:absolute;left:0;right:0;bottom:-.19em;height:2px;background:var(--ink);
   transform-origin:0 50%;animation:rotLine 17.5s var(--ease) infinite;
 }
 @keyframes rotLine{
