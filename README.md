@@ -10,7 +10,8 @@ index.html            # cała strona (one-page)
 assets/
   css/style.css
   js/script.js
-  img/                # zrzuty realizacji (webp), logo, favicon
+  fonts/              # Syne + Geist (self-hosted, latin + latin-ext)
+  img/                # zrzuty realizacji (webp), hero, logo, favicon
 CNAME                 # 21project.pl
 ```
 
@@ -18,30 +19,35 @@ CNAME                 # 21project.pl
 
 ```bash
 python3 -m http.server 8000
-# albo
-npx serve .
 ```
 
 ## Co zawiera
 
-- **Hero** z mockupem laptop + telefon (czysty CSS, bez wklejonej grafiki) pokazującym responsywność
-- **Realizacje** — 5 case studies: Monika Serbista, Maciejewska Design, Pani Projekt, DRG Auto, Werka Bramy
-  (każda w ramce przeglądarki + podgląd mobilny)
-- **Oferta** — 4 pakiety: Minimal, Standard, Premium, SEO
-- **Proces** — 4 kroki współpracy
-- **Kontakt** — dane + formularz
+- **Hero** na pełny ekran — fotografia laptopa i telefonu z wtopionym logo,
+  nagłówek z rotującym słowem (5 wariantów), sekwencyjne wejście, parallaksa przy scrollu.
+  Osobny kadr pionowy (`hero-mobile.webp`) dla telefonów.
+- **Pasek klientów** — przewijana lista nazw.
+- **Liczby** — animowane liczniki.
+- **Realizacje** — 5 case studies: Monika Serbista, Maciejewska Design, Pani Projekt,
+  DRG Auto, Werka Bramy. Pełne zrzuty w ramce przeglądarki, telefon nachodzi na róg.
+- **Oferta** — 4 pakiety: Minimal 1500 zł, Standard 2000 zł, Premium 3000 zł, SEO 1000 zł.
+- **Proces** — 4 kroki współpracy.
+- **Kontakt** — dane + formularz.
 
 ## Uwagi techniczne
 
 - Zero zależności i frameworków — czysty HTML/CSS/JS.
-- Fonty: Fraunces (nagłówki) + Manrope (tekst) — self-hosted w `assets/fonts/`, bez zależności od Google.
-- Zdjęcia realizacji: WebP, lazy-loading poniżej pierwszego ekranu.
-- Formularz kontaktowy działa przez `mailto:` (strona statyczna, bez backendu).
-  Podmiana na formularz z wysyłką serwerową będzie możliwa w etapie 2.
+- Paleta: wyłącznie czerń, biel i szarości. Bez koloru akcentowego.
+- Fonty: **Syne** (nagłówki) + **Geist** (tekst), self-hosted w `assets/fonts/`.
+  Każdy font ma dwa podzbiory (`latin` + `latin-ext`) z `unicode-range` —
+  bez tego polskie znaki lecą na font zastępczy.
+- Animacje respektują `prefers-reduced-motion`.
+- Formularz działa przez `mailto:` (strona statyczna, bez backendu).
+  Wysyłka serwerowa dojdzie w etapie 2.
 - SEO: meta description, Open Graph, canonical, JSON-LD (`ProfessionalService`).
 
 ## Do uzupełnienia
 
-- Ceny pakietów Minimal / Standard / Premium (obecnie „wycena indywidualna”).
-- Docelowy adres realizacji „Pani Projekt” (obecnie wersja na GitHub Pages).
+- Docelowy adres realizacji „Pani Projekt" (obecnie wersja na GitHub Pages).
 - Obrazek `og:image` do podglądu linku w social media.
+- Etap 2: panel administracyjny, statystyki ruchu, cotygodniowe leady.
