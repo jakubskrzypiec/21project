@@ -34,7 +34,7 @@ npx serve .
 ## Uwagi techniczne
 
 - Zero zależności i frameworków — czysty HTML/CSS/JS.
-- Fonty: Fraunces (nagłówki) + Manrope (tekst), z Google Fonts.
+- Fonty: Fraunces (nagłówki) + Manrope (tekst) — self-hosted w `assets/fonts/`, bez zależności od Google.
 - Zdjęcia realizacji: WebP, lazy-loading poniżej pierwszego ekranu.
 - Formularz kontaktowy działa przez `mailto:` (strona statyczna, bez backendu).
   Podmiana na formularz z wysyłką serwerową będzie możliwa w etapie 2.
