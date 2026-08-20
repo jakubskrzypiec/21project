@@ -183,6 +183,21 @@
     }
 
     /* ---------------------------------------------------
+       5b. Proces — podświetlanie aktywnego kroku
+       --------------------------------------------------- */
+    var steps = [].slice.call(document.querySelectorAll('[data-step]'));
+    if (steps.length && 'IntersectionObserver' in window) {
+      var po = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          e.target.classList.toggle('is-active', e.isIntersecting);
+        });
+      }, { threshold: 0.45, rootMargin: '-12% 0px -22% 0px' });
+      steps.forEach(function (el) { po.observe(el); });
+    } else {
+      steps.forEach(function (el) { el.classList.add('is-active'); });
+    }
+
+    /* ---------------------------------------------------
        6. Menu mobilne
        --------------------------------------------------- */
     var burger = document.getElementById('burger');
