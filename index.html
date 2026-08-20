@@ -1,29 +1,207 @@
-<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>21project Admin</title><link rel="stylesheet" href="/admin/admin.css"></head><body>
-<div class="admin-shell">
-<aside class="sidebar"><div class="logo">21 <span class="word">PROJECT</span><small>ADMIN</small></div><nav class="side-nav"><button class="active" data-view="dashboard"><span>Dashboard</span></button><button data-view="leads"><span>Leady</span></button><button data-view="prospects"><span>Firmy / Prospecting</span></button><button data-view="help"><span>Konfiguracja</span></button></nav><div class="side-bottom"><a href="/" target="_blank">Otwórz stronę ↗</a><button id="logout">Wyloguj</button></div></aside>
-<main class="main">
-<div class="topbar"><div><h1 id="view-title">Dashboard</h1><div class="muted" id="admin-email"></div></div><button class="btn" id="refresh">Odśwież</button></div>
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>21project | Strony internetowe i SEO dla firm</title>
+  <meta name="description" content="21project tworzy nowoczesne strony internetowe dla firm: landing page, strony z podstronami i SEO. Portfolio, case studies i realizacje desktop/mobile.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://21project.pl/">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pl_PL">
+  <meta property="og:title" content="21project | Strony internetowe i SEO dla firm">
+  <meta property="og:description" content="Nowoczesne strony internetowe, landing page, case studies i SEO.">
+  <meta property="og:url" content="https://21project.pl/">
+  <meta property="og:image" content="https://21project.pl/assets/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="style.css">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "ProfessionalService", "@id": "https://21project.pl/#business", "name": "21project", "url": "https://21project.pl/", "email": "jakubskrzypiec.dev@gmail.com", "telephone": "+48601863788", "areaServed": ["Katowice", "Ruda Śląska", "Chorzów", "Żory", "Mikołów", "Bytom", "Częstochowa", "Polska"], "priceRange": "1000 zł - 3000 zł", "description": "21project tworzy nowoczesne strony internetowe dla firm, landing page oraz wdrożenia z optymalizacją SEO."}, {"@type": "WebSite", "@id": "https://21project.pl/#website", "url": "https://21project.pl/", "name": "21project", "publisher": {"@id": "https://21project.pl/#business"}, "inLanguage": "pl-PL"}]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Ile kosztuje strona internetowa w 21project?", "acceptedAnswer": {"@type": "Answer", "text": "Landing page kosztuje 1500 zł, strona z podstronami 2500 zł, a strona z podstronami i SEO 3000 zł. Samodzielna usługa SEO kosztuje 1000 zł."}}, {"@type": "Question", "name": "Czy strona działa na telefonie?", "acceptedAnswer": {"@type": "Answer", "text": "Tak. Każdy projekt jest przygotowywany responsywnie i dopracowywany osobno dla komputerów, tabletów i telefonów."}}, {"@type": "Question", "name": "Czy zajmujesz się SEO i widocznością w wyszukiwarkach AI?", "acceptedAnswer": {"@type": "Answer", "text": "Tak. Struktura strony, semantyka, dane uporządkowane, szybkość, treści i architektura informacji są przygotowywane tak, aby ułatwiać indeksację w Google i interpretację treści przez systemy wyszukiwania oparte na AI."}}]}</script>
+</head>
+<body>
 
-<section class="view active" id="view-dashboard">
-<div class="cards"><div class="metric"><span>Dzisiaj / odwiedzający</span><strong id="m-today">0</strong></div><div class="metric"><span>7 dni / odwiedzający</span><strong id="m-7">0</strong></div><div class="metric"><span>30 dni / odsłony</span><strong id="m-30">0</strong></div><div class="metric"><span>Konwersja / 30 dni</span><strong id="m-conv">0%</strong></div></div>
-<div class="grid-2"><div class="panel"><h2>Ruch — ostatnie 30 dni</h2><div class="chart-wrap"><canvas id="traffic-chart"></canvas></div></div><div class="panel"><h2>Źródła wejść</h2><div class="list" id="sources"></div></div></div>
-<div class="grid-2"><div class="panel"><h2>Najczęściej odwiedzane strony</h2><div class="list" id="top-pages"></div></div><div class="panel"><h2>Urządzenia</h2><div class="list" id="devices"></div></div></div>
+<header class="header">
+  <div class="shell header-inner">
+    <a class="brand" href="index.html" aria-label="21project — strona główna">
+      <span class="brand-mark">21</span><span>21project</span>
+    </a>
+    <nav class="nav" aria-label="Menu główne">
+      <a href="index.html#realizacje">Realizacje</a>
+      <a href="index.html#oferta">Oferta</a>
+      <a href="index.html#proces">Proces</a>
+      <a href="index.html#seo">SEO / AI</a>
+    </nav>
+    <a class="header-cta" href="mailto:jakubskrzypiec.dev@gmail.com">Napisz do mnie</a>
+    <button class="menu" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span></button>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <div class="shell hero-grid">
+    <div>
+      <p class="eyebrow">21project / web design / SEO</p>
+      <h1>Strony internetowe, które <span>dobrze wyglądają</span> i prowadzą do kontaktu.</h1>
+      <p class="hero-lead">Projektuję nowoczesne, szybkie strony dla firm — od landing page po pełne serwisy z SEO. Bez gotowych szablonów i bez zbędnego contentu.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#realizacje">Zobacz realizacje</a>
+        <a class="btn" href="#oferta">Sprawdź ofertę</a>
+      </div>
+      <div class="hero-proof">
+        <span>responsive</span><span>SEO-ready</span><span>indywidualny projekt</span>
+      </div>
+    </div>
+    <div class="hero-stage" aria-label="Wybrane realizacje 21project">
+      <div class="device-card one"><img src="assets/monika-serbista.jpg" alt="Monika Serbista — projekt strony na komputerze i telefonie"></div>
+      <div class="device-card two"><img src="assets/drg-auto.jpg" alt="DRG Auto — projekt strony na komputerze i telefonie"></div>
+      <div class="hero-badge"><b>05</b> wybranych case studies</div>
+    </div>
+  </div>
 </section>
 
-<section class="view" id="view-leads">
-<div class="toolbar"><input class="input" id="lead-q" placeholder="Szukaj firmy, maila, telefonu"><select class="select" id="lead-status"><option value="all">Wszystkie statusy</option><option>nowy</option><option>kontakt</option><option>oferta</option><option>follow-up</option><option>wygrany</option><option>przegrany</option></select><button class="btn" id="lead-filter">Filtruj</button><a class="btn" href="/api/admin/leads.csv">Eksport CSV</a></div>
-<div class="table-wrap"><table class="table"><thead><tr><th>Data</th><th>Firma / osoba</th><th>Kontakt</th><th>Usługa</th><th>Źródło</th><th>Status</th><th>Follow-up</th><th></th></tr></thead><tbody id="leads-body"></tbody></table></div>
+<div class="trustbar">
+  <div class="shell trustbar-grid">
+    <div class="trustitem"><span class="dot"></span>Projekt od zera</div>
+    <div class="trustitem"><span class="dot"></span>Mobile-first</div>
+    <div class="trustitem"><span class="dot"></span>Techniczne SEO</div>
+    <div class="trustitem"><span class="dot"></span>Wsparcie we wdrożeniu</div>
+  </div>
+</div>
+
+<section class="section" id="realizacje">
+  <div class="shell">
+    <div class="section-head">
+      <p class="eyebrow">Realizacje</p>
+      <div>
+        <h2>Desktop + telefon. Każdy projekt z osobnym case study.</h2>
+        <p>Na stronie głównej pokazuję tylko najważniejszy efekt. Cały kontekst, decyzje projektowe i zakres prac są opisane dopiero w case study.</p>
+      </div>
+    </div>
+    <div class="work-list">
+<article class="work">
+  <div class="work-copy">
+    <div class="tags"><span class="tag">wnętrza</span><span class="tag">portfolio</span><span class="tag">mobile</span></div>
+    <h3>Monika Serbista</h3>
+    <p>Spokojna, elegancka strona oparta na dużych kadrach, czytelnej ofercie i prostym przejściu do kontaktu.</p>
+    <a class="work-link" href="case-monika-serbista.html">Zobacz case study →</a>
+  </div>
+  <div class="work-visual"><img class="project-shot" src="assets/monika-serbista.jpg" loading="lazy" alt="Monika Serbista — widok strony na komputerze i telefonie"></div>
+</article>
+
+<article class="work">
+  <div class="work-copy">
+    <div class="tags"><span class="tag">architektura</span><span class="tag">pełny ekran</span><span class="tag">portfolio</span></div>
+    <h3>To Oni Projektują</h3>
+    <p>Wizerunkowa strona studia wnętrz z mocnym pierwszym ekranem, pełnoekranowymi sekcjami i naciskiem na realizacje.</p>
+    <a class="work-link" href="case-to-oni-projektuja.html">Zobacz case study →</a>
+  </div>
+  <div class="work-visual"><img class="project-shot" src="assets/to-oni-projektuja.jpg" loading="lazy" alt="To Oni Projektują — widok strony na komputerze i telefonie"></div>
+</article>
+
+<article class="work">
+  <div class="work-copy">
+    <div class="tags"><span class="tag">premium</span><span class="tag">wnętrza</span><span class="tag">SEO-ready</span></div>
+    <h3>Maciejewska Design</h3>
+    <p>Nowoczesna prezentacja projektantki wnętrz z mocnym hero, ofertą, realizacjami i strukturą przygotowaną pod rozwój SEO.</p>
+    <a class="work-link" href="case-maciejewska-design.html">Zobacz case study →</a>
+  </div>
+  <div class="work-visual"><img class="project-shot" src="assets/maciejewska-design.jpg" loading="lazy" alt="Maciejewska Design — widok strony na komputerze i telefonie"></div>
+</article>
+
+<article class="work">
+  <div class="work-copy">
+    <div class="tags"><span class="tag">usługi lokalne</span><span class="tag">Śląsk</span><span class="tag">oferta</span></div>
+    <h3>Werka Bramy</h3>
+    <p>Mocna strona usługowa łącząca produktowy charakter, ofertę bram i ogrodzeń oraz lokalną widoczność.</p>
+    <a class="work-link" href="case-werka-bramy.html">Zobacz case study →</a>
+  </div>
+  <div class="work-visual"><img class="project-shot" src="assets/werka-bramy.jpg" loading="lazy" alt="Werka Bramy — widok strony na komputerze i telefonie"></div>
+</article></div>
+    <div style="margin-top:28px"><a class="btn btn-dark" href="realizacje.html">Zobacz wszystkie realizacje</a></div>
+  </div>
 </section>
 
-<section class="view" id="view-prospects">
-<div class="panel" style="margin-bottom:14px"><h2>Dodaj firmę</h2><div class="form-row"><input class="input" id="p-company" placeholder="Nazwa firmy"><input class="input" id="p-domain" placeholder="https://firma.pl"><input class="input" id="p-city" placeholder="Miasto"><input class="input" id="p-email" placeholder="E-mail"></div><div class="toolbar" style="margin-top:10px;margin-bottom:0"><button class="btn dark" id="p-add">Dodaj</button><label class="btn">Import CSV<input type="file" id="csv-file" accept=".csv,text/csv" hidden></label><span class="muted" id="import-status"></span></div></div>
-<div class="toolbar"><input class="input" id="p-q" placeholder="Szukaj firmy / domeny"><label class="btn"><input type="checkbox" id="p-old"> Stopka ≤ 2020</label><label class="btn"><input type="checkbox" id="p-noseo"> Brak SEO</label><button class="btn" id="p-filter">Filtruj</button><button class="btn dark" id="p-check-visible">Analizuj widoczne</button></div>
-<div class="table-wrap"><table class="table"><thead><tr><th>Firma</th><th>Domena</th><th>Miasto</th><th>Stopka</th><th>Score</th><th>Problemy</th><th>Status</th><th>Follow-up</th><th>Akcje</th></tr></thead><tbody id="prospects-body"></tbody></table></div>
+<section class="section offer-section" id="oferta">
+  <div class="shell">
+    <div class="section-head">
+      <p class="eyebrow">Oferta</p>
+      <div><h2>Prosto. Cztery warianty.</h2><p style="color:#a9adb6">Bez rozbudowanych pakietów i dopłat ukrytych w małym druku. Zakres ustalamy przed startem.</p></div>
+    </div>
+    <div class="offer-grid">
+      <article class="offer-card"><small>01</small><h3>Landing page</h3><p>Jedna mocna strona pod usługę, kampanię lub konkretną ofertę.</p><div class="price">1500 zł</div></article>
+      <article class="offer-card"><small>02</small><h3>Strona z podstronami</h3><p>Pełna strona firmowa z logiczną strukturą i wersją mobilną.</p><div class="price">2500 zł</div></article>
+      <article class="offer-card featured"><small>03 / najczęściej wybierane</small><h3>Strona + SEO</h3><p>Strona z podstronami oraz optymalizacją techniczną i treściową pod wyszukiwarki.</p><div class="price">3000 zł</div></article>
+      <article class="offer-card"><small>04</small><h3>SEO</h3><p>Optymalizacja istniejącej strony: technika, struktura, treści i indeksacja.</p><div class="price">1000 zł</div></article>
+    </div>
+  </div>
 </section>
 
-<section class="view" id="view-help"><div class="panel"><h2>Jak uruchomić panel</h2><div class="help">1. Skopiuj <b>.env.example</b> do <b>.env</b>.<br>2. Wygeneruj hash: <b>npm run hash-password -- "TwojeHaslo"</b> i wklej do ADMIN_PASSWORD_HASH.<br>3. Ustaw długi SESSION_SECRET.<br>4. Uruchom <b>npm install</b>, potem <b>npm start</b>.<br><br>Do produkcji polecam Render/Railway/VPS z trwałym dyskiem dla SQLite. Na czystym GitHub Pages panel i backend nie zadziałają.</div><h2 style="margin-top:24px">Prospecting</h2><p class="muted">Analiza domen sprawdza publiczny HTML strony po backendzie: rok stopki, HTTPS, viewport, title, description, Schema.org i canonical. To szybki screening, nie pełny audyt SEO.</p><h2>Powiadomienia e-mail</h2><p class="muted">Jeśli wpiszesz RESEND_API_KEY, NOTIFY_EMAIL i FROM_EMAIL w .env, nowe formularze mogą wysyłać powiadomienie. Bez klucza lead i tak trafia do panelu.</p></div></section>
-</main></div>
+<section class="section" id="proces">
+  <div class="shell">
+    <div class="section-head">
+      <p class="eyebrow">Proces</p>
+      <div><h2>Krótki proces, bez przeciągania projektu.</h2><p>Najpierw ustalamy kierunek. Dopiero później buduję całość.</p></div>
+    </div>
+    <div class="process">
+      <article class="step"><span class="step-no">01</span><h3>Rozmowa</h3><p>Cel strony, branża, materiały i kierunek wizualny.</p></article>
+      <article class="step"><span class="step-no">02</span><h3>Projekt</h3><p>Najpierw kluczowy ekran i styl. Po akceptacji reszta.</p></article>
+      <article class="step"><span class="step-no">03</span><h3>Wdrożenie</h3><p>Kod, responsive, formularze i dopracowanie detali.</p></article>
+      <article class="step"><span class="step-no">04</span><h3>Publikacja</h3><p>Domena, indeksacja i opcjonalne SEO / dalsza opieka.</p></article>
+    </div>
+  </div>
+</section>
 
-<div class="drawer" id="lead-drawer"><button class="drawer-close" data-close-drawer>×</button><div id="lead-detail"></div></div>
-<div class="modal" id="email-modal"><div class="modal-card"><h2>Szkic maila</h2><input class="input" id="draft-subject" style="width:100%;margin-bottom:10px"><textarea class="textarea" id="draft-body"></textarea><div class="toolbar" style="margin-top:10px"><button class="btn dark" id="copy-draft">Kopiuj</button><button class="btn" id="close-modal">Zamknij</button></div></div></div>
-<script src="/admin/admin.js" defer></script></body></html>
+<section class="section ai-section" id="seo">
+  <div class="shell ai-grid">
+    <div>
+      <p class="eyebrow">SEO + wyszukiwanie AI</p>
+      <h2>Strona ma być czytelna nie tylko dla człowieka.</h2>
+      <p style="color:var(--muted);max-width:590px">Optymalizacja nie polega na wciskaniu fraz. Tworzę jasną strukturę informacji, semantyczny kod i treści, które wyszukiwarki oraz systemy AI mogą łatwiej zrozumieć i powiązać z Twoją ofertą.</p>
+    </div>
+    <div class="ai-list">
+      <div class="ai-row"><b>01</b><div><strong>Semantyka i dane uporządkowane</strong><p>Schema.org, poprawne nagłówki, canonicale i jednoznaczne informacje o usłudze.</p></div></div>
+      <div class="ai-row"><b>02</b><div><strong>Szybkość i mobile</strong><p>Lekki front, responsywne obrazy, lazy loading i ograniczenie zbędnego JavaScriptu.</p></div></div>
+      <div class="ai-row"><b>03</b><div><strong>Case studies i kontekst</strong><p>Realizacje opisane jako konkretne problemy, rozwiązania i zakres prac — wartościowe dla Google i systemów AI.</p></div></div>
+      <div class="ai-row"><b>04</b><div><strong>Techniczna dostępność</strong><p>Sitemap, robots.txt, llms.txt, poprawne linkowanie i treści możliwe do odczytania bez skryptów.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-sm">
+  <div class="shell faq">
+    <p class="eyebrow">FAQ</p>
+    <h2 class="big-title">Najważniejsze pytania.</h2>
+    <details><summary>Ile kosztuje strona internetowa w 21project?</summary><p>Landing page kosztuje 1500 zł, strona z podstronami 2500 zł, a strona z podstronami i SEO 3000 zł. Samodzielna usługa SEO kosztuje 1000 zł.</p></details><details><summary>Czy strona działa na telefonie?</summary><p>Tak. Każdy projekt jest przygotowywany responsywnie i dopracowywany osobno dla komputerów, tabletów i telefonów.</p></details><details><summary>Czy zajmujesz się SEO i widocznością w wyszukiwarkach AI?</summary><p>Tak. Struktura strony, semantyka, dane uporządkowane, szybkość, treści i architektura informacji są przygotowywane tak, aby ułatwiać indeksację w Google i interpretację treści przez systemy wyszukiwania oparte na AI.</p></details>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="shell cta-grid">
+    <div><h2>Masz firmę i chcesz lepszą stronę?</h2><p>Napisz czym się zajmujesz. Odpowiem z konkretnym kierunkiem i wyceną.</p></div>
+    <a class="btn" href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="shell footer-grid">
+    <div>
+      <a class="brand" href="index.html"><span class="brand-mark">21</span><span>21project</span></a>
+      <p>Nowoczesne strony internetowe dla firm. Projekt, wdrożenie i SEO.</p>
+    </div>
+    <div class="footer-col">
+      <strong>Kontakt</strong>
+      <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
+      <a href="tel:+48601863788">601 863 788</a>
+    </div>
+    <div class="footer-col">
+      <strong>Obszar</strong>
+      <a href="index.html#seo">Katowice / Śląsk / cała Polska</a>
+      <a href="realizacje.html">Case studies</a>
+    </div>
+  </div>
+  <div class="shell footer-bottom"><span>© 2026 21project</span><span>Strony internetowe / SEO / Web design</span></div>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>
