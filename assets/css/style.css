@@ -168,34 +168,36 @@ h3{font-size:clamp(1.18rem,1.55vw,1.4rem);letter-spacing:-.024em;font-weight:700
 
 /* --- logo wtopione w ekrany --- */
 .screen{position:absolute;display:flex;align-items:center;justify-content:center;
-  opacity:0;transition:opacity 1s var(--ease) .55s}
+  opacity:0;transition:opacity 1.1s var(--ease) .55s;overflow:hidden}
 .hero.is-ready .screen{opacity:1}
 .screen--laptop{left:54.2%;top:34.9%;width:26.1%;height:41.5%;transform:rotate(-1.9deg)}
 .screen--phone{left:81.2%;top:41.5%;width:10.1%;height:44.3%}
-.screen img{opacity:.74;mix-blend-mode:multiply}
-.screen--laptop img{width:58%}
-.screen--phone img{width:50%}
-.screen::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(104deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.16) 30%,
-             rgba(255,255,255,0) 52%,rgba(255,255,255,.1) 100%);
+.screen--laptop img{width:56%}
+.screen--phone img{width:47%}
+
+/* logo przejmuje oświetlenie ekranu: mnożenie + gaśnie tam, gdzie pada refleks */
+.screen img{
+  opacity:.52;mix-blend-mode:multiply;
+  -webkit-mask-image:linear-gradient(104deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,.72) 26%,
+                     #000 52%,rgba(0,0,0,.88) 100%);
+  mask-image:linear-gradient(104deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,.72) 26%,
+             #000 52%,rgba(0,0,0,.88) 100%);
 }
+/* bez nakładek na całym boxie — każda z nich rysowałaby widoczny prostokąt
+   na białej tafli ekranu. Całe „wtopienie” robi maska na samym logo. */
 
 /* --- tekst hero --- */
 .hero__copy{
   position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
   z-index:4;will-change:transform,opacity;pointer-events:none;
 }
-.hero__copy .shell{max-width:var(--shell)}
+.hero__copy .shell{max-width:none;padding-inline:clamp(20px,4.2vw,68px)}
 .hero__copy > .shell > *{pointer-events:auto}
-.hero__copy .eyebrow{margin-bottom:1.5em;letter-spacing:.26em}
 .hero__copy h1{
-  font-size:clamp(2.4rem,5.3vw,4.6rem);line-height:1.03;
-  letter-spacing:-.042em;margin-bottom:.42em;max-width:14ch;
+  font-size:clamp(2.4rem,5.6vw,5rem);line-height:1.02;
+  letter-spacing:-.044em;margin-bottom:.44em;max-width:13ch;
 }
-.hero__lead{font-size:clamp(.98rem,1.16vw,1.14rem);line-height:1.72;
-  color:var(--mute);max-width:38ch}
-.hero__actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:clamp(26px,2.6vw,40px)}
+.hero__actions{display:flex;flex-wrap:wrap;gap:12px}
 
 /* wjazd tekstu — maska linia po linii */
 [data-in]{opacity:0;transform:translateY(26px);filter:blur(6px)}
@@ -257,22 +259,6 @@ h1 .ln{display:block}
   animation:sc 2.4s var(--ease) infinite}
 @keyframes sc{0%{transform:translateY(-100%)}55%,100%{transform:translateY(100%)}}
 
-/* =========================================================
-   PASEK KLIENTÓW
-   ========================================================= */
-.marquee{
-  overflow:hidden;background:var(--ink);color:rgba(255,255,255,.9);
-  padding:17px 0;user-select:none;
-}
-.marquee__row{display:flex;width:max-content;animation:mq 42s linear infinite}
-.marquee__set{display:flex;align-items:center;gap:30px;padding-right:30px;flex:none}
-.marquee__set span{
-  font-family:var(--ff-d);font-weight:700;font-size:clamp(.92rem,1.5vw,1.15rem);
-  letter-spacing:-.02em;white-space:nowrap;
-}
-.marquee__set i{font-style:normal;color:rgba(255,255,255,.32)}
-.marquee:hover .marquee__row{animation-play-state:paused}
-@keyframes mq{to{transform:translate3d(-50%,0,0)}}
 
 /* =========================================================
    SECTIONS
@@ -280,24 +266,19 @@ h1 .ln{display:block}
 .section{padding:var(--sec) 0}
 .section--alt{background:var(--white);border-block:1px solid var(--line)}
 
-/* ---------------- liczby ---------------- */
-.stats-sec{padding-block:clamp(56px,6vw,88px)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,44px)}
-.stats li{display:flex;flex-direction:column;gap:9px;
-  padding-top:22px;border-top:1px solid var(--line-2)}
-.stats b{font-family:var(--ff-d);font-weight:700;font-size:clamp(2.3rem,4.4vw,3.5rem);
-  color:var(--ink);letter-spacing:-.045em;line-height:1;font-variant-numeric:tabular-nums}
-.stats li > span{font-size:.85rem;color:var(--mute);line-height:1.5}
-.stats b > span{font:inherit;color:inherit}
-@media (max-width:760px){.stats{grid-template-columns:1fr 1fr}}
-
 /* ---------------- realizacje ---------------- */
-.cases{display:flex;flex-direction:column;gap:clamp(78px,9vw,140px)}
+.cases{display:flex;flex-direction:column;gap:clamp(72px,8vw,124px)}
 
-.case__visual{position:relative;padding-bottom:clamp(30px,4vw,58px)}
+/* lewa: komputer + telefon · prawa: opis */
+.case{
+  display:grid;grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);
+  gap:clamp(32px,4.4vw,72px);align-items:center;
+}
+
+.case__visual{position:relative;padding-bottom:clamp(18px,2.4vw,34px)}
 .browser{
-  width:87%;border-radius:10px;overflow:hidden;background:var(--white);
-  box-shadow:0 34px 64px -28px rgba(13,13,13,.42),0 0 0 1px rgba(13,13,13,.07);
+  width:88%;border-radius:9px;overflow:hidden;background:var(--white);
+  box-shadow:0 30px 58px -26px rgba(13,13,13,.4),0 0 0 1px rgba(13,13,13,.07);
 }
 .browser__bar{
   display:flex;align-items:center;gap:14px;height:38px;padding:0 15px;
@@ -312,28 +293,24 @@ h1 .ln{display:block}
 }
 .browser img{width:100%}
 
-/* telefon nachodzi na róg przeglądarki */
+/* telefon nachodzi na róg przeglądarki — cienka obudowa */
 .phone{
-  position:absolute;right:0;bottom:0;width:20.5%;z-index:3;
-  background:linear-gradient(150deg,#3D3D3D,#111);padding:1.5%;
-  border-radius:13%/6.2%;
-  box-shadow:0 30px 52px -18px rgba(13,13,13,.55),inset 0 0 0 1px rgba(255,255,255,.18);
+  position:absolute;right:0;bottom:0;width:21%;z-index:3;
+  background:#141414;padding:.55%;
+  border-radius:11%/5.4%;
+  box-shadow:0 22px 42px -18px rgba(13,13,13,.5),0 0 0 1px rgba(13,13,13,.16);
 }
-.phone img{width:100%;border-radius:11%/5.2%;background:#000}
+.phone img{width:100%;border-radius:9.5%/4.7%;background:#000;display:block}
 
-.case__info{
-  display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
-  gap:clamp(24px,4vw,64px);
-  margin-top:clamp(28px,3.5vw,46px);padding-top:clamp(24px,3vw,36px);
-  border-top:1px solid var(--line-2);
-}
+.case__info{display:block}
 .case__cat{
   font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
   color:var(--mute);margin-bottom:.9em;
 }
-.case__info h3{font-size:clamp(1.55rem,2.5vw,2.15rem);margin-bottom:.7em}
-.case__desc p{color:var(--body);font-size:1rem;line-height:1.78}
-.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.case__info h3{font-size:clamp(1.5rem,2.3vw,2.05rem);margin-bottom:.6em}
+.case__id{margin-bottom:22px}
+.case__desc p{color:var(--body);font-size:.97rem;line-height:1.76}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
 .tags li{
   font-size:.71rem;font-weight:500;letter-spacing:.02em;padding:7px 14px;
   border:1px solid var(--line-2);border-radius:99px;color:var(--mute);
@@ -480,7 +457,7 @@ h2.is-in .ln > span,.case__info h3.is-in .ln > span{transform:none}
   .btn:hover,.plan:hover{transform:none}
   .rot em{animation:none;opacity:0}
   .rot em:nth-of-type(1){opacity:1}
-  .hero__scroll i::after,.marquee__row{animation:none}
+  .hero__scroll i::after{animation:none}
   .hero__media,.screen,.hero__scroll,[data-in]{opacity:1!important;
     transform:translate3d(-50%,-50%,0)!important;animation:none!important;filter:none!important}
   .screen,.hero__scroll,[data-in]{transform:none!important}
@@ -513,7 +490,8 @@ h2.is-in .ln > span,.case__info h3.is-in .ln > span{transform:none}
   .hero__actions .btn{padding:14px 20px;font-size:.72rem;flex:1 1 auto}
   .hero__scroll{display:none}
 
-  .case__info,.split,.contact{grid-template-columns:1fr}
+  .case,.split,.contact{grid-template-columns:1fr}
+  .case__visual{padding-bottom:0}
   .footer__inner{grid-template-columns:1fr 1fr}
   .footer__brand{grid-column:1/-1}
 }

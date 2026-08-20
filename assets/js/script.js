@@ -98,6 +98,14 @@
         });
       }, { threshold: 0.1, rootMargin: '0px 0px -9% 0px' });
       items.forEach(function (el) { io.observe(el); });
+
+      // bezpiecznik: nic nie może zostać trwale ukryte przez maskę
+      setTimeout(function () {
+        items.forEach(function (el) {
+          var r = el.getBoundingClientRect();
+          if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('is-in');
+        });
+      }, 2500);
     } else {
       items.forEach(function (el) { el.classList.add('is-in'); });
     }
