@@ -21,16 +21,16 @@
 </head>
 <body>
 
-<header class="header">
+<header class="header" id="siteHeader">
   <div class="shell header-inner">
     <a class="brand" href="index.html" aria-label="21project — strona główna">
       <span class="brand-mark">21</span><span>21project</span>
     </a>
     <nav class="nav" aria-label="Menu główne">
-      <a href="index.html#realizacje">Realizacje</a>
-      <a href="index.html#oferta">Oferta</a>
-      <a href="index.html#proces">Proces</a>
-      <a href="index.html#seo">SEO / AI</a>
+      <a href="#realizacje">Realizacje</a>
+      <a href="#oferta">Oferta</a>
+      <a href="#proces">Proces</a>
+      <a href="#seo">SEO / AI</a>
     </nav>
     <a class="header-cta" href="mailto:jakubskrzypiec.dev@gmail.com">Napisz do mnie</a>
     <button class="menu" type="button" aria-label="Otwórz menu" aria-expanded="false"><span></span><span></span></button>
@@ -39,22 +39,32 @@
 <main>
 <section class="hero">
   <div class="shell hero-grid">
-    <div>
-      <p class="eyebrow">21project / web design / SEO</p>
-      <h1>Strony internetowe, które <span>dobrze wyglądają</span> i prowadzą do kontaktu.</h1>
-      <p class="hero-lead">Projektuję nowoczesne, szybkie strony dla firm — od landing page po pełne serwisy z SEO. Bez gotowych szablonów i bez zbędnego contentu.</p>
+    <div class="hero-copy reveal">
+      <p class="eyebrow">21project / strony internetowe / SEO</p>
+      <h1>Strony internetowe dla firm, które chcą wyglądać <span>profesjonalnie.</span></h1>
+      <p class="hero-lead">Projektuję i wdrażam strony, które są proste w odbiorze, dobrze prezentują ofertę i prowadzą użytkownika do kontaktu. Bez gotowych motywów i bez przeładowania.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#realizacje">Zobacz realizacje</a>
-        <a class="btn" href="#oferta">Sprawdź ofertę</a>
+        <a class="btn btn-ghost" href="#oferta">Sprawdź ofertę</a>
       </div>
       <div class="hero-proof">
-        <span>responsive</span><span>SEO-ready</span><span>indywidualny projekt</span>
+        <span>indywidualny projekt</span>
+        <span>mobile-first</span>
+        <span>SEO-ready</span>
       </div>
     </div>
-    <div class="hero-stage" aria-label="Wybrane realizacje 21project">
-      <div class="device-card one"><img src="assets/monika-serbista.jpg" alt="Monika Serbista — projekt strony na komputerze i telefonie"></div>
-      <div class="device-card two"><img src="assets/drg-auto.jpg" alt="DRG Auto — projekt strony na komputerze i telefonie"></div>
-      <div class="hero-badge"><b>05</b> wybranych case studies</div>
+
+    <div class="hero-showcase reveal" aria-label="Wybrane projekty 21project">
+      <div class="showcase-main">
+        <img src="assets/monika-serbista.jpg" alt="Monika Serbista — projekt strony na komputerze i telefonie">
+      </div>
+      <div class="showcase-float">
+        <img src="assets/drg-auto.jpg" alt="DRG Auto — projekt strony na komputerze i telefonie">
+      </div>
+      <div class="showcase-note">
+        <span>wybrane realizacje</span>
+        <strong>desktop + mobile</strong>
+      </div>
     </div>
   </div>
 </section>
@@ -68,85 +78,153 @@
   </div>
 </div>
 
-<section class="section" id="realizacje">
+<section class="section projects-section" id="realizacje">
   <div class="shell">
-    <div class="section-head">
+    <div class="section-head left-head">
       <p class="eyebrow">Realizacje</p>
       <div>
-        <h2>Desktop + telefon. Każdy projekt z osobnym case study.</h2>
-        <p>Na stronie głównej pokazuję tylko najważniejszy efekt. Cały kontekst, decyzje projektowe i zakres prac są opisane dopiero w case study.</p>
+        <h2>Wybrane projekty i konkretny kontekst.</h2>
+        <p>Na głównej stronie pokazuję najważniejszy efekt. Każda realizacja ma osobne case study z opisem problemu, kierunku projektowego i zakresu prac.</p>
       </div>
     </div>
-    <div class="work-list">
-<article class="work">
-  <div class="work-copy">
-    <div class="tags"><span class="tag">wnętrza</span><span class="tag">portfolio</span><span class="tag">mobile</span></div>
-    <h3>Monika Serbista</h3>
-    <p>Spokojna, elegancka strona oparta na dużych kadrach, czytelnej ofercie i prostym przejściu do kontaktu.</p>
-    <a class="work-link" href="case-monika-serbista.html">Zobacz case study →</a>
-  </div>
-  <div class="work-visual"><img class="project-shot" src="assets/monika-serbista.jpg" loading="lazy" alt="Monika Serbista — widok strony na komputerze i telefonie"></div>
-</article>
-
-<article class="work">
-  <div class="work-copy">
-    <div class="tags"><span class="tag">architektura</span><span class="tag">pełny ekran</span><span class="tag">portfolio</span></div>
-    <h3>To Oni Projektują</h3>
-    <p>Wizerunkowa strona studia wnętrz z mocnym pierwszym ekranem, pełnoekranowymi sekcjami i naciskiem na realizacje.</p>
-    <a class="work-link" href="case-to-oni-projektuja.html">Zobacz case study →</a>
-  </div>
-  <div class="work-visual"><img class="project-shot" src="assets/to-oni-projektuja.jpg" loading="lazy" alt="To Oni Projektują — widok strony na komputerze i telefonie"></div>
-</article>
-
-<article class="work">
-  <div class="work-copy">
-    <div class="tags"><span class="tag">premium</span><span class="tag">wnętrza</span><span class="tag">SEO-ready</span></div>
-    <h3>Maciejewska Design</h3>
-    <p>Nowoczesna prezentacja projektantki wnętrz z mocnym hero, ofertą, realizacjami i strukturą przygotowaną pod rozwój SEO.</p>
-    <a class="work-link" href="case-maciejewska-design.html">Zobacz case study →</a>
-  </div>
-  <div class="work-visual"><img class="project-shot" src="assets/maciejewska-design.jpg" loading="lazy" alt="Maciejewska Design — widok strony na komputerze i telefonie"></div>
-</article>
-
-<article class="work">
-  <div class="work-copy">
-    <div class="tags"><span class="tag">usługi lokalne</span><span class="tag">Śląsk</span><span class="tag">oferta</span></div>
-    <h3>Werka Bramy</h3>
-    <p>Mocna strona usługowa łącząca produktowy charakter, ofertę bram i ogrodzeń oraz lokalną widoczność.</p>
-    <a class="work-link" href="case-werka-bramy.html">Zobacz case study →</a>
-  </div>
-  <div class="work-visual"><img class="project-shot" src="assets/werka-bramy.jpg" loading="lazy" alt="Werka Bramy — widok strony na komputerze i telefonie"></div>
-</article></div>
-    <div style="margin-top:28px"><a class="btn btn-dark" href="realizacje.html">Zobacz wszystkie realizacje</a></div>
+    <div class="projects-list">
+      <article class="project-row reveal ">
+      <div class="project-copy">
+        <span class="project-no">01</span>
+        <p class="project-type">Projektowanie wnętrz</p>
+        <h3>Monika Serbista</h3>
+        <p>Spokojny, premium kierunek oparty na realizacjach, ofercie i prostym kontakcie.</p>
+        <a class="project-link" href="case-monika-serbista.html">Zobacz case study <span>→</span></a>
+      </div>
+      <div class="project-visual">
+        <img src="assets/monika-serbista.jpg" loading="lazy" decoding="async" alt="Monika Serbista — widok strony na komputerze i telefonie">
+      </div>
+    </article><article class="project-row reveal work-reverse">
+      <div class="project-copy">
+        <span class="project-no">02</span>
+        <p class="project-type">Studio projektowania wnętrz</p>
+        <h3>To Oni Projektują</h3>
+        <p>Pełnoekranowe sekcje, duże kadry i mocny rytm strony skoncentrowany na portfolio.</p>
+        <a class="project-link" href="case-to-oni-projektuja.html">Zobacz case study <span>→</span></a>
+      </div>
+      <div class="project-visual">
+        <img src="assets/to-oni-projektuja.jpg" loading="lazy" decoding="async" alt="To Oni Projektują — widok strony na komputerze i telefonie">
+      </div>
+    </article><article class="project-row reveal ">
+      <div class="project-copy">
+        <span class="project-no">03</span>
+        <p class="project-type">Projektowanie wnętrz</p>
+        <h3>Maciejewska Design</h3>
+        <p>Elegancka strona wizerunkowa z ofertą, realizacjami i strukturą gotową do dalszego SEO.</p>
+        <a class="project-link" href="case-maciejewska-design.html">Zobacz case study <span>→</span></a>
+      </div>
+      <div class="project-visual">
+        <img src="assets/maciejewska-design.jpg" loading="lazy" decoding="async" alt="Maciejewska Design — widok strony na komputerze i telefonie">
+      </div>
+    </article><article class="project-row reveal work-reverse">
+      <div class="project-copy">
+        <span class="project-no">04</span>
+        <p class="project-type">Bramy i ogrodzenia</p>
+        <h3>Werka Bramy</h3>
+        <p>Strona usługowa z naciskiem na ofertę lokalną, kontakt i możliwość rozbudowy o treści SEO.</p>
+        <a class="project-link" href="case-werka-bramy.html">Zobacz case study <span>→</span></a>
+      </div>
+      <div class="project-visual">
+        <img src="assets/werka-bramy.jpg" loading="lazy" decoding="async" alt="Werka Bramy — widok strony na komputerze i telefonie">
+      </div>
+    </article>
+    </div>
+    <div class="projects-more"><a class="text-link" href="realizacje.html">Wszystkie realizacje →</a></div>
   </div>
 </section>
 
 <section class="section offer-section" id="oferta">
   <div class="shell">
-    <div class="section-head">
+    <div class="offer-intro">
       <p class="eyebrow">Oferta</p>
-      <div><h2>Prosto. Cztery warianty.</h2><p style="color:#a9adb6">Bez rozbudowanych pakietów i dopłat ukrytych w małym druku. Zakres ustalamy przed startem.</p></div>
+      <h2>Zakres dopasowany do etapu Twojej firmy.</h2>
+      <p>Każdy projekt zaczynam od ustalenia celu strony, treści i tego, co użytkownik ma zrobić po wejściu. Poniżej są cztery najczęstsze warianty współpracy.</p>
     </div>
-    <div class="offer-grid">
-      <article class="offer-card"><small>01</small><h3>Landing page</h3><p>Jedna mocna strona pod usługę, kampanię lub konkretną ofertę.</p><div class="price">1500 zł</div></article>
-      <article class="offer-card"><small>02</small><h3>Strona z podstronami</h3><p>Pełna strona firmowa z logiczną strukturą i wersją mobilną.</p><div class="price">2500 zł</div></article>
-      <article class="offer-card featured"><small>03 / najczęściej wybierane</small><h3>Strona + SEO</h3><p>Strona z podstronami oraz optymalizacją techniczną i treściową pod wyszukiwarki.</p><div class="price">3000 zł</div></article>
-      <article class="offer-card"><small>04</small><h3>SEO</h3><p>Optymalizacja istniejącej strony: technika, struktura, treści i indeksacja.</p><div class="price">1000 zł</div></article>
+
+    <div class="offer-list">
+      <article class="offer-row reveal">
+        <div class="offer-index">01</div>
+        <div class="offer-name">
+          <h3>Landing page</h3>
+          <p>Dla jednej usługi, kampanii lub konkretnej oferty.</p>
+        </div>
+        <div class="offer-details">
+          <span>indywidualny projekt</span>
+          <span>wersja mobilna</span>
+          <span>formularz / CTA</span>
+          <span>podstawowe SEO techniczne</span>
+        </div>
+        <div class="offer-price">1500 zł</div>
+      </article>
+
+      <article class="offer-row reveal">
+        <div class="offer-index">02</div>
+        <div class="offer-name">
+          <h3>Strona z podstronami</h3>
+          <p>Dla firm, które potrzebują pełnej prezentacji marki, usług i realizacji.</p>
+        </div>
+        <div class="offer-details">
+          <span>strona główna + podstrony</span>
+          <span>responsywność</span>
+          <span>formularze i kontakt</span>
+          <span>wdrożenie na domenie</span>
+        </div>
+        <div class="offer-price">2500 zł</div>
+      </article>
+
+      <article class="offer-row offer-featured reveal">
+        <div class="offer-index">03</div>
+        <div class="offer-name">
+          <div class="popular">najczęściej wybierane</div>
+          <h3>Strona + SEO</h3>
+          <p>Pełna strona z przygotowaniem pod widoczność organiczną.</p>
+        </div>
+        <div class="offer-details">
+          <span>wszystko z pakietu wyżej</span>
+          <span>struktura SEO</span>
+          <span>meta / schema / sitemap</span>
+          <span>optymalizacja treści i indeksacji</span>
+        </div>
+        <div class="offer-price">3000 zł</div>
+      </article>
+
+      <article class="offer-row reveal">
+        <div class="offer-index">04</div>
+        <div class="offer-name">
+          <h3>SEO dla istniejącej strony</h3>
+          <p>Dla witryny, która już działa, ale wymaga poprawy struktury i widoczności.</p>
+        </div>
+        <div class="offer-details">
+          <span>audyt techniczny</span>
+          <span>struktura nagłówków i meta</span>
+          <span>schema / sitemap / robots</span>
+          <span>rekomendacje treści</span>
+        </div>
+        <div class="offer-price">1000 zł</div>
+      </article>
     </div>
   </div>
 </section>
 
-<section class="section" id="proces">
+<section class="section process-section" id="proces">
   <div class="shell">
-    <div class="section-head">
+    <div class="section-head left-head">
       <p class="eyebrow">Proces</p>
-      <div><h2>Krótki proces, bez przeciągania projektu.</h2><p>Najpierw ustalamy kierunek. Dopiero później buduję całość.</p></div>
+      <div>
+        <h2>Bez chaosu i bez tygodni ustalania detali.</h2>
+        <p>Najpierw określamy kierunek. Dopiero po jego akceptacji rozwijam całość.</p>
+      </div>
     </div>
     <div class="process">
-      <article class="step"><span class="step-no">01</span><h3>Rozmowa</h3><p>Cel strony, branża, materiały i kierunek wizualny.</p></article>
-      <article class="step"><span class="step-no">02</span><h3>Projekt</h3><p>Najpierw kluczowy ekran i styl. Po akceptacji reszta.</p></article>
-      <article class="step"><span class="step-no">03</span><h3>Wdrożenie</h3><p>Kod, responsive, formularze i dopracowanie detali.</p></article>
-      <article class="step"><span class="step-no">04</span><h3>Publikacja</h3><p>Domena, indeksacja i opcjonalne SEO / dalsza opieka.</p></article>
+      <article class="step reveal"><span class="step-no">01</span><h3>Krótka rozmowa</h3><p>Cel strony, odbiorcy, materiały, inspiracje i zakres.</p></article>
+      <article class="step reveal"><span class="step-no">02</span><h3>Kierunek wizualny</h3><p>Przygotowuję kluczowy ekran i ustalamy wygląd całości.</p></article>
+      <article class="step reveal"><span class="step-no">03</span><h3>Projekt + wdrożenie</h3><p>Buduję sekcje, wersję mobilną, formularze i dopracowuję szczegóły.</p></article>
+      <article class="step reveal"><span class="step-no">04</span><h3>Publikacja</h3><p>Podpinam domenę, indeksację i — jeśli wybrano — działania SEO.</p></article>
     </div>
   </div>
 </section>
@@ -159,10 +237,10 @@
       <p style="color:var(--muted);max-width:590px">Optymalizacja nie polega na wciskaniu fraz. Tworzę jasną strukturę informacji, semantyczny kod i treści, które wyszukiwarki oraz systemy AI mogą łatwiej zrozumieć i powiązać z Twoją ofertą.</p>
     </div>
     <div class="ai-list">
-      <div class="ai-row"><b>01</b><div><strong>Semantyka i dane uporządkowane</strong><p>Schema.org, poprawne nagłówki, canonicale i jednoznaczne informacje o usłudze.</p></div></div>
-      <div class="ai-row"><b>02</b><div><strong>Szybkość i mobile</strong><p>Lekki front, responsywne obrazy, lazy loading i ograniczenie zbędnego JavaScriptu.</p></div></div>
-      <div class="ai-row"><b>03</b><div><strong>Case studies i kontekst</strong><p>Realizacje opisane jako konkretne problemy, rozwiązania i zakres prac — wartościowe dla Google i systemów AI.</p></div></div>
-      <div class="ai-row"><b>04</b><div><strong>Techniczna dostępność</strong><p>Sitemap, robots.txt, llms.txt, poprawne linkowanie i treści możliwe do odczytania bez skryptów.</p></div></div>
+      <div class="ai-row reveal"><b>01</b><div><strong>Semantyka i dane uporządkowane</strong><p>Schema.org, poprawne nagłówki, canonicale i jednoznaczne informacje o usłudze.</p></div></div>
+      <div class="ai-row reveal"><b>02</b><div><strong>Szybkość i mobile</strong><p>Lekki front, responsywne obrazy, lazy loading i ograniczenie zbędnego JavaScriptu.</p></div></div>
+      <div class="ai-row reveal"><b>03</b><div><strong>Case studies i kontekst</strong><p>Realizacje opisane jako konkretne problemy, rozwiązania i zakres prac — wartościowe dla Google i systemów AI.</p></div></div>
+      <div class="ai-row reveal"><b>04</b><div><strong>Techniczna dostępność</strong><p>Sitemap, robots.txt, llms.txt, poprawne linkowanie i treści możliwe do odczytania bez skryptów.</p></div></div>
     </div>
   </div>
 </section>
