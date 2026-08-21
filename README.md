@@ -5,15 +5,9 @@ Hostowana na GitHub Pages pod domeną **21project.pl**.
 
 ## Struktura
 
-```
-index.html            # cała strona (one-page)
-assets/
-  css/style.css
-  js/script.js
-  fonts/              # Syne + Geist (self-hosted, latin + latin-ext)
-  img/                # zrzuty realizacji (webp), hero, logo, favicon
-CNAME                 # 21project.pl
-```
+Wszystkie pliki znajdują się bezpośrednio w katalogu głównym. Nie ma folderu
+`assets`. Na GitHub należy wgrać całą rozpakowaną zawartość, razem z
+`index.html`, `style.css`, fontami, zdjęciami i plikiem `CNAME`.
 
 ## Uruchomienie lokalnie
 
@@ -37,8 +31,8 @@ python3 -m http.server 8000
 ## Uwagi techniczne
 
 - Zero zależności i frameworków — czysty HTML/CSS/JS.
-- Paleta: wyłącznie czerń, biel i szarości. Bez koloru akcentowego.
-- Fonty: **Syne** (nagłówki) + **Geist** (tekst), self-hosted w `assets/fonts/`.
+- Paleta: grafit i biel z akcentami Electric Iris oraz Ember Pulse.
+- Fonty: **Syne** (nagłówki) + **Geist** (tekst), zapisane w katalogu głównym.
   Każdy font ma dwa podzbiory (`latin` + `latin-ext`) z `unicode-range` —
   bez tego polskie znaki lecą na font zastępczy.
 - Animacje respektują `prefers-reduced-motion`.
