@@ -15,7 +15,7 @@ CASES = [
         challenge="Projekty wnętrz sprzedają się obrazem, a dotychczasowa komunikacja opierała się "
                   "głównie na Instagramie. Brakowało miejsca, które pokazuje pełne realizacje "
                   "i porządkuje zapytania — zamiast rozmów rozsypanych po wiadomościach prywatnych.",
-        solution="Zbudowałem stronę wokół fotografii: pełnoekranowy hero, ciemna paleta, "
+        solution="Strona powstała wokół fotografii: pełnoekranowy hero, ciemna paleta, "
                  "dużo powietrza i typografia, która nie konkuruje ze zdjęciami. "
                  "Portfolio podzielone na osobne realizacje, a zamiast zwykłego formularza — "
                  "brief online, który prowadzi klienta przez konkretne pytania.",
@@ -35,7 +35,7 @@ CASES = [
         challenge="Pracownia miała mocne realizacje, ale rozproszone materiały. "
                   "Potrzebna była strona, która od pierwszego ekranu ustawia poziom — "
                   "premium, ale bez przepychu — i szybko prowadzi do kontaktu.",
-        solution="Postawiłem na duże kadry realizacji, stonowaną typografię i wyraźny podział "
+        solution="Całość oparto na dużych kadrach realizacji, stonowanej typografii i wyraźnym podziale "
                  "na ofertę, realizacje i kontakt. Każda sekcja kończy się jednym, "
                  "czytelnym krokiem dalej, więc odwiedzający nigdy nie zostaje bez wskazówki.",
         result="Spójna identyfikacja w sieci i strona, którą pracownia może wysłać "
@@ -53,7 +53,7 @@ CASES = [
         challenge="Klientka pracuje z osobami, które urządzają mieszkanie pierwszy raz. "
                   "Największą barierą nie była cena, tylko niepewność: co się właściwie dzieje "
                   "po podpisaniu umowy i ile to trwa.",
-        solution="Zbudowałem stronę wokół procesu. Ciepła, jasna paleta zamiast zimnego minimalizmu, "
+        solution="Strona została zbudowana wokół procesu. Ciepła, jasna paleta zamiast zimnego minimalizmu, "
                  "spokojna kompozycja i sekcja krok po kroku opisująca współpracę — "
                  "od pierwszej rozmowy po odbiór projektu.",
         result="Klient wchodzi na rozmowę wiedząc, czego się spodziewać. "
@@ -131,7 +131,7 @@ FOOTER = '''<footer class="footer">
           <img src="assets/img/logo-mark.svg" width="1588" height="1356" alt="21 project">
         </a>
         <p>
-          Projektuję i buduję strony internetowe dla firm.<br>
+          Projektowanie i wdrażanie stron internetowych dla firm.<br>
           Katowice, Śląsk i cała Polska — zdalnie.
         </p>
       </div>
@@ -141,6 +141,7 @@ FOOTER = '''<footer class="footer">
         <a href="index.html#oferta">Oferta</a>
         <a href="index.html#proces">Proces</a>
         <a href="index.html#kontakt">Kontakt</a>
+        <a href="polityka-prywatnosci.html">Polityka prywatności</a>
       </nav>
 
       <div class="footer__contact">
