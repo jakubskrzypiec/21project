@@ -76,6 +76,7 @@
 
     window.addEventListener('scroll', requestScroll, { passive: true });
     window.addEventListener('resize', requestScroll);
+    window.addEventListener('load', requestScroll, { once: true });
     updateScroll();
 
     if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
@@ -104,9 +105,9 @@
     });
   };
 
-  if (document.readyState === 'complete') {
-    window.setTimeout(start, 1200);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
   } else {
-    window.addEventListener('load', () => window.setTimeout(start, 1200), { once: true });
+    start();
   }
 })();
