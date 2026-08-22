@@ -865,3 +865,20 @@ html,body{max-width:100%;overflow-x:clip}
   [data-reveal],[data-reveal="clip"],[data-reveal="row"],[data-reveal="slide"],[data-reveal="card"],[data-reveal="step"]{opacity:1!important;transform:none!important;clip-path:none!important;filter:none!important;transition:none!important}
 }
 @media(prefers-reduced-motion:reduce){.heroBrowser,.heroPhone{animation:none!important;transform:none!important}}
+
+
+/* === 21project mobile stability hotfix 2026-08-22 === */
+@media (max-width:900px), (pointer:coarse){
+  [data-reveal],[data-reveal="clip"],[data-reveal="row"],[data-reveal="slide"],[data-reveal="card"],[data-reveal="step"]{
+    opacity:1!important;transform:none!important;clip-path:none!important;filter:none!important;transition:none!important;will-change:auto!important
+  }
+  [data-parallax]{--parallax-y:0px!important;will-change:auto!important}
+  .heroBrowser,.heroPhone,.phoneLift{animation:none!important}
+  .projects,.project,.projectVisual,.why,.faqZone,.region,.serviceGate{max-width:100%;overflow-x:clip}
+  .projectVisual{isolation:isolate}
+}
+@supports not (overflow:clip){
+  @media (max-width:900px), (pointer:coarse){
+    .projects,.project,.projectVisual,.why,.faqZone,.region,.serviceGate{overflow-x:hidden}
+  }
+}

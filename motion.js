@@ -3,9 +3,9 @@
     const root = document.documentElement;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
-    const mobileLayout = window.matchMedia('(max-width: 700px)').matches;
+    const mobileLayout = window.matchMedia('(max-width: 900px)').matches;
     const safeMotion = !reduceMotion && !mobileLayout;
-    const allowParallax = !reduceMotion && !coarsePointer && window.innerWidth > 900;
+    const allowParallax = !reduceMotion && !coarsePointer && window.innerWidth > 1100;
     const revealTargets = [...document.querySelectorAll('[data-reveal]')];
 
     if (!safeMotion || !('IntersectionObserver' in window)) {
