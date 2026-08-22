@@ -14,6 +14,7 @@ pliki z katalogu głównego trafiają na serwer takie, jakie są.
 | `polityka-prywatnosci.html` | polityka prywatności |
 | `detail-style.css`, `script.js` | style i skrypt podstron |
 | `inter-*.woff2` | krój Inter (podzbiór łaciński + polskie znaki) |
+| `screen-21-desktop.webp` | plansza 21 project na ekranie komputera w hero |
 | `screen-21-logo.webp` | ekran z logo 21 project pokazywany na telefonie w sekcji FAQ |
 | `robots.txt`, `sitemap.xml` | pliki dla wyszukiwarek — przy nowej podstronie dopisz ją do mapy |
 | `mockups/` | źródła HTML tych ekranów (patrz niżej) |
@@ -26,16 +27,18 @@ plansza 21 project generowana z `mockups/screen-logo.html` (940×2004).
 `mockups/screen-desktop.html` (1901×1079) służy do obrazka Open Graph.
 Żeby odświeżyć po zmianie treści: otwórz plik w przeglądarce, zrób zrzut
 w rozmiarze podanym w `body` i zapisz — telefon jako `screen-21-logo.webp`,
-Open Graph jako `og-21project.jpg`.
+ekran komputera jako `screen-21-desktop.webp`, Open Graph jako
+`og-21project.jpg` (skalowany z pełnego zrzutu 1901×1079 do 1200×630).
 
 Motyw jest jasny: biała strona, chłodne szare bloki (`--paper`, `--surface`)
 i niebieski akcent. Kolory tekstu sprawdzone pod kątem kontrastu — najsłabszy
 element ma 5,1:1 przy wymaganych 4,5:1.
 
-Grafika w hero (okno przeglądarki, telefon i linie wymiarowe) to inline SVG
-w `index.html`, kolorowany klasami z `style.css` — nie ma tam żadnego pliku
-graficznego. Rotujące słowo w nagłówku to cztery `<span>` w jednej komórce
-siatki, przełączane animacją `wordFade`.
+Hero pokazuje ekran komputera z własną planszą 21 project
+(`screen-21-desktop.webp`, źródło: `mockups/screen-desktop.html`). Ramka
+przeglądarki nad zrzutem jest zrobiona w CSS (`.mac`), nie jest obrazkiem.
+Rotujące słowo w nagłówku to cztery `<span>` w jednej komórce siatki,
+przełączane animacją `wordFade`.
 
 ## Skala wizualna
 
