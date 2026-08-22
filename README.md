@@ -14,17 +14,22 @@ pliki z katalogu głównego trafiają na serwer takie, jakie są.
 | `polityka-prywatnosci.html` | polityka prywatności |
 | `detail-style.css`, `script.js` | style i skrypt podstron |
 | `inter-*.woff2` | krój Inter (podzbiór łaciński + polskie znaki) |
-| `screen-21-*.webp` | ekrany 21 project pokazywane na mockupach urządzeń |
+| `screen-21-kontakt.webp` | ekran wyceny 21 project pokazywany na telefonie w sekcji FAQ |
 | `mockups/` | źródła HTML tych ekranów (patrz niżej) |
 | `og-21project.jpg` | obrazek do podglądu linku (Open Graph) |
 
 ## Ekrany na mockupach
 
-Ekrany widoczne w laptopie i telefonie nie są zrzutami cudzych stron — to własne
-plansze 21 project generowane z `mockups/*.html`. Żeby je odświeżyć po zmianie
-treści: otwórz plik w przeglądarce, zrób zrzut w rozmiarze podanym w `body`
-(`screen-desktop` 1901×1079, `screen-mobile` 946×2047, `screen-faq` 940×2004)
-i zapisz jako WebP pod nazwą `screen-21-<nazwa>.webp`.
+Ekran na telefonie w sekcji FAQ nie jest zrzutem cudzej strony — to własna
+plansza 21 project generowana z `mockups/screen-kontakt.html` (940×2004).
+`mockups/screen-desktop.html` (1901×1079) służy do obrazka Open Graph.
+Żeby odświeżyć po zmianie treści: otwórz plik w przeglądarce, zrób zrzut
+w rozmiarze podanym w `body` i zapisz — telefon jako `screen-21-kontakt.webp`,
+Open Graph jako `og-21project.jpg`.
+
+Hero nie używa mockupów urządzeń — jest tam lewitujący znak `21` złożony
+w CSS (maska na `logo-mark.svg` z metalicznym gradientem), więc nie ma
+tam żadnego pliku do odświeżania.
 
 ## Publikacja
 

@@ -51,10 +51,10 @@ em{font:inherit;color:var(--accent-soft)}
 .heroAtmos i:nth-child(1){width:52%;height:34%;left:4%;top:26%;background:radial-gradient(ellipse,rgba(255,255,255,.5) 0%,rgba(220,224,232,.16) 40%,transparent 72%);transform:rotate(-16deg)}
 .heroAtmos i:nth-child(2){width:50%;height:36%;right:2%;top:34%;background:radial-gradient(ellipse,rgba(236,238,243,.34) 0%,rgba(170,176,190,.13) 44%,transparent 75%);transform:rotate(17deg)}
 .heroAtmos i:nth-child(3){width:42%;height:24%;left:24%;bottom:6%;background:radial-gradient(ellipse,rgba(200,205,216,.24) 0%,rgba(150,156,170,.1) 46%,transparent 76%)}
-.heroOrbit{position:absolute;left:38%;top:52%;border:1px solid rgba(255,255,255,.13);border-radius:50%;pointer-events:none;z-index:0}
-.heroOrbitOne{width:78vw;height:78vw;transform:translate(-50%,-50%) rotateX(74deg) rotateZ(calc(var(--page-progress,0)*140deg))}
-.heroOrbitTwo{width:48vw;height:48vw;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(calc(var(--page-progress,0)*-180deg));border-color:rgba(255,255,255,.14)}
-.heroMark{position:absolute;left:-.06em;bottom:-.28em;z-index:0;font-size:min(42vw,660px);font-weight:600;line-height:.7;letter-spacing:-.13em;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.1);pointer-events:none;user-select:none}
+
+
+
+
 .heroInner{position:relative;z-index:3;width:100%;max-width:1580px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);align-items:center;gap:clamp(38px,5vw,84px)}
 .heroCopy{min-width:0;transform:translate3d(0,var(--parallax-y,0),0);will-change:transform}
 .heroEyebrow{font-size:9px;font-weight:650;text-transform:uppercase;letter-spacing:.2em;margin-bottom:22px;color:var(--accent-soft)}
@@ -70,22 +70,22 @@ em{font:inherit;color:var(--accent-soft)}
 .button.light{background:rgba(255,255,255,.06);color:#fff;border-color:var(--line-strong);backdrop-filter:blur(16px)}.button.light:hover{background:rgba(255,255,255,.14)}
 .button.inverse{border-color:rgba(255,255,255,.36);color:#fff;background:rgba(255,255,255,.05)}.button.inverse:hover{background:#fff;color:#08090c}
 .heroStage{position:relative;min-width:0;display:grid;place-items:center;padding:clamp(10px,1.6vw,24px) 0 clamp(58px,7vh,86px);transform:translate3d(0,var(--parallax-y,0),0);will-change:transform}
-.stageGlow{position:absolute;width:78%;aspect-ratio:1.4;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.24),transparent 68%);filter:blur(36px);z-index:0}
+
 .device{position:relative;z-index:2}
 .deviceViewport{overflow:hidden;background:#05060a}
 .deviceViewport img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
-.deviceLaptop{width:min(100%,760px);border:1px solid rgba(255,255,255,.2);border-radius:16px 16px 5px 5px;padding:9px 9px 0;background:linear-gradient(150deg,#23262f,#101219 46%,#191c25);box-shadow:0 46px 90px rgba(0,0,0,.62),0 0 0 1px rgba(255,255,255,.05) inset}
-.deviceLaptop .deviceViewport{aspect-ratio:1901/1079;border-radius:9px 9px 0 0;box-shadow:0 0 0 1px rgba(0,0,0,.55) inset}
-.deviceFoot{display:block;height:14px;margin:0 -26px;border-radius:0 0 14px 14px;background:linear-gradient(180deg,#3a3e4a,#171a22 72%,#0e1017);box-shadow:0 18px 34px rgba(0,0,0,.62),0 1px 0 rgba(255,255,255,.14) inset;position:relative}
-.deviceFoot::after{content:"";position:absolute;left:50%;top:0;width:88px;height:5px;transform:translateX(-50%);border-radius:0 0 7px 7px;background:rgba(0,0,0,.55)}
-.devicePhone{position:absolute;right:-1%;bottom:14px;width:min(23%,166px);z-index:4;border:1px solid rgba(255,255,255,.22);border-radius:26px;padding:6px;background:linear-gradient(150deg,#2a2d37,#0d0f15 52%,#1b1e27);box-shadow:0 30px 58px rgba(0,0,0,.6)}
-.devicePhone .deviceViewport{aspect-ratio:946/2047;border-radius:20px}
-.deviceNotch{position:absolute;left:50%;top:12px;width:34%;height:9px;transform:translateX(-50%);background:#05060a;border-radius:99px;z-index:3}
-.heroCase{position:absolute;left:0;bottom:0;z-index:5;width:196px;padding:14px 16px;background:rgba(12,14,20,.82);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(18px);display:grid;gap:2px;box-shadow:0 22px 44px rgba(0,0,0,.5);transition:border-color .25s,transform .25s}
-.heroCase:hover{border-color:var(--line-strong);transform:translateY(-3px)}
-.heroCase span{font-size:8px;text-transform:uppercase;letter-spacing:.16em;color:var(--dim)}
-.heroCase strong{font-size:15px;font-weight:550;color:#fff}
-.heroCase em{font:inherit;font-size:9px;margin-top:7px;border-top:1px solid var(--line);padding-top:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-soft)}
+
+
+
+
+
+
+
+
+
+
+
+
 .heroFlow{position:absolute;z-index:3;left:var(--pad);right:var(--pad);bottom:clamp(46px,6vh,68px);display:flex;align-items:center;gap:clamp(10px,1.6vw,22px);flex-wrap:wrap;font-size:9px;font-weight:650;text-transform:uppercase;letter-spacing:.22em;color:var(--dim)}
 .heroFlow span{white-space:nowrap;transition:color .3s}
 .heroFlow span:last-of-type{color:var(--accent-soft)}
@@ -168,14 +168,14 @@ footer{background:#08090c;color:#fff;padding:72px var(--pad) 28px}.footerTop{dis
 
 @media(max-width:1100px){
   .topbar{grid-template-columns:1fr auto}.topbar nav{display:none}.headerRight{gap:13px}
-  .heroInner{grid-template-columns:1fr;gap:clamp(46px,6vw,72px)}.heroStage{order:2;max-width:620px;justify-self:start;width:100%}.heroCase{left:auto;right:0;bottom:-5%}
+  .heroInner{grid-template-columns:1fr;gap:clamp(46px,6vw,72px)}.heroStage{order:2;max-width:620px;justify-self:start;width:100%}
   .planGrid,.processGrid{grid-template-columns:1fr 1fr}.why{grid-template-columns:1fr;min-height:auto}.whySticky{position:relative;top:0;min-height:auto;padding-bottom:50px}.whyMini{margin:60px 0 22px}.whyCards{padding-top:0}.whyCard{position:relative!important;top:auto!important;min-height:520px;margin-bottom:24px}
   .faqZone{grid-template-columns:1fr 1.1fr}.contactHeading{grid-template-columns:1fr}.contactHeading>p:last-child{justify-self:start}.footerTop{grid-template-columns:1fr 1fr}
 }
 
 @media(max-width:700px){
   .topbar{height:64px;padding:0 18px}.brand img{width:94px}.headerPhone{font-size:12px}.headerCta{display:none}
-  .hero{min-height:0;padding:calc(64px + 34px) 20px 104px}.heroInner{gap:38px}.heroEyebrow{margin-bottom:14px}.hero h1{font-size:17px}.rotatingWords{font-size:clamp(3.05rem,13vw,4.6rem);height:74px}.heroNote{width:100%;font-size:13px}.actions{margin-top:20px}.button{padding:13px 18px}.heroStage{max-width:none}.deviceLaptop{width:calc(100% - 62px);margin-left:0}.devicePhone{width:28%;right:0;bottom:40px}.heroCase{position:relative;left:auto;right:auto;bottom:auto;width:auto;max-width:58%;margin:26px auto 0 0}.heroMark{font-size:88vw;bottom:-.2em}.heroOrbitOne{width:150vw;height:150vw}.heroOrbitTwo{width:92vw;height:92vw}.heroFlow{bottom:38px;gap:8px;font-size:8px;letter-spacing:.16em}.heroFlow i{max-width:26px}.scrollCue{display:none}
+  .hero{min-height:0;padding:calc(64px + 34px) 20px 104px}.heroInner{gap:38px}.heroEyebrow{margin-bottom:14px}.hero h1{font-size:17px}.rotatingWords{font-size:clamp(3.05rem,13vw,4.6rem);height:74px}.heroNote{width:100%;font-size:13px}.actions{margin-top:20px}.button{padding:13px 18px}.heroStage{max-width:none}.heroFlow{bottom:38px;gap:8px;font-size:8px;letter-spacing:.16em}.heroFlow i{max-width:26px}.scrollCue{display:none}
   .section{padding:86px 20px}.sectionHead{margin-bottom:60px}.sectionHead h2,.why h2,.faqCopy h2,.contactHeading h2{font-size:clamp(3rem,14vw,5rem)}.sectionHead.horizontal{grid-template-columns:1fr;gap:22px}.sectionHead.horizontal>p{justify-self:start;margin:0}
   .projectsWatermark{font-size:95vw;top:.1em}.project,.project.reverse{grid-template-columns:1fr;gap:34px;padding:50px 0}.project.reverse .projectVisual{order:0}.projectVisual{min-height:245px;padding:17px;border-radius:18px}.projectNo{font-size:32px;margin-bottom:18px}.projectInfo h3{font-size:42px}.mobileScreen{border-width:3px;border-radius:13px}
   .planGrid,.processGrid{grid-template-columns:1fr}.plan{min-height:470px}.processGrid{border-left:0}.processGrid li{min-height:300px;border-left:1px solid var(--line)}
@@ -244,3 +244,60 @@ body.menuOpen{overflow:hidden}
 .formNote{font-size:12px;color:var(--muted);min-height:1.2em;line-height:1.45}
 .formNote.isOk{color:var(--ink)}
 @media(min-width:701px){.formNote{flex:1;text-align:right;margin:0 20px}}
+
+/* =========================================================
+   Hero: lewitujacy znak 21 + subtelny napis w tle
+   ========================================================= */
+
+/* Napis w tle zamiast kresek */
+.heroWord{position:absolute;left:50%;transform:translateX(-50%);bottom:clamp(88px,11.6vh,126px);z-index:0;margin:0;
+  font-size:min(15.5vw,238px);font-weight:600;line-height:.86;letter-spacing:-.045em;white-space:nowrap;
+  color:rgba(255,255,255,.03);pointer-events:none;user-select:none}
+
+/* Scena ze znakiem */
+.markStage{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  width:100%;padding-bottom:8px}
+.markHalo{position:absolute;bottom:16%;width:78%;aspect-ratio:1.12;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.17),transparent 66%);filter:blur(46px);z-index:0}
+.markLift{position:relative;z-index:3;margin-bottom:clamp(30px,4.4vh,46px);
+  animation:markFloat 7.5s cubic-bezier(.45,0,.55,1) infinite;will-change:transform}
+.markGlyph{display:block;width:min(52vw,430px);aspect-ratio:1588/1356;
+  background:linear-gradient(152deg,#fff 0%,#e7e9ef 18%,#9aa0ae 39%,#fff 55%,#c3c8d4 72%,#767c8a 88%,#e9ebf0 100%);
+  -webkit-mask:url("logo-mark.svg") center/contain no-repeat;mask:url("logo-mark.svg") center/contain no-repeat;
+  filter:drop-shadow(0 34px 44px rgba(0,0,0,.72)) drop-shadow(0 0 52px rgba(255,255,255,.16))}
+.markDrop{position:absolute;bottom:clamp(30px,4.4vh,46px);z-index:2;width:34%;height:20px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(0,0,0,.74),transparent 70%);filter:blur(9px);
+  animation:markDropShadow 7.5s cubic-bezier(.45,0,.55,1) infinite;will-change:transform,opacity}
+.markPedestal{position:relative;z-index:1;width:min(260px,52%)}
+.markPedestal span{display:block;height:42px;border-radius:0 0 50% 50%/0 0 24px 24px;
+  background:linear-gradient(180deg,#33363f 0%,#1c1e25 56%,#0e1014 100%);
+  box-shadow:0 32px 56px rgba(0,0,0,.64),0 1px 0 rgba(255,255,255,.06) inset}
+.markPedestal i{position:absolute;left:0;right:0;top:-12px;height:24px;border-radius:50%;
+  background:linear-gradient(180deg,#454954,#272a32 70%);
+  box-shadow:0 2px 0 rgba(255,255,255,.16) inset,0 -1px 0 rgba(0,0,0,.4) inset}
+
+@keyframes markFloat{
+  0%,100%{transform:translateY(0) rotate(-1.1deg)}
+  50%{transform:translateY(-26px) rotate(1.1deg)}
+}
+@keyframes markDropShadow{
+  0%,100%{transform:scale(1);opacity:.85}
+  50%{transform:scale(.78);opacity:.5}
+}
+
+@media(max-width:1100px){
+  .markGlyph{width:min(46vw,340px)}
+  .heroWord{font-size:min(19vw,260px)}
+}
+@media(max-width:700px){
+  .markGlyph{width:min(58vw,260px)}
+  .markLift{margin-bottom:26px}
+  .markDrop{bottom:26px;width:38%}
+  .markPedestal{width:min(200px,58%)}
+  .markPedestal span{height:32px}
+  .markPedestal i{top:-9px;height:18px}
+  .heroWord{font-size:18.5vw;bottom:clamp(76px,10vh,104px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .markLift,.markDrop{animation:none!important}
+}
