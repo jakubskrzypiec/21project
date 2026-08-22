@@ -40,6 +40,12 @@ na końcu `style.css`: `--r1/--r2/--r3` (promienie), `--block` i `--headGap`
 (odstępy sekcji), `--a1`/`--a2` (indygo i fiolet). Zmiana odstępu między
 sekcjami na całej stronie to jedna wartość `--block`.
 
+Zasada układu: **linie zamiast pudełek**. Oferta, proces, obszar działania,
+„Dlaczego ja" i formularz są zbudowane na siatce z włosowych kresek, nie na
+kartach z obramowaniem i cieniem. Kreski nad wierszami (`.rowLine`, `.whyLine`)
+rysują się od lewej, kiedy wiersz wchodzi w kadr — obsługuje to zwykły
+`data-reveal` z `motion.js` plus przejście w CSS, bez dodatkowego skryptu.
+
 ## SEO
 
 Dane strukturalne na stronie głównej (`ProfessionalService` z listą miast
