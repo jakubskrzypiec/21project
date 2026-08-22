@@ -51,15 +51,20 @@
         whyCards.forEach((card, index) => {
           const next = whyCards[index + 1];
           if (!stacked || !next) {
-            card.style.setProperty('--card-scale', '1');
+            card.style.setProperty('--card-rot', '0deg');
+            card.style.setProperty('--card-z', '0px');
+            card.style.setProperty('--card-y', '0px');
             card.style.setProperty('--card-dim', '0');
             return;
           }
           const height = card.offsetHeight || 1;
           const bottom = card.getBoundingClientRect().top + height;
           const covered = clamp(0, (bottom - next.getBoundingClientRect().top) / height, 1);
-          card.style.setProperty('--card-scale', (1 - covered * .055).toFixed(4));
-          card.style.setProperty('--card-dim', (covered * .55).toFixed(3));
+          const eased = covered * covered * (3 - 2 * covered);
+          card.style.setProperty('--card-rot', (eased * 7).toFixed(2) + 'deg');
+          card.style.setProperty('--card-z', (eased * -120).toFixed(1) + 'px');
+          card.style.setProperty('--card-y', (eased * -16).toFixed(1) + 'px');
+          card.style.setProperty('--card-dim', (eased * .5).toFixed(3));
         });
       }
     };
