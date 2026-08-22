@@ -14,22 +14,31 @@ pliki z katalogu głównego trafiają na serwer takie, jakie są.
 | `polityka-prywatnosci.html` | polityka prywatności |
 | `detail-style.css`, `script.js` | style i skrypt podstron |
 | `inter-*.woff2` | krój Inter (podzbiór łaciński + polskie znaki) |
-| `screen-21-pakiety.webp` | ekran cennika 21 project pokazywany na telefonie w sekcji FAQ |
+| `screen-21-logo.webp` | ekran z logo 21 project pokazywany na telefonie w sekcji FAQ |
+| `robots.txt`, `sitemap.xml` | pliki dla wyszukiwarek — przy nowej podstronie dopisz ją do mapy |
 | `mockups/` | źródła HTML tych ekranów (patrz niżej) |
 | `og-21project.jpg` | obrazek do podglądu linku (Open Graph) |
 
 ## Ekrany na mockupach
 
 Ekran na telefonie w sekcji FAQ nie jest zrzutem cudzej strony — to własna
-plansza 21 project generowana z `mockups/screen-pakiety.html` (940×2004).
+plansza 21 project generowana z `mockups/screen-logo.html` (940×2004).
 `mockups/screen-desktop.html` (1901×1079) służy do obrazka Open Graph.
 Żeby odświeżyć po zmianie treści: otwórz plik w przeglądarce, zrób zrzut
-w rozmiarze podanym w `body` i zapisz — telefon jako `screen-21-pakiety.webp`,
+w rozmiarze podanym w `body` i zapisz — telefon jako `screen-21-logo.webp`,
 Open Graph jako `og-21project.jpg`.
 
-Hero jest wyłącznie typograficzne — żadnych obrazków ani mockupów, więc nie ma
-tam nic do odświeżania. Rotujące słowo w nagłówku to cztery `<span>`
-w jednej komórce `inline-grid`, przełączane animacją `wordFade`.
+Hero nie używa żadnych obrazków — jest zbudowane z typografii, jednego miękkiego
+światła i paska faktów. Rotujące słowo w nagłówku to cztery `<span>` w jednej
+komórce siatki, przełączane animacją `wordFade`.
+
+## SEO
+
+Dane strukturalne na stronie głównej (`ProfessionalService` z listą miast
+i `FAQPage`) generuję z treści strony — pytania do `FAQPage` są wczytywane
+z sekcji FAQ, więc nie rozjadą się z tym, co widzi użytkownik. Po dodaniu
+lub zmianie pytania trzeba odświeżyć blok `application/ld+json` w `index.html`.
+Podstrony realizacji mają własne `BreadcrumbList`.
 
 ## Publikacja
 
