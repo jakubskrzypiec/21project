@@ -654,16 +654,6 @@ footer{background:var(--paper);color:var(--ink);border-top:1px solid var(--line)
 
 /* ekran komputera */
 .heroArt{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center}
-.mac{width:100%;border:1px solid rgba(11,18,32,.16);border-radius:12px 12px 4px 4px;overflow:hidden;
-  background:#fff;box-shadow:0 40px 80px rgba(15,23,42,.14),0 4px 14px rgba(15,23,42,.06)}
-.macBar{display:flex;align-items:center;gap:7px;height:34px;padding:0 14px;
-  background:var(--paper);border-bottom:1px solid rgba(11,18,32,.1)}
-.macBar i{width:8px;height:8px;border-radius:50%;background:rgba(11,18,32,.18);flex:none}
-.macBar b{flex:1;height:12px;margin-left:12px;border-radius:3px;background:rgba(11,18,32,.07)}
-.mac img{display:block;width:100%;height:auto}
-.macFoot{width:56%;height:11px;border-radius:0 0 8px 8px;
-  background:linear-gradient(180deg,#e6eaf1,#cfd6e1);
-  box-shadow:0 16px 26px rgba(15,23,42,.14)}
 
 @media(max-width:1100px){
   .heroBody{grid-template-columns:1fr;align-items:start;gap:clamp(34px,6vw,52px)}
@@ -674,5 +664,103 @@ footer{background:var(--paper);color:var(--ink);border-top:1px solid var(--line)
   .hero{min-height:max(560px,86svh);padding:calc(64px + 26px) 20px 34px}
   .heroInner{gap:34px}
   .hero .heroTitle{font-size:clamp(2.2rem,9.6vw,3.4rem);letter-spacing:-.045em}
-  .macFoot{height:8px}
+}
+
+/* =========================================================
+   Hero: lewitujacy znak 21 z pelna oprawa animacji
+   ========================================================= */
+
+
+.heroArt{position:relative;display:flex;align-items:center;justify-content:center;
+  min-height:clamp(300px,42vh,520px);perspective:1200px}
+.markScene{position:relative;width:min(100%,520px);aspect-ratio:1/.92;
+  display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;
+  animation:markIn 1.15s cubic-bezier(.16,1,.3,1) both}
+
+/* poswiata pod znakiem — pulsuje w rytm unoszenia */
+.markGlow{position:absolute;top:46%;left:50%;width:86%;aspect-ratio:1.15;
+  transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle,rgba(18,87,255,.30),rgba(18,87,255,.10) 42%,transparent 68%);
+  filter:blur(38px);animation:markGlowPulse 7s ease-in-out infinite}
+
+/* delikatna siatka pomiarowa, wjezdza raz przy wejsciu */
+.markGrid{position:absolute;inset:6% 2%;pointer-events:none;opacity:0;
+  background-image:linear-gradient(rgba(11,18,32,.055) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(11,18,32,.055) 1px,transparent 1px);
+  background-size:62px 62px;
+  -webkit-mask-image:radial-gradient(circle at 50% 48%,#000 30%,transparent 72%);
+  mask-image:radial-gradient(circle at 50% 48%,#000 30%,transparent 72%);
+  animation:markGridIn 1.2s cubic-bezier(.16,1,.3,1) .35s forwards}
+
+/* trzy male kwadraty krazace wokol znaku */
+.markOrbit{position:absolute;top:50%;left:50%;width:78%;aspect-ratio:1;
+  transform:translate(-50%,-50%) rotate(0deg);animation:markSpin 18s linear infinite}
+.markOrbit i{position:absolute;width:9px;height:9px;border-radius:2px;
+  background:var(--a1);box-shadow:0 0 14px rgba(18,87,255,.55);
+  animation:markSpinBack 18s linear infinite}
+.markOrbit i:nth-child(1){top:-4px;left:50%;margin-left:-4.5px}
+.markOrbit i:nth-child(2){bottom:11%;left:4%;width:7px;height:7px;opacity:.75}
+.markOrbit i:nth-child(3){bottom:11%;right:4%;width:5px;height:5px;opacity:.55;
+  background:var(--a2);box-shadow:0 0 10px rgba(11,63,212,.5)}
+
+/* przechylenie za kursorem (JS ustawia --tx/--ty) */
+.markTilt{position:relative;z-index:3;width:78%;transform-style:preserve-3d;
+  transform:rotateX(calc(var(--ty,0) * -7deg)) rotateY(calc(var(--tx,0) * 9deg));
+  transition:transform .5s cubic-bezier(.16,1,.3,1)}
+
+/* sam znak: maska na gradiencie, plus przesuwajacy sie refleks */
+.markGlyph{position:relative;width:100%;aspect-ratio:1588/1356;overflow:hidden;
+  background:linear-gradient(148deg,#2f6bff 0%,#1257ff 34%,#0b3fd4 62%,#1f5cff 100%);
+  -webkit-mask:url("logo-mark.svg") center/contain no-repeat;
+  mask:url("logo-mark.svg") center/contain no-repeat;
+  filter:drop-shadow(0 26px 40px rgba(18,87,255,.34));
+  animation:markFloat 7s cubic-bezier(.45,0,.55,1) infinite}
+.markShine{position:absolute;top:-40%;bottom:-40%;left:-70%;width:55%;
+  background:linear-gradient(100deg,transparent 0%,rgba(255,255,255,.9) 48%,transparent 96%);
+  transform:skewX(-14deg);animation:markShine 5.2s ease-in-out 1.4s infinite}
+
+/* cien kontaktowy — kurczy sie, gdy znak idzie w gore */
+.markShadow{position:absolute;left:50%;bottom:4%;width:44%;height:16px;
+  transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(ellipse,rgba(15,23,42,.34),transparent 70%);
+  filter:blur(10px);animation:markShadow 7s cubic-bezier(.45,0,.55,1) infinite}
+
+@keyframes markFloat{
+  0%,100%{transform:translateY(0) rotate(-1.4deg)}
+  50%{transform:translateY(-30px) rotate(1.4deg)}
+}
+@keyframes markShadow{
+  0%,100%{transform:translateX(-50%) scale(1);opacity:.9}
+  50%{transform:translateX(-50%) scale(.74);opacity:.45}
+}
+@keyframes markGlowPulse{
+  0%,100%{opacity:.85;transform:translate(-50%,-50%) scale(1)}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}
+}
+@keyframes markShine{
+  0%{left:-70%}
+  55%,100%{left:130%}
+}
+@keyframes markSpin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes markSpinBack{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+@keyframes markIn{from{opacity:0;transform:translateY(28px) scale(.93);filter:blur(12px)}
+  to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes markGridIn{to{opacity:1}}
+
+@media(max-width:1100px){
+  .heroArt{min-height:clamp(260px,34vh,380px)}
+  .markScene{width:min(100%,420px)}
+}
+@media(max-width:700px){
+  .heroArt{min-height:250px}
+  .markScene{width:min(100%,300px)}
+  .markOrbit i{width:7px;height:7px}
+  .markShadow{height:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .markScene,.markGlyph,.markShadow,.markGlow,.markOrbit,.markOrbit i,.markShine,.markGrid{animation:none!important}
+  .markScene,.markGlyph{opacity:1;transform:none;filter:none}
+  .markGrid{opacity:1}
+  .markShine{display:none}
+  .markTilt{transition:none;transform:none}
 }

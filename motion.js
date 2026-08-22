@@ -57,6 +57,23 @@
     window.addEventListener('load', requestScroll, { once: true });
     updateScroll();
 
+    const markTilt = document.querySelector('.markTilt');
+    const heroSection = document.querySelector('.hero');
+
+    if (markTilt && heroSection && !reduceMotion && window.matchMedia('(pointer: fine)').matches) {
+      heroSection.addEventListener('pointermove', (event) => {
+        const rect = heroSection.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - .5;
+        const y = (event.clientY - rect.top) / rect.height - .5;
+        markTilt.style.setProperty('--tx', x.toFixed(3));
+        markTilt.style.setProperty('--ty', y.toFixed(3));
+      });
+      heroSection.addEventListener('pointerleave', () => {
+        markTilt.style.setProperty('--tx', '0');
+        markTilt.style.setProperty('--ty', '0');
+      });
+    }
+
     if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
       document.querySelectorAll('.projectVisual').forEach((visual) => {
         visual.addEventListener('pointermove', (event) => {
