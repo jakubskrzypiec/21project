@@ -1,8 +1,3 @@
-@font-face{font-family:Inter;src:url('inter-300.ttf') format('truetype');font-weight:300;font-style:normal;font-display:swap}
-@font-face{font-family:Inter;src:url('inter-400.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:Inter;src:url('inter-500.ttf') format('truetype');font-weight:500;font-style:normal;font-display:swap}
-@font-face{font-family:Inter;src:url('inter-600.ttf') format('truetype');font-weight:600;font-style:normal;font-display:swap}
-@font-face{font-family:Inter;src:url('inter-700.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap}
 /* =========================================================
    21 project — style.css
    Czerń, biel, szarości. Bez koloru akcentowego.
@@ -10,31 +5,34 @@
    ========================================================= */
 
 /* latin */
-
-
+@font-face{font-family:"Syne";src:url("../fonts/syne-latin.woff2") format("woff2");
+  font-weight:400 800;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Geist";src:url("../fonts/geist-latin.woff2") format("woff2");
+  font-weight:100 900;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 /* latin-ext (polskie znaki) */
-
-
+@font-face{font-family:"Syne";src:url("../fonts/syne-latin-ext.woff2") format("woff2");
+  font-weight:400 800;font-display:swap;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Geist";src:url("../fonts/geist-latin-ext.woff2") format("woff2");
+  font-weight:100 900;font-display:swap;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 
 :root{
-  /* dark palette: --ink is now the light foreground, --invert-* carries the
-     accent panels that used to be solid black */
-  --white:#111419;
-  --paper:#0a0c11;
-  --paper-2:#161a23;
-  --ink:#f4f5f8;
-  --ink-2:#e3e6ed;
-  --invert-bg:#ffffff;
-  --invert-fg:#08090c;
-  --panel:#0f1219;
-  --body:#c2c5ce;
-  --mute:#9a9dab;
-  --mute-2:#7b7f8d;
-  --line:rgba(255,255,255,.12);
-  --line-2:rgba(255,255,255,.28);
+  --white:#FFFFFF;
+  --paper:#FAFAFA;
+  --paper-2:#F2F2F2;
+  --ink:#0D0D0D;
+  --ink-2:#1A1A1A;
+  --body:#2E2E2E;
+  --mute:#707070;
+  --mute-2:#9A9A9A;
+  --line:#E6E6E6;
+  --line-2:#CFCFCF;
 
-  --ff-d:"HelveticaNow","Helvetica Neue",Inter,"Neue Haas Grotesk",sans-serif;
-  --ff-b:"HelveticaNow","Helvetica Neue",Inter,"Neue Haas Grotesk",sans-serif;
+  --ff-d:"Syne","Helvetica Neue",Arial,sans-serif;
+  --ff-b:"Geist","Helvetica Neue",Arial,sans-serif;
 
   --shell:1280px;
   --pad:clamp(20px,4vw,44px);
@@ -69,7 +67,7 @@ h3{font-size:clamp(1.18rem,1.55vw,1.4rem);letter-spacing:-.024em;font-weight:700
 .shell{width:100%;max-width:var(--shell);margin:0 auto;padding-inline:var(--pad)}
 
 .skip-link{position:absolute;left:-9999px;top:0;z-index:999;
-  background:var(--invert-bg);color:var(--invert-fg);padding:12px 20px;font-weight:600}
+  background:var(--ink);color:#fff;padding:12px 20px;font-weight:600}
 .skip-link:focus{left:0}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
 
@@ -100,12 +98,12 @@ h3{font-size:clamp(1.18rem,1.55vw,1.4rem);letter-spacing:-.024em;font-weight:700
              border-color .28s var(--ease),transform .28s var(--ease);
 }
 .btn:hover{transform:translateY(-2px)}
-.btn--dark{background:var(--invert-bg);color:var(--invert-fg);--bd:var(--invert-bg)}
+.btn--dark{background:var(--ink);color:#fff;--bd:var(--ink)}
 .btn--dark:hover{background:var(--ink-2);--bd:var(--ink-2)}
-.btn--light{background:rgba(255,255,255,.07);color:var(--ink);--bd:var(--line-2)}
-.btn--light:hover{background:rgba(255,255,255,.15);--bd:var(--line-2)}
+.btn--light{background:#fff;color:var(--ink);--bd:#fff}
+.btn--light:hover{background:var(--paper-2);--bd:var(--paper-2)}
 .btn--line{background:transparent;color:var(--ink);--bd:var(--line-2)}
-.btn--line:hover{--bd:var(--invert-bg);background:var(--invert-bg);color:var(--invert-fg)}
+.btn--line:hover{--bd:var(--ink);background:var(--ink);color:#fff}
 .btn--sm{padding:11px 20px;font-size:.7rem}
 .btn--full{width:100%}
 
@@ -119,7 +117,7 @@ h3{font-size:clamp(1.18rem,1.55vw,1.4rem);letter-spacing:-.024em;font-weight:700
 
 /* ---------------- logo ---------------- */
 .logo{display:block}
-.logo img{width:clamp(112px,11vw,146px);height:auto;filter:invert(1)}
+.logo img{width:clamp(112px,11vw,146px);height:auto}
 .logo--inv img{filter:invert(1)}
 .logo--mark img{width:clamp(44px,4vw,58px)}
 
@@ -134,7 +132,7 @@ h3{font-size:clamp(1.18rem,1.55vw,1.4rem);letter-spacing:-.024em;font-weight:700
   transition:background .35s var(--ease),border-color .35s var(--ease);
 }
 .header.is-stuck{
-  background:rgba(10,12,17,.86);backdrop-filter:blur(18px) saturate(160%);
+  background:rgba(255,255,255,.86);backdrop-filter:blur(18px) saturate(160%);
   border-bottom-color:var(--line);
 }
 .header__inner{display:flex;align-items:center;justify-content:space-between;height:62px}
@@ -159,7 +157,7 @@ h3{font-size:clamp(1.18rem,1.55vw,1.4rem);letter-spacing:-.024em;font-weight:700
 /* =========================================================
    HERO — pełny ekran
    ========================================================= */
-.hero{position:relative;height:var(--hd);min-height:580px;overflow:hidden;background:var(--paper)}
+.hero{position:relative;height:var(--hd);min-height:580px;overflow:hidden;background:#EFEEEE}
 
 .hero__media{
   position:absolute;top:50%;left:50%;
@@ -288,7 +286,7 @@ h1 .ln{display:block}
   background:var(--paper-2);border-bottom:1px solid var(--line);
 }
 .browser__dots{display:flex;gap:6px;flex:none}
-.browser__dots i{width:9px;height:9px;border-radius:50%;background:#3a3f4b;display:block}
+.browser__dots i{width:9px;height:9px;border-radius:50%;background:#C9C9C9;display:block}
 .browser__url{
   flex:1;background:var(--white);border-radius:99px;padding:5px 15px;
   font-size:.7rem;color:var(--mute);white-space:nowrap;overflow:hidden;
@@ -349,16 +347,16 @@ h1 .ln{display:block}
 }
 .plan__price b{font-family:var(--ff-d);font-weight:700;font-size:2rem;color:var(--ink);
   letter-spacing:-.035em;line-height:1}
-.plan--dark{background:var(--invert-bg);border-color:var(--invert-bg);color:var(--invert-fg)}
+.plan--dark{background:var(--ink);border-color:var(--ink)}
 .plan--dark h3,.plan--dark .plan__price b{color:#fff}
 .plan--dark .plan__desc,.plan--dark .plan__list li,.plan--dark .plan__price{color:#A8A8A8}
 .plan--dark .plan__no{color:#6E6E6E}
-.plan--dark .plan__list li::before{background:var(--invert-fg)}
+.plan--dark .plan__list li::before{background:#fff}
 .plan--dark .plan__price{border-top-color:rgba(255,255,255,.18)}
 .plan--dark:hover{border-color:var(--ink)}
 .plan__badge{
   position:absolute;top:0;left:28px;transform:translateY(-50%);
-  background:var(--invert-bg);color:var(--invert-fg);font-size:.6rem;font-weight:700;
+  background:var(--ink);color:#fff;font-size:.6rem;font-weight:700;
   letter-spacing:.16em;text-transform:uppercase;padding:6px 12px;white-space:nowrap;
 }
 
@@ -420,7 +418,7 @@ a.contact__value{border-bottom:1px solid var(--line-2)}
 a.contact__value:hover{border-bottom-color:var(--ink)}
 
 /* formularz — pola podkreślane, bez ramek */
-.form{background:var(--white);border:1px solid var(--line);padding:clamp(28px,3.4vw,46px)}
+.form{background:var(--white);border:1px solid var(--ink);padding:clamp(28px,3.4vw,46px)}
 .form__head{margin-bottom:32px}
 .form__head p{font-size:.78rem;font-weight:700;letter-spacing:.2em;
   text-transform:uppercase;color:var(--mute-2)}
@@ -513,18 +511,18 @@ a.contact__value:hover{border-bottom-color:var(--ink)}
 .cs-nav__item{display:flex;flex-direction:column;gap:12px;
   padding:clamp(30px,4vw,52px) var(--pad);transition:background .3s var(--ease)}
 .cs-nav__item--next{text-align:right;align-items:flex-end;border-left:1px solid var(--line-2)}
-.cs-nav__item:hover{background:var(--paper-2)}
+.cs-nav__item:hover{background:var(--white)}
 .cs-nav__label{font-size:.68rem;font-weight:700;letter-spacing:.18em;
   text-transform:uppercase;color:var(--mute)}
 .cs-nav__name{font-family:var(--ff-d);font-weight:700;
   font-size:clamp(1.3rem,2.4vw,2rem);letter-spacing:-.035em;color:var(--ink)}
 
-.cs-cta{background:var(--panel);color:#fff;border-block:1px solid var(--line);padding:clamp(64px,7.5vw,116px) 0;text-align:center}
+.cs-cta{background:var(--ink);color:#fff;padding:clamp(64px,7.5vw,116px) 0;text-align:center}
 .cs-cta h2{color:#fff;margin-bottom:.45em}
 .cs-cta p{color:rgba(255,255,255,.66);max-width:46ch;margin:0 auto}
 .cs-cta__actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:34px}
 .btn--ghost-inv{background:transparent;color:#fff;--bd:rgba(255,255,255,.36)}
-.btn--ghost-inv:hover{background:var(--invert-bg);color:var(--invert-fg);--bd:var(--invert-bg)}
+.btn--ghost-inv:hover{background:#fff;color:var(--ink);--bd:#fff}
 
 @media (max-width:900px){
   .cs-body,.cs-mobile{grid-template-columns:1fr}
@@ -561,7 +559,7 @@ a.contact__value:hover{border-bottom-color:var(--ink)}
 .legal__date{color:var(--mute)!important;font-size:.88rem!important;margin-top:1.4em!important}
 
 /* ---------------- ciemny blok CTA ---------------- */
-.band{background:var(--panel);color:#fff;border-block:1px solid var(--line);padding:clamp(70px,8vw,124px) 0;text-align:center}
+.band{background:var(--ink);color:#fff;padding:clamp(70px,8vw,124px) 0;text-align:center}
 .band__eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.24em;
   text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:1.6em;
   display:inline-flex;align-items:center;gap:.7em}
@@ -575,7 +573,7 @@ a.contact__value:hover{border-bottom-color:var(--ink)}
 .band__actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:36px}
 
 /* ---------------- stopka ---------------- */
-.footer{background:var(--panel);color:rgba(255,255,255,.62);border-top:1px solid var(--line);padding:clamp(52px,6vw,76px) 0 30px}
+.footer{background:var(--ink);color:rgba(255,255,255,.62);padding:clamp(52px,6vw,76px) 0 30px}
 .footer__inner{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:36px;align-items:start;
   padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.14)}
 .footer__brand p{margin-top:22px;font-size:.9rem;line-height:1.75}
@@ -652,7 +650,7 @@ h2.is-in .ln > span,.case__info h3.is-in .ln > span{transform:none}
   .burger{display:flex}
   .nav{
     position:fixed;inset:84px 0 auto;flex-direction:column;align-items:stretch;gap:0;
-    background:rgba(10,12,17,.97);backdrop-filter:blur(16px);
+    background:rgba(255,255,255,.98);backdrop-filter:blur(16px);
     border-block:1px solid var(--line);padding:8px var(--pad) 26px;
     transform:translateY(-12px);opacity:0;pointer-events:none;visibility:hidden;
     transition:opacity .28s var(--ease),transform .28s var(--ease),visibility .28s;
@@ -661,7 +659,7 @@ h2.is-in .ln > span,.case__info h3.is-in .ln > span{transform:none}
   .nav a:not(.btn){padding:16px 0;font-size:1rem;border-bottom:1px solid var(--line)}
   .nav a:not(.btn)::after{display:none}
   .nav__cta{margin-top:20px;width:100%;padding:15px 20px;font-size:.75rem}
-  .header.is-open{background:rgba(10,12,17,.97)}
+  .header.is-open{background:rgba(255,255,255,.98)}
 
   .browser{width:100%}
   .phone{position:relative;right:auto;bottom:auto;width:56%;margin:-9% 0 0 auto;padding:1.8%}

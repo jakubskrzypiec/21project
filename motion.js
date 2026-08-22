@@ -18,8 +18,7 @@
     }
 
     const parallaxTargets = [...document.querySelectorAll('[data-parallax]')];
-    const scene = document.querySelector('[data-scroll-scene]');
-    const sceneLines = [...document.querySelectorAll('[data-scene-line]')];
+    const whyCards = [...document.querySelectorAll('.whyCard')];
     let frame = 0;
 
     const clamp = (min, value, max) => Math.max(min, Math.min(max, value));
@@ -47,24 +46,20 @@
         element.style.setProperty('--parallax-y', `${offset.toFixed(2)}px`);
       });
 
-      if (scene) {
-        const rect = scene.getBoundingClientRect();
-        const travel = Math.max(1, rect.height - viewportHeight);
-        const progress = clamp(0, -rect.top / travel, 1);
-        scene.style.setProperty('--scene-progress', progress.toFixed(4));
-
-        sceneLines.forEach((line, index) => {
-          const center = index / Math.max(1, sceneLines.length - 1);
-          const distance = Math.abs(progress - center);
-          const opacity = clamp(0, 1 - distance * 5.2, 1);
-          const direction = progress > center ? -1 : 1;
-          const y = direction * clamp(0, distance * 310, 78);
-          const scale = .86 + opacity * .14;
-          const blur = (1 - opacity) * 13;
-          line.style.setProperty('--line-opacity', opacity.toFixed(3));
-          line.style.setProperty('--line-y', `${y.toFixed(1)}px`);
-          line.style.setProperty('--line-scale', scale.toFixed(3));
-          line.style.setProperty('--line-blur', `${blur.toFixed(1)}px`);
+      if (whyCards.length) {
+        const stacked = window.innerWidth > 1100;
+        whyCards.forEach((card, index) => {
+          const next = whyCards[index + 1];
+          if (!stacked || !next) {
+            card.style.setProperty('--card-scale', '1');
+            card.style.setProperty('--card-dim', '0');
+            return;
+          }
+          const height = card.offsetHeight || 1;
+          const bottom = card.getBoundingClientRect().top + height;
+          const covered = clamp(0, (bottom - next.getBoundingClientRect().top) / height, 1);
+          card.style.setProperty('--card-scale', (1 - covered * .055).toFixed(4));
+          card.style.setProperty('--card-dim', (covered * .55).toFixed(3));
         });
       }
     };
