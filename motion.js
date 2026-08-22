@@ -2,189 +2,126 @@
   const start = () => {
     const root = document.documentElement;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const mobileLayout = window.matchMedia('(max-width: 700px)').matches;
+    const safeMotion = !reduceMotion && !mobileLayout;
+    const allowParallax = !reduceMotion && !coarsePointer && window.innerWidth > 900;
     const revealTargets = [...document.querySelectorAll('[data-reveal]')];
 
-    if (reduceMotion || !('IntersectionObserver' in window)) {
-      revealTargets.forEach((element) => element.classList.add('is-visible'));
+    if (!safeMotion || !('IntersectionObserver' in window)) {
+      revealTargets.forEach((el) => el.classList.add('is-visible'));
     } else {
-      const revealObserver = new IntersectionObserver((entries, observer) => {
+      const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
+          obs.unobserve(entry.target);
         });
-      }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-      revealTargets.forEach((element) => revealObserver.observe(element));
+      }, { threshold: 0.08, rootMargin: '0px 0px -3% 0px' });
+      revealTargets.forEach((el) => observer.observe(el));
+      setTimeout(() => {
+        revealTargets.forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.top < innerHeight * 1.05 && r.bottom > -40) el.classList.add('is-visible');
+        });
+      }, 700);
     }
 
     const parallaxTargets = [...document.querySelectorAll('[data-parallax]')];
     let frame = 0;
-
-    const clamp = (min, value, max) => Math.max(min, Math.min(max, value));
-
+    const clamp = (min,v,max) => Math.max(min,Math.min(max,v));
     const updateScroll = () => {
       frame = 0;
-      if (reduceMotion) return;
-
-      const viewportHeight = window.innerHeight;
-      const maxScroll = Math.max(1, document.documentElement.scrollHeight - viewportHeight);
-      root.style.setProperty('--page-progress', (window.scrollY / maxScroll).toFixed(4));
-
-      revealTargets.forEach((element) => {
-        if (element.classList.contains('is-visible')) return;
-        const rect = element.getBoundingClientRect();
-        if (rect.top < viewportHeight * .92 && rect.bottom > 0) element.classList.add('is-visible');
+      const vh = innerHeight;
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
+      root.style.setProperty('--page-progress',(scrollY/maxScroll).toFixed(4));
+      if (!allowParallax) {
+        parallaxTargets.forEach((el)=>el.style.setProperty('--parallax-y','0px'));
+        return;
+      }
+      parallaxTargets.forEach((el)=>{
+        const r=el.getBoundingClientRect();
+        if (r.bottom < -vh*.4 || r.top > vh*1.4) return;
+        const strength=Number(el.dataset.parallax||20);
+        const distance=(vh*.5-(r.top+r.height*.5))/vh;
+        const offset=clamp(-Math.abs(strength),distance*strength*1.5,Math.abs(strength));
+        el.style.setProperty('--parallax-y',`${offset.toFixed(2)}px`);
       });
-
-      parallaxTargets.forEach((element) => {
-        const rect = element.getBoundingClientRect();
-        if (rect.bottom < -viewportHeight * .4 || rect.top > viewportHeight * 1.4) return;
-        const strength = Number(element.dataset.parallax || 20);
-        const distance = (viewportHeight * .5 - (rect.top + rect.height * .5)) / viewportHeight;
-        const offset = clamp(-Math.abs(strength), distance * strength * 1.75, Math.abs(strength));
-        element.style.setProperty('--parallax-y', `${offset.toFixed(2)}px`);
-      });
-
     };
-
-    const requestScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(updateScroll);
-    };
-
-    window.addEventListener('scroll', requestScroll, { passive: true });
-    window.addEventListener('resize', requestScroll);
-    window.addEventListener('load', requestScroll, { once: true });
+    const requestScroll=()=>{if(!frame) frame=requestAnimationFrame(updateScroll)};
+    addEventListener('scroll',requestScroll,{passive:true});
+    addEventListener('resize',requestScroll,{passive:true});
+    addEventListener('load',requestScroll,{once:true});
     updateScroll();
 
-    const markTilt = document.querySelector('.markTilt');
-    const heroSection = document.querySelector('.hero');
-
-    if (markTilt && heroSection && !reduceMotion && window.matchMedia('(pointer: fine)').matches) {
-      heroSection.addEventListener('pointermove', (event) => {
-        const rect = heroSection.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width - .5;
-        const y = (event.clientY - rect.top) / rect.height - .5;
-        markTilt.style.setProperty('--tx', x.toFixed(3));
-        markTilt.style.setProperty('--ty', y.toFixed(3));
-      });
-      heroSection.addEventListener('pointerleave', () => {
-        markTilt.style.setProperty('--tx', '0');
-        markTilt.style.setProperty('--ty', '0');
-      });
-    }
-
-    if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
-      document.querySelectorAll('.projectVisual').forEach((visual) => {
-        visual.addEventListener('pointermove', (event) => {
-          const rect = visual.getBoundingClientRect();
-          const x = (event.clientX - rect.left) / rect.width - .5;
-          const y = (event.clientY - rect.top) / rect.height - .5;
-          visual.style.setProperty('--pointer-x', x.toFixed(3));
-          visual.style.setProperty('--pointer-y', y.toFixed(3));
+    if (!reduceMotion && !coarsePointer) {
+      document.querySelectorAll('.projectVisual').forEach((visual)=>{
+        visual.addEventListener('pointermove',(event)=>{
+          const r=visual.getBoundingClientRect();
+          visual.style.setProperty('--pointer-x',(((event.clientX-r.left)/r.width)-.5).toFixed(3));
+          visual.style.setProperty('--pointer-y',(((event.clientY-r.top)/r.height)-.5).toFixed(3));
         });
-        visual.addEventListener('pointerleave', () => {
-          visual.style.setProperty('--pointer-x', '0');
-          visual.style.setProperty('--pointer-y', '0');
+        visual.addEventListener('pointerleave',()=>{
+          visual.style.setProperty('--pointer-x','0');
+          visual.style.setProperty('--pointer-y','0');
         });
       });
     }
 
-    const form = document.querySelector('.contactForm');
-    const formNote = form && form.querySelector('.formNote');
-
-    if (form && formNote) {
-      form.addEventListener('submit', (event) => {
+    const form=document.querySelector('.contactForm');
+    const note=form&&form.querySelector('.formNote');
+    if(form&&note){
+      form.addEventListener('submit',(event)=>{
         event.preventDefault();
-        const value = (field) => (form.elements[field] ? form.elements[field].value.trim() : '');
-        const name = value('name');
-        const contact = value('contact');
-        const message = value('message');
-
-        if (!name || !contact || !message) {
-          formNote.textContent = 'Uzupe\u0142nij imi\u0119, kontakt i kr\u00f3tki opis \u2014 reszt\u0105 zajm\u0119 si\u0119 ja.';
-          formNote.classList.remove('isOk');
-          const missing = !name ? 'name' : (!contact ? 'contact' : 'message');
-          if (form.elements[missing]) form.elements[missing].focus();
+        const value=(name)=>form.elements[name]?form.elements[name].value.trim():'';
+        const name=value('name'), contact=value('contact'), message=value('message');
+        if(!name||!contact||!message){
+          note.textContent='Uzupełnij imię, kontakt i krótki opis — resztą zajmę się ja.';
+          note.classList.remove('isOk');
+          const missing=!name?'name':(!contact?'contact':'message');
+          if(form.elements[missing]) form.elements[missing].focus();
           return;
         }
-
-        const plan = value('plan');
-        const date = value('date');
-        const subject = 'Zapytanie ze strony 21project.pl \u2014 ' + plan;
-        const body = [
-          'Imi\u0119 i nazwisko: ' + name,
-          'Kontakt: ' + contact,
-          'Pakiet: ' + plan,
-          date ? 'Planowany termin: ' + date : null,
-          '',
-          message,
-        ].filter((line) => line !== null).join('\n');
-
-        formNote.textContent = 'Otwieram Tw\u00f3j program pocztowy z gotow\u0105 wiadomo\u015bci\u0105\u2026';
-        formNote.classList.add('isOk');
-        window.location.href = 'mailto:jakubskrzypiec.dev@gmail.com' +
-          '?subject=' + encodeURIComponent(subject) +
-          '&body=' + encodeURIComponent(body);
+        const plan=value('plan'), date=value('date');
+        const subject='Zapytanie ze strony 21project.pl — '+plan;
+        const body=['Imię i nazwisko: '+name,'Kontakt: '+contact,'Pakiet: '+plan,date?'Planowany termin: '+date:null,'',message].filter((x)=>x!==null).join('\n');
+        note.textContent='Otwieram Twój program pocztowy z gotową wiadomością…';
+        note.classList.add('isOk');
+        location.href='mailto:jakubskrzypiec.dev@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
       });
     }
 
-    const burger = document.querySelector('.burger');
-    const menu = document.getElementById('mobileMenu');
-
-    if (burger && menu) {
-      let openFrame = 0;
-
-      const setMenu = (open) => {
-        window.cancelAnimationFrame(openFrame);
-        burger.setAttribute('aria-expanded', String(open));
-        burger.setAttribute('aria-label', open ? 'Zamknij menu' : 'Otw\u00f3rz menu');
-        document.body.classList.toggle('menuOpen', open);
-        if (open) {
-          menu.hidden = false;
-          openFrame = window.requestAnimationFrame(() => menu.classList.add('isOpen'));
+    const burger=document.querySelector('.burger');
+    const menu=document.getElementById('mobileMenu');
+    if(burger&&menu){
+      let timer=0;
+      const setMenu=(open)=>{
+        clearTimeout(timer);
+        burger.setAttribute('aria-expanded',String(open));
+        burger.setAttribute('aria-label',open?'Zamknij menu':'Otwórz menu');
+        document.body.classList.toggle('menuOpen',open);
+        if(open){
+          menu.hidden=false;
+          requestAnimationFrame(()=>menu.classList.add('isOpen'));
         } else {
           menu.classList.remove('isOpen');
-          if (reduceMotion) {
-            menu.hidden = true;
-          } else {
-            window.setTimeout(() => {
-              if (!menu.classList.contains('isOpen')) menu.hidden = true;
-            }, 340);
-          }
+          timer=setTimeout(()=>{if(!menu.classList.contains('isOpen')) menu.hidden=true},reduceMotion?0:340);
         }
       };
-
-      burger.addEventListener('click', () => {
-        setMenu(burger.getAttribute('aria-expanded') !== 'true');
-      });
-      menu.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', () => setMenu(false));
-      });
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
-          setMenu(false);
-          burger.focus();
-        }
-      });
-      window.addEventListener('resize', () => {
-        if (window.innerWidth > 1100 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
-      });
+      burger.addEventListener('click',()=>setMenu(burger.getAttribute('aria-expanded')!=='true'));
+      menu.querySelectorAll('a').forEach((a)=>a.addEventListener('click',()=>setMenu(false)));
+      document.addEventListener('keydown',(e)=>{if(e.key==='Escape'&&burger.getAttribute('aria-expanded')==='true'){setMenu(false);burger.focus()}});
+      addEventListener('resize',()=>{if(innerWidth>1100&&burger.getAttribute('aria-expanded')==='true')setMenu(false)});
     }
 
-    document.querySelectorAll('.faqList details').forEach((detail) => {
-      detail.addEventListener('toggle', () => {
-        if (!detail.open) return;
-        document.querySelectorAll('.faqList details').forEach((other) => {
-          if (other !== detail) other.open = false;
-        });
+    document.querySelectorAll('.faqList details,.pageFaq details').forEach((detail)=>{
+      detail.addEventListener('toggle',()=>{
+        if(!detail.open)return;
+        const scope=detail.closest('.faqList,.pageFaq');
+        scope?.querySelectorAll('details').forEach((other)=>{if(other!==detail)other.open=false});
       });
     });
   };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
 })();

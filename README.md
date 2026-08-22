@@ -1,87 +1,16 @@
-# 21project.pl
+# 21 project — wersja do GitHub Pages
 
-Statyczna strona firmowa (GitHub Pages, domena z pliku `CNAME`). Bez buildu i bez zależności —
-pliki z katalogu głównego trafiają na serwer takie, jakie są.
+Gotowa paczka produkcyjna. Nie ma folderu `assets` — obrazy, fonty, CSS i JS są w katalogu głównym, a foldery z nazwami usług zawierają wyłącznie `index.html` dla czystych adresów URL.
 
-## Struktura
+## Nowe podstrony
+- `/strony-internetowe-katowice/`
+- `/strony-internetowe-slask/`
+- `/strony-internetowe-dla-architektow/`
+- `/pozycjonowanie-stron/`
+- `/realizacje/`
 
-| Plik | Rola |
-| --- | --- |
-| `index.html` | strona główna |
-| `style.css` | style strony głównej |
-| `motion.js` | animacje, menu mobilne, obsługa formularza |
-| `realizacja-*.html` | podstrony realizacji |
-| `polityka-prywatnosci.html` | polityka prywatności |
-| `detail-style.css`, `script.js` | style i skrypt podstron |
-| `inter-*.woff2` | krój Inter (podzbiór łaciński + polskie znaki) |
-| `screen-21-logo.webp` | ekran z logo 21 project pokazywany na telefonie w sekcji FAQ |
-| `robots.txt`, `sitemap.xml` | pliki dla wyszukiwarek — przy nowej podstronie dopisz ją do mapy |
-| `mockups/` | źródła HTML tych ekranów (patrz niżej) |
-| `og-21project.jpg` | obrazek do podglądu linku (Open Graph) |
+## Mobile
+Na ekranach do 700 px reveal/parallax nie ukrywa już treści. Cięższe animacje i efekty kursora są wyłączone na urządzeniach dotykowych.
 
-## Ekrany na mockupach
-
-Ekran na telefonie w sekcji FAQ nie jest zrzutem cudzej strony — to własna
-plansza 21 project generowana z `mockups/screen-logo.html` (940×2004).
-`mockups/screen-desktop.html` (1901×1079) służy do obrazka Open Graph.
-Żeby odświeżyć po zmianie treści: otwórz plik w przeglądarce, zrób zrzut
-w rozmiarze podanym w `body` i zapisz — telefon jako `screen-21-logo.webp`,
-Open Graph jako
-`og-21project.jpg` (skalowany z pełnego zrzutu 1901×1079 do 1200×630).
-
-Motyw jest jasny: biała strona, chłodne szare bloki (`--paper`, `--surface`)
-i niebieski akcent. Kolory tekstu sprawdzone pod kątem kontrastu — najsłabszy
-element ma 5,1:1 przy wymaganych 4,5:1.
-
-W hero lewituje znak `21` — nie ma tam żadnego pliku graficznego. Ścieżka
-z `logo-mark.svg` jest **wklejona wprost w `index.html`** i wypełniona
-gradientem SVG, a wokół niej
-scena złożona z warstw: pulsująca poświata, krążące kwadraty, siatka
-pomiarowa, przesuwający się refleks i cień kontaktowy, który kurczy się,
-gdy znak idzie w górę. Przechylenie za kursorem ustawia `motion.js` przez
-zmienne `--tx`/`--ty`.
-
-Dwie rzeczy, o które łatwo się potknąć przy zmianach w tej scenie:
-
-- animacja wejścia (`markIn`) musi siedzieć na `.markScene`, a nie na
-  `.markGlyph` — obie ruszają `transform`, a `markIn` z `fill: both`
-  nadpisuje unoszenie i znak stoi w miejscu;
-- znak celowo **nie** używa maski CSS ani `aspect-ratio`. W tej wersji
-  znikał na części telefonów; wklejony SVG z `viewBox` sam ustala wysokość
-  i nie zależy od obsługi `mask-mode`.
-
-Rotujące słowo w nagłówku to cztery `<span>` w jednej komórce siatki,
-przełączane animacją `wordFade`.
-
-Poniżej 1100 px scena z desktopu się nie skaluje — znak przechodzi **nad**
-nagłówek jako zwarty znacznik (190 px na tablecie, 142 px na telefonie),
-a krążące kwadraty i siatka są ukrywane, bo w tej skali czytają się jak
-przypadkowe kropki. Hero traci wtedy wymuszoną wysokość, żeby nie robiła się
-dziura między podpisem a treścią.
-
-## Skala wizualna
-
-Promienie, rytm pionowy i akcent kolorystyczny siedzą w zmiennych w `:root`
-na końcu `style.css`: `--r1/--r2/--r3` (promienie), `--block` i `--headGap`
-(odstępy sekcji), `--a1`/`--a2` (niebieski akcent). Zmiana odstępu między
-sekcjami na całej stronie to jedna wartość `--block`.
-
-Zasada układu: **linie zamiast pudełek**. Oferta, proces, obszar działania,
-„Dlaczego ja" i formularz są zbudowane na siatce z włosowych kresek, nie na
-kartach z obramowaniem i cieniem. Kreski nad wierszami (`.rowLine`, `.whyLine`)
-rysują się od lewej, kiedy wiersz wchodzi w kadr — obsługuje to zwykły
-`data-reveal` z `motion.js` plus przejście w CSS, bez dodatkowego skryptu.
-
-## SEO
-
-Dane strukturalne na stronie głównej (`ProfessionalService` z listą miast
-i `FAQPage`) generuję z treści strony — pytania do `FAQPage` są wczytywane
-z sekcji FAQ, więc nie rozjadą się z tym, co widzi użytkownik. Po dodaniu
-lub zmianie pytania trzeba odświeżyć blok `application/ld+json` w `index.html`.
-Podstrony realizacji mają własne `BreadcrumbList`.
-
-## Publikacja
-
-Wypchnięcie na `main` uruchamia deploy GitHub Pages. Przy wgrywaniu plików przez
-przeglądarkę uważaj na kolizje nazw — GitHub dopisuje wtedy `(1)`, `(2)` do nazwy
-zamiast nadpisać plik, przez co strona potrafi zostać z niepodmienionym arkuszem stylów.
+## Wdrożenie
+Wgraj zawartość tego folderu do głównego katalogu repozytorium GitHub Pages. `CNAME`, `robots.txt` i `sitemap.xml` są gotowe.
