@@ -28,6 +28,10 @@ plansza 21 project generowana z `mockups/screen-logo.html` (940×2004).
 w rozmiarze podanym w `body` i zapisz — telefon jako `screen-21-logo.webp`,
 Open Graph jako `og-21project.jpg`.
 
+Motyw jest jasny: biała strona, chłodne szare bloki (`--paper`, `--surface`)
+i niebieski akcent. Kolory tekstu sprawdzone pod kątem kontrastu — najsłabszy
+element ma 5,1:1 przy wymaganych 4,5:1.
+
 Grafika w hero (okno przeglądarki, telefon i linie wymiarowe) to inline SVG
 w `index.html`, kolorowany klasami z `style.css` — nie ma tam żadnego pliku
 graficznego. Rotujące słowo w nagłówku to cztery `<span>` w jednej komórce
@@ -37,7 +41,7 @@ siatki, przełączane animacją `wordFade`.
 
 Promienie, rytm pionowy i akcent kolorystyczny siedzą w zmiennych w `:root`
 na końcu `style.css`: `--r1/--r2/--r3` (promienie), `--block` i `--headGap`
-(odstępy sekcji), `--a1`/`--a2` (indygo i fiolet). Zmiana odstępu między
+(odstępy sekcji), `--a1`/`--a2` (niebieski akcent). Zmiana odstępu między
 sekcjami na całej stronie to jedna wartość `--block`.
 
 Zasada układu: **linie zamiast pudełek**. Oferta, proces, obszar działania,
