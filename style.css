@@ -800,279 +800,165 @@ footer{background:var(--paper);color:var(--ink);border-top:1px solid var(--line)
 
 
 /* =========================================================
-   HERO 2026 — jasny laptop, clean background, lewy dol
+   FINAL HERO — realny laptop + minimalny content
    ========================================================= */
-.hero.heroLaptop{
+.hero.heroRealLaptop{
   position:relative;
-  min-height:max(780px,100svh);
+  min-height:max(760px,100svh);
   overflow:hidden;
-  background:
-    radial-gradient(circle at 78% 15%, rgba(11,18,32,.035), transparent 21%),
-    radial-gradient(circle at 22% 72%, rgba(18,87,255,.035), transparent 28%),
-    linear-gradient(180deg, #ffffff 0%, #f7f8fb 100%);
-  padding:calc(76px + 24px) var(--pad) 0;
+  background:#fff;
+  padding:76px var(--pad) 0;
+  isolation:isolate;
 }
-.hero.heroLaptop .heroLight{
-  position:absolute;
-  inset:auto;
-  right:-8%;
-  top:-12%;
-  width:min(720px,62vw);
-  height:min(720px,62vw);
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(255,255,255,.9) 0%, rgba(240,243,248,.7) 42%, rgba(255,255,255,0) 76%);
-  filter:blur(6px);
-  pointer-events:none;
-}
-.heroInner--laptop{
+.heroInner--realLaptop{
   position:relative;
-  z-index:2;
+  z-index:1;
   width:100%;
-  max-width:1480px;
+  max-width:1540px;
+  min-height:calc(100svh - 76px);
   margin:0 auto;
-  min-height:calc(100svh - 100px);
-  display:flex;
-  align-items:stretch;
 }
-.heroBody--laptop{
-  display:grid;
-  grid-template-columns:minmax(320px,.92fr) minmax(420px,1.08fr);
-  gap:clamp(28px,4vw,72px);
-  align-items:end;
-  width:100%;
+.heroCopy--realLaptop{
+  position:absolute;
+  left:0;
+  bottom:clamp(72px,9vh,110px);
+  z-index:4;
+  width:min(610px,43vw);
 }
-.heroCopy--laptop{
-  align-self:end;
-  padding:0 0 clamp(72px,11vh,110px) clamp(2px, .6vw, 4px);
-  max-width:680px;
-}
-.heroCopy--laptop .heroLabel{
-  margin:0 0 18px;
-  font-size:12px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.19em;
-  color:var(--ink);
-}
-.heroTitle--laptop{
+.heroTitle--realLaptop{
   margin:0;
-  max-width:8.4ch;
-  font-size:clamp(3.5rem,7vw,6.9rem);
-  line-height:.96;
-  letter-spacing:-.075em;
+  max-width:7.9ch;
   color:var(--ink);
+  font-size:clamp(3.5rem,5.4vw,5.8rem);
+  font-weight:450;
+  line-height:.95;
+  letter-spacing:-.07em;
 }
-.heroCopy--laptop .actions{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
-.heroButtonGhost{background:rgba(255,255,255,.72);color:var(--ink);border-color:rgba(11,18,32,.22);backdrop-filter:blur(10px)}
-.heroButtonGhost:hover{background:#fff;color:var(--ink);border-color:rgba(11,18,32,.32)}
-.heroVisual{
-  position:relative;
-  min-height:640px;
+.heroActions--realLaptop{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:28px;
+}
+.heroRealLaptop .button.dark{
+  background:#0b1220;
+  color:#fff;
+  border-color:#0b1220;
+}
+.heroRealLaptop .button.dark:hover{
+  background:#1c2738;
+  border-color:#1c2738;
+}
+.heroButtonGhost{
+  background:rgba(255,255,255,.8);
+  color:var(--ink)!important;
+  border-color:rgba(11,18,32,.22)!important;
+  backdrop-filter:blur(10px);
+}
+.heroButtonGhost:hover{
+  background:#fff!important;
+  border-color:rgba(11,18,32,.38)!important;
+}
+.heroVisual--realLaptop{
+  position:absolute;
+  right:clamp(-38px,-1.8vw,-12px);
+  top:clamp(34px,4vh,58px);
+  bottom:0;
+  width:min(68vw,1040px);
+  z-index:2;
   display:flex;
   align-items:flex-end;
   justify-content:flex-end;
+  pointer-events:none;
 }
-.heroPedestal{
-  position:absolute;
-  right:0;
-  bottom:0;
-  width:min(820px,94%);
-  height:220px;
-  border-radius:28px 28px 0 0;
-  background:linear-gradient(180deg, #f7f7f8 0%, #ececef 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 -1px 0 rgba(11,18,32,.03);
-}
-.heroPedestal::before{
+.heroVisual--realLaptop::before{
   content:'';
   position:absolute;
-  inset:0 0 auto 0;
-  height:1px;
-  background:linear-gradient(90deg, rgba(11,18,32,0), rgba(11,18,32,.09), rgba(11,18,32,0));
+  left:-5%;
+  top:6%;
+  width:66%;
+  height:74%;
+  background:radial-gradient(circle,rgba(25,75,180,.055),rgba(25,75,180,0) 70%);
+  filter:blur(28px);
+  z-index:-1;
 }
-.heroLaptopDevice{
-  position:relative;
-  width:min(880px,100%);
-  padding-bottom:48px;
-  transform:translateY(24px);
+.heroVisual--realLaptop img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:right bottom;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.9) 7%,#000 15%,#000 100%);
+  mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.9) 7%,#000 15%,#000 100%);
 }
-.heroLaptopLid{
-  position:relative;
-  margin:0 auto;
-  width:min(760px,92%);
-  aspect-ratio:1.48/1;
-  border:8px solid #0f1116;
-  border-bottom-width:12px;
-  border-radius:26px 26px 12px 12px;
-  background:linear-gradient(180deg,#15181e 0%, #0d0f13 100%);
-  box-shadow:0 24px 70px rgba(15,23,42,.16);
-  overflow:hidden;
-}
-.heroLaptopLid::after{
-  content:'';
-  position:absolute;
-  top:3px;
-  left:50%;
-  width:70px;
-  height:8px;
-  transform:translateX(-50%);
-  border-radius:0 0 8px 8px;
-  background:rgba(255,255,255,.08);
-  z-index:5;
-}
-.heroLaptopBase{
-  position:relative;
-  z-index:2;
-  width:min(930px,100%);
-  height:26px;
-  margin:-2px auto 0;
-  border-radius:0 0 44px 44px;
-  background:linear-gradient(180deg, #f4f4f6 0%, #d7d7db 100%);
-  box-shadow:0 18px 32px rgba(15,23,42,.14);
-}
-.heroLaptopBase::before{
-  content:'';
-  position:absolute;
-  left:50%;
-  top:0;
-  transform:translateX(-50%);
-  width:16%;
-  height:4px;
-  border-radius:0 0 8px 8px;
-  background:#b7b8bd;
-}
-.heroScreenScene{
-  position:absolute;
-  inset:0;
-  padding:18px;
-  background:linear-gradient(180deg, #f7f5f1 0%, #f3f1ed 55%, #efede8 100%);
-  display:grid;
-  grid-template-rows:auto 1fr auto;
-}
-.screenTopbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding-bottom:14px;
-}
-.screenBrand{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#3d3c3b;font-weight:700}
-.screenMenu{display:flex;gap:16px;font-size:10px;color:#7a746d}
-.screenGrid{display:grid;grid-template-columns:.9fr 1.1fr;gap:22px;align-items:stretch}
-.screenCopy{padding:14px 6px 10px 2px;display:flex;flex-direction:column}
-.screenEyebrow{margin:0 0 12px;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#7a746d}
-.screenCopy h3{margin:0;font-size:clamp(1.6rem,2vw,2.3rem);line-height:.94;letter-spacing:-.055em;color:#1d1b19;max-width:10ch;font-weight:500}
-.screenCopy p{margin:14px 0 0;color:#6e6963;font-size:13px;line-height:1.55;max-width:30ch}
-.screenCtaRow{display:flex;gap:10px;margin-top:auto;padding-top:20px}
-.screenPrimary,.screenSecondary{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:11px 14px;font-size:9px;text-transform:uppercase;letter-spacing:.15em;font-weight:700}
-.screenPrimary{background:#1b1b1c;color:#fff}
-.screenSecondary{border:1px solid rgba(27,27,28,.18);color:#1b1b1c;background:rgba(255,255,255,.54)}
-.screenArt{position:relative;display:grid;grid-template-rows:1fr auto;gap:12px}
-.screenPhotoMain{
-  border-radius:18px;
-  background:
-    linear-gradient(135deg, rgba(255,255,255,.34), rgba(255,255,255,0) 30%),
-    linear-gradient(180deg, rgba(35,34,33,.20), rgba(35,34,33,.02)),
-    radial-gradient(circle at 68% 24%, rgba(255,255,255,.65), transparent 24%),
-    linear-gradient(135deg, #c7b7a6 0%, #e7dfd5 38%, #d2c4b3 65%, #bca58d 100%);
-  overflow:hidden;
-  position:relative;
-}
-.screenPhotoMain::before{
-  content:'';
-  position:absolute;
-  left:12%;
-  right:12%;
-  bottom:0;
-  height:42%;
-  background:
-    linear-gradient(90deg, transparent 0 8%, rgba(255,255,255,.65) 8% 10%, transparent 10% 20%, rgba(255,255,255,.74) 20% 22%, transparent 22% 52%, rgba(255,255,255,.52) 52% 54%, transparent 54%),
-    linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.32));
-}
-.screenPhotoMain::after{
-  content:'';
-  position:absolute;
-  left:8%;
-  bottom:10%;
-  width:38%;
-  height:30%;
-  border-radius:12px;
-  background:rgba(255,255,255,.78);
-  box-shadow:32px -8px 0 8px rgba(255,255,255,.92), 114px -14px 0 2px rgba(53,48,43,.82);
-}
-.screenStatCard{
-  align-self:end;
-  display:grid;
-  gap:4px;
-  padding:12px 14px;
-  border-radius:16px;
-  background:rgba(255,255,255,.7);
-  border:1px solid rgba(27,27,28,.08);
-  width:max-content;
-  box-shadow:0 14px 30px rgba(15,23,42,.06);
-}
-.screenStatCard strong{font-size:30px;line-height:.9;letter-spacing:-.06em;color:#1d1b19;font-weight:600}
-.screenStatCard span{font-size:11px;color:#6e6963}
-.screenBottomRow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding-top:14px}
-.screenMiniCard{padding:12px;border-radius:16px;background:rgba(255,255,255,.56);border:1px solid rgba(27,27,28,.08);display:grid;gap:4px}
-.screenMiniCard b{font-size:11px;letter-spacing:-.02em;color:#242220}
-.screenMiniCard span{font-size:11px;color:#7a746d;line-height:1.35}
 
 @media(max-width:1200px){
-  .heroBody--laptop{grid-template-columns:minmax(300px,.82fr) minmax(420px,1.18fr)}
-  .heroTitle--laptop{font-size:clamp(3.15rem,6.2vw,5.6rem)}
+  .heroCopy--realLaptop{width:min(540px,45vw)}
+  .heroTitle--realLaptop{font-size:clamp(3.2rem,5.7vw,5rem)}
+  .heroVisual--realLaptop{width:min(67vw,900px)}
 }
-@media(max-width:1100px){
-  .hero.heroLaptop{min-height:0;padding:calc(76px + 24px) var(--pad) 52px}
-  .heroInner--laptop{min-height:auto}
-  .heroBody--laptop{grid-template-columns:1fr;align-items:start;gap:36px}
-  .heroCopy--laptop{padding:0;max-width:none}
-  .heroTitle--laptop{max-width:9.2ch}
-  .heroVisual{min-height:460px}
-  .heroPedestal{width:100%;height:170px}
-  .heroLaptopDevice{width:min(760px,100%);padding-bottom:28px;transform:none}
-}
+
 @media(max-width:900px){
   body{overflow-x:hidden}
-  [data-reveal]{opacity:1 !important;transform:none !important;clip-path:none !important;filter:none !important}
-  [data-parallax]{--parallax-y:0px !important}
-  .projectVisual,.screen,.mobileScreen{transform:none !important}
-  .projectGlow{transform:none !important}
-  .hero.heroLaptop{padding:calc(64px + 20px) 20px 42px}
-  .heroCopy--laptop{display:flex;flex-direction:column;align-items:flex-start}
-  .heroTitle--laptop{font-size:clamp(2.55rem,9.3vw,4.2rem);max-width:8.5ch}
-  .heroVisual{min-height:0}
-  .heroPedestal{height:120px;border-radius:20px 20px 0 0}
-  .heroLaptopLid{width:100%;border-width:6px;border-bottom-width:10px;border-radius:20px 20px 10px 10px}
-  .heroLaptopBase{height:18px;border-radius:0 0 26px 26px}
-  .heroScreenScene{padding:12px}
-  .screenTopbar{padding-bottom:10px}
-  .screenMenu{gap:10px;font-size:8px}
-  .screenGrid{gap:12px}
-  .screenCopy h3{font-size:clamp(1.05rem,4vw,1.45rem)}
-  .screenCopy p{font-size:11px;margin-top:10px}
-  .screenCtaRow{gap:8px;padding-top:12px}
-  .screenPrimary,.screenSecondary{padding:8px 10px;font-size:7px}
-  .screenBottomRow{gap:8px;padding-top:10px}
-  .screenMiniCard{padding:9px;border-radius:12px}
-  .screenMiniCard b,.screenMiniCard span{font-size:9px}
-  .screenStatCard{padding:10px 12px;border-radius:12px}
-  .screenStatCard strong{font-size:22px}
+  [data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important;filter:none!important}
+  [data-parallax]{--parallax-y:0px!important;transform:none!important}
+  .projectVisual,.screen,.mobileScreen,.projectGlow{transform:none!important}
+
+  .hero.heroRealLaptop{
+    min-height:0;
+    padding:calc(64px + 34px) 20px 0;
+    overflow:hidden;
+  }
+  .heroInner--realLaptop{
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:30px;
+  }
+  .heroCopy--realLaptop{
+    position:relative;
+    left:auto;
+    bottom:auto;
+    width:100%;
+    max-width:620px;
+    z-index:3;
+  }
+  .heroTitle--realLaptop{
+    max-width:8.7ch;
+    font-size:clamp(3rem,10vw,4.8rem);
+    line-height:.96;
+  }
+  .heroActions--realLaptop{margin-top:24px}
+  .heroVisual--realLaptop{
+    position:relative;
+    right:auto;
+    top:auto;
+    bottom:auto;
+    width:calc(100% + 40px);
+    height:auto;
+    margin-left:-20px;
+    margin-right:-20px;
+    align-self:center;
+  }
+  .heroVisual--realLaptop::before{display:none}
+  .heroVisual--realLaptop img{
+    width:100%;
+    height:auto;
+    object-fit:contain;
+    object-position:center bottom;
+    -webkit-mask-image:none;
+    mask-image:none;
+  }
 }
+
 @media(max-width:700px){
-  .hero.heroLaptop{padding:calc(64px + 18px) 20px 38px}
-  .heroCopy--laptop .heroLabel{font-size:10px;margin-bottom:14px}
-  .heroTitle--laptop{font-size:clamp(2.2rem,10.3vw,3.25rem);max-width:none;line-height:.98}
-  .heroCopy--laptop .actions{margin-top:22px;gap:10px}
-  .heroCopy--laptop .button{padding:13px 16px}
-  .heroVisual{justify-content:center}
-  .heroPedestal{height:84px;border-radius:16px 16px 0 0}
-  .heroLaptopDevice{padding-bottom:16px}
-  .screenGrid{grid-template-columns:1fr;gap:10px}
-  .screenTopbar{gap:10px;align-items:flex-start;flex-direction:column}
-  .screenMenu{flex-wrap:wrap}
-  .screenArt{grid-template-rows:auto auto}
-  .screenPhotoMain{min-height:120px}
-  .screenBottomRow{grid-template-columns:1fr}
+  .hero.heroRealLaptop{padding:calc(64px + 28px) 20px 0}
+  .heroTitle--realLaptop{font-size:clamp(2.5rem,11.6vw,3.45rem);max-width:9ch;letter-spacing:-.06em}
+  .heroActions--realLaptop{gap:9px;margin-top:21px}
+  .heroActions--realLaptop .button{padding:12px 15px;font-size:8px}
+  .heroVisual--realLaptop{width:calc(100% + 56px);margin-left:-28px;margin-right:-28px}
 }
+
 @media(prefers-reduced-motion:reduce){
-  .hero.heroLaptop *{animation:none!important;transition:none!important}
+  .heroRealLaptop *{animation:none!important;transition:none!important}
 }
