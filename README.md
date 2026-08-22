@@ -53,6 +53,12 @@ Dwie rzeczy, o które łatwo się potknąć przy zmianach w tej scenie:
 Rotujące słowo w nagłówku to cztery `<span>` w jednej komórce siatki,
 przełączane animacją `wordFade`.
 
+Poniżej 1100 px scena z desktopu się nie skaluje — znak przechodzi **nad**
+nagłówek jako zwarty znacznik (190 px na tablecie, 142 px na telefonie),
+a krążące kwadraty i siatka są ukrywane, bo w tej skali czytają się jak
+przypadkowe kropki. Hero traci wtedy wymuszoną wysokość, żeby nie robiła się
+dziura między podpisem a treścią.
+
 ## Skala wizualna
 
 Promienie, rytm pionowy i akcent kolorystyczny siedzą w zmiennych w `:root`

@@ -758,3 +758,42 @@ footer{background:var(--paper);color:var(--ink);border-top:1px solid var(--line)
   .markShine{display:none}
   .markTilt{transition:none;transform:none}
 }
+
+/* =========================================================
+   Hero ponizej desktopu: znak jako zwarty znacznik nad naglowkiem,
+   a nie scena z desktopu wciagnieta na maly ekran
+   ========================================================= */
+
+@media(max-width:1100px){
+  /* bez wymuszonej wysokosci nie robi sie dziura miedzy podpisem a trescia */
+  .hero{min-height:0;padding:calc(76px + clamp(34px,5vh,58px)) var(--pad) clamp(48px,7vh,76px)}
+  .heroInner{justify-content:flex-start;flex:0 1 auto;gap:clamp(30px,4vw,44px)}
+  .heroBody{gap:clamp(30px,4vw,44px)}
+  /* .heroArt zostalo flex-direction:column po wersji z ekranem komputera,
+     wiec o poziomym ustawieniu decyduje align-items, nie justify-content */
+  .heroArt{order:0;flex-direction:row;align-items:flex-start;justify-content:flex-start;
+    min-height:0;max-width:none}
+  .heroCopy{order:1}
+  .markScene{width:190px}
+  .markTilt{width:100%}
+  .markGlyph{filter:drop-shadow(0 16px 26px rgba(18,87,255,.3))}
+  /* przy tej skali kwadraty i siatka czytaja sie jak smieci */
+  .markOrbit,.markGrid{display:none}
+  .markGlow{width:150%;height:150%;filter:blur(26px);opacity:.42}
+  .markShadow{width:58%;height:9px;bottom:-10px;filter:blur(7px)}
+  @keyframes markFloat{
+    0%,100%{transform:translateY(0) rotate(-1.2deg)}
+    50%{transform:translateY(-16px) rotate(1.2deg)}
+  }
+}
+@media(max-width:700px){
+  .hero{min-height:0;padding:calc(64px + 30px) 20px 44px}
+  .heroInner{justify-content:flex-start;flex:0 1 auto;gap:30px}
+  .heroBody{gap:30px}
+  .markScene{width:142px}
+  .markGlyph{filter:drop-shadow(0 12px 20px rgba(18,87,255,.3))}
+  .markGlow{width:145%;height:145%;filter:blur(24px);opacity:.4}
+  .markShadow{width:58%;height:8px;bottom:-10px;filter:blur(6px)}
+  .hero .heroTitle{font-size:clamp(2.15rem,9.2vw,3.1rem)}
+  .hero .actions{margin-top:26px}
+}
