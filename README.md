@@ -28,9 +28,17 @@ plansza 21 project generowana z `mockups/screen-logo.html` (940×2004).
 w rozmiarze podanym w `body` i zapisz — telefon jako `screen-21-logo.webp`,
 Open Graph jako `og-21project.jpg`.
 
-Hero nie używa żadnych obrazków — jest zbudowane z typografii, jednego miękkiego
-światła i paska faktów. Rotujące słowo w nagłówku to cztery `<span>` w jednej
-komórce siatki, przełączane animacją `wordFade`.
+Grafika w hero (okno przeglądarki, telefon i linie wymiarowe) to inline SVG
+w `index.html`, kolorowany klasami z `style.css` — nie ma tam żadnego pliku
+graficznego. Rotujące słowo w nagłówku to cztery `<span>` w jednej komórce
+siatki, przełączane animacją `wordFade`.
+
+## Skala wizualna
+
+Promienie, rytm pionowy i akcent kolorystyczny siedzą w zmiennych w `:root`
+na końcu `style.css`: `--r1/--r2/--r3` (promienie), `--block` i `--headGap`
+(odstępy sekcji), `--a1`/`--a2` (indygo i fiolet). Zmiana odstępu między
+sekcjami na całej stronie to jedna wartość `--block`.
 
 ## SEO
 
