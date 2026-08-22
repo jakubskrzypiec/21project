@@ -33,16 +33,22 @@ Motyw jest jasny: biała strona, chłodne szare bloki (`--paper`, `--surface`)
 i niebieski akcent. Kolory tekstu sprawdzone pod kątem kontrastu — najsłabszy
 element ma 5,1:1 przy wymaganych 4,5:1.
 
-W hero lewituje znak `21` — nie ma tam żadnego obrazka. To `logo-mark.svg`
-użyty jako maska CSS na niebieskim gradiencie (`.markGlyph`), a wokół niego
+W hero lewituje znak `21` — nie ma tam żadnego pliku graficznego. Ścieżka
+z `logo-mark.svg` jest **wklejona wprost w `index.html`** i wypełniona
+gradientem SVG, a wokół niej
 scena złożona z warstw: pulsująca poświata, krążące kwadraty, siatka
 pomiarowa, przesuwający się refleks i cień kontaktowy, który kurczy się,
 gdy znak idzie w górę. Przechylenie za kursorem ustawia `motion.js` przez
 zmienne `--tx`/`--ty`.
 
-Uwaga na przyszłość: animacja wejścia (`markIn`) siedzi na `.markScene`,
-a nie na `.markGlyph`. Obie animowały `transform`, a `markIn` z `fill: both`
-nadpisywał unoszenie i znak stał w miejscu.
+Dwie rzeczy, o które łatwo się potknąć przy zmianach w tej scenie:
+
+- animacja wejścia (`markIn`) musi siedzieć na `.markScene`, a nie na
+  `.markGlyph` — obie ruszają `transform`, a `markIn` z `fill: both`
+  nadpisuje unoszenie i znak stoi w miejscu;
+- znak celowo **nie** używa maski CSS ani `aspect-ratio`. W tej wersji
+  znikał na części telefonów; wklejony SVG z `viewBox` sam ustala wysokość
+  i nie zależy od obsługi `mask-mode`.
 
 Rotujące słowo w nagłówku to cztery `<span>` w jednej komórce siatki,
 przełączane animacją `wordFade`.

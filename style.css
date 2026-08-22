@@ -673,12 +673,12 @@ footer{background:var(--paper);color:var(--ink);border-top:1px solid var(--line)
 
 .heroArt{position:relative;display:flex;align-items:center;justify-content:center;
   min-height:clamp(300px,42vh,520px);perspective:1200px}
-.markScene{position:relative;width:min(100%,520px);aspect-ratio:1/.92;
+.markScene{position:relative;width:min(100%,520px);
   display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;
   animation:markIn 1.15s cubic-bezier(.16,1,.3,1) both}
 
 /* poswiata pod znakiem — pulsuje w rytm unoszenia */
-.markGlow{position:absolute;top:46%;left:50%;width:86%;aspect-ratio:1.15;
+.markGlow{position:absolute;top:46%;left:50%;width:86%;height:86%;
   transform:translate(-50%,-50%);border-radius:50%;
   background:radial-gradient(circle,rgba(18,87,255,.30),rgba(18,87,255,.10) 42%,transparent 68%);
   filter:blur(38px);animation:markGlowPulse 7s ease-in-out infinite}
@@ -693,7 +693,7 @@ footer{background:var(--paper);color:var(--ink);border-top:1px solid var(--line)
   animation:markGridIn 1.2s cubic-bezier(.16,1,.3,1) .35s forwards}
 
 /* trzy male kwadraty krazace wokol znaku */
-.markOrbit{position:absolute;top:50%;left:50%;width:78%;aspect-ratio:1;
+.markOrbit{position:absolute;top:50%;left:50%;width:96%;height:110%;
   transform:translate(-50%,-50%) rotate(0deg);animation:markSpin 18s linear infinite}
 .markOrbit i{position:absolute;width:9px;height:9px;border-radius:2px;
   background:var(--a1);box-shadow:0 0 14px rgba(18,87,255,.55);
@@ -709,15 +709,9 @@ footer{background:var(--paper);color:var(--ink);border-top:1px solid var(--line)
   transition:transform .5s cubic-bezier(.16,1,.3,1)}
 
 /* sam znak: maska na gradiencie, plus przesuwajacy sie refleks */
-.markGlyph{position:relative;width:100%;aspect-ratio:1588/1356;overflow:hidden;
-  background:linear-gradient(148deg,#2f6bff 0%,#1257ff 34%,#0b3fd4 62%,#1f5cff 100%);
-  -webkit-mask:url("logo-mark.svg") center/contain no-repeat;
-  mask:url("logo-mark.svg") center/contain no-repeat;
-  filter:drop-shadow(0 26px 40px rgba(18,87,255,.34));
-  animation:markFloat 7s cubic-bezier(.45,0,.55,1) infinite}
-.markShine{position:absolute;top:-40%;bottom:-40%;left:-70%;width:55%;
-  background:linear-gradient(100deg,transparent 0%,rgba(255,255,255,.9) 48%,transparent 96%);
-  transform:skewX(-14deg);animation:markShine 5.2s ease-in-out 1.4s infinite}
+.markGlyph{position:relative;width:100%;filter:drop-shadow(0 26px 40px rgba(18,87,255,.34));animation:markFloat 7s cubic-bezier(.45,0,.55,1) infinite}
+.markSvg{display:block;width:100%;height:auto;overflow:visible}
+.markShine{animation:markShine 5.2s ease-in-out 1.4s infinite}
 
 /* cien kontaktowy — kurczy sie, gdy znak idzie w gore */
 .markShadow{position:absolute;left:50%;bottom:4%;width:44%;height:16px;
@@ -738,8 +732,8 @@ footer{background:var(--paper);color:var(--ink);border-top:1px solid var(--line)
   50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}
 }
 @keyframes markShine{
-  0%{left:-70%}
-  55%,100%{left:130%}
+  0%{transform:translateX(0) skewX(-12deg)}
+  55%,100%{transform:translateX(2620px) skewX(-12deg)}
 }
 @keyframes markSpin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes markSpinBack{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
