@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Inter;src:url('../inter-400.woff2') format('woff2');font-weight:400}
+@font-face{font-family:Inter;src:url('../inter-500.woff2') format('woff2');font-weight:500}
+@font-face{font-family:Inter;src:url('../inter-600.woff2') format('woff2');font-weight:600}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:940px;height:2004px;background:#ffffff;color:#0b1220;font-family:Inter,sans-serif;overflow:hidden;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:64px;padding:0 90px}
+.light{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(66% 34% at 50% 36%,rgba(18,87,255,.10),rgba(18,87,255,.03) 48%,transparent 74%)}
+.status{position:absolute;top:0;left:0;right:0;height:100px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;font-size:29px;font-weight:600}
+.dots{display:flex;gap:9px}
+.dots i{display:block;width:13px;height:13px;border-radius:50%;background:rgba(11,18,32,.55)}
+.logo{position:relative;width:640px}
+.rule{position:relative;width:150px;height:2px;background:#1257ff}
+.tag{position:relative;font-size:32px;letter-spacing:.02em;color:#5a6474;text-align:center;line-height:1.45}
+.foot{position:absolute;left:90px;right:90px;bottom:78px;display:flex;justify-content:space-between;
+  font-size:22px;font-weight:600;letter-spacing:.22em;color:#858fa1}
+</style></head><body>
+<div class="light"></div>
+<div class="status"><span>10:05</span><span class="dots"><i></i><i></i><i></i></span></div>
+<img class="logo" src="../logo.svg" alt="21 project">
+<div class="rule"></div>
+<p class="tag">Strony internetowe dla firm<br>Katowice · Śląsk</p>
+<footer class="foot"><span>PROJEKT</span><span>KOD</span><span>SEO</span></footer>
+</body></html>
