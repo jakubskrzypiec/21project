@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Inter;src:url('../inter-400.woff2') format('woff2');font-weight:400}
+@font-face{font-family:Inter;src:url('../inter-500.woff2') format('woff2');font-weight:500}
+@font-face{font-family:Inter;src:url('../inter-600.woff2') format('woff2');font-weight:600}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:940px;height:2004px;background:#07080b;color:#f4f5f8;font-family:Inter,sans-serif;overflow:hidden;position:relative}
+.glow{position:absolute;inset:0;background:radial-gradient(74% 30% at 50% 4%,rgba(255,255,255,.12),transparent 72%)}
+.status{position:absolute;top:0;left:0;right:0;height:100px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;font-size:29px;font-weight:600}
+.dots{display:flex;gap:9px}
+.dots i{display:block;width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.62)}
+.bar{position:absolute;top:100px;left:0;right:0;height:120px;padding:0 54px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.09)}
+.bar img{height:42px;filter:brightness(0) invert(1)}
+.burger{margin-left:auto;display:grid;gap:11px}
+.burger i{display:block;width:50px;height:3px;background:rgba(255,255,255,.75)}
+main{position:absolute;inset:220px 0 176px;padding:60px 54px 0}
+.eyebrow{font-size:24px;letter-spacing:.34em;color:#7e7e84;font-weight:500;margin-bottom:26px}
+h1{font-size:74px;line-height:1.04;font-weight:500;letter-spacing:-.035em;margin-bottom:56px}
+.q{border-top:1px solid rgba(255,255,255,.11);padding:38px 0;display:flex;align-items:flex-start;gap:22px}
+.q span{font-size:22px;color:#55565c;font-weight:600;letter-spacing:.08em;padding-top:8px;min-width:56px}
+.q p{font-size:34px;font-weight:500;letter-spacing:-.02em;flex:1;line-height:1.28}
+.q b{font-size:40px;font-weight:400;color:#7e7e84;line-height:1}
+.open{background:rgba(255,255,255,.045);border-radius:22px;margin:0 -22px;padding:38px 22px;border-top-color:transparent}
+.ans{font-size:29px;line-height:1.5;color:#9d9da3;margin-top:20px;font-weight:400;letter-spacing:-.005em}
+.note{margin-top:52px;border:1px solid rgba(255,255,255,.11);border-radius:24px;padding:40px 34px;display:grid;gap:12px}
+.note p{font-size:32px;font-weight:500;letter-spacing:-.02em}
+.note span{font-size:27px;color:#9d9da3}
+.foot{position:absolute;left:0;right:0;bottom:0;height:176px;padding:0 54px;display:flex;align-items:center;border-top:1px solid rgba(255,255,255,.09)}
+.btn{flex:1;background:#fff;color:#07080b;border-radius:999px;padding:30px 0;text-align:center;font-size:29px;font-weight:600;letter-spacing:.1em}
+</style></head><body>
+<div class="glow"></div>
+<div class="status"><span>10:05</span><span class="dots"><i></i><i></i><i></i></span></div>
+<header class="bar"><img src="../logo.svg" alt="21 project"><span class="burger"><i></i><i></i></span></header>
+<main>
+  <p class="eyebrow">21 PROJECT · FAQ</p>
+  <h1>Krótko<br>i konkretnie.</h1>
+  <div class="q open"><span>01</span><div style="flex:1"><p>Ile trwa realizacja strony?</p><p class="ans">Najczęściej od 7 do 14 dni od otrzymania materiałów.</p></div><b>–</b></div>
+  <div class="q"><span>02</span><p>Czy mogę zgłaszać poprawki?</p><b>+</b></div>
+  <div class="q"><span>03</span><p>Czy strona będzie działać na telefonie?</p><b>+</b></div>
+  <div class="q"><span>04</span><p>Co muszę dostarczyć?</p><b>+</b></div>
+  <div class="q"><span>05</span><p>Czy zajmujesz się domeną i publikacją?</p><b>+</b></div>
+  <div class="q"><span>06</span><p>Jak wygląda płatność?</p><b>+</b></div>
+  <div class="note"><p>Nie znalazłeś odpowiedzi?</p><span>Napisz — odpowiadam tego samego dnia.</span></div>
+</main>
+<footer class="foot"><span class="btn">BEZPŁATNA WYCENA</span></footer>
+</body></html>

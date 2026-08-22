@@ -1,8 +1,8 @@
-@font-face{font-family:Inter;src:url('inter-300.ttf') format('truetype');font-weight:300;font-style:normal;font-display:swap}
-@font-face{font-family:Inter;src:url('inter-400.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
-@font-face{font-family:Inter;src:url('inter-500.ttf') format('truetype');font-weight:500;font-style:normal;font-display:swap}
-@font-face{font-family:Inter;src:url('inter-600.ttf') format('truetype');font-weight:600;font-style:normal;font-display:swap}
-@font-face{font-family:Inter;src:url('inter-700.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:Inter;src:url('inter-300.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:Inter;src:url('inter-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:Inter;src:url('inter-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:Inter;src:url('inter-600.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:Inter;src:url('inter-700.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap}
 
 :root{
   /* dark surface scale — darkest page bed up to raised cards */
@@ -187,3 +187,60 @@ footer{background:#08090c;color:#fff;padding:72px var(--pad) 28px}.footerTop{dis
 }
 
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rotatingWords span{animation:none;display:none}.rotatingWords span:first-child{display:block;opacity:1;transform:none}[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important;filter:none!important}.heroCopy,.heroStage,.heroAtmos,.phoneStage,[data-parallax]{transform:none!important}.heroAtmos,.scrollCue i,.phoneLift,.phoneDrop{animation:none!important}}
+
+/* =========================================================
+   Wykonczenie: kotwice pod przyklejonym paskiem, fokus,
+   menu mobilne
+   ========================================================= */
+
+/* Sekcje nie chowaja sie pod pasek po kliknieciu w nawigacje */
+section[id],main[id]{scroll-margin-top:96px}
+
+/* Widoczny fokus dla klawiatury (bez obwodek przy kliknieciu myszka) */
+:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px;border-radius:4px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline-offset:4px}
+::selection{background:rgba(255,255,255,.22);color:#fff}
+
+/* Przycisk menu */
+.burger{display:none;width:42px;height:42px;margin-right:-9px;padding:0;background:none;border:0;color:inherit;cursor:pointer;
+  flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.burger span{display:block;width:22px;height:1.5px;background:currentColor;border-radius:2px;
+  transition:transform .32s cubic-bezier(.16,1,.3,1),opacity .2s}
+.burger[aria-expanded="true"] span:first-child{transform:translateY(3.75px) rotate(45deg)}
+.burger[aria-expanded="true"] span:last-child{transform:translateY(-3.75px) rotate(-45deg)}
+
+/* Panel menu */
+.mobileMenu{position:fixed;inset:76px 0 0;z-index:79;display:flex;flex-direction:column;justify-content:space-between;
+  gap:32px;padding:clamp(26px,7vw,46px) var(--pad) calc(env(safe-area-inset-bottom,0px) + 34px);
+  background:rgba(7,8,11,.97);backdrop-filter:blur(26px) saturate(130%);
+  opacity:0;transform:translateY(-14px);transition:opacity .34s ease,transform .38s cubic-bezier(.16,1,.3,1);
+  overflow-y:auto;overscroll-behavior:contain}
+.mobileMenu[hidden]{display:none}
+.mobileMenu.isOpen{opacity:1;transform:none}
+.mobileMenu nav{display:grid;gap:4px}
+.mobileMenu nav a{display:flex;align-items:baseline;gap:16px;padding:15px 0;
+  font-size:clamp(28px,8.4vw,38px);font-weight:500;letter-spacing:-.035em;color:#fff;
+  border-bottom:1px solid rgba(255,255,255,.09)}
+.mobileMenu nav a span{font-size:11px;font-weight:600;letter-spacing:.16em;color:var(--dim)}
+.mobileMenuFoot{display:grid;gap:14px;justify-items:start;font-size:14px;color:var(--muted)}
+.mobileMenuFoot a{color:var(--muted)}
+.mobileMenuFoot .mobileMenuCta{justify-self:stretch;text-align:center;background:#fff;color:#07080b;border-radius:999px;
+  padding:17px 24px;font-size:11px;font-weight:650;text-transform:uppercase;letter-spacing:.13em}
+body.menuOpen{overflow:hidden}
+
+@media(max-width:1100px){
+  .burger{display:flex}
+}
+@media(max-width:700px){
+  section[id],main[id]{scroll-margin-top:80px}
+  .mobileMenu{inset:64px 0 0}
+}
+@media(prefers-reduced-motion:reduce){
+  .mobileMenu{transition:none}
+  .burger span{transition:none}
+}
+
+/* Komunikat formularza kontaktowego */
+.formNote{font-size:12px;color:var(--muted);min-height:1.2em;line-height:1.45}
+.formNote.isOk{color:var(--ink)}
+@media(min-width:701px){.formNote{flex:1;text-align:right;margin:0 20px}}

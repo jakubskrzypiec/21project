@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Inter;src:url('../inter-400.woff2') format('woff2');font-weight:400}
+@font-face{font-family:Inter;src:url('../inter-500.woff2') format('woff2');font-weight:500}
+@font-face{font-family:Inter;src:url('../inter-600.woff2') format('woff2');font-weight:600}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:946px;height:2047px;background:#07080b;color:#f4f5f8;font-family:Inter,sans-serif;overflow:hidden;position:relative}
+.glow{position:absolute;inset:0;background:
+  radial-gradient(70% 34% at 50% 6%,rgba(255,255,255,.14),transparent 72%),
+  radial-gradient(60% 30% at 50% 100%,rgba(255,255,255,.05),transparent 70%)}
+.status{position:absolute;top:0;left:0;right:0;height:104px;display:flex;align-items:center;justify-content:space-between;padding:0 62px;font-size:30px;font-weight:600;color:#f4f5f8}
+.dots{display:flex;gap:9px;align-items:center}
+.dots i{display:block;width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.62)}
+.bar{position:absolute;top:104px;left:0;right:0;height:126px;padding:0 56px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.09)}
+.bar img{height:44px;filter:brightness(0) invert(1)}
+.burger{margin-left:auto;display:grid;gap:11px}
+.burger i{display:block;width:52px;height:3px;background:rgba(255,255,255,.75)}
+main{position:absolute;inset:230px 0 210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:58px;padding:0 70px 200px;text-align:center}
+.mark{width:330px;filter:brightness(0) invert(1)}
+.rule{width:150px;height:1px;background:rgba(255,255,255,.24)}
+.tag{font-size:46px;line-height:1.32;color:#cfd2d8;letter-spacing:-.015em}
+.eyebrow{font-size:26px;letter-spacing:.4em;color:#7e7e84;font-weight:500}
+.btn{margin-top:14px;background:#fff;color:#07080b;border-radius:999px;padding:32px 62px;font-size:30px;font-weight:600;letter-spacing:.1em}
+.foot{position:absolute;left:56px;right:56px;bottom:0;height:210px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.09);font-size:25px;letter-spacing:.2em;color:#7e7e84;font-weight:500}
+</style></head><body>
+<div class="glow"></div>
+<div class="status"><span>10:05</span><span class="dots"><i></i><i></i><i></i></span></div>
+<header class="bar"><img src="../logo.svg" alt="21 project"><span class="burger"><i></i><i></i></span></header>
+<main>
+  <p class="eyebrow">STUDIO PROJEKTOWE</p>
+  <img class="mark" src="../logo-mark.svg" alt="21">
+  <div class="rule"></div>
+  <p class="tag">Strony internetowe<br>dla firm</p>
+  <span class="btn">ZOBACZ OFERTĘ</span>
+</main>
+<footer class="foot"><span>PROJEKT</span><span>KOD</span><span>SEO</span></footer>
+</body></html>

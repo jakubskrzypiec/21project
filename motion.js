@@ -95,6 +95,88 @@
       });
     }
 
+    const form = document.querySelector('.contactForm');
+    const formNote = form && form.querySelector('.formNote');
+
+    if (form && formNote) {
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const value = (field) => (form.elements[field] ? form.elements[field].value.trim() : '');
+        const name = value('name');
+        const contact = value('contact');
+        const message = value('message');
+
+        if (!name || !contact || !message) {
+          formNote.textContent = 'Uzupe\u0142nij imi\u0119, kontakt i kr\u00f3tki opis \u2014 reszt\u0105 zajm\u0119 si\u0119 ja.';
+          formNote.classList.remove('isOk');
+          const missing = !name ? 'name' : (!contact ? 'contact' : 'message');
+          if (form.elements[missing]) form.elements[missing].focus();
+          return;
+        }
+
+        const plan = value('plan');
+        const date = value('date');
+        const subject = 'Zapytanie ze strony 21project.pl \u2014 ' + plan;
+        const body = [
+          'Imi\u0119 i nazwisko: ' + name,
+          'Kontakt: ' + contact,
+          'Pakiet: ' + plan,
+          date ? 'Planowany termin: ' + date : null,
+          '',
+          message,
+        ].filter((line) => line !== null).join('\n');
+
+        formNote.textContent = 'Otwieram Tw\u00f3j program pocztowy z gotow\u0105 wiadomo\u015bci\u0105\u2026';
+        formNote.classList.add('isOk');
+        window.location.href = 'mailto:jakubskrzypiec.dev@gmail.com' +
+          '?subject=' + encodeURIComponent(subject) +
+          '&body=' + encodeURIComponent(body);
+      });
+    }
+
+    const burger = document.querySelector('.burger');
+    const menu = document.getElementById('mobileMenu');
+
+    if (burger && menu) {
+      let openFrame = 0;
+
+      const setMenu = (open) => {
+        window.cancelAnimationFrame(openFrame);
+        burger.setAttribute('aria-expanded', String(open));
+        burger.setAttribute('aria-label', open ? 'Zamknij menu' : 'Otw\u00f3rz menu');
+        document.body.classList.toggle('menuOpen', open);
+        if (open) {
+          menu.hidden = false;
+          openFrame = window.requestAnimationFrame(() => menu.classList.add('isOpen'));
+        } else {
+          menu.classList.remove('isOpen');
+          if (reduceMotion) {
+            menu.hidden = true;
+          } else {
+            window.setTimeout(() => {
+              if (!menu.classList.contains('isOpen')) menu.hidden = true;
+            }, 340);
+          }
+        }
+      };
+
+      burger.addEventListener('click', () => {
+        setMenu(burger.getAttribute('aria-expanded') !== 'true');
+      });
+      menu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => setMenu(false));
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
+          setMenu(false);
+          burger.focus();
+        }
+      });
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 1100 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
+      });
+    }
+
     document.querySelectorAll('.faqList details').forEach((detail) => {
       detail.addEventListener('toggle', () => {
         if (!detail.open) return;
