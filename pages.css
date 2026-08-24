@@ -216,3 +216,74 @@
   .contactDirect{padding:72px 20px}.contactIdentity h2{font-size:clamp(3.3rem,15vw,5rem)}.contactLinks>a,.contactArea{grid-template-columns:1fr 24px;gap:8px 14px;padding:22px 0}.contactLinks span,.contactArea span{grid-column:1/-1}.contactLinks strong,.contactArea strong{font-size:clamp(1.35rem,7vw,2rem)}.contactArea{grid-template-columns:1fr}.contactArea p{grid-column:1;margin-top:4px}.contactLinks b{grid-column:2;grid-row:2}
   .contactFormSection{padding:76px 20px}.contactFormIntro h2{font-size:clamp(3rem,14vw,4.7rem)}.contactPageForm label{grid-template-columns:30px 1fr;gap:8px 12px;padding:20px 0}.contactPageForm label>b{grid-column:2}.contactPageForm input,.contactPageForm select,.contactPageForm textarea{grid-column:2}.contactFormEnd{align-items:flex-start;flex-direction:column}.contactFormEnd button{width:100%}
 }
+
+
+/* =========================================================
+   21 project — v2.5 final frontend polish
+   ========================================================= */
+/* Desktop + mobile previews form one overlapping composition. */
+.portfolioWideMedia{
+  display:block;
+  position:relative;
+  overflow:hidden;
+  padding:clamp(18px,2.4vw,36px);
+  background:#f3f3f3;
+}
+.portfolioDesktopFrame{
+  width:92%;
+  aspect-ratio:16/9;
+  min-width:0;
+}
+.portfolioMobileFrame{
+  position:absolute;
+  z-index:3;
+  right:clamp(18px,3.6vw,54px);
+  top:50%;
+  width:clamp(118px,13.2%,190px);
+  transform:translateY(-50%);
+  transition:transform .65s cubic-bezier(.16,1,.3,1),box-shadow .65s cubic-bezier(.16,1,.3,1);
+}
+.portfolioWide:hover .portfolioMobileFrame{
+  transform:translateY(calc(-50% - 5px));
+  box-shadow:0 24px 52px rgba(0,0,0,.18);
+}
+
+/* Cleaner direct-contact block. */
+.contactDirectInner{grid-template-columns:minmax(210px,.56fr) minmax(0,1.44fr)}
+.contactIdentity h2{font-size:clamp(3.15rem,5.2vw,6.35rem);max-width:6.5ch}
+.contactEmailRow{min-width:0}
+.contactEmailValue{
+  min-width:0;
+  font-size:clamp(1.35rem,2.05vw,2.55rem)!important;
+  white-space:nowrap;
+  overflow-wrap:normal!important;
+  word-break:normal;
+  letter-spacing:-.055em!important;
+}
+.pageBody [data-reveal]{will-change:transform,opacity,clip-path,filter}
+
+@media(max-width:900px){
+  .portfolioDesktopFrame{width:91%}
+  .portfolioMobileFrame{right:20px;width:clamp(104px,15%,142px)}
+  .contactDirectInner{grid-template-columns:1fr}
+  .contactEmailValue{font-size:clamp(1.3rem,4.7vw,2.15rem)!important}
+}
+@media(max-width:700px){
+  .portfolioWideMedia{padding:12px 12px 30px;overflow:visible}
+  .portfolioDesktopFrame{width:100%;aspect-ratio:16/10}
+  .portfolioMobileFrame{
+    top:auto;
+    right:18px;
+    bottom:8px;
+    width:25%;
+    min-width:76px;
+    transform:none;
+  }
+  .portfolioWide:hover .portfolioMobileFrame{transform:translateY(-3px)}
+  .contactEmailValue{
+    white-space:normal;
+    overflow-wrap:anywhere!important;
+    word-break:break-word;
+    font-size:clamp(1.2rem,6.1vw,1.75rem)!important;
+  }
+}

@@ -14,6 +14,21 @@
 
   ready(function () {
 
+    /* Ujednolicone reveal na wszystkich podstronach / case studies. */
+    var autoRevealSelectors = [
+      '.cs-hero .shell > *',
+      '.cs-nav__item',
+      '.cs-cta .shell > *',
+      '.footer__inner > *',
+      '.footer__bottom > *',
+      '.legal > *'
+    ];
+    autoRevealSelectors.forEach(function (selector) {
+      [].slice.call(document.querySelectorAll(selector)).forEach(function (el) {
+        if (!el.classList.contains('reveal')) el.classList.add('reveal');
+      });
+    });
+
     /* ---------------------------------------------------
        1. Wejście hero — sekwencja
        --------------------------------------------------- */

@@ -2,6 +2,26 @@
   const start = () => {
     const root = document.documentElement;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 900;
+
+    const assignReveal = (selector, type) => {
+      document.querySelectorAll(selector).forEach((element, index) => {
+        if (element.hasAttribute('data-reveal')) return;
+        element.setAttribute('data-reveal', type);
+        if (type === 'row' || type === 'card') {
+          element.style.setProperty('--delay', `${Math.min(index % 5, 4) * 55}ms`);
+        }
+      });
+    };
+
+    if (document.body.classList.contains('pageBody')) {
+      assignReveal('.pageHeroInner > div:first-child, .pageSectionHead > div, .pageSticky, .contactHeroGrid > h1, .contactIdentity, .contactFormIntro', 'clip');
+      assignReveal('.pageHeroInner > div:last-child, .pageSectionHead > p, .contactHeroAside, .pageCtaInner', 'slide');
+      assignReveal('.portfolioWide, .pageCard, .pageFaq details', 'card');
+      assignReveal('.pageRow, .pageFacts li, .contactLinks > *, .contactPageForm label', 'row');
+    }
+
+    assignReveal('footer .footerPortfolioLink, footer .footerTop > img, footer .footerTop > p, footer .footerContact, footer .footerTop > nav, footer .footerBottom', 'row');
+
     const revealTargets = [...document.querySelectorAll('[data-reveal]')];
 
     if (reduceMotion || !('IntersectionObserver' in window)) {
