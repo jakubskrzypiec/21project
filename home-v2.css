@@ -209,6 +209,18 @@
 .homeV2 .v2-contactForm button{appearance:none;border:1px solid #fff;background:#fff;color:#111;padding:17px 18px 17px 22px;min-width:210px;display:flex;justify-content:space-between;align-items:center;gap:26px;font:inherit;font-size:11px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;transition:background .2s,color .2s}
 .homeV2 .v2-contactForm button:hover{background:transparent;color:#fff}
 
+
+/* v2.1 — monochrome hero atmosphere */
+.v2-hero{position:relative;isolation:isolate;overflow:hidden}
+.v2-hero::before{content:"21";position:absolute;z-index:-2;right:-.035em;top:50%;transform:translateY(-50%);font-size:clamp(300px,43vw,760px);line-height:.74;font-weight:500;letter-spacing:-.13em;color:transparent;-webkit-text-stroke:1px rgba(10,10,10,.045);text-stroke:1px rgba(10,10,10,.045);pointer-events:none;user-select:none}
+.v2-hero::after{content:"";position:absolute;z-index:-3;inset:0;background:linear-gradient(90deg,transparent 0,transparent calc(25% - .5px),rgba(10,10,10,.035) 25%,transparent calc(25% + .5px),transparent calc(50% - .5px),rgba(10,10,10,.035) 50%,transparent calc(50% + .5px),transparent calc(75% - .5px),rgba(10,10,10,.035) 75%,transparent calc(75% + .5px));pointer-events:none}
+.v2-heroCopy{position:relative;z-index:1}
+.v2-footerWork{display:flex;align-items:end;justify-content:space-between;gap:28px;padding:0 0 42px;margin-bottom:0;border-bottom:1px solid #2e2e2e;text-decoration:none;color:#fff!important}
+.v2-footerWork span:first-child{font-size:clamp(34px,5.2vw,76px);line-height:.95;letter-spacing:-.055em;font-weight:500}
+.v2-footerWork span:last-child{font-size:18px;transition:transform .2s}
+.v2-footerWork:hover span:last-child{transform:translate(3px,-3px)}
+.v2-footer .v2-shell{border-top:0!important;padding-top:54px!important}
+
 /* Footer */
 .v2-footer{background:#0b0b0b;color:#fff;padding:0 0 34px}
 .v2-footer .v2-shell{border-top:1px solid #2e2e2e;padding-top:48px}
@@ -397,3 +409,5 @@
 @media (prefers-reduced-motion:reduce){
   .homeV2 *{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
+
+@media (max-width:900px){.v2-hero::before{right:-.15em;top:42%;font-size:min(105vw,520px);-webkit-text-stroke-color:rgba(10,10,10,.035)}.v2-hero::after{background:linear-gradient(90deg,transparent calc(50% - .5px),rgba(10,10,10,.03) 50%,transparent calc(50% + .5px))}.v2-footerWork{padding-bottom:30px}.v2-footerWork span:first-child{font-size:clamp(30px,9vw,52px)}}
