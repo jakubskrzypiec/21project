@@ -451,3 +451,125 @@
   .v2-hero::before{right:-.34em;top:42%;font-size:min(118vw,520px);color:#f3f3f3;-webkit-text-stroke-color:#e4e4e4}
   .v2-hero::after{background:linear-gradient(90deg,transparent calc(50% - .5px),rgba(0,0,0,.04) 50%,transparent calc(50% + .5px))}
 }
+
+/* =========================================================
+   21 project — v2.3 clean hero
+   ========================================================= */
+.homeV2 .v2-hero{
+  min-height:100svh;
+  padding-top:82px;
+  background:#fff;
+  overflow:hidden;
+  isolation:isolate;
+}
+.homeV2 .v2-hero::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  width:clamp(330px,35vw,620px);
+  aspect-ratio:1;
+  right:5.5vw;
+  top:50%;
+  transform:translateY(-48%);
+  border:1px solid rgba(0,0,0,.07);
+  border-radius:50%;
+  background:transparent;
+  -webkit-text-stroke:0;
+  pointer-events:none;
+}
+.homeV2 .v2-hero::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 81% 51%,rgba(0,0,0,.18) 0 2px,transparent 2.5px),
+    linear-gradient(90deg,transparent calc(81% - .5px),rgba(0,0,0,.045) 81%,transparent calc(81% + .5px)),
+    linear-gradient(0deg,transparent calc(49% - .5px),rgba(0,0,0,.045) 49%,transparent calc(49% + .5px));
+}
+.homeV2 .v2-heroInner{
+  position:relative;
+  z-index:1;
+  min-height:calc(100svh - 82px);
+  padding-top:34px;
+  padding-bottom:56px;
+  grid-template-rows:auto 1fr;
+}
+.homeV2 .v2-heroBottom{
+  align-self:end;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 230px;
+  gap:64px;
+  align-items:end;
+  padding-top:14vh;
+}
+.homeV2 .v2-heroCopy{max-width:1120px;position:relative;z-index:2}
+.homeV2 .v2-heroCopy h1{max-width:1120px}
+.homeV2 .v2-heroCopy>p{display:none}
+.homeV2 .v2-heroActions{margin-top:38px;display:flex;gap:10px;align-items:stretch}
+.homeV2 .v2-heroButton{
+  min-width:196px;
+  min-height:60px;
+  padding:17px 19px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  border:1px solid #111;
+  border-radius:0;
+  text-transform:uppercase;
+  letter-spacing:.055em;
+  font-size:11px;
+  font-weight:600;
+  text-decoration:none;
+  transition:background .2s,color .2s,border-color .2s,transform .2s;
+}
+.homeV2 .v2-heroButton:hover{transform:translateY(-2px)}
+.homeV2 .v2-heroButton--dark{background:#111;color:#fff!important}
+.homeV2 .v2-heroButton--dark:hover{background:#2b2b2b;border-color:#2b2b2b}
+.homeV2 .v2-heroButton--light{background:#f1f1f1;color:#111!important;border-color:#dedede}
+.homeV2 .v2-heroButton--light:hover{background:#e8e8e8;border-color:#cfcfcf}
+.homeV2 .v2-heroButton span{font-size:15px;font-weight:400}
+.homeV2 .v2-heroCoordinates{
+  justify-self:end;
+  width:100%;
+  max-width:210px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:10px;
+  padding-bottom:8px;
+  color:#8a8a8a;
+  font-size:8px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  position:relative;
+  z-index:2;
+}
+.homeV2 .v2-heroCoordinates i{height:1px;background:#cfcfcf;display:block}
+.homeV2 .v2-heroPeek{display:none!important}
+
+@media(max-width:900px){
+  .homeV2 .v2-hero::before{width:min(72vw,520px);right:-16vw;top:40%;border-color:rgba(0,0,0,.055)}
+  .homeV2 .v2-hero::after{
+    background:
+      radial-gradient(circle at 82% 40%,rgba(0,0,0,.16) 0 2px,transparent 2.5px),
+      linear-gradient(90deg,transparent calc(82% - .5px),rgba(0,0,0,.035) 82%,transparent calc(82% + .5px));
+  }
+  .homeV2 .v2-heroInner{min-height:calc(100svh - 70px);padding-top:24px;padding-bottom:36px}
+  .homeV2 .v2-heroBottom{grid-template-columns:1fr;gap:40px;padding-top:17vh}
+  .homeV2 .v2-heroCoordinates{justify-self:start;max-width:190px}
+}
+
+@media(max-width:620px){
+  .homeV2 .v2-hero{padding-top:64px}
+  .homeV2 .v2-heroInner{min-height:calc(100svh - 64px);padding-top:22px;padding-bottom:28px}
+  .homeV2 .v2-heroBottom{padding-top:16vh;gap:36px}
+  .homeV2 .v2-heroCopy h1{font-size:clamp(49px,14vw,66px);line-height:.91}
+  .homeV2 .v2-heroActions{margin-top:30px;display:grid;grid-template-columns:1fr;gap:8px;width:min(100%,330px)}
+  .homeV2 .v2-heroButton{width:100%;min-width:0;min-height:56px;padding:15px 16px}
+  .homeV2 .v2-heroCoordinates{font-size:7px;padding-bottom:0}
+  .homeV2 .v2-hero::before{width:86vw;right:-37vw;top:35%}
+}
+@media(max-width:620px){.homeV2 .v2-heroCopy h1 br:nth-of-type(2){display:block}}

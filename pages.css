@@ -87,3 +87,81 @@
   .pageHero::before{right:-.28em;top:42%;font-size:min(112vw,460px);color:#f3f3f3;-webkit-text-stroke-color:#e4e4e4}
   .pageHero::after{background:linear-gradient(90deg,transparent calc(50% - .5px),rgba(0,0,0,.04) 50%,transparent calc(50% + .5px))}
 }
+
+/* =========================================================
+   21 project — v2.3 subpages + wide portfolio
+   ========================================================= */
+.pageBody .pageHero{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:#fff;
+}
+.pageBody .pageHero::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  width:clamp(270px,31vw,520px);
+  aspect-ratio:1;
+  right:7vw;
+  top:50%;
+  transform:translateY(-50%);
+  border:1px solid rgba(0,0,0,.065);
+  border-radius:50%;
+  background:transparent;
+  -webkit-text-stroke:0;
+  pointer-events:none;
+}
+.pageBody .pageHero::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 82% 50%,rgba(0,0,0,.17) 0 2px,transparent 2.5px),
+    linear-gradient(90deg,transparent calc(82% - .5px),rgba(0,0,0,.04) 82%,transparent calc(82% + .5px));
+}
+.pageBody .pageHeroInner{position:relative;z-index:1}
+
+.portfolioWideSection{background:#fff;border-bottom:1px solid var(--line)}
+.portfolioWideStack{display:grid;grid-template-columns:1fr;width:100%}
+.portfolioWide{display:block;width:100%;background:#fff;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink);overflow:hidden}
+.portfolioWide:last-child{border-bottom:0}
+.portfolioWideMedia{width:100%;aspect-ratio:16/8.8;max-height:880px;overflow:hidden;background:#ededed}
+.portfolioWideMedia img{width:100%;height:100%;display:block;object-fit:cover;object-position:top;transition:transform .6s cubic-bezier(.2,.75,.2,1),filter .25s ease}
+.portfolioWide:hover .portfolioWideMedia img{transform:scale(1.012)}
+.portfolioWideInfo{
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr) auto;
+  gap:24px;
+  align-items:end;
+  width:100%;
+  padding:28px max(var(--pad),calc((100vw - 1500px)/2));
+  background:#fff;
+}
+.portfolioWideNo{font-size:9px;letter-spacing:.14em;color:#777;text-transform:uppercase;padding-bottom:7px}
+.portfolioWideInfo h2,.portfolioWideInfo h3{margin:0;font-size:clamp(2.1rem,4vw,4.9rem);line-height:.92;letter-spacing:-.055em;font-weight:500}
+.portfolioWideInfo p{margin-top:9px;color:#777;font-size:11px;letter-spacing:.02em}
+.portfolioWideInfo b{font-size:22px;font-weight:400;align-self:center;transition:transform .2s ease}
+.portfolioWide:hover .portfolioWideInfo b{transform:translate(3px,-3px)}
+.pageSection--widePortfolio{padding-bottom:0}
+.portfolioWideStack--inside{width:100vw;margin-left:calc(50% - 50vw);margin-top:0}
+.pageFaq--wide{max-width:1180px}
+
+@media(max-width:900px){
+  .pageBody .pageHero::before{width:min(68vw,430px);right:-15vw;top:42%;border-color:rgba(0,0,0,.05)}
+  .pageBody .pageHero::after{background:linear-gradient(90deg,transparent calc(82% - .5px),rgba(0,0,0,.03) 82%,transparent calc(82% + .5px))}
+  .portfolioWideMedia{aspect-ratio:16/9;max-height:none}
+  .portfolioWideInfo{grid-template-columns:38px minmax(0,1fr) auto;gap:14px;padding:22px 24px 34px}
+  .portfolioWideInfo h2,.portfolioWideInfo h3{font-size:clamp(2rem,8vw,3.8rem)}
+}
+
+@media(max-width:700px){
+  .pageBody .pageHero::before{width:82vw;right:-42vw;top:32%}
+  .portfolioWideMedia{aspect-ratio:1.35/1}
+  .portfolioWideInfo{grid-template-columns:30px minmax(0,1fr) 18px;gap:10px;padding:18px 20px 28px;align-items:start}
+  .portfolioWideInfo h2,.portfolioWideInfo h3{font-size:clamp(1.8rem,10vw,3rem)}
+  .portfolioWideInfo p{font-size:10px;margin-top:6px}
+  .portfolioWideInfo b{font-size:18px}
+}
