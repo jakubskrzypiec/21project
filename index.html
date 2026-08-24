@@ -1,67 +1,374 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="pl">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Strony internetowe Katowice i Śląsk | 21 project</title>
-<meta content="Strony internetowe dla firm z Katowic, Gliwic, Chorzowa i całego Śląska. Projekt, kod, SEO i wdrożenie od 1500 zł, realizacja w 7–14 dni. Zapytaj o bezpłatną wycenę." name="description"/>
-<link href="https://21project.pl/" rel="canonical"/>
-<meta content="#ffffff" name="theme-color"/>
-<meta content="index,follow" name="robots"/>
-<meta content="website" property="og:type"/>
-<meta content="pl_PL" property="og:locale"/>
-<meta content="21 project" property="og:site_name"/>
-<meta content="https://21project.pl/" property="og:url"/>
-<meta content="Strony internetowe Katowice i Śląsk | 21 project" property="og:title"/>
-<meta content="Strony internetowe dla firm z Katowic i całego Śląska. Projekt, kod, SEO i wdrożenie od 1500 zł." property="og:description"/>
-<meta content="https://21project.pl/og-21project.jpg" property="og:image"/>
-<meta content="1200" property="og:image:width"/>
-<meta content="630" property="og:image:height"/>
-<meta content="summary_large_image" name="twitter:card"/>
-<meta content="Strony internetowe Katowice i Śląsk | 21 project" name="twitter:title"/>
-<meta content="Strony internetowe dla firm z Katowic i całego Śląska. Projekt, kod, SEO i wdrożenie od 1500 zł." name="twitter:description"/>
-<meta content="https://21project.pl/og-21project.jpg" name="twitter:image"/>
-<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
-<link as="font" crossorigin="" href="inter-400.woff2" rel="preload" type="font/woff2"/>
-<link as="font" crossorigin="" href="inter-500.woff2" rel="preload" type="font/woff2"/>
-<link href="style.css" rel="stylesheet"/>
-<noscript><style>[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important;filter:none!important}</style></noscript>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://21project.pl/#studio","name":"21 project","alternateName":"21 project — strony internetowe","description":"Projektowanie i wdrażanie stron internetowych dla firm — projekt, kod, SEO i uruchomienie.","url":"https://21project.pl/","image":"https://21project.pl/og-21project.jpg","logo":"https://21project.pl/logo.svg","telephone":"+48601863788","email":"jakubskrzypiec.dev@gmail.com","priceRange":"1000-3000 PLN","currenciesAccepted":"PLN","inLanguage":"pl-PL","address":{"@type":"PostalAddress","addressLocality":"Katowice","addressRegion":"śląskie","addressCountry":"PL"},"areaServed":[{"@type":"City","name":"Katowice"},{"@type":"City","name":"Gliwice"},{"@type":"City","name":"Chorzów"},{"@type":"City","name":"Zabrze"},{"@type":"City","name":"Sosnowiec"},{"@type":"City","name":"Tychy"},{"@type":"City","name":"Ruda Śląska"},{"@type":"City","name":"Bytom"},{"@type":"City","name":"Mysłowice"},{"@type":"City","name":"Dąbrowa Górnicza"},{"@type":"City","name":"Rybnik"},{"@type":"City","name":"Jaworzno"},{"@type":"Country","name":"Polska"}],"founder":{"@type":"Person","name":"Jakub Skrzypiec"},"knowsAbout":["projektowanie stron internetowych","strony wielopodstronowe","landing page","SEO","pozycjonowanie lokalne","wdrożenia stron"],"makesOffer":[{"@type":"Offer","name":"Minimal — landing page","price":"1500","priceCurrency":"PLN"},{"@type":"Offer","name":"Standard — strona firmowa","price":"2000","priceCurrency":"PLN"},{"@type":"Offer","name":"Premium — strona z SEO","price":"3000","priceCurrency":"PLN"},{"@type":"Offer","name":"SEO — audyt i pozycjonowanie","price":"1000","priceCurrency":"PLN"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Ile trwa realizacja strony?","acceptedAnswer":{"@type":"Answer","text":"Najczęściej od 7 do 14 dni od otrzymania materiałów. Dokładny termin ustalamy przed startem."}},{"@type":"Question","name":"Czy mogę zgłaszać poprawki?","acceptedAnswer":{"@type":"Answer","text":"Tak. Na każdym etapie widzisz postęp i możesz zgłaszać zmiany — nic nie jest robione bez Twojej akceptacji."}},{"@type":"Question","name":"Czy strona będzie działać na telefonie?","acceptedAnswer":{"@type":"Answer","text":"Tak. Każdy projekt dopracowuję osobno na komputerach, tabletach i telefonach."}},{"@type":"Question","name":"Co muszę dostarczyć?","acceptedAnswer":{"@type":"Answer","text":"Logo, zdjęcia i podstawowe informacje o firmie. Jeśli nie masz gotowych tekstów, pomogę je uporządkować."}},{"@type":"Question","name":"Czy zajmujesz się domeną i publikacją?","acceptedAnswer":{"@type":"Answer","text":"Tak. Mogę podpiąć domenę, uruchomić stronę i skonfigurować podstawowe narzędzia Google."}},{"@type":"Question","name":"Ile kosztuje strona internetowa dla firmy?","acceptedAnswer":{"@type":"Answer","text":"Landing page to 1500 zł, strona firmowa z trzema podstronami 2000 zł, a wersja z optymalizacją SEO 3000 zł. Sam audyt i pozycjonowanie istniejącej strony kosztuje 1000 zł. Cenę ustalam przed startem i nie zmienia się w trakcie."}},{"@type":"Question","name":"Czy pracujesz z firmami spoza Katowic?","acceptedAnswer":{"@type":"Answer","text":"Tak. Najwięcej projektów prowadzę dla firm z Katowic, Gliwic, Chorzowa, Zabrza i Sosnowca, ale cały proces da się poprowadzić zdalnie — strony na tej stronie powstały też dla firm z Ciechanowa i Miastka."}}]}</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Strony internetowe Katowice i Śląsk | 21 project</title>
+  <meta name="description" content="Projektuję i wdrażam nowoczesne strony internetowe dla firm z Katowic, Śląska i całej Polski. Indywidualny design, lekki kod, mobile i SEO. Strony od 1500 zł.">
+  <link rel="canonical" href="https://21project.pl/">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#ffffff">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pl_PL">
+  <meta property="og:site_name" content="21 project">
+  <meta property="og:url" content="https://21project.pl/">
+  <meta property="og:title" content="Strony internetowe Katowice i Śląsk | 21 project">
+  <meta property="og:description" content="Indywidualny projekt, lekki kod, dopracowany mobile i SEO dla firm z Katowic, Śląska i całej Polski.">
+  <meta property="og:image" content="https://21project.pl/og-21project.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="21 project — projektowanie i tworzenie stron internetowych">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Strony internetowe Katowice i Śląsk | 21 project">
+  <meta name="twitter:description" content="Indywidualny projekt, lekki kod, dopracowany mobile i SEO dla firm.">
+  <meta name="twitter:image" content="https://21project.pl/og-21project.jpg">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" as="font" href="inter-400.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="inter-500.woff2" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=20260824">
+  <link rel="stylesheet" href="home-v2.css?v=20260824">
+  <noscript><style>[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important;filter:none!important}</style></noscript>
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@graph":[
+      {
+        "@type":"WebSite",
+        "@id":"https://21project.pl/#website",
+        "url":"https://21project.pl/",
+        "name":"21 project",
+        "inLanguage":"pl-PL"
+      },
+      {
+        "@type":"Organization",
+        "@id":"https://21project.pl/#studio",
+        "name":"21 project",
+        "alternateName":"21 project — strony internetowe",
+        "url":"https://21project.pl/",
+        "logo":"https://21project.pl/logo.svg",
+        "image":"https://21project.pl/og-21project.jpg",
+        "description":"Projektowanie i wdrażanie stron internetowych dla firm: indywidualny design, frontend, wersja mobilna, SEO techniczne i publikacja.",
+        "telephone":"+48601863788",
+        "email":"jakubskrzypiec.dev@gmail.com",
+        "founder":{"@type":"Person","name":"Jakub Skrzypiec"},
+        "contactPoint":{"@type":"ContactPoint","telephone":"+48601863788","email":"jakubskrzypiec.dev@gmail.com","contactType":"sales","areaServed":"PL","availableLanguage":"pl"},
+        "hasOfferCatalog":{
+          "@type":"OfferCatalog",
+          "name":"Strony internetowe i SEO",
+          "itemListElement":[
+            {"@type":"Offer","price":"1500","priceCurrency":"PLN","itemOffered":{"@type":"Service","name":"Landing page — Minimal"}},
+            {"@type":"Offer","price":"2000","priceCurrency":"PLN","itemOffered":{"@type":"Service","name":"Strona firmowa — Standard"}},
+            {"@type":"Offer","price":"3000","priceCurrency":"PLN","itemOffered":{"@type":"Service","name":"Strona firmowa z SEO — Premium"}},
+            {"@type":"Offer","price":"1000","priceCurrency":"PLN","itemOffered":{"@type":"Service","name":"Audyt i optymalizacja SEO"}}
+          ]
+        }
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"Ile trwa realizacja strony?","acceptedAnswer":{"@type":"Answer","text":"Najczęściej od 7 do 14 dni od otrzymania materiałów. Dokładny termin ustalam przed rozpoczęciem projektu."}},
+      {"@type":"Question","name":"Czy mogę zgłaszać poprawki?","acceptedAnswer":{"@type":"Answer","text":"Tak. Na każdym etapie widzisz postęp i możesz zgłaszać zmiany, zanim projekt zostanie opublikowany."}},
+      {"@type":"Question","name":"Czy strona będzie działać na telefonie?","acceptedAnswer":{"@type":"Answer","text":"Tak. Każdy projekt dopracowuję osobno na komputerach, tabletach i telefonach."}},
+      {"@type":"Question","name":"Co muszę dostarczyć?","acceptedAnswer":{"@type":"Answer","text":"Najlepiej logo, zdjęcia i podstawowe informacje o firmie. Jeśli nie masz gotowych tekstów, pomogę je uporządkować."}},
+      {"@type":"Question","name":"Czy zajmujesz się domeną i publikacją?","acceptedAnswer":{"@type":"Answer","text":"Tak. Mogę podpiąć domenę, uruchomić stronę, przygotować sitemapę i skonfigurować podstawowe narzędzia Google."}},
+      {"@type":"Question","name":"Ile kosztuje strona internetowa dla firmy?","acceptedAnswer":{"@type":"Answer","text":"Landing page kosztuje 1500 zł, strona firmowa 2000 zł, a wariant Premium z rozszerzoną optymalizacją SEO 3000 zł. Audyt i optymalizacja istniejącej strony zaczynają się od 1000 zł."}},
+      {"@type":"Question","name":"Czy pracujesz z firmami spoza Katowic?","acceptedAnswer":{"@type":"Answer","text":"Tak. Obsługuję firmy z całego Śląska i z całej Polski. Cały proces może odbyć się zdalnie przez telefon i e-mail."}}
+    ]
+  }
+  </script>
 </head>
-<body><link as="image" href="logo.svg" rel="preload"/><header class="topbar"><a aria-label="21 project — początek" class="brand" href="#start"><img alt="21 project" src="logo.svg"/></a><nav aria-label="Nawigacja główna"><a href="#realizacje">Realizacje</a><a href="#oferta">Oferta</a><a href="#dlaczego-ja">Dlaczego ja</a><a href="#proces">Proces</a></nav><div class="headerRight"><a class="headerPhone" href="tel:+48601863788">601 863 788</a><a class="headerCta" href="#kontakt">Bezpłatna wycena <span>↗</span></a><button aria-controls="mobileMenu" aria-expanded="false" aria-label="Otwórz menu" class="burger" type="button"><span aria-hidden="true"></span><span aria-hidden="true"></span></button></div></header><div class="mobileMenu" hidden="" id="mobileMenu"><nav aria-label="Nawigacja mobilna"><a href="#realizacje"><span>01</span>Realizacje</a><a href="#oferta"><span>02</span>Oferta</a><a href="#dlaczego-ja"><span>03</span>Dlaczego ja</a><a href="#proces"><span>04</span>Proces</a><a href="#obszar"><span>05</span>Obszar działania</a><a href="#kontakt"><span>06</span>Kontakt</a></nav><div class="mobileMenuFoot"><a class="mobileMenuCta" href="#kontakt">Bezpłatna wycena <span>↗</span></a><a href="tel:+48601863788">601 863 788</a><a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a></div></div><main id="start">
+<body class="homeV2">
+  <a class="v2-skip" href="#main">Przejdź do treści</a>
 
-<section class="hero heroMinimalBrand" data-scroll-section="true" id="start">
-<div aria-hidden="true" class="heroMinimalGlow"></div>
-<div class="heroInner heroInner--minimalBrand">
-<div class="heroMinimalCopy">
-<p class="heroMinimalLabel">Strony internetowe</p>
-<h1>Design, który pracuje na Twój biznes.</h1>
-<p class="heroMinimalText">Projektuję nowoczesne strony internetowe dla firm — od designu po wdrożenie.</p>
-<div class="actions">
-<a class="button dark" href="#realizacje">Zobacz realizacje</a>
-<a class="button light heroMinimalGhost" href="#oferta">Poznaj ofertę</a>
-</div>
-<div aria-hidden="true" class="heroMinimalMeta">
-<span>Projekt</span><i></i><span>Kod</span><i></i><span>Mobile</span><i></i><span>SEO</span>
-</div>
-</div>
-<div aria-hidden="true" class="heroMinimalArt">
-<div class="heroLogoHalo"></div>
-<img alt="" class="heroLogoMark" src="logo-mark.svg"/>
-<div class="heroBrandCard">
-<div class="heroBrandCardTop">
-<span class="heroBrandDot"></span>
-<span class="heroBrandOverline">21 project</span>
-</div>
-<img alt="" class="heroBrandWordmark" src="logo.svg"/>
-<p class="heroBrandCaption">Minimal web design studio<br/>design · code · mobile</p>
-</div>
-<div class="heroBrandProject">PROJECT</div>
-</div>
-</div>
-</section>
+  <header class="topbar v2-topbar">
+    <a class="brand" href="#start" aria-label="21 project — początek">
+      <img src="logo.svg" alt="21 project" width="4616" height="1360">
+    </a>
+    <nav aria-label="Nawigacja główna">
+      <a href="#realizacje">Realizacje</a>
+      <a href="#oferta">Oferta</a>
+      <a href="#proces">Proces</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="headerRight">
+      <a class="headerCta" href="#kontakt">Zapytaj o projekt <span>↗</span></a>
+      <button class="burger" type="button" aria-label="Otwórz menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
 
-<section class="projects section" id="realizacje"><div class="sectionHead" data-reveal="clip"><p class="kicker">01 / Realizacje</p><h2>Wybrane strony.<br/><em>Prawdziwe efekty.</em></h2><p>Każda powstała od zera — pod konkretną markę, odbiorcę i cel biznesowy.</p></div><div class="projectList"><article class="project" data-reveal="slide"><a aria-label="Zobacz realizację COS Interiors" class="projectVisual" href="https://cosinteriors.pl" rel="noreferrer" target="_blank"><div class="projectGlow"></div><div class="screen" data-parallax="22"><img alt="Strona COS Interiors na komputerze" loading="eager" src="cosinteriors-desktop.webp"/></div><div class="mobileScreen" data-parallax="-28"><img alt="Strona COS Interiors na telefonie" loading="eager" src="cosinteriors-mobile.webp"/></div></a><div class="projectInfo"><p class="projectNo">/01</p><p class="projectPlace">Projektowanie wnętrz</p><h3><a href="https://cosinteriors.pl" rel="noreferrer" target="_blank">COS Interiors</a></h3><p>Rozbudowana, elegancka strona pracowni wnętrzarskiej, w której fotografia, oferta i ankieta projektowa prowadzą klienta przez spójną historię marki.</p><ul><li>Strona wielopodstronowa</li><li>Portfolio</li><li>Mobile</li></ul><a class="textLink" href="https://cosinteriors.pl" rel="noreferrer" target="_blank">Zobacz realizację <span>↗</span></a></div></article><article class="project reverse" data-reveal="slide"><a aria-label="Zobacz realizację Monika Serbista" class="projectVisual" href="realizacja-monika-serbista.html"><div class="projectGlow"></div><div class="screen" data-parallax="-22"><img alt="Strona Monika Serbista na komputerze" loading="lazy" src="monika-desktop.webp"/></div><div class="mobileScreen" data-parallax="28"><img alt="Strona Monika Serbista na telefonie" loading="lazy" src="monika-mobile.webp"/></div></a><div class="projectInfo"><p class="projectNo">/02</p><p class="projectPlace">Projektowanie wnętrz · Ciechanów</p><h3><a href="realizacja-monika-serbista.html">Monika Serbista</a></h3><p>Studio wnętrzarskie potrzebowało strony w tonie własnych realizacji — spokojnej, ciemnej i opartej na fotografii.</p><ul><li>Strona wielopodstronowa</li><li>Brief online</li><li>Portfolio</li></ul><a class="textLink" href="realizacja-monika-serbista.html">Zobacz realizację <span>↗</span></a></div></article><article class="project" data-reveal="slide"><a aria-label="Zobacz realizację Maciejewska Design" class="projectVisual" href="realizacja-maciejewska-design.html"><div class="projectGlow"></div><div class="screen" data-parallax="22"><img alt="Strona Maciejewska Design na komputerze" loading="lazy" src="maciejewska-desktop.webp"/></div><div class="mobileScreen" data-parallax="-28"><img alt="Strona Maciejewska Design na telefonie" loading="lazy" src="maciejewska-mobile.webp"/></div></a><div class="projectInfo"><p class="projectNo">/03</p><p class="projectPlace">Projektowanie wnętrz</p><h3><a href="realizacja-maciejewska-design.html">Maciejewska Design</a></h3><p>Elegancka wizytówka pracowni zbudowana wokół portfolio i krótkiej ścieżki do zapytania o projekt.</p><ul><li>Portfolio</li><li>Identyfikacja</li><li>SEO</li></ul><a class="textLink" href="realizacja-maciejewska-design.html">Zobacz realizację <span>↗</span></a></div></article><article class="project reverse" data-reveal="slide"><a aria-label="Zobacz realizację Pani Projekt" class="projectVisual" href="realizacja-pani-projekt.html"><div class="projectGlow"></div><div class="screen" data-parallax="-22"><img alt="Strona Pani Projekt na komputerze" loading="lazy" src="pani-desktop.webp"/></div><div class="mobileScreen" data-parallax="28"><img alt="Strona Pani Projekt na telefonie" loading="lazy" src="pani-mobile.webp"/></div></a><div class="projectInfo"><p class="projectNo">/04</p><p class="projectPlace">Wnętrza prywatne</p><h3><a href="realizacja-pani-projekt.html">Pani Projekt</a></h3><p>Kameralna strona dla projektantki wnętrz — ciepła paleta i czytelnie opisany proces współpracy.</p><ul><li>Landing page</li><li>Treści</li><li>Proces</li></ul><a class="textLink" href="realizacja-pani-projekt.html">Zobacz realizację <span>↗</span></a></div></article><article class="project" data-reveal="slide"><a aria-label="Zobacz realizację DRG Auto" class="projectVisual" href="realizacja-drg-auto.html"><div class="projectGlow"></div><div class="screen" data-parallax="22"><img alt="Strona DRG Auto na komputerze" loading="lazy" src="drg-desktop.webp"/></div><div class="mobileScreen" data-parallax="-28"><img alt="Strona DRG Auto na telefonie" loading="lazy" src="drg-mobile.webp"/></div></a><div class="projectInfo"><p class="projectNo">/05</p><p class="projectPlace">Komis i detailing · Miastko</p><h3><a href="realizacja-drg-auto.html">DRG Auto</a></h3><p>Dwie usługi na jednej stronie — sprzedaż aut i detailing — rozdzielone na wyraźne ścieżki.</p><ul><li>Landing page</li><li>FAQ</li><li>Kontakt</li></ul><a class="textLink" href="realizacja-drg-auto.html">Zobacz realizację <span>↗</span></a></div></article><article class="project reverse" data-reveal="slide"><a aria-label="Zobacz realizację Werka Bramy" class="projectVisual" href="realizacja-werka-bramy.html"><div class="projectGlow"></div><div class="screen" data-parallax="-22"><img alt="Strona Werka Bramy na komputerze" loading="lazy" src="werka-desktop.webp"/></div><div class="mobileScreen" data-parallax="28"><img alt="Strona Werka Bramy na telefonie" loading="lazy" src="werka-mobile.webp"/></div></a><div class="projectInfo"><p class="projectNo">/06</p><p class="projectPlace">Bramy i ogrodzenia · Ruda Śląska</p><h3><a href="realizacja-werka-bramy.html">Werka Bramy</a></h3><p>Techniczna strona nastawiona na wycenę, z lokalnym SEO pod miasta w regionie.</p><ul><li>Strona firmowa</li><li>Lokalne SEO</li><li>Wycena</li></ul><a class="textLink" href="realizacja-werka-bramy.html">Zobacz realizację <span>↗</span></a></div></article></div></section><section class="offers section" id="oferta"><div class="sectionHead compact" data-reveal="clip"><div><p class="kicker">02 / Oferta</p><h2>Cztery pakiety.<br/><em>Jedna, jasna cena.</em></h2></div><p>Bez ukrytych dopłat. Zakres i termin ustalamy przed rozpoczęciem realizacji.</p></div><div class="priceTable"><article class="priceRow" data-reveal="row"><i aria-hidden="true" class="rowLine"></i><span class="priceNo">01</span><div class="priceMain"><h3>Minimal</h3><p>Zwięzły landing page — jedna strona, bez podstron. Konkretnie przedstawia ofertę i prowadzi do kontaktu.</p></div><ul class="priceFeat"><li>Jedna strona, bez podstron</li><li>Oferta i dane kontaktowe</li><li>Mobile i desktop</li></ul><p class="priceTag">1500<em>zł</em></p><a class="priceCta" href="#kontakt">Zapytaj o pakiet <span>↗</span></a></article><article class="priceRow" data-reveal="row"><i aria-hidden="true" class="rowLine"></i><span class="priceNo">02</span><div class="priceMain"><h3>Standard</h3><p>Pełna strona firmowa z trzema podstronami. Więcej miejsca na usługi, realizacje i historię firmy.</p></div><ul class="priceFeat"><li>Strona główna + 3 podstrony</li><li>Prezentacja usług</li><li>Formularz kontaktowy</li></ul><p class="priceTag">2000<em>zł</em></p><a class="priceCta" href="#kontakt">Zapytaj o pakiet <span>↗</span></a></article><article class="priceRow isTop" data-reveal="row"><i aria-hidden="true" class="rowLine"></i><span class="priceNo">03</span><div class="priceMain"><h3>Premium<span class="priceMark">Najczęściej wybierany</span></h3><p>Wszystko ze Standardu oraz SEO. Strona od początku pracuje na widoczność firmy w Google.</p></div><ul class="priceFeat"><li>Wszystko ze Standardu</li><li>Optymalizacja SEO</li><li>Pozycjonowanie strony</li></ul><p class="priceTag">3000<em>zł</em></p><a class="priceCta" href="#kontakt">Zapytaj o pakiet <span>↗</span></a></article><article class="priceRow" data-reveal="row"><i aria-hidden="true" class="rowLine"></i><span class="priceNo">04</span><div class="priceMain"><h3>SEO</h3><p>Audyt, optymalizacja i pozycjonowanie strony, którą już masz — bez znaczenia, kto ją wcześniej wykonał.</p></div><ul class="priceFeat"><li>Audyt obecnej strony</li><li>Optymalizacja</li><li>Działania pozycjonujące</li></ul><p class="priceTag">1000<em>zł</em></p><a class="priceCta" href="#kontakt">Zapytaj o pakiet <span>↗</span></a></article></div></section><section class="process section" id="proces"><div class="sectionHead compact" data-reveal="clip"><div><p class="kicker">03 / Proces realizacji</p><h2>Wiesz, co dzieje się<br/><em>na każdym etapie.</em></h2></div><p>Prosty proces bez technicznego chaosu. Przez cały czas masz ze mną kontakt i widzisz, jak rozwija się projekt.</p></div><ol class="processRail"><li data-reveal="step"><i aria-hidden="true" class="stepTick"></i><span class="stepNo">01</span><h3>Rozmowa o projekcie</h3><p>Poznaję Twoją firmę, potrzeby i cel strony. Ustalamy zakres, cenę oraz termin.</p></li><li data-reveal="step"><i aria-hidden="true" class="stepTick"></i><span class="stepNo">02</span><h3>Dostarczenie materiałów</h3><p>Przekazujesz logo, zdjęcia i informacje. Pomagam uporządkować to, czego jeszcze brakuje.</p></li><li data-reveal="step"><i aria-hidden="true" class="stepTick"></i><span class="stepNo">03</span><h3>Wstępny projekt i poprawki</h3><p>Otrzymujesz pierwszy kierunek. Nanoszę zmiany i wspólnie dopracowujemy każdy ekran.</p></li><li data-reveal="step"><i aria-hidden="true" class="stepTick"></i><span class="stepNo">04</span><h3>Oddanie projektu</h3><p>Finalizuję wersję mobilną, podpinam domenę i publikuję gotową stronę.</p></li></ol><div class="supportNote" data-reveal="clip"><strong>Stały support.</strong><p>Przez cały proces jesteśmy w kontakcie — na każdym etapie możesz zgłosić pytanie lub zmianę.</p><a href="#kontakt">Porozmawiajmy <span>↗</span></a></div></section><section aria-labelledby="why-title" class="why section" id="dlaczego-ja"><div class="sectionHead horizontal" data-reveal="clip"><div><p class="kicker">04 / Dlaczego ja</p><h2 id="why-title">Jedna osoba.<br/><em>Pełna odpowiedzialność.</em></h2></div><p>Nie przekazuję Cię między grafikiem, handlowcem i programistą. Od pierwszego szkicu po publikację rozmawiasz bezpośrednio ze mną.</p></div><div class="whyRows"><article class="whyRow" data-reveal="row"><i aria-hidden="true" class="whyLine"></i><span class="whyNo">01</span><p class="whyTag">Projekt pod markę</p><h3>Najpierw poznaję firmę.<br/>Dopiero później projektuję.</h3><p class="whyText">Układ, język i styl wynikają z tego, komu sprzedajesz — nie z gotowego szablonu.</p></article><article class="whyRow" data-reveal="row"><i aria-hidden="true" class="whyLine"></i><span class="whyNo">02</span><p class="whyTag">Jedna rozmowa</p><h3>Każda decyzja trafia od razu<br/>do osoby, która ją wdroży.</h3><p class="whyText">Mniej nieporozumień, szybsze poprawki i pełna kontrola nad efektem.</p></article><article class="whyRow" data-reveal="row"><i aria-hidden="true" class="whyLine"></i><span class="whyNo">03</span><p class="whyTag">Po publikacji</p><h3>Oddanie strony nie kończy<br/>naszej współpracy.</h3><p class="whyText">Pomagam z domeną, uruchomieniem, zmianami i dalszym rozwojem strony.</p></article></div><a class="button light whyCta" href="#kontakt">Poznajmy Twój projekt <span>↗</span></a></section><section aria-labelledby="faq-title" class="faqZone"><div class="faqPhoneSide"><p class="kicker light">05 / Najczęstsze pytania</p><div class="phoneStage" data-parallax="26"><div aria-hidden="true" class="phoneHalo"></div><div class="phoneLift"><div class="device phoneBig"><div class="deviceViewport"><img alt="Logo 21 project na ekranie telefonu" height="1503" loading="lazy" src="screen-21-logo.webp" width="705"/></div></div></div><div aria-hidden="true" class="phoneDrop"></div><div aria-hidden="true" class="phonePedestal"><span></span><i></i></div></div></div><div class="faqCopy" data-reveal="clip"><p class="faqEyebrow">Bez technicznego żargonu</p><h2 id="faq-title">Krótko<br/>i konkretnie.</h2><div class="faqList"><details open=""><summary><span>01</span>Ile trwa realizacja strony?<b>+</b></summary><p>Najczęściej od 7 do 14 dni od otrzymania materiałów. Dokładny termin ustalamy przed startem.</p></details><details><summary><span>02</span>Czy mogę zgłaszać poprawki?<b>+</b></summary><p>Tak. Na każdym etapie widzisz postęp i możesz zgłaszać zmiany — nic nie jest robione bez Twojej akceptacji.</p></details><details><summary><span>03</span>Czy strona będzie działać na telefonie?<b>+</b></summary><p>Tak. Każdy projekt dopracowuję osobno na komputerach, tabletach i telefonach.</p></details><details><summary><span>04</span>Co muszę dostarczyć?<b>+</b></summary><p>Logo, zdjęcia i podstawowe informacje o firmie. Jeśli nie masz gotowych tekstów, pomogę je uporządkować.</p></details><details><summary><span>05</span>Czy zajmujesz się domeną i publikacją?<b>+</b></summary><p>Tak. Mogę podpiąć domenę, uruchomić stronę i skonfigurować podstawowe narzędzia Google.</p></details><details><summary><span>06</span>Ile kosztuje strona internetowa dla firmy?<b>+</b></summary><p>Landing page to 1500 zł, strona firmowa z trzema podstronami 2000 zł, a wersja z optymalizacją SEO 3000 zł. Sam audyt i pozycjonowanie istniejącej strony kosztuje 1000 zł. Cenę ustalam przed startem i nie zmienia się w trakcie.</p></details><details><summary><span>07</span>Czy pracujesz z firmami spoza Katowic?<b>+</b></summary><p>Tak. Najwięcej projektów prowadzę dla firm z Katowic, Gliwic, Chorzowa, Zabrza i Sosnowca, ale cały proces da się poprowadzić zdalnie — strony na tej stronie powstały też dla firm z Ciechanowa i Miastka.</p></details></div></div></section><section aria-labelledby="region-title" class="region section" id="obszar"><div class="sectionHead compact" data-reveal="clip"><div><p class="kicker">06 / Obszar działania</p><h2 id="region-title">Śląsk z bliska.<br/><em>Reszta kraju zdalnie.</em></h2></div><p>Większość projektów prowadzę dla firm z aglomeracji górnośląskiej. Spotkanie na żywo jest możliwe, ale nigdy nie jest warunkiem — cały proces da się poprowadzić przez telefon i maila.</p></div><div class="regionSplit"><div class="regionCities" data-reveal="clip"><p class="regionLabel">Miasta, w których pracuję najczęściej</p><ul class="cityList"><li>Katowice</li><li>Gliwice</li><li>Chorzów</li><li>Zabrze</li><li>Sosnowiec</li><li>Tychy</li><li>Ruda Śląska</li><li>Bytom</li><li>Mysłowice</li><li>Dąbrowa Górnicza</li><li>Rybnik</li><li>Jaworzno</li></ul><p class="regionFoot">Poza aglomeracją pracuję zdalnie — realizacje z tej strony powstały między innymi dla pracowni wnętrz z Ciechanowa i komisu z Miastka.</p></div><div class="regionText" data-reveal="clip"><p class="regionLabel">Lokalne SEO, nie tylko ładna strona</p><p>Strona firmowa bez ustawionego SEO nie pojawi się w wynikach na frazy z nazwą miasta. W pakiecie Premium opisuję usługi pod konkretne zapytania, porządkuję nagłówki i dane strukturalne, podpinam Google Search Console i pomagam uzupełnić wizytówkę Google, żeby firma była widoczna w mapach i w lokalnych wynikach.</p><p>Jeśli masz już stronę, samo pozycjonowanie zamawiasz osobno — zaczynam wtedy od audytu i pokazuję, co realnie blokuje widoczność.</p><a class="textLink" href="#kontakt">Zapytaj o widoczność w swoim mieście <span>↗</span></a></div></div></section><section class="contact section" id="kontakt"><div class="contactHeading" data-reveal="clip"><p class="kicker">07 / Kontakt</p><h2>Masz pomysł?<br/><em>Zróbmy z niego stronę.</em></h2><p>Opisz krótko swoją firmę. Odpowiem z konkretną propozycją, wyceną i możliwym terminem.</p></div><form action="mailto:jakubskrzypiec.dev@gmail.com" class="contactForm" data-reveal="card" enctype="text/plain" method="post"><div class="formRow"><label><span>01</span>Imię i nazwisko<input name="name" placeholder="Jak mam się do Ciebie zwracać?" required=""/></label><label><span>02</span>Telefon lub e-mail<input name="contact" placeholder="Twój kontakt" required=""/></label></div><div class="formRow"><label><span>03</span>Interesujący pakiet<select name="plan"><option>Minimal — 1500 zł</option><option>Standard — 2000 zł</option><option>Premium — 3000 zł</option><option>SEO — 1000 zł</option><option selected="">Jeszcze nie wiem</option></select></label><label><span>04</span>Planowany termin<input name="date" placeholder="Np. wrzesień / jak najszybciej"/></label></div><label class="messageField"><span>05</span>Krótko o firmie i potrzebach<textarea name="message" placeholder="Czym zajmuje się firma i czego potrzebujesz od nowej strony?" required="" rows="4"></textarea></label><div class="formBottom"><p>Wolisz zadzwonić? <a href="tel:+48601863788">601 863 788</a></p><p aria-live="polite" class="formNote" role="status"></p><button class="button dark" type="submit">Wyślij zapytanie <span>↗</span></button></div></form></section></main><footer><div class="footerTop"><img alt="21 project" src="logo.svg"/><p>Strony internetowe dla firm.<br/>Katowice, Śląsk i cała Polska.</p><div class="footerContact"><span>Zadzwoń</span><a href="tel:+48601863788">601 863 788</a><a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a></div><nav><a href="#realizacje">Realizacje</a><a href="#oferta">Oferta</a><a href="#dlaczego-ja">Dlaczego ja</a><a href="#obszar">Obszar działania</a><a href="#kontakt">Kontakt</a></nav></div><div class="footerBottom"><p>© 2026 21 project · Jakub Skrzypiec</p><a href="polityka-prywatnosci.html">Polityka prywatności</a></div></footer><script defer="" src="motion.js"></script></body>
+  <div class="mobileMenu v2-mobileMenu" id="mobileMenu" hidden>
+    <nav aria-label="Nawigacja mobilna">
+      <a href="#realizacje"><span>01</span>Realizacje</a>
+      <a href="#oferta"><span>02</span>Oferta</a>
+      <a href="#proces"><span>03</span>Proces</a>
+      <a href="#obszar"><span>04</span>Katowice / Śląsk</a>
+      <a href="#faq"><span>05</span>FAQ</a>
+      <a href="#kontakt"><span>06</span>Kontakt</a>
+    </nav>
+    <div class="mobileMenuFoot">
+      <a class="mobileMenuCta" href="#kontakt">Bezpłatna wycena <span>↗</span></a>
+      <a href="tel:+48601863788">601 863 788</a>
+      <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
+    </div>
+  </div>
+
+  <main id="main">
+    <section class="v2-hero" id="start" aria-labelledby="hero-title">
+      <div class="v2-shell v2-heroInner">
+        <div class="v2-heroTop">
+          <p class="v2-eyebrow">Strony internetowe · Katowice / Śląsk</p>
+          <p class="v2-heroSide" aria-label="Zakres usług">Design&nbsp;&nbsp;·&nbsp;&nbsp;Kod&nbsp;&nbsp;·&nbsp;&nbsp;Mobile&nbsp;&nbsp;·&nbsp;&nbsp;SEO</p>
+        </div>
+        <div class="v2-heroBottom">
+          <div class="v2-heroCopy">
+            <h1 id="hero-title">Strony internetowe,<br>które pracują<br>na Twój biznes.</h1>
+            <p>Projektuję i wdrażam strony dla firm, które mają wyglądać dobrze, działać szybko i prowadzić użytkownika do kontaktu.</p>
+            <div class="v2-heroActions">
+              <a class="v2-arrowLink" href="#realizacje">Zobacz realizacje <span>↓</span></a>
+              <a class="v2-textLink" href="#kontakt">Bezpłatna wycena ↗</a>
+            </div>
+          </div>
+          <div class="v2-heroSignature" aria-hidden="true">
+            <span>21</span>
+            <i></i>
+            <p>PROJECT<br>WEB STUDIO<br>2026</p>
+          </div>
+        </div>
+      </div>
+      <a class="v2-heroPeek" href="#realizacje" aria-label="Przejdź do realizacji">
+        <span>01 / SELECTED WORK</span>
+        <div><img src="cosinteriors-desktop.webp" width="1520" height="862" alt="" fetchpriority="high"></div>
+      </a>
+    </section>
+
+    <section class="v2-work" id="realizacje" aria-labelledby="work-title">
+      <div class="v2-shell">
+        <div class="v2-sectionHead" data-reveal="clip">
+          <div>
+            <p class="v2-kicker">01 / Selected work</p>
+            <h2 id="work-title">Wybrane projekty.<br><em>Nie szablony.</em></h2>
+          </div>
+          <p>Każda realizacja powstaje pod inną markę, odbiorcę i cel. Najpierw układ i kierunek, później kod, mobile i publikacja.</p>
+        </div>
+
+        <article class="v2-case" data-reveal="slide">
+          <a class="v2-caseVisual" href="realizacja-cos-interiors.html" aria-label="Case study COS Interiors">
+            <img class="v2-caseDesktop" src="cosinteriors-desktop.webp" width="1520" height="862" alt="COS Interiors — widok strony internetowej na komputerze" decoding="async">
+            <img class="v2-caseMobile" src="cosinteriors-mobile.webp" width="710" height="1536" alt="COS Interiors — widok strony na telefonie" loading="lazy" decoding="async">
+          </a>
+          <div class="v2-caseInfo">
+            <div class="v2-caseMeta"><span>/01</span><span>Projektowanie wnętrz</span></div>
+            <h3><a href="realizacja-cos-interiors.html">COS Interiors</a></h3>
+            <p>Rozbudowana strona pracowni wnętrz, w której portfolio, oferta i ankieta projektowa prowadzą użytkownika przez spójną historię marki.</p>
+            <ul><li>Design</li><li>Development</li><li>Mobile</li><li>Portfolio</li></ul>
+            <a class="v2-caseLink" href="realizacja-cos-interiors.html">Zobacz case study <span>↗</span></a>
+          </div>
+        </article>
+
+        <article class="v2-case v2-case--reverse" data-reveal="slide">
+          <a class="v2-caseVisual" href="realizacja-monika-serbista.html" aria-label="Case study Monika Serbista">
+            <img class="v2-caseDesktop" src="monika-desktop.webp" width="1800" height="1023" alt="Monika Serbista — widok strony internetowej na komputerze" loading="lazy" decoding="async">
+            <img class="v2-caseMobile" src="monika-mobile.webp" width="640" height="1385" alt="Monika Serbista — widok strony na telefonie" loading="lazy" decoding="async">
+          </a>
+          <div class="v2-caseInfo">
+            <div class="v2-caseMeta"><span>/02</span><span>Wnętrza · Ciechanów</span></div>
+            <h3><a href="realizacja-monika-serbista.html">Monika Serbista</a></h3>
+            <p>Spokojna, ciemna witryna oparta na fotografii. Portfolio i brief online porządkują ofertę i prowadzą klienta do konkretnego zapytania.</p>
+            <ul><li>Design</li><li>Strona firmowa</li><li>Brief online</li><li>Mobile</li></ul>
+            <a class="v2-caseLink" href="realizacja-monika-serbista.html">Zobacz case study <span>↗</span></a>
+          </div>
+        </article>
+
+        <article class="v2-case" data-reveal="slide">
+          <a class="v2-caseVisual" href="realizacja-maciejewska-design.html" aria-label="Case study Maciejewska Design">
+            <img class="v2-caseDesktop" src="maciejewska-desktop.webp" width="1800" height="1021" alt="Maciejewska Design — widok strony internetowej na komputerze" loading="lazy" decoding="async">
+            <img class="v2-caseMobile" src="maciejewska-mobile.webp" width="640" height="1385" alt="Maciejewska Design — widok strony na telefonie" loading="lazy" decoding="async">
+          </a>
+          <div class="v2-caseInfo">
+            <div class="v2-caseMeta"><span>/03</span><span>Architektura wnętrz</span></div>
+            <h3><a href="realizacja-maciejewska-design.html">Maciejewska Design</a></h3>
+            <p>Minimalistyczny serwis portfolio, w którym układ i typografia zostawiają pierwszeństwo realizacjom oraz prowadzą do czytelnej oferty.</p>
+            <ul><li>UI / UX</li><li>Development</li><li>Portfolio</li><li>Responsive</li></ul>
+            <a class="v2-caseLink" href="realizacja-maciejewska-design.html">Zobacz case study <span>↗</span></a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="v2-proof" id="dlaczego-ja" aria-labelledby="proof-title">
+      <div class="v2-shell">
+        <div class="v2-proofLead" data-reveal="clip">
+          <p class="v2-kicker v2-kicker--light">21 project / podejście</p>
+          <h2 id="proof-title">Strona nie kończy się<br>na dobrym wyglądzie.</h2>
+        </div>
+        <div class="v2-proofGrid">
+          <article data-reveal="row"><span>01</span><h3>Projekt</h3><p>Układ i język wynikają z marki, odbiorcy i celu strony — nie z gotowego szablonu.</p></article>
+          <article data-reveal="row"><span>02</span><h3>Kod</h3><p>Lekki frontend bez przypadkowych builderów. Mniej zbędnych warstw, łatwiejsza kontrola wydajności.</p></article>
+          <article data-reveal="row"><span>03</span><h3>Mobile</h3><p>Telefon nie jest pomniejszoną wersją desktopu. Każdy ekran dostaje własny układ i hierarchię.</p></article>
+          <article data-reveal="row"><span>04</span><h3>Support</h3><p>Od pierwszej rozmowy do publikacji kontaktujesz się bezpośrednio z osobą, która projektuje i wdraża.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="v2-offer" id="oferta" aria-labelledby="offer-title">
+      <div class="v2-shell">
+        <div class="v2-sectionHead" data-reveal="clip">
+          <div><p class="v2-kicker">02 / Oferta</p><h2 id="offer-title">Dobieramy zakres.<br><em>Cena jest jasna.</em></h2></div>
+          <p>Trzy warianty budowy strony. Bez ukrywania ceny za „wyceną indywidualną”, jeśli zakres mieści się w pakiecie.</p>
+        </div>
+
+        <div class="v2-pricing">
+          <article class="v2-price" data-reveal="card">
+            <div class="v2-priceTop"><span>01</span><p>Minimal</p></div>
+            <h3>Landing page</h3>
+            <p class="v2-priceDesc">Jedna dopracowana strona dla firmy, usługi lub kampanii.</p>
+            <ul><li>Indywidualny projekt</li><li>Wersja mobilna</li><li>Formularz kontaktowy</li><li>Publikacja</li></ul>
+            <div class="v2-priceBottom"><p><strong>1500</strong> zł</p><a href="#kontakt">Wybieram ↗</a></div>
+          </article>
+
+          <article class="v2-price v2-price--featured" data-reveal="card">
+            <div class="v2-priceBadge">Najczęściej wybierany</div>
+            <div class="v2-priceTop"><span>02</span><p>Standard</p></div>
+            <h3>Strona firmowa</h3>
+            <p class="v2-priceDesc">Landing + trzy podstrony dla firmy, która potrzebuje pełniejszej struktury.</p>
+            <ul><li>Do 3 podstron</li><li>Indywidualny projekt</li><li>Responsive</li><li>Podstawowe SEO techniczne</li></ul>
+            <div class="v2-priceBottom"><p><strong>2000</strong> zł</p><a href="#kontakt">Wybieram ↗</a></div>
+          </article>
+
+          <article class="v2-price" data-reveal="card">
+            <div class="v2-priceTop"><span>03</span><p>Premium</p></div>
+            <h3>Strona + SEO</h3>
+            <p class="v2-priceDesc">Rozbudowany serwis przygotowany od początku pod widoczność i dalszy rozwój.</p>
+            <ul><li>Wszystko ze Standardu</li><li>SEO techniczne</li><li>Optymalizacja on-page</li><li>Search Console + sitemap</li></ul>
+            <div class="v2-priceBottom"><p><strong>3000</strong> zł</p><a href="#kontakt">Wybieram ↗</a></div>
+          </article>
+        </div>
+
+        <a class="v2-seoStrip" href="pozycjonowanie-stron/" data-reveal="clip">
+          <div><span>Masz już stronę?</span><h3>Audyt i optymalizacja SEO</h3></div>
+          <p>Sprawdzam technikę, indeksację, strukturę i treści. Zakres od <strong>1000 zł</strong>.</p>
+          <b>↗</b>
+        </a>
+      </div>
+    </section>
+
+    <section class="v2-process" id="proces" aria-labelledby="process-title">
+      <div class="v2-shell v2-processGrid">
+        <div class="v2-processSticky" data-reveal="clip">
+          <p class="v2-kicker">03 / Proces</p>
+          <h2 id="process-title">Od pierwszej rozmowy<br>do gotowej strony.</h2>
+          <p>Prosty proces bez technicznego chaosu. Wiesz, co dzieje się na każdym etapie i kiedy potrzebna jest Twoja decyzja.</p>
+          <a class="v2-textLink" href="#kontakt">Porozmawiajmy ↗</a>
+        </div>
+        <ol class="v2-processList">
+          <li data-reveal="row"><span>01</span><div><h3>Rozmowa</h3><p>Poznaję firmę, odbiorców i cel. Ustalamy zakres, cenę i termin.</p></div></li>
+          <li data-reveal="row"><span>02</span><div><h3>Materiały</h3><p>Przekazujesz logo, zdjęcia i najważniejsze informacje. Pomagam uporządkować brakujące treści.</p></div></li>
+          <li data-reveal="row"><span>03</span><div><h3>Kierunek i projekt</h3><p>Przygotowuję pierwszą wersję, zbieram uwagi i dopracowuję hierarchię, typografię oraz układ.</p></div></li>
+          <li data-reveal="row"><span>04</span><div><h3>Kod + mobile</h3><p>Wdrażam zaakceptowany kierunek i dopracowuję responsywność, wydajność oraz podstawy SEO.</p></div></li>
+          <li data-reveal="row"><span>05</span><div><h3>Publikacja</h3><p>Podpinam domenę, sprawdzam finalną wersję i uruchamiam gotową stronę.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="v2-moreWork" aria-labelledby="more-title">
+      <div class="v2-shell">
+        <div class="v2-sectionHead v2-sectionHead--compact" data-reveal="clip">
+          <div><p class="v2-kicker">04 / Portfolio</p><h2 id="more-title">Więcej projektów.</h2></div>
+          <a class="v2-textLink" href="realizacje/">Zobacz całe portfolio ↗</a>
+        </div>
+        <div class="v2-workRows">
+          <a href="realizacja-pani-projekt.html" class="v2-workRow" data-reveal="row"><span>01</span><div><h3>Pani Projekt</h3><p>Studio projektowe</p></div><figure><img src="pani-desktop.webp" width="1800" height="1023" alt="Pani Projekt — strona internetowa" loading="lazy" decoding="async"></figure><b>↗</b></a>
+          <a href="realizacja-drg-auto.html" class="v2-workRow" data-reveal="row"><span>02</span><div><h3>DRG Auto</h3><p>Motoryzacja · Miastko</p></div><figure><img src="drg-desktop.webp" width="1800" height="1019" alt="DRG Auto — strona internetowa" loading="lazy" decoding="async"></figure><b>↗</b></a>
+          <a href="realizacja-werka-bramy.html" class="v2-workRow" data-reveal="row"><span>03</span><div><h3>Werka Bramy</h3><p>Bramy i usługi</p></div><figure><img src="werka-desktop.webp" width="1800" height="1023" alt="Werka Bramy — strona internetowa" loading="lazy" decoding="async"></figure><b>↗</b></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="v2-region" id="obszar" aria-labelledby="region-title">
+      <div class="v2-shell">
+        <div class="v2-sectionHead" data-reveal="clip">
+          <div><p class="v2-kicker">05 / Katowice + Śląsk</p><h2 id="region-title">Lokalnie na Śląsku.<br><em>Zdalnie w całej Polsce.</em></h2></div>
+          <p>Strona może wyglądać świetnie i nadal nie odpowiadać na to, czego ktoś szuka w Google. Dlatego projekt, struktura treści i SEO planuję razem.</p>
+        </div>
+        <div class="v2-regionGrid">
+          <div class="v2-regionCopy" data-reveal="clip">
+            <p>Przy lokalnych usługach nie wystarcza lista miast w stopce. Potrzebne są osobne, sensowne strony odpowiadające na konkretne intencje — bez kopiowania tej samej treści pod każdą lokalizację.</p>
+            <p>Na stronie przygotowana jest już struktura pod rozwój lokalnego SEO, portfolio i branżowych landingów. Kolejne podstrony będziemy dodawać tylko tam, gdzie faktycznie mają wartość dla użytkownika.</p>
+            <a class="v2-textLink" href="pozycjonowanie-stron/">Jak pracuję z SEO ↗</a>
+          </div>
+          <nav class="v2-regionLinks" aria-label="Najważniejsze strony lokalne i usługowe" data-reveal="row">
+            <a href="strony-internetowe-katowice/"><span>Katowice</span><small>strony internetowe</small><b>↗</b></a>
+            <a href="strony-internetowe-slask/"><span>Śląsk</span><small>strony dla firm</small><b>↗</b></a>
+            <a href="strony-internetowe-dla-architektow/"><span>Dla architektów</span><small>branżowy landing</small><b>↗</b></a>
+            <a href="pozycjonowanie-stron/"><span>SEO</span><small>audyt i optymalizacja</small><b>↗</b></a>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <section class="v2-faq" id="faq" aria-labelledby="faq-title">
+      <div class="v2-shell v2-faqGrid">
+        <div class="v2-faqLead" data-reveal="clip">
+          <p class="v2-kicker">06 / FAQ</p>
+          <h2 id="faq-title">Masz pytania?<br><em>Prawdopodobnie już<br>na nie odpowiedziałem.</em></h2>
+          <p>Bez technicznego żargonu. Jeśli czegoś tu nie ma, napisz albo zadzwoń.</p>
+        </div>
+        <div class="faqList v2-faqList" data-reveal="clip">
+          <details open><summary><span>01</span>Ile trwa realizacja strony?<b>+</b></summary><p>Najczęściej od 7 do 14 dni od otrzymania materiałów. Dokładny termin ustalam przed rozpoczęciem projektu.</p></details>
+          <details><summary><span>02</span>Czy mogę zgłaszać poprawki?<b>+</b></summary><p>Tak. Na każdym etapie widzisz postęp i możesz zgłaszać zmiany, zanim projekt zostanie opublikowany.</p></details>
+          <details><summary><span>03</span>Czy strona będzie działać na telefonie?<b>+</b></summary><p>Tak. Każdy projekt dopracowuję osobno na komputerach, tabletach i telefonach.</p></details>
+          <details><summary><span>04</span>Co muszę dostarczyć?<b>+</b></summary><p>Najlepiej logo, zdjęcia i podstawowe informacje o firmie. Jeśli nie masz gotowych tekstów, pomogę je uporządkować.</p></details>
+          <details><summary><span>05</span>Czy zajmujesz się domeną i publikacją?<b>+</b></summary><p>Tak. Mogę podpiąć domenę, uruchomić stronę, przygotować sitemapę i skonfigurować podstawowe narzędzia Google.</p></details>
+          <details><summary><span>06</span>Ile kosztuje strona internetowa dla firmy?<b>+</b></summary><p>Landing page kosztuje 1500 zł, strona firmowa 2000 zł, a wariant Premium z rozszerzoną optymalizacją SEO 3000 zł. Audyt i optymalizacja istniejącej strony zaczynają się od 1000 zł.</p></details>
+          <details><summary><span>07</span>Czy pracujesz z firmami spoza Katowic?<b>+</b></summary><p>Tak. Obsługuję firmy z całego Śląska i z całej Polski. Cały proces może odbyć się zdalnie przez telefon i e-mail.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="v2-contact" id="kontakt" aria-labelledby="contact-title">
+      <div class="v2-shell v2-contactGrid">
+        <div class="v2-contactLead" data-reveal="clip">
+          <p class="v2-kicker v2-kicker--light">07 / Start a project</p>
+          <h2 id="contact-title">Masz projekt?<br>Zróbmy z niego<br>dobrą stronę.</h2>
+          <div class="v2-directContact">
+            <a href="tel:+48601863788">601 863 788</a>
+            <a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a>
+          </div>
+        </div>
+
+        <form class="contactForm v2-contactForm" action="mailto:jakubskrzypiec.dev@gmail.com" enctype="text/plain" method="post" data-reveal="clip">
+          <label><span>01</span><b>Imię i nazwisko</b><input type="text" name="name" autocomplete="name" placeholder="Jak mam się do Ciebie zwracać?" required></label>
+          <label><span>02</span><b>Telefon lub e-mail</b><input type="text" name="contact" autocomplete="email" placeholder="Twój kontakt" required></label>
+          <label><span>03</span><b>Czego potrzebujesz?</b><select name="plan"><option>Minimal — 1500 zł</option><option>Standard — 2000 zł</option><option>Premium — 3000 zł</option><option>SEO — od 1000 zł</option><option selected>Jeszcze nie wiem</option></select></label>
+          <label><span>04</span><b>Planowany termin</b><input type="text" name="date" placeholder="Np. wrzesień / jak najszybciej"></label>
+          <label class="v2-message"><span>05</span><b>Krótko o firmie i potrzebach</b><textarea name="message" rows="4" placeholder="Czym zajmuje się firma i czego potrzebujesz od strony?" required></textarea></label>
+          <div class="v2-formEnd"><p class="formNote" role="status" aria-live="polite"></p><button type="submit">Wyślij zapytanie <span>↗</span></button></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="v2-footer">
+    <div class="v2-shell">
+      <div class="v2-footerLogo">21 PROJECT</div>
+      <div class="v2-footerMeta">
+        <p>Katowice / Śląsk / Polska</p>
+        <nav aria-label="Stopka"><a href="realizacje/">Realizacje</a><a href="pozycjonowanie-stron/">SEO</a><a href="mailto:jakubskrzypiec.dev@gmail.com">E-mail</a><a href="tel:+48601863788">Telefon</a><a href="polityka-prywatnosci.html">Polityka prywatności</a></nav>
+        <p>© 2026 21 project · Jakub Skrzypiec</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="motion.js?v=20260824" defer></script>
+</body>
 </html>
