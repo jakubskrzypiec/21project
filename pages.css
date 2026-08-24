@@ -165,3 +165,54 @@
   .portfolioWideInfo p{font-size:10px;margin-top:6px}
   .portfolioWideInfo b{font-size:18px}
 }
+
+
+/* =========================================================
+   21 project — v2.4 contact + framed portfolio previews
+   ========================================================= */
+.portfolioWideSection{padding:clamp(54px,6vw,96px) var(--pad);background:#fff;border-bottom:1px solid var(--line)}
+.portfolioWideStack{width:min(100%,1460px);max-width:1460px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:clamp(64px,7vw,112px)}
+.portfolioWide{width:100%;border:1px solid var(--line);overflow:hidden;background:#fff}
+.portfolioWide:last-child{border-bottom:1px solid var(--line)}
+.portfolioWideMedia{position:relative;width:100%;height:auto;max-height:none;aspect-ratio:auto;overflow:hidden;background:#f3f3f3;display:grid;grid-template-columns:minmax(0,1fr) clamp(120px,14vw,205px);gap:clamp(20px,3vw,46px);align-items:center;padding:clamp(16px,2.2vw,34px)}
+.portfolioDesktopFrame{min-width:0;aspect-ratio:16/9;overflow:hidden;background:#e9e9e9;border:1px solid rgba(0,0,0,.12);box-shadow:0 18px 50px rgba(0,0,0,.08)}
+.portfolioMobileFrame{width:100%;aspect-ratio:640/1385;overflow:hidden;background:#e9e9e9;border:5px solid #111;border-radius:18px;box-shadow:0 18px 42px rgba(0,0,0,.16)}
+.portfolioWideMedia img.portfolioDesktop,.portfolioWideMedia img.portfolioMobile{display:block;width:100%;height:100%;object-fit:cover;object-position:top;transform:none!important;filter:none!important}
+.portfolioWide:hover .portfolioDesktop{transform:scale(1.008)!important}
+.portfolioWideInfo{width:100%;padding:24px clamp(22px,3vw,42px) 30px;grid-template-columns:44px minmax(0,1fr) auto;gap:20px;border-top:1px solid var(--line)}
+.portfolioWideInfo h2,.portfolioWideInfo h3{font-size:clamp(2rem,3.4vw,4.15rem)}
+.pageSection--widePortfolio{padding-bottom:clamp(80px,8vw,130px)}
+.portfolioWideStack--inside{width:100%;max-width:1460px;margin:clamp(44px,5vw,78px) auto 0}
+.pageSection--widePortfolio .pageWrap{max-width:1500px}
+
+/* Contact page */
+.contactHero{padding:clamp(105px,11vw,170px) var(--pad) clamp(76px,8vw,125px);background:#fff;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.contactHero::before{content:"";position:absolute;right:7vw;top:50%;width:clamp(240px,29vw,470px);aspect-ratio:1;border:1px solid rgba(0,0,0,.065);border-radius:50%;transform:translateY(-50%)}
+.contactHero::after{content:"21";position:absolute;right:9vw;top:53%;transform:translateY(-50%);font-size:clamp(120px,20vw,320px);font-weight:500;line-height:.7;letter-spacing:-.12em;color:rgba(0,0,0,.018);pointer-events:none}
+.contactHeroInner,.contactDirectInner,.contactFormLayout{width:min(100%,1500px);margin:0 auto;position:relative;z-index:1}
+.contactHeroGrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.55fr);gap:clamp(50px,8vw,130px);align-items:end}
+.contactHero h1{font-size:clamp(4.3rem,8vw,9rem);line-height:.86;letter-spacing:-.075em;font-weight:500;max-width:9ch}
+.contactHero h1 em{font-style:normal;color:#555}
+.contactHeroAside{padding-bottom:10px;max-width:470px}.contactHeroAside p{font-size:clamp(15px,1.2vw,19px);line-height:1.55;color:#4d4d4d}.contactHeroAside span{display:block;margin-top:28px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:#777}
+.contactDirect{padding:clamp(80px,8vw,130px) var(--pad);background:#f5f5f5;border-bottom:1px solid var(--line)}
+.contactDirectInner{display:grid;grid-template-columns:minmax(250px,.7fr) minmax(0,1.3fr);gap:clamp(50px,8vw,140px)}
+.contactIdentity h2{font-size:clamp(3.4rem,6vw,7.3rem);line-height:.88;letter-spacing:-.065em;font-weight:500;margin:24px 0 18px}.contactIdentity>p:last-child{font-size:13px;color:#777;text-transform:uppercase;letter-spacing:.12em}
+.contactLinks{border-top:1px solid var(--line)}
+.contactLinks>a,.contactArea{display:grid;grid-template-columns:130px minmax(0,1fr) 26px;gap:24px;align-items:center;padding:28px 0;border-bottom:1px solid var(--line)}
+.contactLinks span,.contactArea span{font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:#777;font-weight:700}.contactLinks strong,.contactArea strong{font-size:clamp(1.45rem,2.7vw,3.2rem);letter-spacing:-.045em;font-weight:500;overflow-wrap:anywhere}.contactLinks b{font-size:20px;font-weight:400}.contactArea{grid-template-columns:130px minmax(0,1fr)}.contactArea p{grid-column:2;margin-top:-8px;color:#777;font-size:12px;line-height:1.5}
+.contactFormSection{padding:clamp(90px,9vw,150px) var(--pad);background:#0b0b0b;color:#fff}
+.contactFormLayout{display:grid;grid-template-columns:minmax(270px,.75fr) minmax(0,1.25fr);gap:clamp(60px,9vw,150px);align-items:start}
+.contactFormIntro{position:sticky;top:120px}.contactFormIntro .kicker{color:#777}.contactFormIntro h2{font-size:clamp(3.2rem,5.7vw,6.6rem);line-height:.9;letter-spacing:-.065em;font-weight:500;margin:24px 0 30px}.contactFormIntro>p:last-child{max-width:420px;color:#8d8d8d;font-size:14px;line-height:1.65}
+.contactPageForm{border-top:1px solid #333}.contactPageForm label{display:grid;grid-template-columns:46px 180px minmax(0,1fr);gap:18px;align-items:center;padding:25px 0;border-bottom:1px solid #333}.contactPageForm label>span{font-size:9px;color:#6d6d6d;letter-spacing:.14em}.contactPageForm label>b{font-size:12px;font-weight:500}.contactPageForm input,.contactPageForm select,.contactPageForm textarea{width:100%;background:transparent;border:0;color:#fff;font:inherit;font-size:14px;outline:none;padding:5px 0}.contactPageForm input::placeholder,.contactPageForm textarea::placeholder{color:#5f5f5f}.contactPageForm select{color:#fff}.contactPageForm select option{color:#111}.contactPageForm .contactMessage{align-items:start}.contactFormEnd{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:28px}.contactFormEnd .formNote{font-size:11px;color:#8b8b8b;max-width:360px}.contactFormEnd button{border:1px solid #fff;background:#fff;color:#111;padding:15px 20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;cursor:pointer}.contactFormEnd button span{margin-left:12px}
+
+@media(max-width:900px){
+  .portfolioWideSection{padding-left:24px;padding-right:24px}.portfolioWideStack{gap:60px}.portfolioWideMedia{grid-template-columns:minmax(0,1fr) 132px;gap:22px;padding:20px}.portfolioMobileFrame{border-width:4px;border-radius:14px}.portfolioWideInfo{padding:20px 22px 26px}
+  .portfolioWideStack--inside{margin-top:48px}
+  .contactHeroGrid,.contactDirectInner,.contactFormLayout{grid-template-columns:1fr}.contactHeroGrid{gap:44px}.contactHero h1{max-width:10ch}.contactHeroAside{max-width:540px}.contactDirectInner{gap:50px}.contactFormLayout{gap:60px}.contactFormIntro{position:static}.contactLinks>a,.contactArea{grid-template-columns:110px minmax(0,1fr) 22px}.contactArea{grid-template-columns:110px minmax(0,1fr)}
+}
+@media(max-width:700px){
+  .portfolioWideSection{padding:44px 20px 72px}.portfolioWideStack{gap:48px}.portfolioWide{border-left:0;border-right:0}.portfolioWideMedia{display:block;position:relative;padding:12px 12px 28px;overflow:visible}.portfolioDesktopFrame{width:100%;aspect-ratio:16/10}.portfolioMobileFrame{position:absolute;right:22px;bottom:8px;width:24%;min-width:74px;border-width:3px;border-radius:11px}.portfolioWideInfo{grid-template-columns:28px minmax(0,1fr) 18px;gap:10px;padding:18px 2px 24px}.portfolioWideInfo h2,.portfolioWideInfo h3{font-size:clamp(1.8rem,9vw,2.8rem)}.portfolioWideStack--inside{margin-top:38px}
+  .contactHero{padding:96px 20px 70px}.contactHero::before{right:-38vw;width:88vw;top:38%}.contactHero::after{right:-6vw;top:40%;font-size:42vw}.contactHero h1{font-size:clamp(3.6rem,16vw,5.6rem);max-width:none}.contactHeroAside p{font-size:15px}
+  .contactDirect{padding:72px 20px}.contactIdentity h2{font-size:clamp(3.3rem,15vw,5rem)}.contactLinks>a,.contactArea{grid-template-columns:1fr 24px;gap:8px 14px;padding:22px 0}.contactLinks span,.contactArea span{grid-column:1/-1}.contactLinks strong,.contactArea strong{font-size:clamp(1.35rem,7vw,2rem)}.contactArea{grid-template-columns:1fr}.contactArea p{grid-column:1;margin-top:4px}.contactLinks b{grid-column:2;grid-row:2}
+  .contactFormSection{padding:76px 20px}.contactFormIntro h2{font-size:clamp(3rem,14vw,4.7rem)}.contactPageForm label{grid-template-columns:30px 1fr;gap:8px 12px;padding:20px 0}.contactPageForm label>b{grid-column:2}.contactPageForm input,.contactPageForm select,.contactPageForm textarea{grid-column:2}.contactFormEnd{align-items:flex-start;flex-direction:column}.contactFormEnd button{width:100%}
+}
