@@ -115,11 +115,18 @@ const TRACKER = `(function(){
     else fetch(endpoint + '/api/track', { method: 'POST', body: payload, headers: { 'Content-Type': 'application/json' }, keepalive: true }).catch(function(){});
   }
 
-  post({ type: 'pageview', title: document.title, referrer: document.referrer,
+  // Licznik ładuje się jako async i może wystartować przed końcem parsowania,
+  // a wtedy document.title bywa jeszcze pusty. Odsłonę zgłaszamy po zbudowaniu strony.
+  function gdyGotowe(fn) {
+    if (document.readyState !== 'loading') fn(); else addEventListener('DOMContentLoaded', fn);
+  }
+
+  gdyGotowe(function () { post({ type: 'pageview', title: document.title, referrer: document.referrer,
     utm_source: params.get('utm_source'), utm_medium: params.get('utm_medium'),
     utm_campaign: params.get('utm_campaign'), screen_w: window.innerWidth,
     entry: !sessionStorage.getItem('p21seen') ? 1 : 0 });
-  sessionStorage.setItem('p21seen', '1');
+    sessionStorage.setItem('p21seen', '1');
+  });
 
   addEventListener('scroll', function () {
     var h = document.documentElement.scrollHeight - innerHeight;

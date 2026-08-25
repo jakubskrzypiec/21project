@@ -12,17 +12,17 @@
     else document.addEventListener('DOMContentLoaded', fn);
   }
 
-  ready(function () {
+  /* Bezpiecznik odsłaniający treść. Świadomie POZA ready(): gdy jakiś skrypt
+     zewnętrzny się nie wczytuje, DOMContentLoaded potrafi się opóźnić o sekundy,
+     a wtedy bezpiecznik w środku ready() też by czekał. Pusta strona jest
+     gorsza niż strona bez animacji. */
+  window.setTimeout(function () {
+    [].slice.call(document.querySelectorAll('.reveal:not(.is-in)')).forEach(function (el) {
+      el.classList.add('is-in');
+    });
+  }, 3000);
 
-    /* Bezpiecznik: treść odsłania się przy przewijaniu, ale gdyby obserwator
-       się nie uruchomił (wolne łącze, wyłączony IntersectionObserver, błąd
-       wyżej w kodzie), po trzech sekundach pokazujemy wszystko. Pusta strona
-       jest gorsza niż strona bez animacji. */
-    window.setTimeout(function () {
-      [].slice.call(document.querySelectorAll('.reveal:not(.is-in)')).forEach(function (el) {
-        el.classList.add('is-in');
-      });
-    }, 3000);
+  ready(function () {
 
     /* Ujednolicone reveal na wszystkich podstronach / case studies. */
     var autoRevealSelectors = [

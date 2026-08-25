@@ -15,16 +15,25 @@
   var endpoint = (script && script.dataset.endpoint) ||
     (script && script.src.replace(/\/form-hook\.js.*$/, '')) || '';
 
-  // Pułapka na boty — człowiek tego pola nie zobaczy i nie wypełni.
-  document.querySelectorAll('form.contactForm').forEach(function (form) {
-    if (form.querySelector('[name="website_url"]')) return;
-    var trap = document.createElement('input');
-    trap.name = 'website_url';
-    trap.tabIndex = -1;
-    trap.autocomplete = 'off';
-    trap.setAttribute('aria-hidden', 'true');
-    trap.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;opacity:0';
-    form.append(trap);
+  // Skrypt ładuje się jako async, więc może wystartować, zanim formularz
+  // znajdzie się w dokumencie. Pułapkę na boty dokładamy po zbudowaniu strony.
+  function gdyGotowe(fn) {
+    if (document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
+
+  gdyGotowe(function () {
+    // Człowiek tego pola nie zobaczy i nie wypełni.
+    document.querySelectorAll('form.contactForm').forEach(function (form) {
+      if (form.querySelector('[name="website_url"]')) return;
+      var trap = document.createElement('input');
+      trap.name = 'website_url';
+      trap.tabIndex = -1;
+      trap.autocomplete = 'off';
+      trap.setAttribute('aria-hidden', 'true');
+      trap.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;opacity:0';
+      form.append(trap);
+    });
   });
 
   function onSubmit(event) {

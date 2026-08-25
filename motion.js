@@ -1,3 +1,10 @@
+
+/* Bezpiecznik poza obsługą DOMContentLoaded — patrz komentarz w script.js. */
+window.setTimeout(function () {
+  document.querySelectorAll('[data-reveal]:not(.is-visible), .reveal:not(.is-in)').forEach(function (el) {
+    el.classList.add(el.hasAttribute('data-reveal') ? 'is-visible' : 'is-in');
+  });
+}, 3000);
 (() => {
   const start = () => {
     const root = document.documentElement;
@@ -148,14 +155,6 @@
           '&body=' + encodeURIComponent(body);
       });
     }
-    /* Ten sam bezpiecznik co w script.js: jeśli po trzech sekundach coś nadal
-       czeka na odsłonięcie, pokazujemy to bez animacji. */
-    window.setTimeout(() => {
-      document.querySelectorAll('[data-reveal]:not(.is-visible), .reveal:not(.is-in)').forEach((el) => {
-        el.classList.add(el.hasAttribute('data-reveal') ? 'is-visible' : 'is-in');
-      });
-    }, 3000);
-
 
     const burger = document.querySelector('.burger');
     const menu = document.getElementById('mobileMenu');
