@@ -185,7 +185,6 @@ CREATE TABLE IF NOT EXISTS notes (
   source_ref TEXT,          -- identyfikator wątku Gmaila, chroni przed duplikatami
   links      TEXT           -- JSON: {gmail, website, facebook, instagram, linkedin}
 );
-CREATE UNIQUE INDEX IF NOT EXISTS idx_notes_source ON notes(source_ref) WHERE source_ref IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_notes_pinned ON notes(pinned, position);
 
 -- PLIKI --------------------------------------------------------------------
@@ -223,15 +222,31 @@ CREATE TABLE IF NOT EXISTS audit_log (
 );
 `;
 
-/** Dokłada kolumny, których nie było we wcześniejszych wersjach bazy. */
+/**
+ * Dokłada to, czego nie było we wcześniejszych wersjach bazy.
+ *
+ * Kolejność ma znaczenie: indeksy na nowych kolumnach muszą powstać PO nich,
+ * więc nie mogą siedzieć w schemacie — ten wykonuje się wcześniej i na starej
+ * bazie wywracał start panelu na nieistniejącej kolumnie.
+ *
+ * Każdy krok idzie osobno i nie przerywa pozostałych. Panel, który nie wstaje,
+ * jest gorszy niż panel bez jednego indeksu — a problem zostaje w logach.
+ */
 function migrate() {
+  const krok = (opis, fn) => {
+    try { fn(); } catch (err) { console.error(`[migracja] ${opis}: ${err.message}`); }
+  };
+
   const kolumny = db.prepare('PRAGMA table_info(notes)').all().map((c) => c.name);
-  for (const [name, ddl] of [
-    ['source', 'TEXT'], ['source_ref', 'TEXT'], ['links', 'TEXT'],
-  ]) {
-    if (!kolumny.includes(name)) db.exec(`ALTER TABLE notes ADD COLUMN ${name} ${ddl}`);
+  for (const [name, ddl] of [['source', 'TEXT'], ['source_ref', 'TEXT'], ['links', 'TEXT']]) {
+    if (!kolumny.includes(name)) {
+      krok(`notes.${name}`, () => db.exec(`ALTER TABLE notes ADD COLUMN ${name} ${ddl}`));
+    }
   }
-  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_notes_source ON notes(source_ref) WHERE source_ref IS NOT NULL');
+
+  krok('indeks notes.source_ref', () => db.exec(
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_notes_source ON notes(source_ref) WHERE source_ref IS NOT NULL'
+  ));
 }
 
 function init() {
