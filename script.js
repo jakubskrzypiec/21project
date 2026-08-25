@@ -215,21 +215,39 @@
     /* ---------------------------------------------------
        6. Menu mobilne
        --------------------------------------------------- */
-    var burger = document.getElementById('burger');
-    var nav = document.getElementById('nav');
-    if (burger && nav) {
-      var setNav = function (open) {
-        nav.classList.toggle('is-open', open);
-        if (header) header.classList.toggle('is-open', open);
+    /* Menu telefonowe — ten sam pasek i ten sam mechanizm co na pozostałych
+       podstronach; wcześniej realizacje miały własny, rozwijany nav. */
+    var burger = document.querySelector('.burger');
+    var menu = document.getElementById('mobileMenu');
+
+    if (burger && menu) {
+      var setMenu = function (open) {
         burger.setAttribute('aria-expanded', String(open));
-        document.body.style.overflow = open ? 'hidden' : '';
+        burger.setAttribute('aria-label', open ? 'Zamknij menu' : 'Otw\u00f3rz menu');
+        document.body.classList.toggle('menuOpen', open);
+        if (open) {
+          menu.hidden = false;
+          window.requestAnimationFrame(function () { menu.classList.add('isOpen'); });
+        } else {
+          menu.classList.remove('isOpen');
+          window.setTimeout(function () {
+            if (!menu.classList.contains('isOpen')) menu.hidden = true;
+          }, 340);
+        }
       };
+
       burger.addEventListener('click', function () {
-        setNav(burger.getAttribute('aria-expanded') !== 'true');
+        setMenu(burger.getAttribute('aria-expanded') !== 'true');
       });
-      nav.addEventListener('click', function (e) { if (e.target.closest('a')) setNav(false); });
-      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setNav(false); });
-      window.addEventListener('resize', function () { if (window.innerWidth > 760) setNav(false); });
+      Array.prototype.forEach.call(menu.querySelectorAll('a'), function (link) {
+        link.addEventListener('click', function () { setMenu(false); });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 900 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
+      });
     }
 
     /* ---------------------------------------------------

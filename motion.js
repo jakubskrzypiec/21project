@@ -188,7 +188,7 @@
         }
       });
       window.addEventListener('resize', () => {
-        if (window.innerWidth > 1100 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
+        if (window.innerWidth > 900 && burger.getAttribute('aria-expanded') === 'true') setMenu(false);
       });
     }
 

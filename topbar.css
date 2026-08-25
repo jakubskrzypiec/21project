@@ -1,0 +1,81 @@
+/* Jeden pasek górny dla całego serwisu.
+   Wcześniej istniały trzy: .topbar (podstrony), .homeV2 .v2-topbar (landing)
+   i .header (realizacje). Ten plik jest ładowany na każdej podstronie jako
+   ostatni, więc wygrywa z resztkami tamtych reguł. */
+
+.topbar{
+  position:fixed;inset:0 0 auto;z-index:200;
+  height:82px;padding:0 max(48px,calc((100vw - 1540px)/2));
+  display:flex;align-items:center;gap:38px;
+  background:rgba(255,255,255,.92);color:#0a0a0a;
+  border-bottom:1px solid rgba(10,10,10,.08);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+.topbar .brand{display:flex;align-items:center;width:132px;flex:none}
+.topbar .brand img{display:block;width:100%;height:auto;filter:none}
+
+.topbar nav{margin-left:auto;display:flex;align-items:center;gap:32px;
+  font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.topbar nav a{position:relative;padding:10px 0;color:inherit;text-decoration:none;
+  opacity:1;transform:none}
+/* Podkreślenie wjeżdżające od lewej — element rozpoznawczy strony głównej. */
+.topbar nav a::after{content:"";position:absolute;left:0;right:100%;bottom:5px;height:1px;
+  background:#111111;transition:right .28s ease}
+.topbar nav a:hover::after{right:0}
+.topbar nav a:hover{opacity:1;transform:none}
+
+.topbar .headerRight{display:flex;align-items:center;gap:18px;justify-self:auto}
+.topbar .headerPhone{font-size:13px;font-weight:600;letter-spacing:.015em;
+  color:inherit;text-decoration:none;white-space:nowrap}
+.topbar .headerPhone:hover{opacity:.6;transform:none}
+.topbar .headerCta{display:inline-flex;align-items:center;gap:28px;
+  padding:13px 15px 13px 18px;border:1px solid #111111;border-radius:0;background:none;
+  color:inherit;text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.03em;
+  text-transform:uppercase;transition:background .25s,color .25s;opacity:1;transform:none}
+.topbar .headerCta:hover{background:#111111;color:#ffffff;opacity:1;transform:none}
+.topbar .headerCta span{margin-left:0}
+
+.topbar .burger{display:none;width:42px;height:42px;margin:0;padding:10px;border:0;
+  background:transparent;color:inherit;cursor:pointer;
+  flex-direction:column;justify-content:center;gap:6px}
+.topbar .burger span{display:block;width:100%;height:1.5px;background:#111111;border-radius:2px;
+  transition:transform .28s,opacity .28s}
+.topbar .burger[aria-expanded="true"] span:first-child{transform:translateY(3.75px) rotate(45deg)}
+.topbar .burger[aria-expanded="true"] span:last-child{transform:translateY(-3.75px) rotate(-45deg)}
+
+/* Menu telefonowe — wspólne dla wszystkich podstron. */
+.mobileMenu{position:fixed;inset:82px 0 0;z-index:190;
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:34px 20px 28px;background:#ffffff;color:#0a0a0a;
+  opacity:0;transform:translateY(-10px);pointer-events:none;
+  transition:opacity .28s,transform .28s}
+.mobileMenu[hidden]{display:none}
+.mobileMenu.isOpen{opacity:1;transform:none;pointer-events:auto}
+.mobileMenu nav{display:grid;gap:4px;margin:0}
+.mobileMenu nav a{display:flex;align-items:baseline;gap:16px;padding:15px 0;
+  font-size:clamp(28px,8vw,42px);line-height:1;letter-spacing:-.04em;color:inherit;text-decoration:none;
+  border-bottom:1px solid rgba(10,10,10,.1)}
+.mobileMenu nav a span{font-size:11px;font-weight:600;letter-spacing:.16em;color:#8b8b8b}
+.mobileMenuFoot{display:grid;gap:14px;justify-items:start;font-size:14px;color:#666666}
+.mobileMenuFoot a{color:inherit;text-decoration:none}
+.mobileMenuFoot .mobileMenuCta{justify-self:stretch;padding:16px;border:1px solid #111111;border-radius:0;
+  text-align:center;background:#111111;color:#ffffff;font-size:12px;font-weight:500;
+  letter-spacing:.06em;text-transform:uppercase}
+
+@media (max-width:1180px){
+  .topbar{padding-inline:28px;gap:24px}
+  .topbar nav{gap:20px}
+}
+
+@media (max-width:900px){
+  .topbar{height:70px;padding-inline:20px;background:rgba(255,255,255,.97)}
+  .topbar .brand{width:112px}
+  .topbar nav,.topbar .headerCta{display:none}
+  .topbar .headerRight{margin-left:auto}
+  .topbar .burger{display:flex}
+  .mobileMenu{inset:70px 0 0}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .topbar nav a::after,.mobileMenu,.topbar .burger span{transition:none}
+}
