@@ -71,7 +71,7 @@ function table(columns, rows, renderRow) {
 
 function openModal(title, html, onSubmit) {
   modal.innerHTML = `<h3>${esc(title)}</h3><form id="modalForm">${html}
-    <div class="row end" style="margin-top:1rem">
+    <div class="row end" style="margin-top:18px">
       <button type="button" class="btn ghost" id="modalCancel">Anuluj</button>
       <button type="submit" class="btn">Zapisz</button>
     </div></form>`;
@@ -112,7 +112,7 @@ views['/pulpit'] = async () => {
     ? `<div class="notice warn">Poczta niepodłączona. <a href="#/ustawienia">Połącz konto Google</a>, żeby widzieć maile tutaj.</div>`
     : `<div class="row"><strong style="font-size:1.6rem">${fmtNum(d.mail.unread)}</strong>
        <span class="muted small">nieprzeczytanych z ${fmtNum(d.mail.total)} w skrzynce</span></div>
-       <div class="row" style="margin-top:.75rem"><a class="btn ghost sm" href="#/poczta">Otwórz pocztę</a></div>`;
+       <div class="row" style="margin-top:14px"><a class="btn ghost sm" href="#/poczta">Otwórz pocztę</a></div>`;
 
   view.innerHTML = `
     <h1 class="page">Pulpit</h1>
@@ -125,18 +125,16 @@ views['/pulpit'] = async () => {
       ${kpi(`${d.live.online}`, 'osób na stronie teraz')}
     </div>
 
-    <div class="grid g2" style="margin-top:1rem">
-      <div class="card">
-        <h3>Ruch dzień po dniu</h3>
-        ${chart(d.timeseries)}
-      </div>
+    <div class="card" style="margin-top:1px">
+      <h3>Ruch dzień po dniu</h3>
+      ${chart(d.timeseries)}
+    </div>
+
+    <div class="grid g3" style="margin-top:1px">
       <div class="card">
         <h3>Skrzynka</h3>
         ${mailCard}
       </div>
-    </div>
-
-    <div class="grid g2" style="margin-top:1rem">
       <div class="card">
         <h3>Nadchodzące spotkania</h3>
         ${d.meetings.events.length
@@ -151,11 +149,11 @@ views['/pulpit'] = async () => {
               <div><a href="#/projekty/${p.id}"><strong>${esc(p.name)}</strong></a>
               <span class="tag">${esc(p.status)}</span></div></div>`).join('')
           : `<div class="empty">Brak aktywnych projektów. <a href="#/projekty">Dodaj projekt</a></div>`}
-        ${d.projects.overdue ? `<div class="notice warn" style="margin-top:.75rem">${d.projects.overdue} projekt(y) po terminie.</div>` : ''}
+        ${d.projects.overdue ? `<div class="notice warn" style="margin-top:14px">${d.projects.overdue} projekt(y) po terminie.</div>` : ''}
       </div>
     </div>
 
-    <div class="grid g2" style="margin-top:1rem">
+    <div class="grid g2" style="margin-top:1px">
       <div class="card">
         <h3>Najgorętsze leady</h3>
         ${table(['Firma', 'Potencjał', 'Status'], d.leads.hot, (l) => `<tr>
@@ -163,7 +161,7 @@ views['/pulpit'] = async () => {
             <span class="muted small">${esc(l.email || l.domain || '')}</span></td>
           <td>${scoreTag(l.score)}</td>
           <td><span class="tag ${STATUS_CLASS[l.status] || ''}">${STATUS_LABEL[l.status] || l.status}</span></td></tr>`)}
-        <p class="muted small" style="margin-top:.75rem">${d.leads.newThisWeek} nowych w tym tygodniu.</p>
+        <p class="muted small" style="margin-top:14px">${d.leads.newThisWeek} nowych w tym tygodniu.</p>
       </div>
       <div class="card">
         <h3>Najczęściej odwiedzane strony</h3>
@@ -172,7 +170,7 @@ views['/pulpit'] = async () => {
       </div>
     </div>
 
-    ${!g.connected ? `<div class="notice info" style="margin-top:1rem">
+    ${!g.connected ? `<div class="notice info" style="margin-top:18px">
       Konto Google nie jest połączone — poczta, kalendarz i wysyłka są nieaktywne.
       <a href="#/ustawienia">Połącz teraz</a>.</div>` : ''}
   `;
@@ -202,7 +200,7 @@ views['/ruch'] = async () => {
     <h1 class="page">Ruch na stronie</h1>
     <p class="sub">Dane zbierane własnym licznikiem — bez ciasteczek i bez zewnętrznych narzędzi.</p>
 
-    <div class="row" style="margin-bottom:1rem">
+    <div class="row" style="margin-bottom:18px">
       ${[7, 30, 90, 365].map((d) => `<a class="btn ${d === days ? '' : 'ghost'} sm" href="#/ruch?days=${d}">${d} dni</a>`).join('')}
     </div>
 
@@ -215,9 +213,9 @@ views['/ruch'] = async () => {
       ${kpi(`${s.conversionRate}%`, `konwersji — ${s.conversions} kontaktów`)}
     </div>
 
-    <div class="card" style="margin-top:1rem"><h3>Odsłony dzień po dniu</h3>${chart(ts)}</div>
+    <div class="card" style="margin-top:1px"><h3>Odsłony dzień po dniu</h3>${chart(ts)}</div>
 
-    <div class="grid g2" style="margin-top:1rem">
+    <div class="grid g2" style="margin-top:1px">
       <div class="card"><h3>Podstrony</h3>
         ${table(['Adres', 'Odsłony', 'Sesje', 'Śr. czas'], b.pages, (p) => `<tr>
           <td>${esc(p.path)}</td><td>${fmtNum(p.views)}</td><td>${fmtNum(p.sessions)}</td><td>${p.avg_seconds}s</td></tr>`)}
@@ -259,7 +257,7 @@ views['/poczta'] = async () => {
   view.innerHTML = `
     <h1 class="page">Poczta</h1>
     <p class="sub">Skrzynka Gmail — wszystko w jednym miejscu, bez przełączania kart.</p>
-    <form class="row" id="mailSearch" style="margin-bottom:1rem">
+    <form class="row" id="mailSearch" style="margin-bottom:18px">
       <input class="inp" name="q" style="max-width:22rem" placeholder="Szukaj (np. from:klient@firma.pl)" value="${esc(q)}">
       <button class="btn sm" type="submit">Szukaj</button>
       <button class="btn ghost sm" type="button" id="newMail">Nowa wiadomość</button>
@@ -324,7 +322,7 @@ async function openThread(id) {
         <strong class="small">${esc(m.from)}</strong><span class="muted small">${fmtDateTime(m.internalDate)}</span>
       </div>
       <pre>${esc(m.body || '(pusta treść)')}</pre>
-      ${m.attachments.length ? `<div class="muted small" style="margin-top:.5rem">Załączniki: ${m.attachments.map((a) => esc(a.filename)).join(', ')}</div>` : ''}
+      ${m.attachments.length ? `<div class="muted small" style="margin-top:8px">Załączniki: ${m.attachments.map((a) => esc(a.filename)).join(', ')}</div>` : ''}
     </div>`).join('')}
     <form id="replyForm">
       <label class="f">Odpowiedz
@@ -422,7 +420,7 @@ views['/kalendarz'] = async () => {
   $('#btnNewMeeting').onclick = () => meetingModal();
   $('#btnSlots').onclick = async () => {
     const { slots } = await api('/calendar/free-slots');
-    $('#slotsBox').innerHTML = `<div class="card" style="margin-bottom:1rem"><h3>Wolne okna (najbliższe 2 tygodnie, dni robocze 9–17)</h3>
+    $('#slotsBox').innerHTML = `<div class="card" style="margin-bottom:18px"><h3>Wolne okna (najbliższe 2 tygodnie, dni robocze 9–17)</h3>
       <div class="row">${slots.slice(0, 18).map((s) =>
         `<span class="tag">${fmtDateTime(s.starts_at)}</span>`).join('') || 'Brak wolnych okien.'}</div></div>`;
   };
@@ -476,7 +474,7 @@ views['/projekty'] = async () => {
       ${kpi(fmtMoney(summary.money.paid), 'zapłacone')}
       ${kpi(fmtNum(summary.overdue), 'po terminie')}
     </div>
-    <div class="grid g2" style="margin-top:1rem">
+    <div class="grid g2" style="margin-top:1px">
       ${projects.length ? projects.map((p) => `<div class="card">
         <div class="row" style="justify-content:space-between">
           <a href="#/projekty/${p.id}"><strong>${esc(p.name)}</strong></a>
@@ -538,7 +536,7 @@ views['/projekty/:id'] = async (id) => {
       ${kpi(p.deadline ? fmtDate(p.deadline) : '—', 'termin')}
     </div>
 
-    <div class="grid g2" style="margin-top:1rem">
+    <div class="grid g2" style="margin-top:1px">
       <div class="card">
         <h3>Zadania</h3>
         <div id="taskList">${tasks.map((t) => `<label class="row" style="padding:.35rem 0;gap:.6rem">
@@ -546,7 +544,7 @@ views['/projekty/:id'] = async (id) => {
           <span style="${t.done ? 'text-decoration:line-through;color:var(--ink-3)' : ''}">${esc(t.title)}</span>
           <button class="btn ghost sm" style="margin-left:auto" data-deltask="${t.id}">×</button>
         </label>`).join('') || '<div class="empty">Brak zadań.</div>'}</div>
-        <form class="row" id="taskForm" style="margin-top:.75rem">
+        <form class="row" id="taskForm" style="margin-top:14px">
           <input class="inp" name="title" style="flex:1;margin:0" placeholder="Nowe zadanie" required>
           <button class="btn sm">Dodaj</button>
         </form>
@@ -555,9 +553,9 @@ views['/projekty/:id'] = async (id) => {
         <h3>Notatki</h3>
         <div>${notes.map((n) => `<div class="msg"><div class="muted small">${fmtDateTime(n.created_at)}</div>
           <pre>${esc(n.body)}</pre></div>`).join('') || '<div class="empty">Brak notatek.</div>'}</div>
-        <form id="noteForm" style="margin-top:.5rem">
+        <form id="noteForm" style="margin-top:8px">
           <textarea class="inp" name="body" style="min-height:5rem" placeholder="Ustalenia, hasła, uwagi klienta…" required></textarea>
-          <div class="row end" style="margin-top:.5rem"><button class="btn sm">Zapisz notatkę</button></div>
+          <div class="row end" style="margin-top:8px"><button class="btn sm">Zapisz notatkę</button></div>
         </form>
       </div>
     </div>
@@ -620,7 +618,7 @@ views['/leady'] = async () => {
         <button class="btn" id="btnNewLead">Dodaj ręcznie</button>
       </div>
     </div>
-    <form class="row" id="leadFilter" style="margin-bottom:1rem">
+    <form class="row" id="leadFilter" style="margin-bottom:18px">
       <input class="inp" name="q" style="max-width:18rem;margin:0" placeholder="Szukaj firmy, domeny, maila" value="${esc(q)}">
       <select class="inp" name="status" style="width:auto;margin:0">
         <option value="">wszystkie statusy</option>
@@ -714,7 +712,7 @@ views['/leady/:id'] = async (id) => {
           ? `<ul style="margin:0;padding-left:1.1rem;line-height:1.75;font-size:.87rem">
               ${a.reasons.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>`
           : '<div class="empty">Brak automatycznej analizy — dodaj adres strony i uruchom skanowanie.</div>'}
-        ${a.tech?.length ? `<p class="muted small" style="margin-top:.75rem">Technologie: ${a.tech.map((t) => `<span class="tag">${esc(t)}</span>`).join(' ')}</p>` : ''}
+        ${a.tech?.length ? `<p class="muted small" style="margin-top:14px">Technologie: ${a.tech.map((t) => `<span class="tag">${esc(t)}</span>`).join(' ')}</p>` : ''}
         ${a.builtBy ? `<p class="muted small">Stronę robił: <strong>${esc(a.builtBy)}</strong></p>` : ''}
       </div>
       <div class="card">
@@ -726,8 +724,8 @@ views['/leady/:id'] = async (id) => {
           <tr><td class="muted">Miasto</td><td>${esc(l.city || '—')}</td></tr>
           <tr><td class="muted">Branża</td><td>${esc(l.industry || '—')}</td></tr>
         </tbody></table>
-        ${l.message ? `<h3 style="margin-top:1rem">Wiadomość z formularza</h3><pre style="white-space:pre-wrap;font:inherit;font-size:.87rem">${esc(l.message)}</pre>` : ''}
-        <form id="notesForm" style="margin-top:1rem">
+        ${l.message ? `<h3 style="margin-top:18px">Wiadomość z formularza</h3><pre style="white-space:pre-wrap;font:inherit;font-size:.87rem">${esc(l.message)}</pre>` : ''}
+        <form id="notesForm" style="margin-top:18px">
           <label class="f">Notatki<textarea name="notes" style="min-height:5rem">${esc(l.notes || '')}</textarea></label>
           <div class="row end"><button class="btn sm">Zapisz</button></div>
         </form>
@@ -783,8 +781,8 @@ async function writeModal(lead) {
     <label class="f">Wskazówki dla AI (opcjonalnie)
       <input name="instructions" placeholder="np. wspomnij, że jestem ze Śląska i robię strony dla architektów"></label>
     <div class="row"><button type="button" class="btn ghost sm" id="btnPreview">Pokaż podgląd</button></div>
-    <div id="previewBox" style="margin-top:.75rem"></div>
-    <label class="f" style="margin-top:.75rem">Temat<input name="subject" id="subjInp"></label>
+    <div id="previewBox" style="margin-top:14px"></div>
+    <label class="f" style="margin-top:14px">Temat<input name="subject" id="subjInp"></label>
     <label class="f">Treść<textarea name="body" id="bodyInp" style="min-height:11rem"></textarea></label>
     <p class="small muted">Wiadomość zapisuje się jako szkic. Wysyłasz ją dopiero jednym kliknięciem
     na karcie leada albo w zakładce Wysyłka. Stopka z linkiem wypisania dokleja się automatycznie.</p>`,
@@ -863,7 +861,7 @@ views['/wysylka'] = async () => {
         <pre style="white-space:pre-wrap;font:inherit;font-size:.82rem;color:var(--ink-3);max-height:9rem;overflow:auto">${esc(t.body)}</pre>
       </div>`).join('')}
     </div>
-    <div class="row" style="margin-top:.75rem"><button class="btn ghost" id="btnNewTpl">Nowy szablon</button></div>
+    <div class="row" style="margin-top:14px"><button class="btn ghost" id="btnNewTpl">Nowy szablon</button></div>
 
     <h2 class="sec">Lista wykluczeń</h2>
     <p class="sub">Adresy i domeny, do których nigdy nie wyślę wiadomości. Wypisanie przez link trafia tu automatycznie.</p>
@@ -873,7 +871,7 @@ views['/wysylka'] = async () => {
         <td class="small muted">${fmtDate(s.created_at)}</td>
         <td><button class="btn ghost sm" data-unsup="${esc(s.value)}">Usuń</button></td></tr>`)}
     </div>
-    <form class="row" id="supForm" style="margin-top:.75rem">
+    <form class="row" id="supForm" style="margin-top:14px">
       <input class="inp" name="value" style="max-width:20rem;margin:0" placeholder="adres@firma.pl albo firma.pl" required>
       <button class="btn sm">Dodaj do wykluczeń</button>
     </form>`;
@@ -939,13 +937,13 @@ views['/ustawienia'] = async () => {
              i GOOGLE_REDIRECT_URI, potem zrestartuj serwer. Instrukcja krok po kroku jest w README backendu.</div>`}
     </div>
 
-    <div class="card" style="margin-top:1rem">
+    <div class="card" style="margin-top:1px">
       <h3>Generowanie treści przez AI</h3>
       <p>${g.ai ? '<span class="tag ok">włączone</span> — panel może pisać spersonalizowane wiadomości i streszczać wątki.'
         : '<span class="tag warn">wyłączone</span> — dodaj ANTHROPIC_API_KEY w pliku .env, żeby włączyć.'}</p>
     </div>
 
-    <div class="card" style="margin-top:1rem">
+    <div class="card" style="margin-top:1px">
       <h3>Licznik ruchu — wklej na stronie</h3>
       <p class="muted small">Jedna linia przed <code>&lt;/body&gt;</code> na każdej podstronie 21project.pl.
       Licznik nie używa ciasteczek i respektuje ustawienie „Do Not Track”.</p>
@@ -953,7 +951,7 @@ views['/ustawienia'] = async () => {
       <button class="btn ghost sm" id="btnCopy">Kopiuj</button>
     </div>
 
-    <div class="card" style="margin-top:1rem">
+    <div class="card" style="margin-top:1px">
       <h3>Formularz kontaktowy</h3>
       <p class="muted small">Żeby zapytania ze strony trafiały prosto tutaj, formularz ma wysyłać dane na
       <code>POST ${location.origin}/api/contact</code>. Gotowy skrypt znajdziesz w pliku
@@ -1006,6 +1004,17 @@ $('#logout').onclick = async () => {
   await fetch('/api/auth/logout', { method: 'POST' });
   location.href = '/admin/login';
 };
+
+/* Domyślnie panel wygląda jak strona — jasno. Wybór zapamiętuje przeglądarka. */
+const themeBtn = $('#themeToggle');
+function applyTheme(mode) {
+  if (mode === 'dark') document.documentElement.dataset.theme = 'dark';
+  else delete document.documentElement.dataset.theme;
+  themeBtn.textContent = mode === 'dark' ? 'Jasny' : 'Ciemny';
+  try { localStorage.setItem('p21theme', mode); } catch { /* tryb prywatny */ }
+}
+themeBtn.onclick = () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
 
 (async function boot() {
   try {
