@@ -3,6 +3,4 @@
 exclude:
   - backend
   - docs
-  - build-cases.py
-  - build-hero.py
-  - UPLOAD-INSTRUKCJA.txt
+  - narzedzia

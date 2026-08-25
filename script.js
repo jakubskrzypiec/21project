@@ -14,6 +14,16 @@
 
   ready(function () {
 
+    /* Bezpiecznik: treść odsłania się przy przewijaniu, ale gdyby obserwator
+       się nie uruchomił (wolne łącze, wyłączony IntersectionObserver, błąd
+       wyżej w kodzie), po trzech sekundach pokazujemy wszystko. Pusta strona
+       jest gorsza niż strona bez animacji. */
+    window.setTimeout(function () {
+      [].slice.call(document.querySelectorAll('.reveal:not(.is-in)')).forEach(function (el) {
+        el.classList.add('is-in');
+      });
+    }, 3000);
+
     /* Ujednolicone reveal na wszystkich podstronach / case studies. */
     var autoRevealSelectors = [
       '.cs-hero .shell > *',

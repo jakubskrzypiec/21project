@@ -268,24 +268,15 @@
 
 @media(max-width:900px){
   .portfolioDesktopFrame{width:100%}
-  .portfolioMobileFrame{right:20px;bottom:16px;width:min(21%,132px);border-width:4px;border-radius:14px}
+  /* Na telefonie miniatura telefonu robiła się nieczytelnym znaczkiem i zasłaniała
+     kadr — na wąskim ekranie zostaje sam podgląd desktopowy. */
+  .portfolioMobileFrame{display:none}
   .contactDirectInner{grid-template-columns:1fr}
   .contactEmailValue{font-size:clamp(1.3rem,4.7vw,2.15rem)!important}
 }
 @media(max-width:700px){
-  .portfolioWideMedia{padding:12px 12px 30px;overflow:visible}
+  .portfolioWideMedia{padding:12px;overflow:hidden}
   .portfolioDesktopFrame{width:100%;aspect-ratio:16/10}
-  .portfolioMobileFrame{
-    top:auto;
-    right:16px;
-    bottom:12px;
-    width:26%;
-    min-width:78px;
-    border-width:3px;
-    border-radius:11px;
-    transform:none;
-  }
-  .portfolioWide:hover .portfolioMobileFrame{transform:translateY(-3px)}
   .contactEmailValue{
     white-space:normal;
     overflow-wrap:anywhere!important;

@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Generuje podstrony realizacji z jednego szablonu."""
+"""Generuje podstrony realizacji z jednego szablonu.
+
+UWAGA: skrypt nadpisuje pliki realizacja-*.html w katalogu głównym.
+Szablon musi być zgodny z resztą serwisu — przy zmianie paska górnego
+albo arkuszy stylów popraw go tutaj, inaczej uruchomienie cofnie zmiany.
+Ostatnia synchronizacja: 26 sierpnia 2026.
+"""
 import re, pathlib
 
 ROOT = pathlib.Path(__file__).parent
@@ -100,27 +106,15 @@ CASES = [
     ),
 ]
 
-HEADER = '''<header class="header" id="top">
-  <div class="shell header__inner">
-
-    <a class="logo" href="index.html" aria-label="21 project — strona główna">
-      <img src="assets/img/logo.svg" width="4616" height="1360" alt="21 project">
-    </a>
-
-    <button class="burger" id="burger" aria-expanded="false" aria-controls="nav" aria-label="Menu">
-      <span></span><span></span>
-    </button>
-
-    <nav class="nav" id="nav" aria-label="Nawigacja główna">
-      <a href="index.html#realizacje">Realizacje</a>
-      <a href="index.html#oferta">Oferta</a>
-      <a href="index.html#proces">Proces</a>
-      <a href="index.html#kontakt">Kontakt</a>
-      <a href="index.html#kontakt" class="btn btn--dark btn--sm nav__cta">Bezpłatna wycena</a>
-    </nav>
-
-  </div>
-</header>'''
+HEADER = '''<header class="topbar">
+<a aria-label="21 project — strona główna" class="brand" href="/"><img alt="21 project" height="1360" src="/logo.svg" width="4616"/></a>
+<nav aria-label="Nawigacja główna"><a href="/realizacje.html">Realizacje</a><a href="/oferta.html">Oferta</a><a href="/proces.html">Proces</a><a href="/kontakt.html">Kontakt</a></nav>
+<div class="headerRight"><a class="headerPhone" href="tel:+48601863788">601 863 788</a><a class="headerCta" href="/kontakt.html">Bezpłatna wycena <span aria-hidden="true">↗</span></a><button aria-controls="mobileMenu" aria-expanded="false" aria-label="Otwórz menu" class="burger" type="button"><span aria-hidden="true"></span><span aria-hidden="true"></span></button></div>
+</header>
+<div class="mobileMenu" hidden id="mobileMenu">
+<nav aria-label="Menu mobilne"><a href="/realizacje.html"><span>01</span>Realizacje</a><a href="/oferta.html"><span>02</span>Oferta</a><a href="/proces.html"><span>03</span>Proces</a><a href="/strony-internetowe-dla-architektow.html"><span>04</span>Dla architektów</a><a href="/pozycjonowanie-stron.html"><span>05</span>SEO</a><a href="/kontakt.html"><span>06</span>Kontakt</a></nav>
+<div class="mobileMenuFoot"><a href="tel:+48601863788">601 863 788</a><a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a><a class="mobileMenuCta" href="/kontakt.html">Bezpłatna wycena</a></div>
+</div>'''
 
 FOOTER = '''<footer class="footer">
   <div class="shell">

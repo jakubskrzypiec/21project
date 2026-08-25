@@ -15,6 +15,52 @@ licznikiem ruchu (`t.js`) i podpięciem formularza (`form-hook.js`).
 
 Audyt SEO strony wraz z listą rzeczy do zrobienia: [`docs/SEO-AUDYT.md`](docs/SEO-AUDYT.md).
 
+## Co gdzie leży
+
+```
+21project.pl/
+├── index.html                    strona główna
+├── oferta.html  proces.html  faq.html  kontakt.html
+├── realizacje.html               lista realizacji
+├── realizacja-*.html             sześć pojedynczych realizacji
+├── strony-internetowe-*.html     podstrony lokalne i branżowe
+├── pozycjonowanie-stron.html     podstrona o SEO
+├── polityka-prywatnosci.html     noindex, celowo poza mapą strony
+│
+├── style.css                     wspólna podstawa
+├── topbar.css                    pasek górny i menu — jedyne źródło, ładowane wszędzie
+├── home-v2.css                   tylko strona główna
+├── pages.css                     podstrony z listami i portfolio
+├── detail-style.css              pojedyncze realizacje i polityka
+├── motion.js                     animacje i menu (większość podstron)
+├── script.js                     to samo dla realizacji i polityki
+│
+├── *.webp  logo*.svg  favicon.svg  og-21project.jpg
+├── inter-*.woff2                 krój pisma, cztery grubości
+├── robots.txt  sitemap.xml  llms.txt
+├── _config.yml                   ukrywa backend/, docs/ i narzedzia/ przed stroną
+│
+├── */index.html                  przekierowania ze starych adresów (patrz niżej)
+├── mockups/                      źródła plansz do zrzutów
+├── narzedzia/                    skrypty pomocnicze, nie część strony
+├── docs/                         audyty SEO i instrukcja wdrożenia
+└── backend/                      panel administracyjny (osobna aplikacja)
+```
+
+### Katalogi z jednym plikiem `index.html`
+
+`realizacje/`, `pozycjonowanie-stron/`, `strony-internetowe-katowice/`,
+`strony-internetowe-slask/` i `strony-internetowe-dla-architektow/` zawierają
+po jednym pliku, który **nie jest podstroną** — to przekierowanie.
+
+Te same treści żyły kiedyś pod dwoma adresami naraz (`/realizacje.html`
+i `/realizacje/`), co dzieliło ich pozycję w Google na pół. Wersja `.html` jest
+teraz jedyną właściwą, a te pliki przekazują jej sygnały ze starych adresów
+i przenoszą odwiedzającego.
+
+**Zostaw je na kilka miesięcy.** Gdy Search Console przestanie pokazywać stare
+adresy w indeksie, można je usunąć — wtedy stare linki zaczną zwracać 404.
+
 ## Struktura
 
 | Plik | Rola |
