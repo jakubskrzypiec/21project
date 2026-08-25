@@ -1,21 +1,4 @@
-<!doctype html>
-<html lang="pl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>Panel 21 project — logowanie</title>
-<link rel="icon" href="/admin/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/admin/assets/style.css">
-<script>
-// Wariant kolorystyczny ustawiamy przed pierwszym rysowaniem, żeby nie mrugnęło.
-try { var t = localStorage.getItem('p21theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-</script>
-</head>
-<body>
-<div class="loginWrap">
-  <form class="loginCard" id="loginForm">
-    <div class="loginMark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1588.000000 1356.000000" fill="currentColor" role="img" aria-hidden="true" focusable="false" aria-label="21">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1588.000000 1356.000000" fill="currentColor" role="img" aria-label="21">
 <g transform="translate(0.000000,1356.000000) scale(0.050000,-0.050000)"
 fill="currentColor" stroke="none">
 <path d="M12890 26577 c-628 -37 -1597 -252 -2320 -514 -318 -115 -621 -239
@@ -72,42 +55,4 @@ fill="currentColor" stroke="none">
 -220 -165 -220 -178 0 -36 8888 -44 8937 -8 33 25 35 205 34 3485 -1 1902 -8
 3465 -16 3472 -8 7 -26 9 -40 4z"/>
 </g>
-</svg></div>
-    <h1>Panel 21 project</h1>
-    <p>Dostęp tylko dla właściciela.</p>
-    <label class="f">E-mail
-      <input type="email" name="email" autocomplete="username" required autofocus>
-    </label>
-    <label class="f">Hasło
-      <input type="password" name="password" autocomplete="current-password" required>
-    </label>
-    <p class="notice bad" id="err" hidden></p>
-    <button class="btn" style="width:100%;justify-content:center" type="submit">Zaloguj</button>
-  </form>
-</div>
-<script>
-const form = document.getElementById('loginForm');
-const err = document.getElementById('err');
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  err.hidden = true;
-  const btn = form.querySelector('button');
-  btn.disabled = true;
-  try {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: form.email.value, password: form.password.value }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Logowanie nie powiodło się.');
-    location.href = '/admin';
-  } catch (e2) {
-    err.textContent = e2.message;
-    err.hidden = false;
-    btn.disabled = false;
-  }
-});
-</script>
-</body>
-</html>
+</svg>
