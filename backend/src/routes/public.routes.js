@@ -89,6 +89,16 @@ router.get('/t.js', (req, res) => {
   res.type('application/javascript').set('Cache-Control', 'public, max-age=3600').send(TRACKER);
 });
 
+/**
+ * Skrypt podpinający formularz kontaktowy ze strony.
+ * Wystawiamy pojedynczy plik, a nie cały katalog public/ — inaczej panel
+ * spod /admin byłby dostępny bez logowania.
+ */
+router.get('/form-hook.js', (_req, res) => {
+  res.type('application/javascript').set('Cache-Control', 'public, max-age=3600');
+  res.sendFile(require('path').join(__dirname, '..', '..', 'public', 'form-hook.js'));
+});
+
 const TRACKER = `(function(){
   var endpoint = (document.currentScript && document.currentScript.dataset.endpoint) ||
     (document.currentScript && document.currentScript.src.replace(/\\/t\\.js.*$/, '')) || '';

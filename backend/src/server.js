@@ -48,6 +48,10 @@ app.use((req, res, next) => {
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      // navigator.sendBeacon zawsze wysyła żądanie w trybie "include", więc bez tego
+      // nagłówka przeglądarka odrzuca każdą odsłonę. Te końcówki i tak nie czytają
+      // ciasteczka sesji — ono ma SameSite=lax i nie wychodzi poza panel.
+      'Access-Control-Allow-Credentials': 'true',
       'Access-Control-Max-Age': '86400',
       Vary: 'Origin',
     });

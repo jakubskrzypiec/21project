@@ -142,8 +142,11 @@ function summary(days = 30) {
         GROUP BY session_id HAVING COUNT(*) = 1)`
   ).get(from, to).single;
 
+  // Liczymy sesje, w których ktoś sięgnął po kontakt, a nie same kliknięcia —
+  // jedna osoba potrafi kliknąć telefon i wysłać formularz, co dawałoby ponad 100%.
   const conversions = db.prepare(
-    `SELECT COUNT(*) AS n FROM events WHERE day BETWEEN ? AND ?
+    `SELECT COUNT(DISTINCT session_id) AS n FROM events WHERE day BETWEEN ? AND ?
+       AND session_id IS NOT NULL
        AND name IN ('form_submit','contact_click','phone_click','mail_click')`
   ).get(from, to).n;
 
