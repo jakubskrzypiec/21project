@@ -1,4 +1,44 @@
+# 21project.pl — dostęp dla robotów wyszukiwarek i asystentów AI
+
 User-agent: *
+Allow: /
+
+# Wyszukiwarki i asystenci AI — wpisane wprost, żeby nie było wątpliwości,
+# że treść tej strony może trafiać do odpowiedzi generowanych przez modele.
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://21project.pl/sitemap.xml
