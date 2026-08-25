@@ -36,6 +36,9 @@ app.use((req, res, next) => {
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'X-Robots-Tag': 'noindex, nofollow',
   });
+  // Odpowiedzi API to zawsze bieżący stan panelu. Bez tego przeglądarka potrafi
+  // pokazać zapamiętaną odpowiedź sprzed zmiany ustawień i wygląda to na awarię.
+  if (req.path.startsWith('/api/')) res.set('Cache-Control', 'no-store');
   next();
 });
 
