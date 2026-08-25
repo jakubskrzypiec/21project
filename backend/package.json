@@ -12,7 +12,7 @@
     "migrate": "node -e \"require('./src/db').init(); console.log('OK')\""
   },
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
