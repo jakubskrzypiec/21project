@@ -230,4 +230,18 @@ function live(minutes = 30) {
   };
 }
 
-module.exports = { recordPageview, recordEvent, recordDuration, summary, timeseries, breakdown, live };
+/**
+ * Kasuje statystyki starsze niż podany okres. Polityka prywatności deklaruje
+ * 24 miesiące, więc to musi się realnie wykonywać, a nie tylko widnieć w dokumencie.
+ */
+function purgeOld(days = 730) {
+  const cutoff = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
+  const views = db.prepare('DELETE FROM pageviews WHERE day < ?').run(cutoff).changes;
+  const events = db.prepare('DELETE FROM events WHERE day < ?').run(cutoff).changes;
+  if (views || events) db.exec('VACUUM');
+  return { cutoff, views, events };
+}
+
+module.exports = {
+  recordPageview, recordEvent, recordDuration, summary, timeseries, breakdown, live, purgeOld,
+};

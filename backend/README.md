@@ -78,6 +78,10 @@ Licznik:
 
 **Dlatego nie potrzebujesz banera zgód na cookies** — w odróżnieniu od Google Analytics.
 
+Statystyki starsze niż **24 miesiące** kasują się same (zadanie w harmonogramie, codziennie
+o 3:30). Ten sam okres jest zadeklarowany w polityce prywatności strony — jeśli go zmienisz
+w kodzie, popraw też dokument.
+
 Własne zdarzenie możesz wysłać z dowolnego miejsca:
 
 ```js

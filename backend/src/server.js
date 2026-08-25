@@ -128,6 +128,17 @@ function schedule() {
     } catch (err) { console.error('[kolejka]', err.message); }
   }, { timezone: config.outreach.timezone });
 
+  // Sprzątanie statystyk starszych niż 24 miesiące — okres zadeklarowany
+  // w polityce prywatności. Raz na dobę, w nocy.
+  cron.schedule('30 3 * * *', () => {
+    try {
+      const r = require('./services/analytics').purgeOld(730);
+      if (r.views || r.events) {
+        console.log(`[sprzątanie] usunięto ${r.views} odsłon i ${r.events} zdarzeń sprzed ${r.cutoff}`);
+      }
+    } catch (err) { console.error('[sprzątanie]', err.message); }
+  }, { timezone: config.outreach.timezone });
+
   // Odpowiedzi od leadów — dwa razy dziennie.
   cron.schedule('0 8,16 * * *', async () => {
     try {

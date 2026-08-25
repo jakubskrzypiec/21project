@@ -556,6 +556,9 @@ a.contact__value:hover{border-bottom-color:var(--ink)}
 .legal__block h2{font-size:clamp(1.3rem,2.1vw,1.75rem);margin-bottom:.6em}
 .legal__block p{color:var(--body);font-size:1rem;line-height:1.82;margin-bottom:1em}
 .legal__block p:last-child{margin-bottom:0}
+.legal__block ul{margin:0 0 1em;padding:0;list-style:none;display:flex;flex-direction:column;gap:.55em}
+.legal__block li{position:relative;padding-left:1.1em;color:var(--body);font-size:1rem;line-height:1.82}
+.legal__block li::before{content:"—";position:absolute;left:0;color:var(--mute)}
 .legal__block a{border-bottom:1px solid var(--line-2);transition:border-color .22s var(--ease)}
 .legal__block a:hover{border-bottom-color:var(--ink)}
 .legal__date{color:var(--mute)!important;font-size:.88rem!important;margin-top:1.4em!important}
