@@ -109,6 +109,7 @@ app.use('/api/admin/projects', require('./routes/projects.routes'));
 app.use('/api/admin/mail', require('./routes/mail.routes'));
 app.use('/api/admin/calendar', require('./routes/calendar.routes'));
 app.use('/api/admin/outreach', require('./routes/outreach.routes'));
+app.use('/api/admin/board', require('./routes/board.routes'));
 
 app.use('/admin', ipAllowlist, requireAdmin, express.static(path.join(__dirname, '..', 'public', 'admin')));
 app.get('/admin{/*splat}', ipAllowlist, requireAdmin, (_req, res) =>

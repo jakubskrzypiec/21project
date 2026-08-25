@@ -48,6 +48,31 @@ function attachmentsOf(payload) {
   return out;
 }
 
+/**
+ * Gotowe widoki skrzynki. „Klienci" to zwykła skrzynka odbiorcza minus wszystko,
+ * co Gmail sam uznał za promocje, społeczności i fora, minus typowe adresy
+ * automatów. Dzięki temu zostaje korespondencja od ludzi.
+ */
+const AUTOMATY = [
+  'noreply', 'no-reply', 'donotreply', 'do-not-reply', 'newsletter', 'mailer',
+  'notifications', 'notification', 'automat', 'powiadomienia', 'info@facebookmail.com',
+  'bounce', 'mailchimp', 'sendgrid', 'postmaster',
+];
+
+const VIEWS = {
+  // Ludzie: bez kategorii promocyjnych i bez automatów.
+  klienci: {
+    labelIds: ['INBOX'],
+    q: ['-category:promotions', '-category:social', '-category:forums', '-category:updates',
+        '-in:spam', '-in:trash',
+        ...AUTOMATY.map((a) => `-from:${a}`)].join(' '),
+  },
+  wszystko: { labelIds: ['INBOX'], q: '-in:spam -in:trash' },
+  wazne:    { labelIds: null, q: 'is:starred -in:trash' },
+  nieprzeczytane: { labelIds: ['INBOX'], q: 'is:unread -in:spam -in:trash' },
+  promocje: { labelIds: ['INBOX'], q: 'category:promotions -in:trash' },
+};
+
 async function listThreads({ q = '', labelIds, maxResults = 25, pageToken } = {}) {
   const api = gmail();
   const { data } = await api.users.threads.list({
@@ -107,6 +132,12 @@ async function getThread(id) {
   };
 }
 
+/** Wyciąga sam adres z pola „Jan Kowalski <jan@firma.pl>". */
+function addressOf(from = '') {
+  const m = String(from).match(/<([^>]+)>/);
+  return (m ? m[1] : from).trim().toLowerCase();
+}
+
 function buildRaw({ to, subject, body, from, inReplyTo, references, cc }) {
   const enc = (s) => `=?UTF-8?B?${Buffer.from(String(s), 'utf8').toString('base64')}?=`;
   const lines = [
@@ -164,4 +195,5 @@ async function unreadCount() {
 
 module.exports = {
   listThreads, getThread, sendMessage, createDraft, modifyThread, trashThread, labels, unreadCount,
+  VIEWS, addressOf,
 };

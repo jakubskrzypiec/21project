@@ -168,6 +168,37 @@ CREATE TABLE IF NOT EXISTS meetings (
 );
 CREATE INDEX IF NOT EXISTS idx_meetings_start ON meetings(starts_at);
 
+-- NOTATNIK (TABLICA) -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS notes (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  title      TEXT,
+  body       TEXT,
+  color      TEXT DEFAULT 'zolta',     -- zolta | biala | zielona | rozowa | niebieska
+  pinned     INTEGER NOT NULL DEFAULT 0,
+  done       INTEGER NOT NULL DEFAULT 0,
+  due_date   TEXT,
+  position   INTEGER DEFAULT 0,
+  project_id INTEGER REFERENCES projects(id) ON DELETE SET NULL
+);
+CREATE INDEX IF NOT EXISTS idx_notes_pinned ON notes(pinned, position);
+
+-- PLIKI --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS files (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  created_at    TEXT NOT NULL,
+  folder        TEXT NOT NULL DEFAULT 'Ogólne',
+  original_name TEXT NOT NULL,
+  stored_name   TEXT NOT NULL,
+  mime          TEXT,
+  size          INTEGER,
+  note_id       INTEGER REFERENCES notes(id) ON DELETE SET NULL,
+  project_id    INTEGER REFERENCES projects(id) ON DELETE SET NULL,
+  lead_id       INTEGER REFERENCES leads(id) ON DELETE SET NULL
+);
+CREATE INDEX IF NOT EXISTS idx_files_folder ON files(folder);
+
 -- INTEGRACJE / AUDYT ------------------------------------------------------
 CREATE TABLE IF NOT EXISTS oauth_tokens (
   provider      TEXT PRIMARY KEY,

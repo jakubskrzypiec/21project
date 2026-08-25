@@ -90,6 +90,9 @@ h2.sec{margin:44px 0 14px;font-size:20px;line-height:1.1;letter-spacing:-.03em;f
 /* --------------------------------- układ --------------------------------- */
 
 .shell{display:grid;grid-template-columns:240px 1fr;min-height:100dvh}
+/* Komórki siatki domyślnie nie kurczą się poniżej swojej treści — bez tego
+   szeroka tabela albo długa nazwa pliku rozpycha cały układ na telefonie. */
+.side,main{min-width:0}
 .side{position:sticky;top:0;height:100dvh;overflow:auto;padding:30px 22px 22px;
   background:var(--bg);border-right:1px solid var(--line);display:flex;flex-direction:column}
 .brand{display:flex;align-items:center;gap:11px;margin-bottom:38px;font-size:13px;
@@ -271,3 +274,71 @@ dialog p.small{margin-top:0}
 .themeBtn{padding:5px 10px;border:1px solid var(--line);background:transparent;
   color:var(--ink-3);font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
 .themeBtn:hover{border-color:var(--ink);color:var(--ink)}
+
+/* ------------------------- zakładki (poczta) ------------------------- */
+.tabs{display:flex;gap:26px;margin:0 0 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tabs a{padding:0 0 11px;font-size:13px;color:var(--ink-3);border-bottom:1px solid transparent;margin-bottom:-1px}
+.tabs a:hover{color:var(--ink);text-decoration:none}
+.tabs a.active{color:var(--ink);font-weight:500;border-bottom-color:var(--ink)}
+
+/* Gwiazdka „ważne" przy wątku. */
+.star{padding:0 2px;border:0;background:none;color:var(--ink-4);font-size:15px;line-height:1;cursor:pointer}
+.star:hover{color:var(--ink)}
+.star.on{color:#c99700}
+.threadItem .tag{margin:4px 0 2px}
+
+/* ---------------------------- tablica kartek ---------------------------- */
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-bottom:16px}
+
+.note{display:flex;flex-direction:column;gap:10px;padding:18px 20px 14px;
+  border:1px solid var(--line);background:var(--note-bg,#fdf6d8);color:#141414;
+  /* Lekkie przekrzywienie sprawia, że kartki wyglądają jak przypięte, a nie wklejone. */
+  transform:rotate(var(--tilt,-.35deg));transition:transform .16s,box-shadow .16s}
+.note:nth-child(2n){--tilt:.4deg}
+.note:nth-child(3n){--tilt:-.7deg}
+.note:nth-child(5n){--tilt:.65deg}
+.note:hover{transform:rotate(0deg) translateY(-2px);box-shadow:0 10px 24px rgba(10,10,10,.14)}
+
+.note--zolta{--note-bg:#fdf6d8}
+.note--biala{--note-bg:#fbfbfa}
+.note--zielona{--note-bg:#e6f3e2}
+.note--rozowa{--note-bg:#fbe6ec}
+.note--niebieska{--note-bg:#e4eefb}
+.note--done{opacity:.55}
+.note--done .note__title{text-decoration:line-through}
+
+.note__top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.note__check{display:flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:#5f5f5f;cursor:pointer}
+.note__pin{padding:0;border:0;background:none;font-size:14px;line-height:1;cursor:pointer;opacity:.4}
+.note__pin.on,.note__pin:hover{opacity:1}
+.note__title{margin:0;font-size:16px;line-height:1.25;letter-spacing:-.02em;font-weight:600;color:#111}
+.note__body{margin:0;white-space:pre-wrap;word-wrap:break-word;font:inherit;font-size:13.5px;
+  line-height:1.6;color:#333}
+.note__foot{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:auto;padding-top:8px;
+  border-top:1px solid rgba(10,10,10,.1)}
+.note__foot .tag{background:rgba(255,255,255,.65);border-color:rgba(10,10,10,.14);color:#3a3a3a}
+.note__actions{display:flex;gap:10px;margin-left:auto}
+.note__actions button{padding:0;border:0;background:none;color:#6a6a6a;font-size:11px;
+  letter-spacing:.03em;cursor:pointer}
+.note__actions button:hover{color:#111;text-decoration:underline}
+
+/* W wariancie nocnym kartki zostają jasne — tablica korkowa ma być czytelna
+   jak papier, a nie zlewać się z tłem panelu. */
+[data-theme="dark"] .note{border-color:rgba(255,255,255,.14)}
+[data-theme="dark"] .note:hover{box-shadow:0 10px 24px rgba(0,0,0,.5)}
+
+@media (max-width:960px){
+  .board{grid-template-columns:1fr;gap:12px}
+  .note{transform:none}
+  .note:hover{transform:translateY(-2px)}
+  .tabs{gap:18px}
+}
+
+/* Własna kontrolka wyboru plików — natywna pisze po angielsku. */
+.filePick{display:inline-flex;align-items:center;max-width:24rem;padding:10px 14px;
+  border:1px dashed var(--line);background:var(--surface-2);cursor:pointer}
+.filePick:hover{border-color:var(--ink)}
+.filePick input[type="file"]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.filePick span{font-size:13px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filePick:focus-within{outline:2px solid var(--ink);outline-offset:1px}

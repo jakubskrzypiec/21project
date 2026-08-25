@@ -3,6 +3,7 @@ const express = require('express');
 const gmail = require('../services/gmail');
 const google = require('../services/google');
 const ai = require('../services/ai');
+const { db } = require('../db');
 
 const router = express.Router();
 
@@ -16,15 +17,48 @@ const guard = (handler) => async (req, res) => {
 };
 
 router.get('/threads', guard(async (req, res) => {
-  const { q, label, pageToken } = req.query;
+  const { q, label, pageToken, view } = req.query;
+  const preset = gmail.VIEWS[view] || gmail.VIEWS.klienci;
+
   const data = await gmail.listThreads({
-    q: q || undefined,
-    labelIds: label ? [label] : ['INBOX'],
+    // Własne wyszukiwanie ma pierwszeństwo nad gotowym widokiem.
+    q: q ? q : preset.q,
+    labelIds: label ? [label] : (q ? undefined : preset.labelIds || undefined),
     maxResults: Math.min(Number(req.query.limit) || 25, 50),
     pageToken,
   });
-  res.json(data);
+
+  res.json({ ...data, threads: withKnownSenders(data.threads), view: view || 'klienci' });
 }));
+
+/**
+ * Dokleja informację, czy nadawca jest już w bazie jako lead, klient albo
+ * uczestnik projektu — w liście widać wtedy od razu, kto pisze.
+ */
+function withKnownSenders(threads) {
+  if (!threads.length) return threads;
+  const addresses = [...new Set(threads.map((t) => gmail.addressOf(t.from)).filter(Boolean))];
+  if (!addresses.length) return threads;
+
+  const placeholders = addresses.map(() => '?').join(',');
+  const known = new Map();
+  db.prepare(
+    `SELECT id, email, company, name, status FROM leads WHERE LOWER(email) IN (${placeholders})`
+  ).all(...addresses).forEach((l) => known.set(String(l.email).toLowerCase(), l));
+
+  // Adres nieznany wprost bywa znany po domenie — biuro@firma.pl przy kontakcie jan@firma.pl.
+  const byDomain = new Map();
+  db.prepare("SELECT id, domain, company, status FROM leads WHERE domain IS NOT NULL")
+    .all().forEach((l) => byDomain.set(String(l.domain).toLowerCase(), l));
+
+  return threads.map((t) => {
+    const addr = gmail.addressOf(t.from);
+    const hit = known.get(addr) || byDomain.get(addr.split('@')[1] || '');
+    return hit
+      ? { ...t, known: { leadId: hit.id, label: hit.company || hit.name || hit.domain, status: hit.status } }
+      : t;
+  });
+}
 
 router.get('/labels', guard(async (_req, res) => res.json({ labels: await gmail.labels() })));
 router.get('/unread', guard(async (_req, res) => res.json(await gmail.unreadCount())));

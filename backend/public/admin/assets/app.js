@@ -240,13 +240,22 @@ views['/ruch'] = async () => {
 };
 
 /* --- Poczta --- */
+const MAIL_VIEWS = [
+  ['klienci', 'Od ludzi'],
+  ['nieprzeczytane', 'Nieprzeczytane'],
+  ['wazne', 'Ważne'],
+  ['wszystko', 'Cała skrzynka'],
+  ['promocje', 'Promocje'],
+];
+
 views['/poczta'] = async () => {
   view.innerHTML = '<div class="empty">Wczytywanie skrzynki…</div>';
   const params = new URLSearchParams(location.hash.split('?')[1] || '');
   const q = params.get('q') || '';
+  const mailView = params.get('view') || 'klienci';
   let data;
   try {
-    data = await api(`/mail/threads?limit=30${q ? `&q=${encodeURIComponent(q)}` : ''}`);
+    data = await api(`/mail/threads?limit=30&view=${encodeURIComponent(mailView)}${q ? `&q=${encodeURIComponent(q)}` : ''}`);
   } catch (err) {
     view.innerHTML = `<h1 class="page">Poczta</h1>
       <div class="notice warn">${esc(err.message)}</div>
@@ -254,12 +263,25 @@ views['/poczta'] = async () => {
     return;
   }
 
+  const SUBS = {
+    klienci: 'Skrzynka bez promocji, powiadomień i automatów — zostaje korespondencja od ludzi.',
+    nieprzeczytane: 'Wszystko, czego jeszcze nie otworzyłeś.',
+    wazne: 'Wątki oznaczone gwiazdką — Twoja lista rzeczy do załatwienia.',
+    wszystko: 'Pełna skrzynka odbiorcza, łącznie z tym, co odfiltrowuje widok „Od ludzi".',
+    promocje: 'To, co Gmail uznał za promocje i newslettery.',
+  };
+
   view.innerHTML = `
     <h1 class="page">Poczta</h1>
-    <p class="sub">Skrzynka Gmail — wszystko w jednym miejscu, bez przełączania kart.</p>
+    <p class="sub">${q ? `Wyniki wyszukiwania: <strong>${esc(q)}</strong>` : SUBS[mailView] || ''}</p>
+    <div class="tabs">
+      ${MAIL_VIEWS.map(([key, label]) =>
+        `<a href="#/poczta?view=${key}" class="${!q && key === mailView ? 'active' : ''}">${label}</a>`).join('')}
+    </div>
     <form class="row" id="mailSearch" style="margin-bottom:18px">
       <input class="inp" name="q" style="max-width:22rem" placeholder="Szukaj (np. from:klient@firma.pl)" value="${esc(q)}">
       <button class="btn sm" type="submit">Szukaj</button>
+      ${q ? `<a class="btn ghost sm" href="#/poczta?view=klienci">Wyczyść</a>` : ''}
       <button class="btn ghost sm" type="button" id="newMail">Nowa wiadomość</button>
     </form>
     <div class="mailLayout">
@@ -273,26 +295,48 @@ views['/poczta'] = async () => {
 
   $('#mailSearch').onsubmit = (e) => {
     e.preventDefault();
-    location.hash = `#/poczta?q=${encodeURIComponent(e.target.q.value)}`;
+    const value = e.target.q.value.trim();
+    location.hash = value ? `#/poczta?q=${encodeURIComponent(value)}` : '#/poczta?view=klienci';
     render();
   };
   $('#newMail').onclick = () => composeModal();
   view.querySelectorAll('.threadItem').forEach((el) => {
-    el.onclick = () => {
+    el.onclick = (e) => {
+      if (e.target.closest('[data-star]')) return;   // gwiazdka nie otwiera wątku
       view.querySelectorAll('.threadItem').forEach((x) => x.classList.remove('active'));
       el.classList.add('active');
       openThread(el.dataset.id);
+    };
+  });
+
+  view.querySelectorAll('[data-star]').forEach((b) => {
+    b.onclick = async (e) => {
+      e.stopPropagation();
+      const on = b.dataset.starred !== '1';
+      b.dataset.starred = on ? '1' : '0';
+      b.textContent = on ? '★' : '☆';
+      b.classList.toggle('on', on);
+      try {
+        await api(`/mail/threads/${b.dataset.star}/star`, { method: 'POST', body: { starred: on } });
+      } catch (err) {
+        toast(err.message, true);
+      }
     };
   });
 };
 
 function threadRow(t) {
   return `<div class="threadItem ${t.unread ? 'unread' : ''}" data-id="${t.id}">
-    <div class="row" style="justify-content:space-between">
+    <div class="row" style="justify-content:space-between;flex-wrap:nowrap">
       <strong class="small">${esc(nameOf(t.from))}</strong>
-      <span class="muted small">${relTime(t.internalDate)}</span>
+      <span class="row" style="gap:8px;flex-wrap:nowrap">
+        <span class="muted small">${relTime(t.internalDate)}</span>
+        <button class="star ${t.starred ? 'on' : ''}" data-star="${t.id}" data-starred="${t.starred ? 1 : 0}"
+                title="Oznacz jako ważne">${t.starred ? '★' : '☆'}</button>
+      </span>
     </div>
     <div class="t"><strong>${esc(t.subject)}</strong></div>
+    ${t.known ? `<a class="tag ok" href="#/leady/${t.known.leadId}">${esc(t.known.label)}</a>` : ''}
     <div class="muted small">${esc(String(t.snippet || '').slice(0, 90))}</div>
   </div>`;
 }
@@ -912,6 +956,204 @@ views['/wysylka'] = async () => {
     <p class="small muted">Dostępne pola: {{name}}, {{firstName}}, {{company}}, {{domain}}, {{website}}, {{city}},
     {{observation}}, {{pitch}}, {{score}}. Fragment warunkowy: {{#name}}…{{/name}}.</p>`,
     async (data) => { await api('/outreach/templates', { method: 'POST', body: data }); toast('Szablon zapisany.'); render(); });
+};
+
+/* --- Tablica: kartki i pliki --- */
+
+const KOLORY = [
+  ['zolta', 'żółta'], ['biala', 'biała'], ['zielona', 'zielona'],
+  ['rozowa', 'różowa'], ['niebieska', 'niebieska'],
+];
+
+views['/notatnik'] = async () => {
+  const params = new URLSearchParams(location.hash.split('?')[1] || '');
+  const showDone = params.get('done') === '1';
+  const folder = params.get('folder') || '';
+  view.innerHTML = '<div class="empty">Wczytywanie…</div>';
+
+  const [{ notes, doneCount }, filesData] = await Promise.all([
+    api(`/board/notes${showDone ? '?done=1' : ''}`),
+    api(`/board/files${folder ? `?folder=${encodeURIComponent(folder)}` : ''}`),
+  ]);
+  const { files, folders } = filesData;
+
+  view.innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div>
+        <h1 class="page">Tablica</h1>
+        <p class="sub">Kartki z tym, co do zrobienia, i pliki pod ręką. Wszystko zapisuje się od razu.</p>
+      </div>
+      <div class="row">
+        <a class="btn ghost sm" href="#/notatnik${showDone ? '' : '?done=1'}">
+          ${showDone ? 'Ukryj zrobione' : `Pokaż zrobione (${doneCount})`}</a>
+        <button class="btn" id="btnNewNote">Nowa kartka</button>
+      </div>
+    </div>
+
+    <div class="board">
+      ${notes.length ? notes.map(noteCard).join('') : `
+        <div class="empty" style="grid-column:1/-1">
+          Tablica jest pusta. Pierwsza kartka to zwykle lista rzeczy, o których łatwo zapomnieć.
+        </div>`}
+    </div>
+
+    <h2 class="sec">Pliki</h2>
+    <p class="sub">Umowy, logotypy, materiały od klientów. Do 25 MB na plik.</p>
+
+    <div class="row" style="margin-bottom:14px">
+      <a class="btn ${folder ? 'ghost' : ''} sm" href="#/notatnik">Wszystkie (${folders.reduce((n, f) => n + f.n, 0)})</a>
+      ${folders.map((f) => `<a class="btn ${folder === f.folder ? '' : 'ghost'} sm"
+        href="#/notatnik?folder=${encodeURIComponent(f.folder)}">${esc(f.folder)} (${f.n})</a>`).join('')}
+    </div>
+
+    <form class="card" id="uploadForm" style="margin-bottom:14px">
+      <div class="row">
+        <input class="inp" name="folder" style="max-width:14rem;margin:0" placeholder="Folder (np. nazwa klienta)"
+               value="${esc(folder)}" list="folderList">
+        <datalist id="folderList">${folders.map((f) => `<option value="${esc(f.folder)}">`).join('')}</datalist>
+        <label class="filePick">
+          <input type="file" name="files" id="filePicker" multiple required>
+          <span id="filePickLabel">Wybierz pliki</span>
+        </label>
+        <button class="btn sm" type="submit">Wgraj</button>
+      </div>
+      <p class="small muted" style="margin:10px 0 0">Pusty folder trafi do „Ogólne".</p>
+    </form>
+
+    <div class="card" style="padding:0">
+      ${table(['Nazwa', 'Folder', 'Rozmiar', 'Dodany', ''], files, (f) => `<tr>
+        <td><a href="/api/admin/board/files/${f.id}/download">${esc(f.original_name)}</a></td>
+        <td class="small muted">${esc(f.folder)}</td>
+        <td class="small muted">${fmtBytes(f.size)}</td>
+        <td class="small muted">${fmtDate(f.created_at)}</td>
+        <td><button class="btn ghost sm" data-delfile="${f.id}">Usuń</button></td></tr>`)}
+    </div>`;
+
+  $('#btnNewNote').onclick = () => noteModal();
+
+  view.querySelectorAll('[data-note-edit]').forEach((b) => {
+    b.onclick = async () => {
+      const n = notes.find((x) => String(x.id) === b.dataset.noteEdit);
+      noteModal(n);
+    };
+  });
+  view.querySelectorAll('[data-note-done]').forEach((cb) => {
+    cb.onchange = async () => {
+      await api(`/board/notes/${cb.dataset.noteDone}`, { method: 'PATCH', body: { done: cb.checked } });
+      render();
+    };
+  });
+  view.querySelectorAll('[data-note-pin]').forEach((b) => {
+    b.onclick = async () => {
+      await api(`/board/notes/${b.dataset.notePin}`, { method: 'PATCH', body: { pinned: b.dataset.pinned !== '1' } });
+      render();
+    };
+  });
+  view.querySelectorAll('[data-note-del]').forEach((b) => {
+    b.onclick = async () => {
+      if (!confirm('Usunąć tę kartkę?')) return;
+      await api(`/board/notes/${b.dataset.noteDel}`, { method: 'DELETE' });
+      render();
+    };
+  });
+  view.querySelectorAll('[data-note-move]').forEach((b) => {
+    b.onclick = async () => {
+      await api(`/board/notes/${b.dataset.noteMove}/move`, { method: 'POST', body: { direction: b.dataset.dir } });
+      render();
+    };
+  });
+  view.querySelectorAll('[data-delfile]').forEach((b) => {
+    b.onclick = async () => {
+      if (!confirm('Usunąć plik na stałe?')) return;
+      await api(`/board/files/${b.dataset.delfile}`, { method: 'DELETE' });
+      render();
+    };
+  });
+
+  // Natywna kontrolka pliku pisze po angielsku i nie da się jej przetłumaczyć —
+  // chowamy ją i pokazujemy własną etykietę z liczbą wybranych plików.
+  $('#filePicker').onchange = (e) => {
+    const n = e.target.files.length;
+    $('#filePickLabel').textContent = n === 0 ? 'Wybierz pliki'
+      : n === 1 ? e.target.files[0].name
+      : `wybrano ${n} plików`;
+  };
+
+  $('#uploadForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.disabled = true;
+    btn.textContent = 'Wgrywam…';
+    try {
+      // Pliki idą formularzem, nie JSON-em — dlatego z pominięciem api().
+      const res = await fetch('/api/admin/board/files', { method: 'POST', body: new FormData(e.target) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Błąd ${res.status}`);
+      toast(`Wgrano ${data.files.length} plik(ów).`);
+      render();
+    } catch (err) {
+      toast(err.message, true);
+      btn.disabled = false;
+      btn.textContent = 'Wgraj';
+    }
+  };
+};
+
+function noteCard(n) {
+  const przeterminowana = n.due_date && !n.done && n.due_date < new Date().toISOString().slice(0, 10);
+  return `<article class="note note--${esc(n.color)} ${n.done ? 'note--done' : ''}">
+    <div class="note__top">
+      <label class="note__check">
+        <input type="checkbox" data-note-done="${n.id}" ${n.done ? 'checked' : ''}>
+        <span>${n.done ? 'zrobione' : 'do zrobienia'}</span>
+      </label>
+      <button class="note__pin ${n.pinned ? 'on' : ''}" data-note-pin="${n.id}" data-pinned="${n.pinned}"
+              title="Przypnij na górze">${n.pinned ? '📌' : '📍'}</button>
+    </div>
+    ${n.title ? `<h3 class="note__title">${esc(n.title)}</h3>` : ''}
+    ${n.body ? `<pre class="note__body">${esc(n.body)}</pre>` : ''}
+    <div class="note__foot">
+      ${n.due_date ? `<span class="tag ${przeterminowana ? 'bad' : ''}">${fmtDate(n.due_date)}</span>` : ''}
+      ${n.project_name ? `<span class="tag">${esc(n.project_name)}</span>` : ''}
+      ${n.files ? `<span class="tag">${n.files} plik(ów)</span>` : ''}
+      <span class="note__actions">
+        <button data-note-move="${n.id}" data-dir="up" title="W lewo">←</button>
+        <button data-note-move="${n.id}" data-dir="down" title="W prawo">→</button>
+        <button data-note-edit="${n.id}" title="Edytuj">edytuj</button>
+        <button data-note-del="${n.id}" title="Usuń">usuń</button>
+      </span>
+    </div>
+  </article>`;
+}
+
+async function noteModal(note) {
+  const { projects } = await api('/projects');
+  const isEdit = Boolean(note);
+  openModal(isEdit ? 'Edytuj kartkę' : 'Nowa kartka', `
+    <label class="f">Tytuł<input name="title" value="${esc(note?.title || '')}" placeholder="np. Strona dla Meblarni"></label>
+    <label class="f">Treść<textarea name="body" placeholder="Co trzeba zrobić…">${esc(note?.body || '')}</textarea></label>
+    <label class="f">Kolor kartki<select name="color">
+      ${KOLORY.map(([k, l]) => `<option value="${k}" ${note?.color === k ? 'selected' : ''}>${l}</option>`).join('')}
+    </select></label>
+    <label class="f">Termin<input type="date" name="due_date" value="${esc(note?.due_date || '')}"></label>
+    <label class="f">Powiązany projekt<select name="project_id">
+      <option value="">— brak —</option>
+      ${projects.map((p) => `<option value="${p.id}" ${String(note?.project_id) === String(p.id) ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}
+    </select></label>`,
+    async (data) => {
+      const body = { ...data, project_id: data.project_id || null, due_date: data.due_date || null };
+      if (isEdit) await api(`/board/notes/${note.id}`, { method: 'PATCH', body });
+      else await api('/board/notes', { method: 'POST', body });
+      toast(isEdit ? 'Zapisane.' : 'Kartka dodana.');
+      render();
+    });
+}
+
+const fmtBytes = (b) => {
+  if (!b) return '—';
+  if (b < 1024) return b + ' B';
+  if (b < 1024 * 1024) return Math.round(b / 1024) + ' kB';
+  return (b / 1024 / 1024).toFixed(1).replace('.', ',') + ' MB';
 };
 
 /* --- Ustawienia --- */
