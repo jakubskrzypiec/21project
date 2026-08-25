@@ -1,0 +1,27 @@
+{
+  "name": "21project-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Panel administracyjny 21project.pl — analityka, poczta, kalendarz, projekty, leady i outreach.",
+  "type": "commonjs",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "set-password": "node scripts/set-password.js",
+    "migrate": "node -e \"require('./src/db').init(); console.log('OK')\""
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "googleapis": "^176.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "node-cron": "^4.6.0"
+  }
+}
