@@ -342,3 +342,11 @@ dialog p.small{margin-top:0}
 .filePick input[type="file"]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .filePick span{font-size:13px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .filePick:focus-within{outline:2px solid var(--ink);outline-offset:1px}
+
+/* Odnośniki do wątku i social mediów na kartce z poczty. */
+.note__links{display:flex;flex-wrap:wrap;gap:6px}
+.noteLink{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;
+  border:1px solid rgba(10,10,10,.16);background:rgba(255,255,255,.6);
+  font-size:11px;color:#2c2c2c;white-space:nowrap}
+.noteLink:hover{background:#fff;border-color:rgba(10,10,10,.4);text-decoration:none}
+.noteLink span{font-weight:700;font-size:10px;opacity:.75}

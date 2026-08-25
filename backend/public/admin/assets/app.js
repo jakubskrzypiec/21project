@@ -986,6 +986,7 @@ views['/notatnik'] = async () => {
       <div class="row">
         <a class="btn ghost sm" href="#/notatnik${showDone ? '' : '?done=1'}">
           ${showDone ? 'Ukryj zrobione' : `Pokaż zrobione (${doneCount})`}</a>
+        <button class="btn ghost sm" id="btnScanMail">Wczytaj z poczty</button>
         <button class="btn" id="btnNewNote">Nowa kartka</button>
       </div>
     </div>
@@ -1030,6 +1031,21 @@ views['/notatnik'] = async () => {
     </div>`;
 
   $('#btnNewNote').onclick = () => noteModal();
+
+  $('#btnScanMail').onclick = async (e) => {
+    e.target.disabled = true;
+    e.target.textContent = 'Przeglądam skrzynkę…';
+    try {
+      const r = await api('/board/scan-mail', { method: 'POST', body: { limit: 25 } });
+      if (r.skipped) toast(`Pominięte: ${r.skipped}`, true);
+      else if (r.dodane) { toast(`Dodano ${r.dodane} kartek z zapytaniami.`); render(); return; }
+      else toast(`Sprawdzono ${r.sprawdzone} wiadomości — nic nowego do dodania.`);
+    } catch (err) {
+      toast(err.message, true);
+    }
+    e.target.disabled = false;
+    e.target.textContent = 'Wczytaj z poczty';
+  };
 
   view.querySelectorAll('[data-note-edit]').forEach((b) => {
     b.onclick = async () => {
@@ -1112,7 +1128,9 @@ function noteCard(n) {
     </div>
     ${n.title ? `<h3 class="note__title">${esc(n.title)}</h3>` : ''}
     ${n.body ? `<pre class="note__body">${esc(n.body)}</pre>` : ''}
+    ${noteLinks(n.links)}
     <div class="note__foot">
+      ${n.source === 'poczta' ? '<span class="tag">z poczty</span>' : ''}
       ${n.due_date ? `<span class="tag ${przeterminowana ? 'bad' : ''}">${fmtDate(n.due_date)}</span>` : ''}
       ${n.project_name ? `<span class="tag">${esc(n.project_name)}</span>` : ''}
       ${n.files ? `<span class="tag">${n.files} plik(ów)</span>` : ''}
@@ -1124,6 +1142,20 @@ function noteCard(n) {
       </span>
     </div>
   </article>`;
+}
+
+/** Odnośniki dopisane przez skanowanie poczty: wątek, strona, social media. */
+function noteLinks(links) {
+  if (!links) return '';
+  const ETYKIETY = {
+    gmail: ['Wątek w Gmailu', '✉'], website: ['Strona', '🌐'],
+    facebook: ['Facebook', 'f'], instagram: ['Instagram', 'ig'], linkedin: ['LinkedIn', 'in'],
+  };
+  const items = Object.entries(links)
+    .filter(([k, v]) => v && ETYKIETY[k])
+    .map(([k, v]) => `<a class="noteLink" href="${esc(v)}" target="_blank" rel="noopener"
+      title="${ETYKIETY[k][0]}"><span>${ETYKIETY[k][1]}</span>${ETYKIETY[k][0]}</a>`);
+  return items.length ? `<div class="note__links">${items.join('')}</div>` : '';
 }
 
 async function noteModal(note) {

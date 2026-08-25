@@ -180,8 +180,12 @@ CREATE TABLE IF NOT EXISTS notes (
   done       INTEGER NOT NULL DEFAULT 0,
   due_date   TEXT,
   position   INTEGER DEFAULT 0,
-  project_id INTEGER REFERENCES projects(id) ON DELETE SET NULL
+  project_id INTEGER REFERENCES projects(id) ON DELETE SET NULL,
+  source     TEXT,          -- 'reczna' | 'poczta'
+  source_ref TEXT,          -- identyfikator wątku Gmaila, chroni przed duplikatami
+  links      TEXT           -- JSON: {gmail, website, facebook, instagram, linkedin}
 );
+CREATE UNIQUE INDEX IF NOT EXISTS idx_notes_source ON notes(source_ref) WHERE source_ref IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_notes_pinned ON notes(pinned, position);
 
 -- PLIKI --------------------------------------------------------------------
@@ -219,8 +223,20 @@ CREATE TABLE IF NOT EXISTS audit_log (
 );
 `;
 
+/** Dokłada kolumny, których nie było we wcześniejszych wersjach bazy. */
+function migrate() {
+  const kolumny = db.prepare('PRAGMA table_info(notes)').all().map((c) => c.name);
+  for (const [name, ddl] of [
+    ['source', 'TEXT'], ['source_ref', 'TEXT'], ['links', 'TEXT'],
+  ]) {
+    if (!kolumny.includes(name)) db.exec(`ALTER TABLE notes ADD COLUMN ${name} ${ddl}`);
+  }
+  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_notes_source ON notes(source_ref) WHERE source_ref IS NOT NULL');
+}
+
 function init() {
   db.exec(SCHEMA);
+  migrate();
   const count = db.prepare('SELECT COUNT(*) AS n FROM templates').get().n;
   if (count === 0) seedTemplates();
   return db;

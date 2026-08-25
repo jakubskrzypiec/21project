@@ -34,7 +34,11 @@ router.get('/notes', (req, res) => {
   const counts = new Map(fileCounts.map((r) => [r.note_id, r.n]));
 
   res.json({
-    notes: rows.map((n) => ({ ...n, files: counts.get(n.id) || 0 })),
+    notes: rows.map((n) => ({
+      ...n,
+      files: counts.get(n.id) || 0,
+      links: (() => { try { return n.links ? JSON.parse(n.links) : null; } catch { return null; } })(),
+    })),
     doneCount: db.prepare('SELECT COUNT(*) AS n FROM notes WHERE done = 1').get().n,
   });
 });
@@ -100,6 +104,18 @@ router.post('/notes/:id/move', (req, res) => {
   });
   swap();
   res.json({ ok: true, moved: true });
+});
+
+/** Ręczne wywołanie skanowania skrzynki — ten sam kod, który chodzi z harmonogramu. */
+router.post('/scan-mail', async (req, res) => {
+  try {
+    const r = await require('../services/inbox').scanInbox({
+      limit: Math.min(Number(req.body?.limit) || 25, 50),
+    });
+    res.json(r);
+  } catch (err) {
+    res.status(400).json({ error: err.message, code: err.code || null });
+  }
 });
 
 /* -------------------------------- PLIKI -------------------------------- */

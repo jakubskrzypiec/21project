@@ -132,6 +132,14 @@ function schedule() {
     } catch (err) { console.error('[kolejka]', err.message); }
   }, { timezone: config.outreach.timezone });
 
+  // Nowe zapytania ze skrzynki na tablicę — co pół godziny w godzinach pracy.
+  cron.schedule('*/30 6-22 * * *', async () => {
+    try {
+      const r = await require('./services/inbox').scanInbox({ limit: 25 });
+      if (r.dodane) console.log(`[skrzynka] ${r.dodane} nowych zapytań trafiło na tablicę`);
+    } catch (err) { console.error('[skrzynka]', err.message); }
+  }, { timezone: config.outreach.timezone });
+
   // Sprzątanie statystyk starszych niż 24 miesiące — okres zadeklarowany
   // w polityce prywatności. Raz na dobę, w nocy.
   cron.schedule('30 3 * * *', () => {
