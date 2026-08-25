@@ -1,0 +1,8 @@
+# GitHub Pages publikuje wszystko z katalogu głównego. Backend i dokumentacja
+# nie są częścią strony, więc nie mają się znaleźć pod adresem 21project.pl.
+exclude:
+  - backend
+  - docs
+  - build-cases.py
+  - build-hero.py
+  - UPLOAD-INSTRUKCJA.txt

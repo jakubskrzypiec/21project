@@ -77,11 +77,28 @@ const config = {
   },
 };
 
+/**
+ * Hasło administratora można podać na dwa sposoby:
+ *  - ADMIN_PASSWORD_HASH — gotowy hash z `npm run set-password` (zalecane),
+ *  - ADMIN_PASSWORD      — zwykły tekst; hash powstaje przy starcie.
+ * Druga droga jest dla wdrożeń, gdzie nie ma jak uruchomić skryptu lokalnie.
+ * Samo hasło nigdy nie trafia do bazy ani do logów.
+ */
+function resolveAdminPassword() {
+  if (config.admin.passwordHash) return;
+  const plain = process.env.ADMIN_PASSWORD;
+  if (!plain) return;
+  if (plain.length < 10) throw new Error('ADMIN_PASSWORD musi mieć co najmniej 10 znaków.');
+  config.admin.passwordHash = require('bcryptjs').hashSync(plain, 12);
+  console.log('Hasło administratora wzięte z ADMIN_PASSWORD i zahaszowane przy starcie.');
+}
+
 function assertProductionSecrets() {
+  resolveAdminPassword();
   const missing = [];
   if (!config.jwt.secret || config.jwt.secret.length < 32) missing.push('JWT_SECRET (min. 32 znaki)');
   if (!config.admin.email) missing.push('ADMIN_EMAIL');
-  if (!config.admin.passwordHash) missing.push('ADMIN_PASSWORD_HASH (npm run set-password)');
+  if (!config.admin.passwordHash) missing.push('ADMIN_PASSWORD lub ADMIN_PASSWORD_HASH');
   if (missing.length) {
     throw new Error('Brakuje konfiguracji w .env:\n  - ' + missing.join('\n  - '));
   }

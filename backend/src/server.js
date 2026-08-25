@@ -5,13 +5,21 @@ const cookieParser = require('cookie-parser');
 const cron = require('node-cron');
 
 const { config, assertProductionSecrets } = require('./config');
-const { init, logAction } = require('./db');
+const { init, logAction, ensureJwtSecret } = require('./db');
 const { requireAdmin, ipAllowlist, clientIp } = require('./middleware/auth');
 const google = require('./services/google');
 const outreach = require('./services/outreach');
 
-assertProductionSecrets();
 init();
+config.jwt.secret = ensureJwtSecret(config.jwt.secret);
+try {
+  assertProductionSecrets();
+} catch (err) {
+  // Brak ustawień to najczęstszy problem przy pierwszym wdrożeniu —
+  // ma być widać, czego brakuje, a nie ślad po stosie wywołań.
+  console.error(`\n${err.message}\n\nWzór ustawień znajdziesz w pliku .env.example.\n`);
+  process.exit(1);
+}
 
 const app = express();
 app.set('trust proxy', 1);

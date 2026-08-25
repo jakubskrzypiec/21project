@@ -248,4 +248,19 @@ const logAction = (action, ip, meta) =>
     .prepare('INSERT INTO audit_log (ts, action, ip, meta) VALUES (?, ?, ?, ?)')
     .run(new Date().toISOString(), action, ip || null, meta ? JSON.stringify(meta) : null);
 
-module.exports = { db, init, getSetting, setSetting, logAction };
+/**
+ * Klucz podpisujący sesje. Gdy nie ma go w .env, losuje się przy pierwszym starcie
+ * i zostaje w bazie — dzięki temu restart serwera nie wylogowuje z panelu.
+ */
+function ensureJwtSecret(fromEnv) {
+  if (fromEnv && fromEnv.length >= 32) return fromEnv;
+  let stored = getSetting('jwt_secret');
+  if (!stored) {
+    stored = require('crypto').randomBytes(48).toString('base64url');
+    setSetting('jwt_secret', stored);
+    console.log('Wygenerowano klucz sesji i zapisano go w bazie (data/panel.sqlite).');
+  }
+  return stored;
+}
+
+module.exports = { db, init, getSetting, setSetting, logAction, ensureJwtSecret };
