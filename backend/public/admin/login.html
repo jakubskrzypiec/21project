@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Panel 21 project — logowanie</title>
+<link rel="stylesheet" href="/admin/assets/style.css">
+</head>
+<body>
+<div class="loginWrap">
+  <form class="loginCard" id="loginForm">
+    <h1>Panel 21 project</h1>
+    <p>Dostęp tylko dla właściciela.</p>
+    <label class="f">E-mail
+      <input type="email" name="email" autocomplete="username" required autofocus>
+    </label>
+    <label class="f">Hasło
+      <input type="password" name="password" autocomplete="current-password" required>
+    </label>
+    <p class="notice bad" id="err" hidden></p>
+    <button class="btn" style="width:100%;justify-content:center" type="submit">Zaloguj</button>
+  </form>
+</div>
+<script>
+const form = document.getElementById('loginForm');
+const err = document.getElementById('err');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  err.hidden = true;
+  const btn = form.querySelector('button');
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: form.email.value, password: form.password.value }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Logowanie nie powiodło się.');
+    location.href = '/admin';
+  } catch (e2) {
+    err.textContent = e2.message;
+    err.hidden = false;
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

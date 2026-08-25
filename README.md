@@ -3,6 +3,18 @@
 Statyczna strona firmowa (GitHub Pages, domena z pliku `CNAME`). Bez buildu i bez zależności —
 pliki z katalogu głównego trafiają na serwer takie, jakie są.
 
+## Panel administracyjny (backend)
+
+W katalogu `backend/` stoi prywatny panel: ruch na stronie, skrzynka Gmail, kalendarz spotkań,
+projekty klientów, leady i wysyłka wiadomości do potencjalnych klientów.
+Instrukcja uruchomienia i wdrożenia: [`backend/README.md`](backend/README.md).
+
+To osobna aplikacja Node.js — GitHub Pages jej nie uruchomi. Strona zostaje tam, gdzie jest,
+panel stoi na własnym serwerze (np. `panel.21project.pl`) i łączy się ze stroną dwoma linijkami:
+licznikiem ruchu (`t.js`) i podpięciem formularza (`form-hook.js`).
+
+Audyt SEO strony wraz z listą rzeczy do zrobienia: [`docs/SEO-AUDYT.md`](docs/SEO-AUDYT.md).
+
 ## Struktura
 
 | Plik | Rola |
