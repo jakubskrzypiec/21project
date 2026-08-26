@@ -213,8 +213,7 @@
 /* Footer */
 .v2-footer{background:#0b0b0b;color:#ffffff;padding:0 0 34px}
 .v2-footer .v2-shell{border-top:1px solid #2e2e2e;padding-top:48px}
-.v2-footerLogo{font-size:clamp(70px,11vw,176px);line-height:.78;letter-spacing:-.085em;font-weight:500;white-space:nowrap;overflow:hidden;padding-right:.08em}
-.v2-footerMeta{margin-top:64px;padding-top:22px;border-top:1px solid #2e2e2e;display:grid;grid-template-columns:1fr 2fr 1fr;gap:30px;align-items:center}
+.v2-footerMeta{margin-top:34px;display:grid;grid-template-columns:1fr 2fr 1fr;gap:30px;align-items:center}
 .v2-footerMeta p{margin:0;color:#666666;font-size:9px;letter-spacing:.1em;text-transform:uppercase}
 .v2-footerMeta p:last-child{text-align:right}
 .v2-footerMeta nav{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
@@ -305,7 +304,6 @@
   .v2-contact{padding:110px 0 90px}
   .v2-contactLead h2{font-size:clamp(54px,11vw,82px)}
   .v2-directContact{margin-top:40px}
-  .v2-footerLogo{font-size:16vw}
   .v2-footerMeta{grid-template-columns:1fr;gap:20px}
   .v2-footerMeta nav{justify-content:flex-start}
   .v2-footerMeta p:last-child{text-align:left}
@@ -380,7 +378,6 @@
   .homeV2 .v2-contactForm button{width:100%;min-width:0}
   .v2-footer{padding-bottom:26px}
   .v2-footer .v2-shell{padding-top:36px}
-  .v2-footerLogo{font-size:15.7vw}
   .v2-footerMeta{margin-top:42px}
   .v2-footerMeta nav{gap:13px 18px}
 }

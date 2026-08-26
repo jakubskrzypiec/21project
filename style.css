@@ -164,9 +164,10 @@ footer{background:var(--paper);color:#ffffff;padding:72px var(--pad) 28px}.foote
 [data-reveal="card"]{transform:translateY(54px) scale(.96);transition:opacity .85s cubic-bezier(.16,1,.3,1) var(--delay,0ms),transform .95s cubic-bezier(.16,1,.3,1) var(--delay,0ms)}
 [data-reveal="step"]{transform:translateY(45px) rotateX(10deg);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
 [data-reveal].is-visible{opacity:1;transform:translate(0,0) scale(1) rotateX(0);clip-path:inset(0);filter:blur(0)}
-/* Odsłanianie zjeżdża tylko z góry na dół, więc po bokach zostawiamy luz —
-   inaczej litera wystająca o kilka pikseli poza kolumnę zostaje ścięta. */
-[data-reveal="clip"].is-visible{clip-path:inset(0 -15% 0 -15%)}
+/* Po odsłonięciu kadr rozsuwa się o 15% na każdą stronę. Sama animacja to
+   nadal zjazd z góry na dół, ale kropki, ogonki i akcenty wystające poza
+   prostokąt nagłówka nie są już ścinane. */
+[data-reveal="clip"].is-visible{clip-path:inset(-15%)}
 
 @media(max-width:1100px){
   .topbar{grid-template-columns:1fr auto}.topbar nav{display:none}.headerRight{gap:13px}
