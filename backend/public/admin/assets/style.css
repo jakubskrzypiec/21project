@@ -287,29 +287,44 @@ dialog p.small{margin-top:0}
 .star.on{color:#c99700}
 .threadItem .tag{margin:4px 0 2px}
 
+/* -------------------- zaznaczanie i kasowanie hurtem -------------------- */
+/* Ten sam pasek nad każdą listą w panelu: wiadomości, leady, projekty,
+   kartki, pliki, spotkania, kolejka wysyłki. Przycisk kasujący jest
+   nieaktywny, dopóki nic nie zaznaczysz — trudniej o przypadek. */
+.pickGroup{display:block}
+.bulk[hidden]{display:none}
+.bulk{display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+  margin-bottom:10px;padding:8px 12px;border:1px solid var(--line);background:var(--surface-2)}
+.bulk__all{display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);cursor:pointer}
+.bulk__count{font-size:12px;color:var(--ink-3)}
+.bulk [data-pick-del]{margin-left:auto}
+.bulk [data-pick-del]:not(:disabled){border-color:var(--bad);color:var(--bad)}
+.bulk [data-pick-del]:not(:disabled):hover{background:var(--bad);border-color:var(--bad);color:#fff}
+.bulk [data-pick-del]:disabled{opacity:.45;cursor:not-allowed}
+
+.pick{flex:none;width:15px;height:15px;accent-color:var(--ink);cursor:pointer}
+.pick--brak{display:inline-block;visibility:hidden}
+tr.picked td{background:var(--surface-2)}
+.pickItem.picked{outline:2px solid var(--ink);outline-offset:-2px}
+.note .pick{accent-color:#111}
+.note.picked{outline-color:#111}
+
 /* ---------------------------- tablica kartek ---------------------------- */
-/* Kolumny odpowiadają statusom — widać na pierwszy rzut oka, co czeka,
-   co jest w robocie, a co wisi po Twojej stronie. */
-.kanban{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:1px;
-  background:var(--bg);margin-bottom:16px}
-/* Kreski rysuje sama kolumna, żeby puste miejsce w ostatnim rzędzie
-   nie świeciło szarym prostokątem. */
-.kolumna{background:var(--bg);box-shadow:0 0 0 1px var(--line);
-  padding:18px 16px 20px;min-width:0}
-.kolumna__head{display:flex;align-items:center;justify-content:space-between;gap:8px;
-  margin:0 0 14px;font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:#626262}
-.kolumna__head b{min-width:20px;padding:1px 6px;background:var(--surface-2);border:1px solid var(--line);
-  font-size:10px;font-weight:600;letter-spacing:0;text-align:center;color:var(--ink-2)}
-[data-theme="dark"] .kolumna__head{color:var(--ink-4)}
-.kolumna__karty{display:flex;flex-direction:column;gap:12px}
-.kolumna__pusto{margin:0;padding:14px 0;font-size:12px;color:var(--ink-4)}
-/* Kolumny, w których piłka jest po stronie klienta — rosnący licznik to sygnał,
-   że komuś trzeba przypomnieć. */
-.kolumna--czeka .kolumna__head b{background:var(--warn-bg);border-color:transparent;color:var(--warn)}
+/* Wszystkie kartki leżą w jednej siatce — status jest plakietką na kartce,
+   a nie osobną kolumną. Nad listą jedna linijka: ile czego. */
+.statusSums{display:flex;flex-wrap:wrap;gap:6px 14px;margin:.6rem 0 0;font-size:12px;color:var(--ink-3)}
+.statusSum b{margin-right:4px;color:var(--ink);font-weight:600}
+.statusSum--czeka b{color:var(--warn)}
+
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:16px;margin-bottom:16px;align-items:start}
 
 .board{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-bottom:16px}
 
-.note{display:flex;flex-direction:column;gap:10px;padding:18px 20px 14px;
+/* Kartki zostają jasne również w wariancie nocnym, więc kontrolki na nich
+   (pole wyboru, lista statusów) też muszą być rysowane po jasnemu. */
+.note{color-scheme:light;display:flex;flex-direction:column;gap:10px;padding:18px 20px 14px;
   border:1px solid var(--line);background:var(--note-bg,#fdf6d8);color:#141414;
   /* Lekkie przekrzywienie sprawia, że kartki wyglądają jak przypięte, a nie wklejone. */
   transform:rotate(var(--tilt,-.35deg));transition:transform .16s,box-shadow .16s}
@@ -326,17 +341,16 @@ dialog p.small{margin-top:0}
 .note--done{opacity:.55}
 .note--done .note__title{text-decoration:line-through}
 
-.kolumna .note{--tilt:0deg;padding:14px 15px 11px}
-.kolumna .note:hover{transform:translateY(-2px)}
-.kolumna .note__title{font-size:15px}
-.kolumna .note__body{font-size:13px}
-
 .note__top{display:flex;align-items:center;justify-content:space-between;gap:8px}
-/* Lista statusów wtopiona w kartkę — bez ramki, żeby nie wyglądała jak formularz. */
-.note__status{max-width:calc(100% - 26px);padding:2px 4px 2px 0;border:0;background:none;
-  color:#5f5f5f;font-size:10px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;cursor:pointer}
-.note__status:hover{color:#111}
+/* Status jest plakietką: od razu widać, na czym stoi kartka, a klik zmienia go
+   w miejscu — dlatego to nadal zwykły <select>, tylko ubrany. */
+.note__status{flex:1;min-width:0;max-width:100%;padding:3px 6px;
+  border:1px solid rgba(10,10,10,.16);background:rgba(255,255,255,.72);
+  color:#3a3a3a;font:inherit;font-size:11px;font-weight:600;cursor:pointer}
+.note__status:hover{border-color:rgba(10,10,10,.4);color:#111}
 .note__status:focus{outline:1px solid #111;outline-offset:2px}
+.note__status--czeka{background:#fbf0d8;border-color:transparent;color:#8a6a12}
+.note__status--zrobione{background:rgba(10,10,10,.06);color:#6a6a6a}
 .note__check{display:flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.1em;
   text-transform:uppercase;color:#5f5f5f;cursor:pointer}
 .note__pin{padding:0;border:0;background:none;font-size:14px;line-height:1;cursor:pointer;opacity:.4}
@@ -358,8 +372,7 @@ dialog p.small{margin-top:0}
 [data-theme="dark"] .note:hover{box-shadow:0 10px 24px rgba(0,0,0,.5)}
 
 @media (max-width:960px){
-  .kanban{grid-template-columns:1fr}
-  .kolumna{padding:16px 14px 18px}
+  .notes{grid-template-columns:1fr;gap:12px}
   .board{grid-template-columns:1fr;gap:12px}
   .note{transform:none}
   .note:hover{transform:translateY(-2px)}

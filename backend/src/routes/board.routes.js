@@ -117,17 +117,19 @@ router.delete('/notes/:id', (req, res) => {
   res.json({ ok: true });
 });
 
-/** Przesuwanie kartki w lewo/prawo na tablicy. */
+/** Przesuwanie kartki w lewo/prawo na tablicy.
+ *  Tablica jest jedną listą, więc sąsiada szukamy wśród wszystkich kartek
+ *  o tym samym przypięciu — status nie dzieli już kolejności. */
 router.post('/notes/:id/move', (req, res) => {
   const dir = req.body?.direction === 'up' ? -1 : 1;
   const n = db.prepare('SELECT * FROM notes WHERE id = ?').get(req.params.id);
   if (!n) return res.status(404).json({ error: 'Nie ma takiej notatki.' });
   const neighbour = db
     .prepare(
-      `SELECT * FROM notes WHERE pinned = ? AND status = ? AND position ${dir < 0 ? '<' : '>'} ?
+      `SELECT * FROM notes WHERE pinned = ? AND position ${dir < 0 ? '<' : '>'} ?
         ORDER BY position ${dir < 0 ? 'DESC' : 'ASC'} LIMIT 1`
     )
-    .get(n.pinned, n.status, n.position);
+    .get(n.pinned, n.position);
   if (!neighbour) return res.json({ ok: true, moved: false });
   const swap = db.transaction(() => {
     db.prepare('UPDATE notes SET position = ? WHERE id = ?').run(neighbour.position, n.id);

@@ -69,6 +69,69 @@ function table(columns, rows, renderRow) {
     <tbody>${rows.map(renderRow).join('')}</tbody></table></div>`;
 }
 
+/* --- Zaznaczanie i kasowanie hurtem ---------------------------------------
+   Jeden mechanizm na cały panel. Widok rysuje pole wyboru przy każdej pozycji
+   (`pick(id)`), owija listę w `pickGroup(...)`, a po wyrenderowaniu woła
+   `bulkWire(...)` z funkcją kasującą pojedynczą pozycję. Kasujemy po kolei
+   istniejącymi endpointami — bez nowych tras po stronie serwera. */
+
+const pick = (id) => `<input type="checkbox" class="pick" data-pick="${id}" aria-label="Zaznacz pozycję">`;
+
+/** Owija listę paskiem „zaznacz wszystko / usuń zaznaczone". */
+function pickGroup(name, inner) {
+  return `<div class="pickGroup" data-pick-group="${name}">
+    <div class="bulk">
+      <label class="bulk__all"><input type="checkbox" data-pick-all> Zaznacz wszystko</label>
+      <span class="bulk__count">nic nie zaznaczono</span>
+      <button class="btn ghost sm" data-pick-del disabled>Usuń zaznaczone</button>
+    </div>
+    ${inner}
+  </div>`;
+}
+
+/** Podpina zachowanie paska. `del(id)` kasuje jedną pozycję. */
+function bulkWire(name, del, { label = 'pozycji' } = {}) {
+  const grupa = view.querySelector(`[data-pick-group="${name}"]`);
+  if (!grupa) return;
+  const all = grupa.querySelector('[data-pick-all]');
+  const licznik = grupa.querySelector('.bulk__count');
+  const btn = grupa.querySelector('[data-pick-del]');
+  const boxes = [...grupa.querySelectorAll('[data-pick]')];
+  if (!boxes.length) { grupa.querySelector('.bulk').hidden = true; return; }
+
+  const wybrane = () => boxes.filter((b) => b.checked);
+  const odswiez = () => {
+    const n = wybrane().length;
+    licznik.textContent = n ? `zaznaczono ${n} z ${boxes.length}` : 'nic nie zaznaczono';
+    btn.disabled = n === 0;
+    all.checked = n === boxes.length;
+    all.indeterminate = n > 0 && n < boxes.length;
+    boxes.forEach((b) => (b.closest('tr, .pickItem') || b).classList.toggle('picked', b.checked));
+  };
+
+  // Pole wyboru nie może otwierać wątku ani kartki, na której siedzi.
+  boxes.forEach((b) => { b.onclick = (e) => { e.stopPropagation(); odswiez(); }; });
+  all.onclick = () => { boxes.forEach((b) => { b.checked = all.checked; }); odswiez(); };
+
+  btn.onclick = async () => {
+    const ids = wybrane().map((b) => b.dataset.pick);
+    if (!ids.length) return;
+    if (!confirm(`Usunąć ${ids.length} ${label}? Tego nie da się cofnąć.`)) return;
+    btn.disabled = true;
+    btn.textContent = 'Usuwam…';
+    let ok = 0;
+    const bledy = [];
+    for (const id of ids) {
+      try { await del(id); ok += 1; } catch (err) { bledy.push(err.message); }
+    }
+    toast(bledy.length ? `Usunięto ${ok}, nie udało się ${bledy.length} (${bledy[0]})` : `Usunięto ${ok}.`,
+      bledy.length > 0);
+    render();
+  };
+
+  odswiez();
+}
+
 function openModal(title, html, onSubmit) {
   modal.innerHTML = `<h3>${esc(title)}</h3><form id="modalForm">${html}
     <div class="row end" style="margin-top:18px">
@@ -285,11 +348,11 @@ views['/poczta'] = async () => {
       <button class="btn ghost sm" type="button" id="newMail">Nowa wiadomość</button>
     </form>
     <div class="mailLayout">
-      <div class="card" style="padding:0">
+      ${pickGroup('watki', `<div class="card" style="padding:0">
         <div class="threadList" id="threads">
           ${data.threads.length ? data.threads.map(threadRow).join('') : '<div class="empty">Pusto.</div>'}
         </div>
-      </div>
+      </div>`)}
       <div class="card" id="threadView"><div class="empty">Wybierz wiadomość z listy.</div></div>
     </div>`;
 
@@ -300,9 +363,10 @@ views['/poczta'] = async () => {
     render();
   };
   $('#newMail').onclick = () => composeModal();
+  bulkWire('watki', (id) => api(`/mail/threads/${id}`, { method: 'DELETE' }), { label: 'wątków' });
   view.querySelectorAll('.threadItem').forEach((el) => {
     el.onclick = (e) => {
-      if (e.target.closest('[data-star]')) return;   // gwiazdka nie otwiera wątku
+      if (e.target.closest('[data-star], .pick')) return;  // gwiazdka i zaznaczanie nie otwierają wątku
       view.querySelectorAll('.threadItem').forEach((x) => x.classList.remove('active'));
       el.classList.add('active');
       openThread(el.dataset.id);
@@ -326,9 +390,10 @@ views['/poczta'] = async () => {
 };
 
 function threadRow(t) {
-  return `<div class="threadItem ${t.unread ? 'unread' : ''}" data-id="${t.id}">
+  return `<div class="threadItem pickItem ${t.unread ? 'unread' : ''}" data-id="${t.id}">
     <div class="row" style="justify-content:space-between;flex-wrap:nowrap">
-      <strong class="small">${esc(nameOf(t.from))}</strong>
+      <span class="row" style="gap:8px;flex-wrap:nowrap">${pick(t.id)}
+        <strong class="small">${esc(nameOf(t.from))}</strong></span>
       <span class="row" style="gap:8px;flex-wrap:nowrap">
         <span class="muted small">${relTime(t.internalDate)}</span>
         <button class="star ${t.starred ? 'on' : ''}" data-star="${t.id}" data-starred="${t.starred ? 1 : 0}"
@@ -445,9 +510,10 @@ views['/kalendarz'] = async () => {
       : googleError ? `<div class="notice bad">Google Calendar: ${esc(googleError)}</div>` : ''}
     <div id="slotsBox"></div>
     ${Object.keys(byDay).length
-      ? Object.entries(byDay).map(([day, list]) => `<div class="day">
+      ? pickGroup('spotkania', Object.entries(byDay).map(([day, list]) => `<div class="day">
           <h4>${dayName(day)}</h4>
-          ${list.map((e) => `<div class="event">
+          ${list.map((e) => `<div class="event pickItem">
+            ${e.id && e.source === 'panel' ? pick(e.id) : '<span class="pick pick--brak" title="Wydarzenie z Google — usuń je w Kalendarzu Google"></span>'}
             <time>${e.allDay ? 'cały dzień' : fmtTime(e.starts_at)}</time>
             <div style="flex:1">
               <strong>${esc(e.title)}</strong>
@@ -458,10 +524,11 @@ views['/kalendarz'] = async () => {
             </div>
             ${e.id && e.source === 'panel' ? `<button class="btn ghost sm" data-del="${e.id}">Usuń</button>` : ''}
           </div>`).join('')}
-        </div>`).join('')
+        </div>`).join(''))
       : '<div class="empty">Brak spotkań w najbliższych 45 dniach.</div>'}`;
 
   $('#btnNewMeeting').onclick = () => meetingModal();
+  bulkWire('spotkania', (id) => api(`/calendar/${id}`, { method: 'DELETE' }), { label: 'spotkań' });
   $('#btnSlots').onclick = async () => {
     const { slots } = await api('/calendar/free-slots');
     $('#slotsBox').innerHTML = `<div class="card" style="margin-bottom:18px"><h3>Wolne okna (najbliższe 2 tygodnie, dni robocze 9–17)</h3>
@@ -518,10 +585,11 @@ views['/projekty'] = async () => {
       ${kpi(fmtMoney(summary.money.paid), 'zapłacone')}
       ${kpi(fmtNum(summary.overdue), 'po terminie')}
     </div>
-    <div class="grid g2" style="margin-top:1px">
-      ${projects.length ? projects.map((p) => `<div class="card">
+    ${pickGroup('projekty', `<div class="grid g2" style="margin-top:1px">
+      ${projects.length ? projects.map((p) => `<div class="card pickItem">
         <div class="row" style="justify-content:space-between">
-          <a href="#/projekty/${p.id}"><strong>${esc(p.name)}</strong></a>
+          <span class="row" style="gap:8px">${pick(p.id)}
+            <a href="#/projekty/${p.id}"><strong>${esc(p.name)}</strong></a></span>
           <span class="tag ${p.status === 'live' ? 'ok' : p.status === 'wstrzymany' ? 'bad' : ''}">${esc(p.status)}</span>
         </div>
         <p class="muted small" style="margin:.35rem 0">${esc(p.client || 'bez klienta')} ·
@@ -530,9 +598,10 @@ views['/projekty'] = async () => {
         <div class="bar"><i style="width:${p.progress}%"></i></div>
         <p class="muted small" style="margin:.35rem 0 0">${p.tasksDone}/${p.tasksTotal} zadań · ${p.progress}%</p>
       </div>`).join('') : '<div class="empty">Nie masz jeszcze żadnego projektu.</div>'}
-    </div>`;
+    </div>`)}`;
 
   $('#btnNewProject').onclick = () => projectModal();
+  bulkWire('projekty', (id) => api(`/projects/${id}`, { method: 'DELETE' }), { label: 'projektów' });
 };
 
 function projectModal() {
@@ -669,16 +738,28 @@ views['/leady'] = async () => {
       </select>
       <button class="btn sm">Filtruj</button>
     </form>
-    <div class="card" style="padding:0">
-      ${table(['Firma', 'Kontakt', 'Potencjał', 'Status', 'Źródło', 'Dodany'], leads, (l) => `<tr>
+    ${pickGroup('leady', `<div class="card" style="padding:0">
+      ${table(['', 'Firma', 'Kontakt', 'Potencjał', 'Status', 'Źródło', 'Dodany', ''], leads, (l) => `<tr>
+        <td>${pick(l.id)}</td>
         <td><a href="#/leady/${l.id}"><strong>${esc(l.company || l.name || l.domain || '—')}</strong></a>
           ${l.domain ? `<br><span class="muted small">${esc(l.domain)}</span>` : ''}</td>
         <td class="small">${esc(l.email || '')}${l.phone ? `<br>${esc(l.phone)}` : ''}</td>
         <td>${scoreTag(l.score)}</td>
         <td><span class="tag ${STATUS_CLASS[l.status] || ''}">${STATUS_LABEL[l.status] || l.status}</span></td>
         <td class="small muted">${esc(l.source)}</td>
-        <td class="small muted">${fmtDate(l.created_at)}</td></tr>`)}
-    </div>`;
+        <td class="small muted">${fmtDate(l.created_at)}</td>
+        <td><button class="btn ghost sm" data-dellead="${l.id}">Usuń</button></td></tr>`)}
+    </div>`)}`;
+
+  bulkWire('leady', (id) => api(`/leads/${id}`, { method: 'DELETE' }), { label: 'leadów' });
+  view.querySelectorAll('[data-dellead]').forEach((b) => {
+    b.onclick = async () => {
+      if (!confirm('Usunąć tego leada?')) return;
+      await api(`/leads/${b.dataset.dellead}`, { method: 'DELETE' });
+      toast('Usunięto.');
+      render();
+    };
+  });
 
   $('#leadFilter').onsubmit = (e) => {
     e.preventDefault();
@@ -853,8 +934,9 @@ views['/wysylka'] = async () => {
     </div>
 
     <h2 class="sec">Kolejka i historia</h2>
-    <div class="card" style="padding:0">
-      ${table(['Kiedy', 'Do kogo', 'Temat', 'Status', 'Akcje'], messages, (m) => `<tr>
+    ${pickGroup('kolejka', `<div class="card" style="padding:0">
+      ${table(['', 'Kiedy', 'Do kogo', 'Temat', 'Status', 'Akcje'], messages, (m) => `<tr>
+        <td>${pick(m.id)}</td>
         <td class="small muted">${fmtDateTime(m.created_at)}</td>
         <td class="small">${esc(m.company || m.lead_name || m.to_email)}<br><span class="muted">${esc(m.to_email)}</span></td>
         <td class="small">${esc(m.subject)}</td>
@@ -863,34 +945,39 @@ views['/wysylka'] = async () => {
         <td class="row">${m.status !== 'sent' ? `
           <button class="btn sm" data-send="${m.id}">Wyślij</button>
           <button class="btn ghost sm" data-del="${m.id}">Usuń</button>` : ''}</td></tr>`)}
-    </div>
+    </div>`)}
 
     <h2 class="sec">Szablony</h2>
-    <div class="grid g2">
-      ${templates.map((t) => `<div class="card">
+    ${pickGroup('szablony', `<div class="grid g2">
+      ${templates.map((t) => `<div class="card pickItem">
         <div class="row" style="justify-content:space-between">
-          <strong>${esc(t.name)}</strong>
+          <span class="row" style="gap:8px">${pick(t.id)} <strong>${esc(t.name)}</strong></span>
           <button class="btn ghost sm" data-deltpl="${t.id}">Usuń</button>
         </div>
         <p class="muted small" style="margin:.4rem 0">${esc(t.subject)}</p>
         <pre style="white-space:pre-wrap;font:inherit;font-size:.82rem;color:var(--ink-3);max-height:9rem;overflow:auto">${esc(t.body)}</pre>
       </div>`).join('')}
-    </div>
+    </div>`)}
     <div class="row" style="margin-top:14px"><button class="btn ghost" id="btnNewTpl">Nowy szablon</button></div>
 
     <h2 class="sec">Lista wykluczeń</h2>
     <p class="sub">Adresy i domeny, do których nigdy nie wyślę wiadomości. Wypisanie przez link trafia tu automatycznie.</p>
-    <div class="card" style="padding:0">
-      ${table(['Adres / domena', 'Powód', 'Kiedy', ''], suppression, (s) => `<tr>
+    ${pickGroup('wykluczenia', `<div class="card" style="padding:0">
+      ${table(['', 'Adres / domena', 'Powód', 'Kiedy', ''], suppression, (s) => `<tr>
+        <td>${pick(esc(s.value))}</td>
         <td>${esc(s.value)}</td><td class="small muted">${esc(s.reason || '')}</td>
         <td class="small muted">${fmtDate(s.created_at)}</td>
         <td><button class="btn ghost sm" data-unsup="${esc(s.value)}">Usuń</button></td></tr>`)}
-    </div>
+    </div>`)}
     <form class="row" id="supForm" style="margin-top:14px">
       <input class="inp" name="value" style="max-width:20rem;margin:0" placeholder="adres@firma.pl albo firma.pl" required>
       <button class="btn sm">Dodaj do wykluczeń</button>
     </form>`;
 
+  bulkWire('kolejka', (id) => api(`/outreach/${id}`, { method: 'DELETE' }), { label: 'wiadomości' });
+  bulkWire('szablony', (id) => api(`/outreach/templates/${id}`, { method: 'DELETE' }), { label: 'szablonów' });
+  bulkWire('wykluczenia', (v) => api(`/outreach/suppression/${encodeURIComponent(v)}`, { method: 'DELETE' }),
+    { label: 'wykluczeń' });
   view.querySelectorAll('[data-send]').forEach((b) => {
     b.onclick = async () => {
       if (!confirm('Wysłać tę wiadomość teraz?')) return;
@@ -936,7 +1023,7 @@ const KOLORY = [
   ['rozowa', 'różowa'], ['niebieska', 'niebieska'],
 ];
 
-/* Kolejność decyduje o kolejności kolumn na tablicy. */
+/* Kolejność decyduje o kolejności na liście statusów. */
 const STATUSY = [
   ['do-zrobienia', 'Do zrobienia'],
   ['czekam-na-materialy', 'Czekam na materiały'],
@@ -947,10 +1034,8 @@ const STATUSY = [
   ['wstrzymane', 'Wstrzymane'],
   ['zrobione', 'Zrobione'],
 ];
-/* Kolumny, w których piłka jest po stronie klienta — wyróżnione licznikiem. */
+/* Statusy, w których piłka jest po stronie klienta — plakietka na bursztynowo. */
 const CZEKA_NA_KLIENTA = ['czekam-na-materialy', 'wycena-wyslana', 'czeka-na-odpowiedz'];
-/* Te dwie pokazujemy zawsze, nawet puste — to codzienny rdzeń tablicy. */
-const ZAWSZE_WIDOCZNE = ['do-zrobienia', 'w-trakcie'];
 const nazwaStatusu = (k) => (STATUSY.find(([key]) => key === k) || [, k])[1];
 
 views['/notatnik'] = async () => {
@@ -965,17 +1050,12 @@ views['/notatnik'] = async () => {
   ]);
   const { files, folders } = filesData;
 
-  // Osiem kolumn naraz byłoby nieczytelne, więc pokazujemy tylko te, w których
-  // coś jest — plus dwie stałe. „Zrobione" wyłącznie na życzenie.
-  const wKolumnie = (key) => notes.filter((n) => (n.status || 'do-zrobienia') === key);
-  const widoczneStatusy = STATUSY.filter(([k]) =>
-    k === 'zrobione' ? showDone : (ZAWSZE_WIDOCZNE.includes(k) || wKolumnie(k).length > 0));
-
   view.innerHTML = `
     <div class="row" style="justify-content:space-between;align-items:flex-start">
       <div>
         <h1 class="page">Tablica</h1>
         <p class="sub">Kartki z tym, co do zrobienia, i pliki pod ręką. Wszystko zapisuje się od razu.</p>
+        ${podsumowanieStatusow(licznik, showDone)}
       </div>
       <div class="row">
         <a class="btn ghost sm" href="#/notatnik${showDone ? '' : '?done=1'}">
@@ -984,19 +1064,8 @@ views['/notatnik'] = async () => {
       </div>
     </div>
 
-    ${notes.length ? `
-    <div class="kanban">
-      ${widoczneStatusy.map(([key, label]) => {
-        const karty = wKolumnie(key);
-        return `<section class="kolumna ${CZEKA_NA_KLIENTA.includes(key) ? 'kolumna--czeka' : ''}">
-          <h3 class="kolumna__head">${label} <b>${licznik[key] || 0}</b></h3>
-          <div class="kolumna__karty">
-            ${karty.length ? karty.map(noteCard).join('')
-              : '<p class="kolumna__pusto">nic tutaj</p>'}
-          </div>
-        </section>`;
-      }).join('')}
-    </div>` : `
+    ${notes.length ? pickGroup('notatki', `
+      <div class="notes">${notes.map(noteCard).join('')}</div>`) : `
       <div class="empty">
         Tablica jest pusta. Pierwsza kartka to zwykle lista rzeczy, o których łatwo zapomnieć.
       </div>`}
@@ -1024,14 +1093,18 @@ views['/notatnik'] = async () => {
       <p class="small muted" style="margin:10px 0 0">Pusty folder trafi do „Ogólne".</p>
     </form>
 
-    <div class="card" style="padding:0">
-      ${table(['Nazwa', 'Folder', 'Rozmiar', 'Dodany', ''], files, (f) => `<tr>
+    ${pickGroup('pliki', `<div class="card" style="padding:0">
+      ${table(['', 'Nazwa', 'Folder', 'Rozmiar', 'Dodany', ''], files, (f) => `<tr>
+        <td>${pick(f.id)}</td>
         <td><a href="/api/admin/board/files/${f.id}/download">${esc(f.original_name)}</a></td>
         <td class="small muted">${esc(f.folder)}</td>
         <td class="small muted">${fmtBytes(f.size)}</td>
         <td class="small muted">${fmtDate(f.created_at)}</td>
         <td><button class="btn ghost sm" data-delfile="${f.id}">Usuń</button></td></tr>`)}
-    </div>`;
+    </div>`)}`;
+
+  bulkWire('notatki', (id) => api(`/board/notes/${id}`, { method: 'DELETE' }), { label: 'kartek' });
+  bulkWire('pliki', (id) => api(`/board/files/${id}`, { method: 'DELETE' }), { label: 'plików' });
 
   $('#btnNewNote').onclick = () => noteModal();
 
@@ -1105,13 +1178,25 @@ views['/notatnik'] = async () => {
   };
 };
 
+/** Jedna linijka nad tablicą: ile kartek w jakim statusie, bez dzielenia listy. */
+function podsumowanieStatusow(licznik, showDone) {
+  const czesci = STATUSY
+    .filter(([k]) => (licznik[k] || 0) > 0 && (showDone || k !== 'zrobione'))
+    .map(([k, l]) => `<span class="statusSum ${CZEKA_NA_KLIENTA.includes(k) ? 'statusSum--czeka' : ''}">
+      <b>${licznik[k]}</b> ${l.toLowerCase()}</span>`);
+  return czesci.length ? `<p class="statusSums">${czesci.join('')}</p>` : '';
+}
+
 function noteCard(n) {
   const status = n.status || 'do-zrobienia';
   const zrobiona = status === 'zrobione';
+  const czeka = CZEKA_NA_KLIENTA.includes(status);
   const przeterminowana = n.due_date && !zrobiona && n.due_date < new Date().toISOString().slice(0, 10);
-  return `<article class="note note--${esc(n.color)} ${zrobiona ? 'note--done' : ''}">
+  return `<article class="note pickItem note--${esc(n.color)} ${zrobiona ? 'note--done' : ''}">
     <div class="note__top">
-      <select class="note__status" data-note-status="${n.id}" title="Zmień status">
+      ${pick(n.id)}
+      <select class="note__status ${czeka ? 'note__status--czeka' : ''} ${zrobiona ? 'note__status--zrobione' : ''}"
+              data-note-status="${n.id}" title="Zmień status">
         ${STATUSY.map(([k, l]) => `<option value="${k}" ${k === status ? 'selected' : ''}>${l}</option>`).join('')}
       </select>
       <button class="note__pin ${n.pinned ? 'on' : ''}" data-note-pin="${n.id}" data-pinned="${n.pinned}"
