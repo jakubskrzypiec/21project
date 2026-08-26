@@ -4,7 +4,7 @@
 .pageHero{padding:clamp(84px,9vw,150px) var(--pad) clamp(70px,8vw,120px);background:#ffffff;border-bottom:1px solid var(--line)}
 .pageHeroInner{max-width:1500px;margin:auto;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(340px,.8fr);gap:clamp(50px,8vw,130px);align-items:end}
 .breadcrumbs{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin-bottom:30px}.breadcrumbs a{border-bottom:1px solid var(--line)}
-.pageHero h1{max-width:12ch;font-size:clamp(3.7rem,7vw,8rem);font-weight:500;line-height:.9;letter-spacing:-.075em}.pageHero h1 em{color:var(--a1)}
+.pageHero h1{max-width:12ch;font-size:clamp(3.7rem,7vw,8rem);font-weight:500;line-height:1;letter-spacing:-.075em}.pageHero h1 em{color:var(--a1)}
 .pageLead{max-width:56ch;font-size:clamp(16px,1.35vw,20px);line-height:1.65;color:var(--muted)}.pageLead strong{color:var(--ink);font-weight:600}
 .pageActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
 .pageFacts{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin-top:38px}.pageFacts li{padding:16px 14px 0 0;border-right:1px solid var(--line)}.pageFacts li+li{padding-left:14px}.pageFacts li:last-child{border-right:0}.pageFacts b{display:block;font-size:14px}.pageFacts span{display:block;margin-top:4px;font-size:9px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
@@ -189,12 +189,12 @@
 .contactHeroGrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.55fr);gap:clamp(50px,8vw,130px);align-items:end}
 /* Najdłuższe słowo w tym nagłówku (Porozmawiajmy) nie mieściło się w 9ch:
    wychodziło poza własne pudełko, a ostatnia litera znikała pod sąsiednią kolumną. */
-.contactHero h1{font-size:clamp(4.3rem,8vw,9rem);line-height:.86;letter-spacing:-.075em;font-weight:500;max-width:12ch}
+.contactHero h1{font-size:clamp(4.3rem,8vw,9rem);line-height:1;letter-spacing:-.075em;font-weight:500;max-width:12ch}
 .contactHero h1 em{font-style:normal;color:#555}
 .contactHeroAside{padding-bottom:10px;max-width:470px}.contactHeroAside p{font-size:clamp(15px,1.2vw,19px);line-height:1.55;color:#4d4d4d}.contactHeroAside span{display:block;margin-top:28px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:#777}
 .contactDirect{padding:clamp(80px,8vw,130px) var(--pad);background:#f5f5f5;border-bottom:1px solid var(--line)}
 .contactDirectInner{display:grid;grid-template-columns:minmax(250px,.7fr) minmax(0,1.3fr);gap:clamp(50px,8vw,140px)}
-.contactIdentity h2{font-size:clamp(3.4rem,6vw,7.3rem);line-height:.88;letter-spacing:-.065em;font-weight:500;margin:24px 0 18px}.contactIdentity>p:last-child{font-size:13px;color:#777;text-transform:uppercase;letter-spacing:.12em}
+.contactIdentity h2{font-size:clamp(3.4rem,6vw,7.3rem);line-height:1;letter-spacing:-.065em;font-weight:500;margin:24px 0 18px}.contactIdentity>p:last-child{font-size:13px;color:#777;text-transform:uppercase;letter-spacing:.12em}
 .contactLinks{border-top:1px solid var(--line)}
 .contactLinks>a,.contactArea{display:grid;grid-template-columns:130px minmax(0,1fr) 26px;gap:24px;align-items:center;padding:28px 0;border-bottom:1px solid var(--line)}
 .contactLinks span,.contactArea span{font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:#777;font-weight:700}.contactLinks strong,.contactArea strong{font-size:clamp(1.45rem,2.7vw,3.2rem);letter-spacing:-.045em;font-weight:500;overflow-wrap:anywhere}.contactLinks b{font-size:20px;font-weight:400}.contactArea{grid-template-columns:130px minmax(0,1fr)}.contactArea p{grid-column:2;margin-top:-8px;color:#777;font-size:12px;line-height:1.5}
@@ -210,7 +210,7 @@
 }
 @media(max-width:700px){
   .portfolioWideSection{padding:44px 20px 72px}.portfolioWideStack{gap:48px}.portfolioWide{border-left:0;border-right:0}.portfolioWideMedia{display:block;position:relative;padding:12px 12px 28px;overflow:visible}.portfolioDesktopFrame{width:100%;aspect-ratio:16/10}.portfolioMobileFrame{position:absolute;right:22px;bottom:8px;width:24%;min-width:74px;border-width:3px;border-radius:11px}.portfolioWideInfo{grid-template-columns:28px minmax(0,1fr) 18px;gap:10px;padding:18px 2px 24px}.portfolioWideInfo h2,.portfolioWideInfo h3{font-size:clamp(1.8rem,9vw,2.8rem)}.portfolioWideStack--inside{margin-top:38px}
-  .contactHero{padding:96px 20px 70px}.contactHero::before{right:-38vw;width:88vw;top:38%}.contactHero::after{right:-6vw;top:40%;font-size:42vw}.contactHero h1{font-size:clamp(3.6rem,16vw,5.6rem);max-width:none}.contactHeroAside p{font-size:15px}
+  .contactHero{padding:96px 20px 70px}.contactHero::before{right:-38vw;width:88vw;top:38%}.contactHero::after{right:-6vw;top:40%;font-size:42vw}.contactHero h1{font-size:clamp(2.9rem,12.5vw,5.6rem);max-width:none}.contactHeroAside p{font-size:15px}
   .contactDirect{padding:72px 20px}.contactIdentity h2{font-size:clamp(3.3rem,15vw,5rem)}.contactLinks>a,.contactArea{grid-template-columns:1fr 24px;gap:8px 14px;padding:22px 0}.contactLinks span,.contactArea span{grid-column:1/-1}.contactLinks strong,.contactArea strong{font-size:clamp(1.35rem,7vw,2rem)}.contactArea{grid-template-columns:1fr}.contactArea p{grid-column:1;margin-top:4px}.contactLinks b{grid-column:2;grid-row:2}
   .contactFormSection{padding:76px 20px}.contactFormIntro h2{font-size:clamp(3rem,14vw,4.7rem)}.contactPageForm label{grid-template-columns:30px 1fr;gap:8px 12px;padding:20px 0}.contactPageForm label>b{grid-column:2}.contactPageForm input,.contactPageForm select,.contactPageForm textarea{grid-column:2}.contactFormEnd{align-items:flex-start;flex-direction:column}.contactFormEnd button{width:100%}
 }
@@ -256,7 +256,7 @@
 
 /* Cleaner direct-contact block. */
 .contactDirectInner{grid-template-columns:minmax(210px,.56fr) minmax(0,1.44fr)}
-.contactIdentity h2{font-size:clamp(3.15rem,5.2vw,6.35rem);max-width:6.5ch}
+.contactIdentity h2{font-size:clamp(3.15rem,5.2vw,6.35rem);max-width:9ch}
 .contactEmailRow{min-width:0}
 .contactEmailValue{
   min-width:0;
