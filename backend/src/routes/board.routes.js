@@ -20,7 +20,16 @@ const KOLORY = ['zolta', 'biala', 'zielona', 'rozowa', 'niebieska'];
  * „zrobione" jest ostatnie i traktowane jako zamknięte: takie kartki chowają się,
  * dopóki nie klikniesz „Pokaż zrobione".
  */
-const STATUSY = ['do-zrobienia', 'w-trakcie', 'czeka-na-odpowiedz', 'zrobione'];
+const STATUSY = [
+  'do-zrobienia',
+  'czekam-na-materialy',
+  'w-trakcie',
+  'do-poprawek',
+  'wycena-wyslana',
+  'czeka-na-odpowiedz',
+  'wstrzymane',
+  'zrobione',
+];
 const ZAMKNIETY = 'zrobione';
 
 /* ------------------------------- NOTATKI ------------------------------- */

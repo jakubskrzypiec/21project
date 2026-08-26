@@ -290,9 +290,12 @@ dialog p.small{margin-top:0}
 /* ---------------------------- tablica kartek ---------------------------- */
 /* Kolumny odpowiadają statusom — widać na pierwszy rzut oka, co czeka,
    co jest w robocie, a co wisi po Twojej stronie. */
-.kanban{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;
-  background:var(--line);border:1px solid var(--line);margin-bottom:16px}
-.kolumna{background:var(--bg);padding:18px 16px 20px;min-width:0}
+.kanban{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:1px;
+  background:var(--bg);margin-bottom:16px}
+/* Kreski rysuje sama kolumna, żeby puste miejsce w ostatnim rzędzie
+   nie świeciło szarym prostokątem. */
+.kolumna{background:var(--bg);box-shadow:0 0 0 1px var(--line);
+  padding:18px 16px 20px;min-width:0}
 .kolumna__head{display:flex;align-items:center;justify-content:space-between;gap:8px;
   margin:0 0 14px;font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;color:#626262}
 .kolumna__head b{min-width:20px;padding:1px 6px;background:var(--surface-2);border:1px solid var(--line);
@@ -300,9 +303,9 @@ dialog p.small{margin-top:0}
 [data-theme="dark"] .kolumna__head{color:var(--ink-4)}
 .kolumna__karty{display:flex;flex-direction:column;gap:12px}
 .kolumna__pusto{margin:0;padding:14px 0;font-size:12px;color:var(--ink-4)}
-/* Kolumna „czeka na odpowiedź" to jedyna, w której nic nie zależy od Ciebie. */
-.kolumna--czeka-na-odpowiedz .kolumna__head b{background:var(--warn-bg);border-color:transparent;color:var(--warn)}
-.kolumna--zrobione .kolumna__karty{opacity:.75}
+/* Kolumny, w których piłka jest po stronie klienta — rosnący licznik to sygnał,
+   że komuś trzeba przypomnieć. */
+.kolumna--czeka .kolumna__head b{background:var(--warn-bg);border-color:transparent;color:var(--warn)}
 
 .board{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-bottom:16px}
 

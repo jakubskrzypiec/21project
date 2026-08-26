@@ -939,10 +939,18 @@ const KOLORY = [
 /* Kolejność decyduje o kolejności kolumn na tablicy. */
 const STATUSY = [
   ['do-zrobienia', 'Do zrobienia'],
+  ['czekam-na-materialy', 'Czekam na materiały'],
   ['w-trakcie', 'W trakcie'],
+  ['do-poprawek', 'Do poprawek'],
+  ['wycena-wyslana', 'Wycena wysłana'],
   ['czeka-na-odpowiedz', 'Czeka na odpowiedź'],
+  ['wstrzymane', 'Wstrzymane'],
   ['zrobione', 'Zrobione'],
 ];
+/* Kolumny, w których piłka jest po stronie klienta — wyróżnione licznikiem. */
+const CZEKA_NA_KLIENTA = ['czekam-na-materialy', 'wycena-wyslana', 'czeka-na-odpowiedz'];
+/* Te dwie pokazujemy zawsze, nawet puste — to codzienny rdzeń tablicy. */
+const ZAWSZE_WIDOCZNE = ['do-zrobienia', 'w-trakcie'];
 const nazwaStatusu = (k) => (STATUSY.find(([key]) => key === k) || [, k])[1];
 
 views['/notatnik'] = async () => {
@@ -957,8 +965,11 @@ views['/notatnik'] = async () => {
   ]);
   const { files, folders } = filesData;
 
-  // Kolumnę „Zrobione" pokazujemy tylko na życzenie — inaczej rośnie w nieskończoność.
-  const widoczneStatusy = STATUSY.filter(([k]) => k !== 'zrobione' || showDone);
+  // Osiem kolumn naraz byłoby nieczytelne, więc pokazujemy tylko te, w których
+  // coś jest — plus dwie stałe. „Zrobione" wyłącznie na życzenie.
+  const wKolumnie = (key) => notes.filter((n) => (n.status || 'do-zrobienia') === key);
+  const widoczneStatusy = STATUSY.filter(([k]) =>
+    k === 'zrobione' ? showDone : (ZAWSZE_WIDOCZNE.includes(k) || wKolumnie(k).length > 0));
 
   view.innerHTML = `
     <div class="row" style="justify-content:space-between;align-items:flex-start">
@@ -976,11 +987,11 @@ views['/notatnik'] = async () => {
     ${notes.length ? `
     <div class="kanban">
       ${widoczneStatusy.map(([key, label]) => {
-        const wKolumnie = notes.filter((n) => (n.status || 'do-zrobienia') === key);
-        return `<section class="kolumna kolumna--${key}">
+        const karty = wKolumnie(key);
+        return `<section class="kolumna ${CZEKA_NA_KLIENTA.includes(key) ? 'kolumna--czeka' : ''}">
           <h3 class="kolumna__head">${label} <b>${licznik[key] || 0}</b></h3>
           <div class="kolumna__karty">
-            ${wKolumnie.length ? wKolumnie.map(noteCard).join('')
+            ${karty.length ? karty.map(noteCard).join('')
               : '<p class="kolumna__pusto">nic tutaj</p>'}
           </div>
         </section>`;
