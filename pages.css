@@ -256,7 +256,7 @@
 
 /* Cleaner direct-contact block. */
 .contactDirectInner{grid-template-columns:minmax(210px,.56fr) minmax(0,1.44fr)}
-.contactIdentity h2{font-size:clamp(3.15rem,5.2vw,6.35rem);max-width:9ch}
+.contactIdentity h2{font-size:clamp(3.15rem,5.2vw,5.5rem);max-width:9ch}
 .contactEmailRow{min-width:0}
 .contactEmailValue{
   min-width:0;
