@@ -16,7 +16,7 @@ Node.js + Express + SQLite. Bez frameworka na froncie, bez buildu — `npm insta
 | Poczta | `#/poczta` | skrzynka Gmail: lista wątków, czytanie, odpowiadanie, archiwum, streszczenie wątku przez AI |
 | Kalendarz | `#/kalendarz` | spotkania z panelu + wydarzenia z Google Calendar, wyszukiwanie wolnych okien |
 | Projekty | `#/projekty` | zlecenia, etapy, zadania (domyślnie 8 kroków Twojego procesu), notatki, budżet, terminy |
-| Leady | `#/leady` | kontakty z formularza i z wyszukiwania, analiza strony leada, historia wiadomości |
+| Leady | `#/leady` | kontakty z formularza, z poczty i dodane ręcznie, historia wiadomości |
 | Wysyłka | `#/wysylka` | kolejka wiadomości, szablony, limity, lista wykluczeń |
 | Ustawienia | `#/ustawienia` | połączenie z Google, status AI, kod licznika do wklejenia na stronie |
 
@@ -106,29 +106,19 @@ połączone, dostajesz też natychmiastowe powiadomienie mailem.
 
 ---
 
-## 6. Szukanie leadów po stopkach stron
+## 6. Skąd biorą się leady
 
-Panel → **Leady → Szukaj po stopkach**. Wklejasz adresy stron (albo adres listingu, z którego mam
-wyciągnąć domeny). Dla każdej strony backend:
+Trzy drogi, wszystkie prowadzą do jednej listy w zakładce **Leady**:
 
-1. sprawdza `robots.txt` i odczekuje między pobraniami (`CRAWLER_DELAY_MS`),
-2. wycina obszar stopki i wyciąga e-mail, telefon, NIP, social media oraz podpis wykonawcy
-   („Realizacja: …" — od razu widzisz, kto obsługuje konkurencję),
-3. robi audyt techniczny strony (responsywność, HTTPS, `title`, `description`, H1, schema.org,
-   Open Graph, formaty zdjęć, waga strony, czas odpowiedzi, użyty CMS),
-4. wystawia **ocenę potencjału 0–100** — im wyżej, tym więcej rzeczy do naprawy,
-   czyli tym większa szansa, że firma realnie potrzebuje nowej strony.
+1. **Formularz na stronie** — zapytanie zapisuje się automatycznie (patrz punkt 5).
+2. **Poczta** — przycisk **Wczytaj z poczty** na tablicy wyławia ze skrzynki wiadomości,
+   które wyglądają na zapytanie o stronę, i zakłada kartkę oraz leada.
+3. **Ręcznie** — przycisk **Dodaj ręcznie** w zakładce Leady.
 
-Ocena i lista powodów lądują na karcie leada i są potem materiałem dla AI do napisania wiadomości.
+Automatyczne przeszukiwanie cudzych stron w poszukiwaniu kontaktów zostało usunięte
+z panelu. Moduł analizujący strony (`services/leadFinder.js`) został, bo korzysta
+z niego wczytywanie z poczty — wyciąga profile społecznościowe nadawcy z jego strony.
 
-Opcjonalnie: uzupełnij `GOOGLE_CSE_KEY` i `GOOGLE_CSE_CX`
-(<https://programmablesearchengine.google.com>), żeby wyszukiwać firmy zapytaniem zamiast wklejać
-adresy ręcznie.
-
-**Zapora SSRF:** backend pobiera wyłącznie publiczne adresy `http(s)` — adresy w sieciach
-prywatnych są odrzucane.
-
----
 
 ## 7. Wysyłka wiadomości — i granice, których pilnuje backend
 

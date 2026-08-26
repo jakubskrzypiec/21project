@@ -656,9 +656,8 @@ views['/leady'] = async () => {
 
   view.innerHTML = `
     <div class="row" style="justify-content:space-between;align-items:flex-start">
-      <div><h1 class="page">Leady</h1><p class="sub">${total} kontaktów — z formularza, z wyszukiwania i dodanych ręcznie.</p></div>
+      <div><h1 class="page">Leady</h1><p class="sub">${total} kontaktów — z formularza, z poczty i dodanych ręcznie.</p></div>
       <div class="row">
-        <button class="btn ghost" id="btnScan">Szukaj po stopkach</button>
         <button class="btn" id="btnNewLead">Dodaj ręcznie</button>
       </div>
     </div>
@@ -695,35 +694,7 @@ views['/leady'] = async () => {
     <label class="f">Miasto<input name="city"></label>
     <label class="f">Notatka<textarea name="notes" style="min-height:4rem"></textarea></label>`,
     async (data) => { await api('/leads', { method: 'POST', body: data }); toast('Lead dodany.'); render(); });
-  $('#btnScan').onclick = () => scanModal();
 };
-
-function scanModal() {
-  openModal('Szukanie leadów po stopkach stron', `
-    <p class="small muted" style="margin-top:0">Wklej adresy stron (po jednym w wierszu) albo adres listingu,
-    z którego mam wyciągnąć domeny. Każdą stronę pobieram raz, z odstępem i z poszanowaniem robots.txt,
-    a z jej stopki wyciągam e-mail, telefon i podpis wykonawcy.</p>
-    <label class="f">Adresy stron<textarea name="urls" placeholder="firma1.pl&#10;https://firma2.pl"></textarea></label>
-    <label class="f">albo adres listingu do zebrania domen<input name="listing" placeholder="https://katalog-firm.pl/architekci"></label>
-    <label class="f">Zapisuj tylko powyżej punktów<input name="minScore" type="number" value="25" min="0" max="100"></label>
-    <label class="f">Miasto (opcjonalnie)<input name="city"></label>
-    <label class="f">Branża (opcjonalnie)<input name="industry" placeholder="np. architektura wnętrz"></label>`,
-    async (data) => {
-      let urls = data.urls.split('\n').map((s) => s.trim()).filter(Boolean);
-      if (data.listing) {
-        toast('Zbieram domeny z listingu…');
-        const { domains } = await api('/leads/harvest', { method: 'POST', body: { url: data.listing } });
-        urls = [...new Set([...urls, ...domains])];
-      }
-      if (!urls.length) throw new Error('Nie podałeś żadnego adresu.');
-      toast(`Analizuję ${urls.length} stron — to potrwa chwilę…`);
-      const res = await api('/leads/scan', { method: 'POST', body: {
-        urls, minScore: Number(data.minScore), city: data.city, industry: data.industry,
-      }});
-      toast(`Gotowe: zapisano ${res.saved} z ${urls.length} stron.`);
-      render();
-    });
-}
 
 views['/leady/:id'] = async (id) => {
   view.innerHTML = '<div class="empty">Wczytywanie…</div>';

@@ -1,9 +1,7 @@
 'use strict';
 const express = require('express');
-const { db, logAction } = require('../db');
-const leadFinder = require('../services/leadFinder');
+const { db } = require('../db');
 const outreach = require('../services/outreach');
-const { clientIp } = require('../middleware/auth');
 
 const router = express.Router();
 const now = () => new Date().toISOString();
@@ -73,74 +71,6 @@ router.patch('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   db.prepare('DELETE FROM leads WHERE id = ?').run(req.params.id);
   res.json({ ok: true });
-});
-
-/** Analiza pojedynczej strony bez zapisywania — podgląd przed dodaniem. */
-router.post('/inspect', async (req, res) => {
-  try {
-    const result = await leadFinder.inspectSite(String(req.body?.url || '').trim());
-    res.json(result);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-/** Analiza listy adresów i zapis tych, które przekroczyły próg. */
-router.post('/scan', async (req, res) => {
-  const urls = (req.body?.urls || []).map((u) => String(u).trim()).filter(Boolean).slice(0, 50);
-  const minScore = Number(req.body?.minScore ?? 25);
-  const city = req.body?.city || null;
-  const industry = req.body?.industry || null;
-  if (!urls.length) return res.status(400).json({ error: 'Podaj listę adresów.' });
-
-  const results = [];
-  for (const url of urls) {
-    try {
-      const site = await leadFinder.inspectSite(url);
-      const keep = site.score >= minScore;
-      if (keep) {
-        upsertLead({
-          source: 'crawler',
-          company: site.company,
-          email: site.email,
-          phone: site.phone,
-          website: site.website,
-          domain: site.domain,
-          city, industry,
-          score: site.score,
-          audit: JSON.stringify({ ...site.audit, reasons: site.reasons, socials: site.socials, builtBy: site.builtBy }),
-          notes: site.builtBy ? `Stronę robił: ${site.builtBy}` : null,
-        });
-      }
-      results.push({ url, ok: true, saved: keep, score: site.score, domain: site.domain, email: site.email, reasons: site.reasons });
-    } catch (err) {
-      results.push({ url, ok: false, error: err.message });
-    }
-  }
-  logAction('leads.scan', clientIp(req), { count: urls.length });
-  res.json({ results, saved: results.filter((r) => r.saved).length });
-});
-
-/** Zbiera domeny z podanej strony-listingu (katalog firm, ranking, lista wystawców). */
-router.post('/harvest', async (req, res) => {
-  try {
-    const domains = await leadFinder.harvestLinks(String(req.body?.url || '').trim(), {
-      limit: Math.min(Number(req.body?.limit) || 40, 100),
-    });
-    res.json({ domains });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-/** Wyszukiwanie w Google Programmable Search (jeśli skonfigurowane). */
-router.post('/search', async (req, res) => {
-  try {
-    const items = await leadFinder.searchWeb(String(req.body?.query || ''), { num: 10 });
-    res.json({ items });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
 });
 
 /* ------------------------------ pomocnicze ------------------------------ */
