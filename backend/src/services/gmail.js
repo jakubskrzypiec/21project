@@ -140,20 +140,39 @@ function addressOf(from = '') {
 
 function buildRaw({ to, subject, body, from, inReplyTo, references, cc }) {
   const enc = (s) => `=?UTF-8?B?${Buffer.from(String(s), 'utf8').toString('base64')}?=`;
-  const lines = [
-    `To: ${to}`,
-    cc ? `Cc: ${cc}` : null,
-    from ? `From: ${from}` : null,
+
+  /**
+   * Nagłówki wiadomości muszą być czystym ASCII. Nazwa nadawcy zawiera myślnik
+   * („Jakub Skrzypiec — 21 project"), więc wymaga zakodowania — inaczej odbiorca
+   * widzi krzaki, a niektóre serwery odrzucają całą wiadomość.
+   */
+  const adres = (pole) => {
+    const m = String(pole).match(/^(.*?)\s*<([^>]+)>$/);
+    if (!m) return String(pole);
+    const nazwa = m[1].replace(/^"|"$/g, '').trim();
+    if (!nazwa) return `<${m[2]}>`;
+    return `${/[^\x20-\x7E]/.test(nazwa) ? enc(nazwa) : `"${nazwa.replace(/"/g, '')}"`} <${m[2]}>`;
+  };
+
+  // Base64 w treści łamiemy co 76 znaków — tego wymaga norma i tak robią klienty poczty.
+  const tresc = Buffer.from(String(body), 'utf8').toString('base64').replace(/(.{76})/g, '$1\r\n');
+
+  const naglowki = [
+    `To: ${adres(to)}`,
+    cc ? `Cc: ${adres(cc)}` : null,
+    from ? `From: ${adres(from)}` : null,
     `Subject: ${enc(subject)}`,
     inReplyTo ? `In-Reply-To: ${inReplyTo}` : null,
     references ? `References: ${references}` : null,
     'MIME-Version: 1.0',
     'Content-Type: text/plain; charset="UTF-8"',
     'Content-Transfer-Encoding: base64',
-    '',
-    Buffer.from(String(body), 'utf8').toString('base64'),
-  ].filter(Boolean);
-  return Buffer.from(lines.join('\r\n'), 'utf8').toString('base64url');
+  ].filter((l) => l !== null);
+
+  // Pusta linia oddziela nagłówki od treści. Wcześniej dokładaliśmy ją do tej
+  // samej tablicy, a filter(Boolean) usuwał ją razem z pustymi polami — przez co
+  // cała wiadomość była czytana jako nagłówki i docierała bez treści.
+  return Buffer.from(`${naglowki.join('\r\n')}\r\n\r\n${tresc}`, 'utf8').toString('base64url');
 }
 
 async function sendMessage({ to, subject, body, cc, threadId, inReplyTo, references }) {

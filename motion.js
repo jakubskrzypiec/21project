@@ -1,10 +1,12 @@
 
 /* Bezpiecznik poza obsługą DOMContentLoaded — patrz komentarz w script.js. */
-window.setTimeout(function () {
+function odsloniWszystko() {
   document.querySelectorAll('[data-reveal]:not(.is-visible), .reveal:not(.is-in)').forEach(function (el) {
     el.classList.add(el.hasAttribute('data-reveal') ? 'is-visible' : 'is-in');
   });
-}, 3000);
+}
+window.setTimeout(odsloniWszystko, 1200);
+window.addEventListener('load', odsloniWszystko);
 (() => {
   const start = () => {
     const root = document.documentElement;

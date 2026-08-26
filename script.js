@@ -16,11 +16,13 @@
      zewnętrzny się nie wczytuje, DOMContentLoaded potrafi się opóźnić o sekundy,
      a wtedy bezpiecznik w środku ready() też by czekał. Pusta strona jest
      gorsza niż strona bez animacji. */
-  window.setTimeout(function () {
+  var odsloniWszystko = function () {
     [].slice.call(document.querySelectorAll('.reveal:not(.is-in)')).forEach(function (el) {
       el.classList.add('is-in');
     });
-  }, 3000);
+  };
+  window.setTimeout(odsloniWszystko, 1200);
+  window.addEventListener('load', odsloniWszystko);
 
   ready(function () {
 

@@ -187,7 +187,9 @@
 .contactHero::after{content:"21";position:absolute;right:9vw;top:53%;transform:translateY(-50%);font-size:clamp(120px,20vw,320px);font-weight:500;line-height:.7;letter-spacing:-.12em;color:rgba(0,0,0,.018);pointer-events:none}
 .contactHeroInner,.contactDirectInner,.contactFormLayout{width:min(100%,1500px);margin:0 auto;position:relative;z-index:1}
 .contactHeroGrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.55fr);gap:clamp(50px,8vw,130px);align-items:end}
-.contactHero h1{font-size:clamp(4.3rem,8vw,9rem);line-height:.86;letter-spacing:-.075em;font-weight:500;max-width:9ch}
+/* Najdłuższe słowo w tym nagłówku (Porozmawiajmy) nie mieściło się w 9ch:
+   wychodziło poza własne pudełko, a ostatnia litera znikała pod sąsiednią kolumną. */
+.contactHero h1{font-size:clamp(4.3rem,8vw,9rem);line-height:.86;letter-spacing:-.075em;font-weight:500;max-width:12ch}
 .contactHero h1 em{font-style:normal;color:#555}
 .contactHeroAside{padding-bottom:10px;max-width:470px}.contactHeroAside p{font-size:clamp(15px,1.2vw,19px);line-height:1.55;color:#4d4d4d}.contactHeroAside span{display:block;margin-top:28px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:#777}
 .contactDirect{padding:clamp(80px,8vw,130px) var(--pad);background:#f5f5f5;border-bottom:1px solid var(--line)}
@@ -198,7 +200,7 @@
 .contactLinks span,.contactArea span{font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:#777;font-weight:700}.contactLinks strong,.contactArea strong{font-size:clamp(1.45rem,2.7vw,3.2rem);letter-spacing:-.045em;font-weight:500;overflow-wrap:anywhere}.contactLinks b{font-size:20px;font-weight:400}.contactArea{grid-template-columns:130px minmax(0,1fr)}.contactArea p{grid-column:2;margin-top:-8px;color:#777;font-size:12px;line-height:1.5}
 .contactFormSection{padding:clamp(90px,9vw,150px) var(--pad);background:#0b0b0b;color:#fff}
 .contactFormLayout{display:grid;grid-template-columns:minmax(270px,.75fr) minmax(0,1.25fr);gap:clamp(60px,9vw,150px);align-items:start}
-.contactFormIntro{position:sticky;top:120px}.contactFormIntro .kicker{color:#777}.contactFormIntro h2{font-size:clamp(3.2rem,5.7vw,6.6rem);line-height:.9;letter-spacing:-.065em;font-weight:500;margin:24px 0 30px}.contactFormIntro>p:last-child{max-width:420px;color:#8d8d8d;font-size:14px;line-height:1.65}
+.contactFormIntro{position:sticky;top:120px}.contactFormIntro .kicker{color:#777}.contactFormIntro h2{font-size:clamp(2.6rem,4vw,4.6rem);line-height:.95;letter-spacing:-.05em;font-weight:500;margin:24px 0 30px}.contactFormIntro>p:last-child{max-width:420px;color:#8d8d8d;font-size:14px;line-height:1.65}
 .contactPageForm{border-top:1px solid #333}.contactPageForm label{display:grid;grid-template-columns:46px 180px minmax(0,1fr);gap:18px;align-items:center;padding:25px 0;border-bottom:1px solid #333}.contactPageForm label>span{font-size:9px;color:#6d6d6d;letter-spacing:.14em}.contactPageForm label>b{font-size:12px;font-weight:500}.contactPageForm input,.contactPageForm select,.contactPageForm textarea{width:100%;background:transparent;border:0;color:#fff;font:inherit;font-size:14px;outline:none;padding:5px 0}.contactPageForm input::placeholder,.contactPageForm textarea::placeholder{color:#5f5f5f}.contactPageForm select{color:#fff}.contactPageForm select option{color:#111}.contactPageForm .contactMessage{align-items:start}.contactFormEnd{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:28px}.contactFormEnd .formNote{font-size:11px;color:#8b8b8b;max-width:360px}.contactFormEnd button{border:1px solid #fff;background:#fff;color:#111;padding:15px 20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;cursor:pointer}.contactFormEnd button span{margin-left:12px}
 
 @media(max-width:900px){
