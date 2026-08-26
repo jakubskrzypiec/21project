@@ -15,6 +15,14 @@ fs.mkdirSync(FILES_DIR, { recursive: true });
 
 const KOLORY = ['zolta', 'biala', 'zielona', 'rozowa', 'niebieska'];
 
+/**
+ * Statusy kartek — kolejność jest jednocześnie kolejnością kolumn na tablicy.
+ * „zrobione" jest ostatnie i traktowane jako zamknięte: takie kartki chowają się,
+ * dopóki nie klikniesz „Pokaż zrobione".
+ */
+const STATUSY = ['do-zrobienia', 'w-trakcie', 'czeka-na-odpowiedz', 'zrobione'];
+const ZAMKNIETY = 'zrobione';
+
 /* ------------------------------- NOTATKI ------------------------------- */
 
 router.get('/notes', (req, res) => {
@@ -23,15 +31,19 @@ router.get('/notes', (req, res) => {
     .prepare(
       `SELECT n.*, p.name AS project_name FROM notes n
          LEFT JOIN projects p ON p.id = n.project_id
-        WHERE (@showDone = 1 OR n.done = 0)
+        WHERE (@showDone = 1 OR n.status != @zamkniety)
         ORDER BY n.pinned DESC, n.position, n.updated_at DESC`
     )
-    .all({ showDone: showDone ? 1 : 0 });
+    .all({ showDone: showDone ? 1 : 0, zamkniety: ZAMKNIETY });
 
   const fileCounts = db
     .prepare('SELECT note_id, COUNT(*) AS n FROM files WHERE note_id IS NOT NULL GROUP BY note_id')
     .all();
   const counts = new Map(fileCounts.map((r) => [r.note_id, r.n]));
+
+  const licznik = Object.fromEntries(STATUSY.map((st) => [st, 0]));
+  db.prepare('SELECT status, COUNT(*) AS n FROM notes GROUP BY status')
+    .all().forEach((r) => { if (r.status in licznik) licznik[r.status] = r.n; });
 
   res.json({
     notes: rows.map((n) => ({
@@ -39,7 +51,9 @@ router.get('/notes', (req, res) => {
       files: counts.get(n.id) || 0,
       links: (() => { try { return n.links ? JSON.parse(n.links) : null; } catch { return null; } })(),
     })),
-    doneCount: db.prepare('SELECT COUNT(*) AS n FROM notes WHERE done = 1').get().n,
+    statusy: STATUSY,
+    licznik,
+    doneCount: licznik[ZAMKNIETY],
   });
 });
 
@@ -49,13 +63,16 @@ router.post('/notes', (req, res) => {
     return res.status(400).json({ error: 'Notatka musi mieć tytuł albo treść.' });
   }
   const pos = db.prepare('SELECT COALESCE(MIN(position), 0) - 1 AS p FROM notes').get().p;
+  const status = STATUSY.includes(b.status) ? b.status : 'do-zrobienia';
   const r = db
     .prepare(
-      `INSERT INTO notes (created_at, updated_at, title, body, color, pinned, due_date, position, project_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO notes (created_at, updated_at, title, body, color, pinned, status, done,
+                          due_date, position, project_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .run(now(), now(), String(b.title || '').slice(0, 200) || null, b.body || null,
       KOLORY.includes(b.color) ? b.color : 'zolta', b.pinned ? 1 : 0,
+      status, status === ZAMKNIETY ? 1 : 0,
       b.due_date || null, pos, b.project_id || null);
   res.status(201).json({ note: db.prepare('SELECT * FROM notes WHERE id = ?').get(r.lastInsertRowid) });
 });
@@ -64,19 +81,24 @@ router.patch('/notes/:id', (req, res) => {
   const n = db.prepare('SELECT * FROM notes WHERE id = ?').get(req.params.id);
   if (!n) return res.status(404).json({ error: 'Nie ma takiej notatki.' });
   const b = req.body || {};
+  // Status jest źródłem prawdy; pole done trzymamy zgodne, żeby stary kod nie kłamał.
+  let status = STATUSY.includes(b.status) ? b.status : n.status;
+  if (b.status === undefined && b.done !== undefined) status = b.done ? ZAMKNIETY : 'do-zrobienia';
+
   const next = {
     title: b.title !== undefined ? String(b.title).slice(0, 200) : n.title,
     body: b.body !== undefined ? b.body : n.body,
     color: KOLORY.includes(b.color) ? b.color : n.color,
     pinned: b.pinned !== undefined ? (b.pinned ? 1 : 0) : n.pinned,
-    done: b.done !== undefined ? (b.done ? 1 : 0) : n.done,
+    status,
+    done: status === ZAMKNIETY ? 1 : 0,
     due_date: b.due_date !== undefined ? b.due_date : n.due_date,
     project_id: b.project_id !== undefined ? b.project_id : n.project_id,
   };
   db.prepare(
-    `UPDATE notes SET title=?, body=?, color=?, pinned=?, done=?, due_date=?, project_id=?, updated_at=?
-      WHERE id=?`
-  ).run(next.title, next.body, next.color, next.pinned, next.done, next.due_date,
+    `UPDATE notes SET title=?, body=?, color=?, pinned=?, status=?, done=?, due_date=?,
+                      project_id=?, updated_at=? WHERE id=?`
+  ).run(next.title, next.body, next.color, next.pinned, next.status, next.done, next.due_date,
     next.project_id, now(), n.id);
   res.json({ note: db.prepare('SELECT * FROM notes WHERE id = ?').get(n.id) });
 });
@@ -93,10 +115,10 @@ router.post('/notes/:id/move', (req, res) => {
   if (!n) return res.status(404).json({ error: 'Nie ma takiej notatki.' });
   const neighbour = db
     .prepare(
-      `SELECT * FROM notes WHERE pinned = ? AND done = ? AND position ${dir < 0 ? '<' : '>'} ?
+      `SELECT * FROM notes WHERE pinned = ? AND status = ? AND position ${dir < 0 ? '<' : '>'} ?
         ORDER BY position ${dir < 0 ? 'DESC' : 'ASC'} LIMIT 1`
     )
-    .get(n.pinned, n.done, n.position);
+    .get(n.pinned, n.status, n.position);
   if (!neighbour) return res.json({ ok: true, moved: false });
   const swap = db.transaction(() => {
     db.prepare('UPDATE notes SET position = ? WHERE id = ?').run(neighbour.position, n.id);
@@ -104,18 +126,6 @@ router.post('/notes/:id/move', (req, res) => {
   });
   swap();
   res.json({ ok: true, moved: true });
-});
-
-/** Ręczne wywołanie skanowania skrzynki — ten sam kod, który chodzi z harmonogramu. */
-router.post('/scan-mail', async (req, res) => {
-  try {
-    const r = await require('../services/inbox').scanInbox({
-      limit: Math.min(Number(req.body?.limit) || 25, 50),
-    });
-    res.json(r);
-  } catch (err) {
-    res.status(400).json({ error: err.message, code: err.code || null });
-  }
 });
 
 /* -------------------------------- PLIKI -------------------------------- */

@@ -15,6 +15,7 @@ Node.js + Express + SQLite. Bez frameworka na froncie, bez buildu — `npm insta
 | Ruch na stronie | `#/ruch` | własna analityka: odsłony, użytkownicy, źródła, urządzenia, kampanie UTM, podgląd na żywo |
 | Poczta | `#/poczta` | skrzynka Gmail: lista wątków, czytanie, odpowiadanie, archiwum, streszczenie wątku przez AI |
 | Kalendarz | `#/kalendarz` | spotkania z panelu + wydarzenia z Google Calendar, wyszukiwanie wolnych okien |
+| Tablica | `#/notatnik` | kartki w kolumnach według statusu + pliki z folderami |
 | Projekty | `#/projekty` | zlecenia, etapy, zadania (domyślnie 8 kroków Twojego procesu), notatki, budżet, terminy |
 | Leady | `#/leady` | kontakty z formularza, z poczty i dodane ręcznie, historia wiadomości |
 | Wysyłka | `#/wysylka` | kolejka wiadomości, szablony, limity, lista wykluczeń |
@@ -108,16 +109,13 @@ połączone, dostajesz też natychmiastowe powiadomienie mailem.
 
 ## 6. Skąd biorą się leady
 
-Trzy drogi, wszystkie prowadzą do jednej listy w zakładce **Leady**:
+Dwie drogi, obie prowadzą do listy w zakładce **Leady**:
 
 1. **Formularz na stronie** — zapytanie zapisuje się automatycznie (patrz punkt 5).
-2. **Poczta** — przycisk **Wczytaj z poczty** na tablicy wyławia ze skrzynki wiadomości,
-   które wyglądają na zapytanie o stronę, i zakłada kartkę oraz leada.
-3. **Ręcznie** — przycisk **Dodaj ręcznie** w zakładce Leady.
+2. **Ręcznie** — przycisk **Dodaj ręcznie** w zakładce Leady.
 
-Automatyczne przeszukiwanie cudzych stron w poszukiwaniu kontaktów zostało usunięte
-z panelu. Moduł analizujący strony (`services/leadFinder.js`) został, bo korzysta
-z niego wczytywanie z poczty — wyciąga profile społecznościowe nadawcy z jego strony.
+Panel nie przeszukuje sam ani cudzych stron, ani Twojej skrzynki. Nic nie pojawia
+się na liście ani na tablicy bez Twojego udziału.
 
 
 ## 7. Wysyłka wiadomości — i granice, których pilnuje backend

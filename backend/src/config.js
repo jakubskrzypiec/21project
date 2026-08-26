@@ -61,10 +61,6 @@ const config = {
     googleCseCx: process.env.GOOGLE_CSE_CX || '',
   },
 
-  // Automatyczne przeglądanie skrzynki pod kątem zapytań o stronę.
-  // Domyślnie wyłączone — przycisk „Wczytaj z poczty" w panelu działa zawsze.
-  inboxScan: bool(process.env.INBOX_SCAN, false),
-
   outreach: {
     // draft   – wiadomości lądują wyłącznie w Kopiach roboczych Gmaila (domyślne, najbezpieczniejsze)
     // approve – kolejka czeka na Twoje kliknięcie „Wyślij”

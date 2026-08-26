@@ -936,17 +936,29 @@ const KOLORY = [
   ['rozowa', 'różowa'], ['niebieska', 'niebieska'],
 ];
 
+/* Kolejność decyduje o kolejności kolumn na tablicy. */
+const STATUSY = [
+  ['do-zrobienia', 'Do zrobienia'],
+  ['w-trakcie', 'W trakcie'],
+  ['czeka-na-odpowiedz', 'Czeka na odpowiedź'],
+  ['zrobione', 'Zrobione'],
+];
+const nazwaStatusu = (k) => (STATUSY.find(([key]) => key === k) || [, k])[1];
+
 views['/notatnik'] = async () => {
   const params = new URLSearchParams(location.hash.split('?')[1] || '');
   const showDone = params.get('done') === '1';
   const folder = params.get('folder') || '';
   view.innerHTML = '<div class="empty">Wczytywanie…</div>';
 
-  const [{ notes, doneCount }, filesData] = await Promise.all([
+  const [{ notes, doneCount, licznik }, filesData] = await Promise.all([
     api(`/board/notes${showDone ? '?done=1' : ''}`),
     api(`/board/files${folder ? `?folder=${encodeURIComponent(folder)}` : ''}`),
   ]);
   const { files, folders } = filesData;
+
+  // Kolumnę „Zrobione" pokazujemy tylko na życzenie — inaczej rośnie w nieskończoność.
+  const widoczneStatusy = STATUSY.filter(([k]) => k !== 'zrobione' || showDone);
 
   view.innerHTML = `
     <div class="row" style="justify-content:space-between;align-items:flex-start">
@@ -957,17 +969,26 @@ views['/notatnik'] = async () => {
       <div class="row">
         <a class="btn ghost sm" href="#/notatnik${showDone ? '' : '?done=1'}">
           ${showDone ? 'Ukryj zrobione' : `Pokaż zrobione (${doneCount})`}</a>
-        <button class="btn ghost sm" id="btnScanMail">Wczytaj z poczty</button>
         <button class="btn" id="btnNewNote">Nowa kartka</button>
       </div>
     </div>
 
-    <div class="board">
-      ${notes.length ? notes.map(noteCard).join('') : `
-        <div class="empty" style="grid-column:1/-1">
-          Tablica jest pusta. Pierwsza kartka to zwykle lista rzeczy, o których łatwo zapomnieć.
-        </div>`}
-    </div>
+    ${notes.length ? `
+    <div class="kanban">
+      ${widoczneStatusy.map(([key, label]) => {
+        const wKolumnie = notes.filter((n) => (n.status || 'do-zrobienia') === key);
+        return `<section class="kolumna kolumna--${key}">
+          <h3 class="kolumna__head">${label} <b>${licznik[key] || 0}</b></h3>
+          <div class="kolumna__karty">
+            ${wKolumnie.length ? wKolumnie.map(noteCard).join('')
+              : '<p class="kolumna__pusto">nic tutaj</p>'}
+          </div>
+        </section>`;
+      }).join('')}
+    </div>` : `
+      <div class="empty">
+        Tablica jest pusta. Pierwsza kartka to zwykle lista rzeczy, o których łatwo zapomnieć.
+      </div>`}
 
     <h2 class="sec">Pliki</h2>
     <p class="sub">Umowy, logotypy, materiały od klientów. Do 25 MB na plik.</p>
@@ -1003,20 +1024,6 @@ views['/notatnik'] = async () => {
 
   $('#btnNewNote').onclick = () => noteModal();
 
-  $('#btnScanMail').onclick = async (e) => {
-    e.target.disabled = true;
-    e.target.textContent = 'Przeglądam skrzynkę…';
-    try {
-      const r = await api('/board/scan-mail', { method: 'POST', body: { limit: 25 } });
-      if (r.skipped) toast(`Pominięte: ${r.skipped}`, true);
-      else if (r.dodane) { toast(`Dodano ${r.dodane} kartek z zapytaniami.`); render(); return; }
-      else toast(`Sprawdzono ${r.sprawdzone} wiadomości — nic nowego do dodania.`);
-    } catch (err) {
-      toast(err.message, true);
-    }
-    e.target.disabled = false;
-    e.target.textContent = 'Wczytaj z poczty';
-  };
 
   view.querySelectorAll('[data-note-edit]').forEach((b) => {
     b.onclick = async () => {
@@ -1024,9 +1031,10 @@ views['/notatnik'] = async () => {
       noteModal(n);
     };
   });
-  view.querySelectorAll('[data-note-done]').forEach((cb) => {
-    cb.onchange = async () => {
-      await api(`/board/notes/${cb.dataset.noteDone}`, { method: 'PATCH', body: { done: cb.checked } });
+  view.querySelectorAll('[data-note-status]').forEach((sel) => {
+    sel.onchange = async () => {
+      await api(`/board/notes/${sel.dataset.noteStatus}`, { method: 'PATCH', body: { status: sel.value } });
+      toast(`Przeniesione: ${nazwaStatusu(sel.value)}`);
       render();
     };
   });
@@ -1087,13 +1095,14 @@ views['/notatnik'] = async () => {
 };
 
 function noteCard(n) {
-  const przeterminowana = n.due_date && !n.done && n.due_date < new Date().toISOString().slice(0, 10);
-  return `<article class="note note--${esc(n.color)} ${n.done ? 'note--done' : ''}">
+  const status = n.status || 'do-zrobienia';
+  const zrobiona = status === 'zrobione';
+  const przeterminowana = n.due_date && !zrobiona && n.due_date < new Date().toISOString().slice(0, 10);
+  return `<article class="note note--${esc(n.color)} ${zrobiona ? 'note--done' : ''}">
     <div class="note__top">
-      <label class="note__check">
-        <input type="checkbox" data-note-done="${n.id}" ${n.done ? 'checked' : ''}>
-        <span>${n.done ? 'zrobione' : 'do zrobienia'}</span>
-      </label>
+      <select class="note__status" data-note-status="${n.id}" title="Zmień status">
+        ${STATUSY.map(([k, l]) => `<option value="${k}" ${k === status ? 'selected' : ''}>${l}</option>`).join('')}
+      </select>
       <button class="note__pin ${n.pinned ? 'on' : ''}" data-note-pin="${n.id}" data-pinned="${n.pinned}"
               title="Przypnij na górze">${n.pinned ? '📌' : '📍'}</button>
     </div>
@@ -1106,8 +1115,8 @@ function noteCard(n) {
       ${n.project_name ? `<span class="tag">${esc(n.project_name)}</span>` : ''}
       ${n.files ? `<span class="tag">${n.files} plik(ów)</span>` : ''}
       <span class="note__actions">
-        <button data-note-move="${n.id}" data-dir="up" title="W lewo">←</button>
-        <button data-note-move="${n.id}" data-dir="down" title="W prawo">→</button>
+        <button data-note-move="${n.id}" data-dir="up" title="Wyżej">↑</button>
+        <button data-note-move="${n.id}" data-dir="down" title="Niżej">↓</button>
         <button data-note-edit="${n.id}" title="Edytuj">edytuj</button>
         <button data-note-del="${n.id}" title="Usuń">usuń</button>
       </span>
@@ -1135,6 +1144,9 @@ async function noteModal(note) {
   openModal(isEdit ? 'Edytuj kartkę' : 'Nowa kartka', `
     <label class="f">Tytuł<input name="title" value="${esc(note?.title || '')}" placeholder="np. Strona dla Meblarni"></label>
     <label class="f">Treść<textarea name="body" placeholder="Co trzeba zrobić…">${esc(note?.body || '')}</textarea></label>
+    <label class="f">Status<select name="status">
+      ${STATUSY.map(([k, l]) => `<option value="${k}" ${(note?.status || 'do-zrobienia') === k ? 'selected' : ''}>${l}</option>`).join('')}
+    </select></label>
     <label class="f">Kolor kartki<select name="color">
       ${KOLORY.map(([k, l]) => `<option value="${k}" ${note?.color === k ? 'selected' : ''}>${l}</option>`).join('')}
     </select></label>

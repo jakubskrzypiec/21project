@@ -177,7 +177,8 @@ CREATE TABLE IF NOT EXISTS notes (
   body       TEXT,
   color      TEXT DEFAULT 'zolta',     -- zolta | biala | zielona | rozowa | niebieska
   pinned     INTEGER NOT NULL DEFAULT 0,
-  done       INTEGER NOT NULL DEFAULT 0,
+  status     TEXT NOT NULL DEFAULT 'do-zrobienia',  -- patrz STATUSY w board.routes.js
+  done       INTEGER NOT NULL DEFAULT 0,            -- trzymane zgodnie ze statusem
   due_date   TEXT,
   position   INTEGER DEFAULT 0,
   project_id INTEGER REFERENCES projects(id) ON DELETE SET NULL,
@@ -238,10 +239,20 @@ function migrate() {
   };
 
   const kolumny = db.prepare('PRAGMA table_info(notes)').all().map((c) => c.name);
-  for (const [name, ddl] of [['source', 'TEXT'], ['source_ref', 'TEXT'], ['links', 'TEXT']]) {
+  for (const [name, ddl] of [
+    ['source', 'TEXT'], ['source_ref', 'TEXT'], ['links', 'TEXT'],
+    ['status', "TEXT NOT NULL DEFAULT 'do-zrobienia'"],
+  ]) {
     if (!kolumny.includes(name)) {
       krok(`notes.${name}`, () => db.exec(`ALTER TABLE notes ADD COLUMN ${name} ${ddl}`));
     }
+  }
+
+  // Kartki sprzed statusów: odhaczone stają się zrobione, reszta czeka do zrobienia.
+  if (!kolumny.includes('status')) {
+    krok('statusy kartek', () => db.exec(
+      "UPDATE notes SET status = CASE WHEN done = 1 THEN 'zrobione' ELSE 'do-zrobienia' END"
+    ));
   }
 
   krok('indeks notes.source_ref', () => db.exec(

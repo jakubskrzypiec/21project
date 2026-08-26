@@ -132,19 +132,6 @@ function schedule() {
     } catch (err) { console.error('[kolejka]', err.message); }
   }, { timezone: config.outreach.timezone });
 
-  // Nowe zapytania ze skrzynki na tablicę — co pół godziny w godzinach pracy.
-  // Uruchamia się tylko przy INBOX_SCAN=true. Rozpoznawanie zapytań bywa
-  // omylne, więc domyślnie decyzję podejmuje człowiek przyciskiem w panelu.
-  if (config.inboxScan) {
-    cron.schedule('*/30 6-22 * * *', async () => {
-      try {
-        const r = await require('./services/inbox').scanInbox({ limit: 25 });
-        if (r.dodane) console.log(`[skrzynka] ${r.dodane} nowych zapytań trafiło na tablicę`);
-      } catch (err) { console.error('[skrzynka]', err.message); }
-    }, { timezone: config.outreach.timezone });
-    console.log('   skrzynka: automatyczne wczytywanie zapytań włączone');
-  }
-
   // Sprzątanie statystyk starszych niż 24 miesiące — okres zadeklarowany
   // w polityce prywatności. Raz na dobę, w nocy.
   cron.schedule('30 3 * * *', () => {
