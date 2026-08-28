@@ -350,7 +350,7 @@ views['/poczta'] = async () => {
     <div class="mailLayout">
       ${pickGroup('watki', `<div class="card" style="padding:0">
         <div class="threadList" id="threads">
-          ${data.threads.length ? data.threads.map(threadRow).join('') : '<div class="empty">Pusto.</div>'}
+          ${data.threads.length ? data.threads.map(threadRow).join('') : pustaSkrzynka(data, mailView, q)}
         </div>
       </div>`)}
       <div class="card" id="threadView"><div class="empty">Wybierz wiadomość z listy.</div></div>
@@ -388,6 +388,23 @@ views['/poczta'] = async () => {
     };
   });
 };
+
+/** Pusta lista bez wyjaśnienia to najgorszy możliwy komunikat — mówimy, z którego
+ *  konta czytamy i co najczęściej jest przyczyną. */
+function pustaSkrzynka(data, mailView, q) {
+  if (q) return `<div class="empty">Nic nie pasuje do „${esc(q)}".</div>`;
+  const konto = data.account ? `<strong>${esc(data.account)}</strong>` : 'nieznanego konta';
+  return `<div class="empty" style="text-align:left;padding:18px 16px;line-height:1.6">
+    Czytam skrzynkę ${konto} i nic tu nie ma.
+    ${mailView === 'wszystko' ? `
+      <br><span class="small muted">Jeśli w Gmailu maile są, to znaczy, że panel jest połączony z inną skrzynką
+      niż ta, którą oglądasz. Sprawdź adres w <a href="#/ustawienia">Ustawieniach</a>.</span>`
+    : `<br><span class="small muted">Widok „Od ludzi" odsiewa promocje, powiadomienia i automaty.
+      Zajrzyj do <a href="#/poczta?view=wszystko">Całej skrzynki</a> — jeśli tam są, to kwestia filtra.
+      Jeśli i tam pusto, panel czyta inną skrzynkę niż myślisz: adres jest w
+      <a href="#/ustawienia">Ustawieniach</a>.</span>`}
+  </div>`;
+}
 
 function threadRow(t) {
   return `<div class="threadItem pickItem ${t.unread ? 'unread' : ''}" data-id="${t.id}">

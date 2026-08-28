@@ -28,7 +28,14 @@ router.get('/threads', guard(async (req, res) => {
     pageToken,
   });
 
-  res.json({ ...data, threads: withKnownSenders(data.threads), view: view || 'klienci' });
+  // Konto dokładamy do odpowiedzi, bo przy dwóch skrzynkach Gmaila najczęstszą
+  // przyczyną „pustej poczty" jest podłączenie tej drugiej.
+  res.json({
+    ...data,
+    threads: withKnownSenders(data.threads),
+    view: view || 'klienci',
+    account: google.status().account || null,
+  });
 }));
 
 /**
