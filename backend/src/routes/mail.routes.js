@@ -3,7 +3,7 @@ const express = require('express');
 const gmail = require('../services/gmail');
 const google = require('../services/google');
 const ai = require('../services/ai');
-const { db } = require('../db');
+const { db, getSetting, setSetting } = require('../db');
 
 const router = express.Router();
 
@@ -120,7 +120,36 @@ router.post('/threads/:id/summary', guard(async (req, res) => {
 
 /* ------------------------ połączenie z kontem Google ------------------------ */
 
-router.get('/google/status', (_req, res) => res.json({ ...google.status(), ai: ai.enabled() }));
+router.get('/google/status', (_req, res) => {
+  // `connected` mówi tylko tyle, że mamy zapisany token — nie, że Google go
+  // jeszcze uznaje. Dokładamy ostatni błąd powiadomienia z formularza, bo to
+  // jedyny sygnał, że wysyłka przestała działać.
+  let ostatniBlad = null;
+  try { ostatniBlad = JSON.parse(getSetting('powiadomienie_blad', '') || 'null'); } catch { /* stary zapis */ }
+  res.json({ ...google.status(), ai: ai.enabled(), ostatniBlad });
+});
+
+/** Wysyła próbną wiadomość na Twój własny adres — sprawdza całą drogę naraz. */
+router.post('/test', async (_req, res) => {
+  const g = google.status();
+  if (!g.connected || !g.account) {
+    return res.status(400).json({ error: 'Konto Google nie jest połączone.' });
+  }
+  try {
+    await gmail.sendMessage({
+      to: g.account,
+      subject: 'Test powiadomień z panelu 21 project',
+      body: 'Jeśli czytasz tę wiadomość, powiadomienia z formularza kontaktowego działają.\n\n'
+        + `Wysłane z panelu ${new Date().toLocaleString('pl-PL')}.`,
+    });
+    setSetting('powiadomienie_blad', '');
+    res.json({ ok: true, account: g.account });
+  } catch (err) {
+    const opis = err?.message || String(err);
+    setSetting('powiadomienie_blad', JSON.stringify({ ts: new Date().toISOString(), error: opis.slice(0, 300) }));
+    res.status(502).json({ error: opis.slice(0, 300) });
+  }
+});
 
 router.post('/google/disconnect', (_req, res) => {
   google.disconnect();

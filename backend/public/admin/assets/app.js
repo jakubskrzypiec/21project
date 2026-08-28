@@ -1277,12 +1277,24 @@ views['/ustawienia'] = async () => {
     <h1 class="page">Ustawienia</h1>
     <p class="sub">Integracje i wdrożenie licznika na stronie.</p>
 
+    ${g.ostatniBlad?.error ? `<div class="notice bad">
+      <strong>Powiadomienie z formularza nie doszło.</strong>
+      Ostatnia nieudana próba: ${fmtDateTime(g.ostatniBlad.ts)} — ${esc(g.ostatniBlad.error)}<br>
+      Zapytanie samo w sobie jest zapisane w <a href="#/leady">Leadach</a>, więc nic nie przepadło.
+      Najczęstsza przyczyna to wygasłe połączenie z Google — połącz konto ponownie i wyślij próbną wiadomość.
+    </div>` : ''}
+
     <div class="card">
       <h3>Konto Google (poczta i kalendarz)</h3>
       ${g.connected
         ? `<p>Połączone jako <strong>${esc(g.account || 'nieznane konto')}</strong>
              <span class="muted small">· ostatnia aktualizacja ${fmtDateTime(g.updatedAt)}</span></p>
-           <button class="btn ghost sm" id="btnDisconnect">Odłącz konto</button>`
+           <div class="row" style="margin-top:10px">
+             <button class="btn sm" id="btnTestMail">Wyślij próbną wiadomość</button>
+             <button class="btn ghost sm" id="btnDisconnect">Odłącz konto</button>
+           </div>
+           <p class="small muted" style="margin:10px 0 0">Próbna wiadomość idzie na Twój własny adres tą samą drogą,
+             co powiadomienia z formularza — jeśli dojdzie, formularz też działa.</p>`
         : g.configured
           ? `<p class="muted small">Poczta, kalendarz i wysyłka wymagają połączenia z Twoim kontem Google.</p>
              <button class="btn" id="btnConnect">Połącz konto Google</button>`
@@ -1321,6 +1333,19 @@ views['/ustawienia'] = async () => {
     if (!confirm('Odłączyć konto Google? Poczta i kalendarz przestaną działać.')) return;
     await api('/mail/google/disconnect', { method: 'POST' });
     render();
+  };
+  const btnTest = $('#btnTestMail');
+  if (btnTest) btnTest.onclick = async () => {
+    btnTest.disabled = true;
+    btnTest.textContent = 'Wysyłam…';
+    try {
+      const r = await api('/mail/test', { method: 'POST' });
+      toast(`Wysłane na ${r.account}. Sprawdź skrzynkę.`);
+      render();
+    } catch (err) {
+      toast(err.message, true);
+      render();
+    }
   };
   $('#btnCopy').onclick = () => {
     navigator.clipboard.writeText(snippet).then(() => toast('Skopiowano.'));

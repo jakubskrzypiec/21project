@@ -1,6 +1,6 @@
 'use strict';
 const express = require('express');
-const { db, logAction } = require('../db');
+const { db, logAction, setSetting } = require('../db');
 const { config } = require('../config');
 const { clientIp } = require('../middleware/auth');
 const { upsertLead } = require('./leads.routes');
@@ -47,17 +47,26 @@ router.post('/api/contact', limit(5, 10 * 60 * 1000), async (req, res) => {
 
   logAction('contact.submit', clientIp(req), { lead_id: lead.id });
 
+  // Zapytanie jest już zapisane, więc nieudane powiadomienie nie może wywrócić
+  // odpowiedzi dla odwiedzającego. Ale nie może też zniknąć bez śladu — inaczej
+  // wygasły token Google oznacza ciszę i żadnego sygnału, że coś nie działa.
   try {
     const google = require('../services/google');
-    if (google.status().connected && google.status().account) {
-      const gmail = require('../services/gmail');
-      await gmail.sendMessage({
-        to: google.status().account,
-        subject: `Nowe zapytanie ze strony: ${name}`,
-        body: `Imię: ${name}\nKontakt: ${contact}\nPakiet: ${b.plan || '—'}\nTermin: ${b.date || '—'}\n\n${message}\n\nLead #${lead.id} — ${config.publicUrl}/admin#/leady/${lead.id}`,
-      });
-    }
-  } catch { /* brak powiadomienia nie może zablokować zapisu zapytania */ }
+    const g = google.status();
+    if (!g.connected || !g.account) throw new Error('Konto Google nie jest połączone.');
+    const gmail = require('../services/gmail');
+    await gmail.sendMessage({
+      to: g.account,
+      subject: `Nowe zapytanie ze strony: ${name}`,
+      body: `Imię: ${name}\nKontakt: ${contact}\nPakiet: ${b.plan || '—'}\nTermin: ${b.date || '—'}\n\n${message}\n\nLead #${lead.id} — ${config.publicUrl}/admin#/leady/${lead.id}`,
+    });
+    setSetting('powiadomienie_blad', '');
+  } catch (err) {
+    const opis = err?.message || String(err);
+    console.error('[formularz] nie wysłano powiadomienia:', opis);
+    logAction('contact.notify_failed', clientIp(req), { lead_id: lead.id, error: opis.slice(0, 300) });
+    setSetting('powiadomienie_blad', JSON.stringify({ ts: new Date().toISOString(), error: opis.slice(0, 300) }));
+  }
 
   res.json({ ok: true, message: 'Dziękuję — odezwę się najszybciej, jak się da.' });
 });
