@@ -20,21 +20,37 @@ router.get('/threads', guard(async (req, res) => {
   const { q, label, pageToken, view } = req.query;
   const preset = gmail.VIEWS[view] || gmail.VIEWS.klienci;
 
+  const ile = Math.min(Number(req.query.limit) || 25, 50);
+  const odsiewamy = Boolean(preset.odsiej) && !q && !label;
+
   const data = await gmail.listThreads({
     // Własne wyszukiwanie ma pierwszeństwo nad gotowym widokiem.
     q: q ? q : preset.q,
     labelIds: label ? [label] : (q ? undefined : preset.labelIds || undefined),
-    maxResults: Math.min(Number(req.query.limit) || 25, 50),
+    // Przy odsiewaniu bierzemy z zapasem, bo część wątków odpadnie u nas.
+    maxResults: odsiewamy ? Math.min(ile * 2, 100) : ile,
     pageToken,
   });
+
+  let watki = data.threads;
+  let ukryte = 0;
+  if (odsiewamy) {
+    const przed = watki.length;
+    watki = watki.filter((t) =>
+      !gmail.jestAutomatem(t.from)
+      && !(t.kategorie || []).some((k) => gmail.KATEGORIE_AUTOMATOW.includes(k)));
+    ukryte = przed - watki.length;
+    watki = watki.slice(0, ile);
+  }
 
   // Konto dokładamy do odpowiedzi, bo przy dwóch skrzynkach Gmaila najczęstszą
   // przyczyną „pustej poczty" jest podłączenie tej drugiej.
   res.json({
     ...data,
-    threads: withKnownSenders(data.threads),
+    threads: withKnownSenders(watki),
     view: view || 'klienci',
     account: google.status().account || null,
+    ukryte,
   });
 }));
 

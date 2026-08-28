@@ -48,24 +48,33 @@ function attachmentsOf(payload) {
   return out;
 }
 
-/**
- * Gotowe widoki skrzynki. „Klienci" to zwykła skrzynka odbiorcza minus wszystko,
- * co Gmail sam uznał za promocje, społeczności i fora, minus typowe adresy
- * automatów. Dzięki temu zostaje korespondencja od ludzi.
- */
+/** Fragmenty adresów, po których poznajemy automat. */
 const AUTOMATY = [
   'noreply', 'no-reply', 'donotreply', 'do-not-reply', 'newsletter', 'mailer',
   'notifications', 'notification', 'automat', 'powiadomienia', 'info@facebookmail.com',
   'bounce', 'mailchimp', 'sendgrid', 'postmaster',
 ];
 
+const KATEGORIE_AUTOMATOW = [
+  'CATEGORY_PROMOTIONS', 'CATEGORY_SOCIAL', 'CATEGORY_FORUMS', 'CATEGORY_UPDATES',
+];
+
+/** Czy ostatnia wiadomość w wątku przyszła od automatu, a nie od człowieka. */
+function jestAutomatem(from = '') {
+  const adres = String(addressOf(from) || from).toLowerCase();
+  return AUTOMATY.some((a) => adres.includes(a));
+}
+
 const VIEWS = {
-  // Ludzie: bez kategorii promocyjnych i bez automatów.
+  // Ludzie: skrzynka odbiorcza minus automaty i kategorie Gmaila. Odsiewamy
+  // u siebie, po pobraniu listy — a nie kilkunastoma wykluczeniami w zapytaniu.
+  // Przy wyszukiwaniu wątkowym „-from:" i „-category:" potrafią wyciąć całą
+  // rozmowę przez jedną wiadomość w środku, i tak ginęły prawdziwe maile
+  // od klientów z długich wątków.
   klienci: {
     labelIds: ['INBOX'],
-    q: ['-category:promotions', '-category:social', '-category:forums', '-category:updates',
-        '-in:spam', '-in:trash',
-        ...AUTOMATY.map((a) => `-from:${a}`)].join(' '),
+    q: '-in:spam -in:trash',
+    odsiej: true,
   },
   wszystko: { labelIds: ['INBOX'], q: '-in:spam -in:trash' },
   wazne:    { labelIds: null, q: 'is:starred -in:trash' },
@@ -105,6 +114,7 @@ async function listThreads({ q = '', labelIds, maxResults = 25, pageToken } = {}
         unread: labels.has('UNREAD'),
         starred: labels.has('STARRED'),
         labels: [...labels].filter((l) => !l.startsWith('CATEGORY_')),
+        kategorie: [...labels].filter((l) => l.startsWith('CATEGORY_')),
       };
     })
   );
@@ -214,5 +224,5 @@ async function unreadCount() {
 
 module.exports = {
   listThreads, getThread, sendMessage, createDraft, modifyThread, trashThread, labels, unreadCount,
-  VIEWS, addressOf,
+  VIEWS, addressOf, jestAutomatem, KATEGORIE_AUTOMATOW,
 };

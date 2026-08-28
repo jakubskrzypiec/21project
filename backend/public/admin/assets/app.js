@@ -351,7 +351,8 @@ views['/poczta'] = async () => {
       ${q ? `<a class="btn ghost sm" href="#/poczta?view=klienci">Wyczyść</a>` : ''}
       <button class="btn ghost sm" type="button" id="newMail">Nowa wiadomość</button>
       <button class="btn ghost sm" type="button" id="btnRefreshMail">Odśwież</button>
-      <span class="small muted" id="mailStamp">sprawdzone ${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</span>
+      <span class="small muted" id="mailStamp">sprawdzone ${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}${
+        data.ukryte ? ` · ukryto ${data.ukryte} automat(y)` : ''}</span>
     </form>
     <div class="mailLayout">
       ${pickGroup('watki', `<div class="card" style="padding:0">
