@@ -243,6 +243,8 @@ views['/pulpit'] = async () => {
     b.textContent = d.mail.unread;
     b.hidden = false;
   }
+
+  odswiezajCo(120);
 };
 
 /* --- Ruch --- */
@@ -300,6 +302,8 @@ views['/ruch'] = async () => {
         <td>${relTime(r.ts)}</td><td>${esc(r.path)}</td>
         <td>${esc(r.referrer_host || 'bezpośrednio')}</td><td>${esc(r.device)}</td></tr>`)}
     </div>`;
+
+  odswiezajCo(120);
 };
 
 /* --- Poczta --- */
@@ -346,6 +350,8 @@ views['/poczta'] = async () => {
       <button class="btn sm" type="submit">Szukaj</button>
       ${q ? `<a class="btn ghost sm" href="#/poczta?view=klienci">Wyczyść</a>` : ''}
       <button class="btn ghost sm" type="button" id="newMail">Nowa wiadomość</button>
+      <button class="btn ghost sm" type="button" id="btnRefreshMail">Odśwież</button>
+      <span class="small muted" id="mailStamp">sprawdzone ${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</span>
     </form>
     <div class="mailLayout">
       ${pickGroup('watki', `<div class="card" style="padding:0">
@@ -364,6 +370,10 @@ views['/poczta'] = async () => {
   };
   $('#newMail').onclick = () => composeModal();
   bulkWire('watki', (id) => api(`/mail/threads/${id}`, { method: 'DELETE' }), { label: 'wątków' });
+  $('#btnRefreshMail').onclick = () => render();
+  // Nie podmieniamy widoku, gdy czytasz wątek albo masz coś zaznaczone —
+  // odświeżenie skasowałoby otwartą wiadomość spod palców.
+  odswiezajCo(60, () => !$('#threadView')?.dataset.open && !view.querySelector('[data-pick]:checked'));
   view.querySelectorAll('.threadItem').forEach((el) => {
     el.onclick = (e) => {
       if (e.target.closest('[data-star], .pick')) return;  // gwiazdka i zaznaczanie nie otwierają wątku
@@ -428,6 +438,7 @@ const addrOf = (from = '') => (from.match(/<([^>]+)>/) || [null, from])[1];
 
 async function openThread(id) {
   const box = $('#threadView');
+  box.dataset.open = id;
   box.innerHTML = '<div class="empty">Wczytywanie…</div>';
   const t = await api(`/mail/threads/${id}`);
   api(`/mail/threads/${id}/read`, { method: 'POST' }).catch(() => {});
@@ -1371,7 +1382,24 @@ views['/ustawienia'] = async () => {
 
 /* ------------------------------- router ------------------------------- */
 
+/* Widok renderuje się tylko przy zmianie adresu, więc panel zostawiony otwarty
+   pokazywał stan sprzed godzin. Widoki, które żyją własnym życiem — poczta,
+   ruch, pulpit — zamawiają odświeżanie co kilkadziesiąt sekund. */
+let timerOdswiezania = null;
+
+function odswiezajCo(sekundy, wolno = () => true) {
+  clearInterval(timerOdswiezania);
+  timerOdswiezania = setInterval(() => {
+    if (document.hidden) return;    // karta w tle — szkoda łącza
+    if (modal.open) return;         // otwarte okienko
+    if (!wolno()) return;           // widok mówi, że akurat nie pora
+    render();
+  }, sekundy * 1000);
+}
+
 async function render() {
+  clearInterval(timerOdswiezania);
+  timerOdswiezania = null;
   const raw = (location.hash || '#/pulpit').slice(1).split('?')[0];
   const parts = raw.split('/').filter(Boolean);
   let handler = views[`/${parts.join('/')}`];
