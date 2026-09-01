@@ -1,6 +1,6 @@
 'use strict';
 const express = require('express');
-const { db } = require('../db');
+const { db, getSetting } = require('../db');
 const analytics = require('../services/analytics');
 const cal = require('../services/calendarSvc');
 const google = require('../services/google');
@@ -9,6 +9,24 @@ const outreach = require('../services/outreach');
 const ai = require('../services/ai');
 
 const router = express.Router();
+
+/**
+ * Stan formularza kontaktowego widoczny wprost na pulpicie.
+ * Zapytanie zapisuje się nawet wtedy, gdy powiadomienie na maila nie wyszło,
+ * więc „brak maila" i „brak zapytania" to dwie różne awarie — i pulpit musi
+ * je rozróżniać, zamiast milczeć i kazać zgadywać.
+ */
+function stanFormularza() {
+  const ostatni = db.prepare(
+    "SELECT id, name, created_at FROM leads WHERE source = 'form' ORDER BY datetime(created_at) DESC LIMIT 1"
+  ).get() || null;
+  const od = (dni) => db.prepare(
+    "SELECT COUNT(*) AS n FROM leads WHERE source = 'form' AND created_at >= ?"
+  ).get(new Date(Date.now() - dni * 86400000).toISOString()).n;
+  let blad = null;
+  try { blad = JSON.parse(getSetting('powiadomienie_blad', '') || 'null'); } catch { /* stary zapis */ }
+  return { ostatni, w7dni: od(7), w30dni: od(30), blad };
+}
 
 /** Jeden strzał na wejściu do panelu — wszystko, co widać na pulpicie. */
 router.get('/', async (_req, res) => {
@@ -37,6 +55,7 @@ router.get('/', async (_req, res) => {
     },
     outreach: { quota: outreach.quota(), inWindow: outreach.inSendingWindow() },
     integrations: { google: google.status(), ai: ai.enabled() },
+    formularz: stanFormularza(),
   };
 
   try {

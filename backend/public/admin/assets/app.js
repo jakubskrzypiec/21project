@@ -165,6 +165,50 @@ const scoreTag = (s) =>
 const views = {};
 
 /* --- Pulpit --- */
+/** Polska odmiana przez liczbę: 1 zapytanie, 2 zapytania, 5 zapytań. */
+function odmien(n, jeden, kilka, wiele) {
+  const d = n % 10, s = n % 100;
+  if (n === 1) return jeden;
+  if (d >= 2 && d <= 4 && (s < 12 || s > 14)) return kilka;
+  return wiele;
+}
+
+/**
+ * Formularz milczy z dwóch różnych powodów i pulpit musi je rozdzielić:
+ * albo nikt nie wysłał zapytania (wtedy nie ma czego naprawiać), albo zapytanie
+ * przyszło, ale powiadomienie na maila nie wyszło. Bez tego jedyny sygnał
+ * „coś nie działa" był schowany w Ustawieniach, których nikt nie otwiera.
+ */
+function bannerFormularza(f) {
+  if (!f) return '';
+  const ostatnie = f.ostatni
+    ? `Ostatnie zapytanie: <strong>${esc(f.ostatni.name || 'bez nazwy')}</strong>,
+       ${fmtDateTime(f.ostatni.created_at)} (<a href="#/leady/${f.ostatni.id}">otwórz</a>).`
+    : 'Z formularza nie przyszło jeszcze żadne zapytanie.';
+
+  if (f.blad?.error) {
+    return `<div class="notice bad">
+      <strong>Powiadomienie z formularza nie doszło na maila.</strong>
+      Ostatnia nieudana próba: ${fmtDateTime(f.blad.ts)} — ${esc(f.blad.error)}<br>
+      Same zapytania są zapisane w <a href="#/leady">Leadach</a>, więc nic nie przepadło.
+      Najczęstsza przyczyna to wygasłe połączenie z Google —
+      <a href="#/ustawienia">połącz konto ponownie</a> i wyślij próbną wiadomość.<br>
+      ${ostatnie}
+    </div>`;
+  }
+  if (!f.ostatni) {
+    return `<div class="notice warn">
+      <strong>Formularz nie dostał jeszcze żadnego zapytania.</strong>
+      To nie musi znaczyć awarii — przy obecnym ruchu bywa cicho.
+      Żeby sprawdzić samą drogę wysyłki, wejdź w <a href="#/ustawienia">Ustawienia</a>
+      i kliknij „Wyślij próbną wiadomość".
+    </div>`;
+  }
+  const opis = (n) => `${n} ${odmien(n, 'zapytanie', 'zapytania', 'zapytań')}`;
+  return `<p class="sub" style="margin-top:-6px">Formularz działa — ${opis(f.w7dni)} w ciągu 7 dni,
+    ${opis(f.w30dni)} w ciągu 30 dni. ${ostatnie}</p>`;
+}
+
 views['/pulpit'] = async () => {
   view.innerHTML = '<div class="empty">Wczytywanie…</div>';
   const d = await api('/dashboard');
@@ -180,6 +224,7 @@ views['/pulpit'] = async () => {
   view.innerHTML = `
     <h1 class="page">Pulpit</h1>
     <p class="sub">Ostatnie 30 dni · aktualizacja ${fmtDateTime(new Date())}</p>
+    ${bannerFormularza(d.formularz)}
 
     <div class="grid g4">
       ${kpi(fmtNum(t.visitors), 'użytkowników', t.change.visitors)}
