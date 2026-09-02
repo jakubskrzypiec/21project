@@ -76,18 +76,25 @@ const VIEWS = {
     q: '-in:spam -in:trash',
     odsiej: true,
   },
-  wszystko: { labelIds: ['INBOX'], q: '-in:spam -in:trash' },
+  // Wszystko, co jest na koncie: odebrane, wysłane, zarchiwizowane, każda etykieta.
+  // Bez labelIds Gmail nie zawęża do skrzynki odbiorczej, a bez zapytania nie odsiewa
+  // niczego. Spam i kosz Gmail pomija tu sam — są pod osobnym widokiem.
+  wszystko: { labelIds: null, q: '' },
+  odebrane: { labelIds: ['INBOX'], q: '-in:spam -in:trash' },
+  kosz:     { labelIds: null, q: 'in:spam OR in:trash', zeSmieciami: true },
   wazne:    { labelIds: null, q: 'is:starred -in:trash' },
   nieprzeczytane: { labelIds: ['INBOX'], q: 'is:unread -in:spam -in:trash' },
   promocje: { labelIds: ['INBOX'], q: 'category:promotions -in:trash' },
 };
 
-async function listThreads({ q = '', labelIds, maxResults = 25, pageToken } = {}) {
+async function listThreads({ q = '', labelIds, maxResults = 25, pageToken, zeSmieciami = false } = {}) {
   const api = gmail();
   const { data } = await api.users.threads.list({
     userId: 'me',
     q: q || undefined,
     labelIds: labelIds || undefined,
+    // Gmail domyślnie pomija spam i kosz; widok „Kosz i spam" musi to włączyć wprost.
+    includeSpamTrash: zeSmieciami || undefined,
     maxResults,
     pageToken: pageToken || undefined,
   });

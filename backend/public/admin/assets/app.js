@@ -453,18 +453,20 @@ views['/ruch'] = async () => {
 
 /* --- Poczta --- */
 const MAIL_VIEWS = [
+  ['wszystko', 'Wszystko'],
+  ['odebrane', 'Odebrane'],
   ['klienci', 'Od ludzi'],
   ['nieprzeczytane', 'Nieprzeczytane'],
   ['wazne', 'Ważne'],
-  ['wszystko', 'Cała skrzynka'],
   ['promocje', 'Promocje'],
+  ['kosz', 'Kosz i spam'],
 ];
 
 views['/poczta'] = async () => {
   view.innerHTML = '<div class="empty">Wczytywanie skrzynki…</div>';
   const params = new URLSearchParams(location.hash.split('?')[1] || '');
   const q = params.get('q') || '';
-  const mailView = params.get('view') || 'klienci';
+  const mailView = params.get('view') || 'wszystko';
   let data;
   try {
     data = await api(`/mail/threads?limit=30&view=${encodeURIComponent(mailView)}${q ? `&q=${encodeURIComponent(q)}` : ''}`);
@@ -476,11 +478,13 @@ views['/poczta'] = async () => {
   }
 
   const SUBS = {
-    klienci: 'Skrzynka bez promocji, powiadomień i automatów — zostaje korespondencja od ludzi.',
+    wszystko: 'Całe konto jakubskrzypiec.dev@gmail.com — odebrane, wysłane, zarchiwizowane, wszystkie etykiety. Nic nie jest odsiewane.',
+    odebrane: 'Sama skrzynka odbiorcza, bez wysłanych i archiwum.',
+    klienci: 'Skrzynka odbiorcza bez promocji, powiadomień i automatów — zostaje korespondencja od ludzi.',
     nieprzeczytane: 'Wszystko, czego jeszcze nie otworzyłeś.',
     wazne: 'Wątki oznaczone gwiazdką — Twoja lista rzeczy do załatwienia.',
-    wszystko: 'Pełna skrzynka odbiorcza, łącznie z tym, co odfiltrowuje widok „Od ludzi".',
     promocje: 'To, co Gmail uznał za promocje i newslettery.',
+    kosz: 'Spam i kosz — jedyne, czego nie ma w widoku „Wszystko".',
   };
 
   view.innerHTML = `
@@ -493,7 +497,7 @@ views['/poczta'] = async () => {
     <form class="row" id="mailSearch" style="margin-bottom:18px">
       <input class="inp" name="q" style="max-width:22rem" placeholder="Szukaj (np. from:klient@firma.pl)" value="${esc(q)}">
       <button class="btn sm" type="submit">Szukaj</button>
-      ${q ? `<a class="btn ghost sm" href="#/poczta?view=klienci">Wyczyść</a>` : ''}
+      ${q ? `<a class="btn ghost sm" href="#/poczta?view=wszystko">Wyczyść</a>` : ''}
       <button class="btn ghost sm" type="button" id="newMail">Nowa wiadomość</button>
       <button class="btn ghost sm" type="button" id="btnRefreshMail">Odśwież</button>
       <span class="small muted" id="mailStamp">sprawdzone ${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}${
@@ -511,7 +515,7 @@ views['/poczta'] = async () => {
   $('#mailSearch').onsubmit = (e) => {
     e.preventDefault();
     const value = e.target.q.value.trim();
-    location.hash = value ? `#/poczta?q=${encodeURIComponent(value)}` : '#/poczta?view=klienci';
+    location.hash = value ? `#/poczta?q=${encodeURIComponent(value)}` : '#/poczta?view=wszystko';
     render();
   };
   $('#newMail').onclick = () => composeModal();
@@ -556,7 +560,7 @@ function pustaSkrzynka(data, mailView, q) {
       <br><span class="small muted">Jeśli w Gmailu maile są, to znaczy, że panel jest połączony z inną skrzynką
       niż ta, którą oglądasz. Sprawdź adres w <a href="#/ustawienia">Ustawieniach</a>.</span>`
     : `<br><span class="small muted">Widok „Od ludzi" odsiewa promocje, powiadomienia i automaty.
-      Zajrzyj do <a href="#/poczta?view=wszystko">Całej skrzynki</a> — jeśli tam są, to kwestia filtra.
+      Zajrzyj do widoku <a href="#/poczta?view=wszystko">Wszystko</a> — jeśli tam są, to kwestia filtra.
       Jeśli i tam pusto, panel czyta inną skrzynkę niż myślisz: adres jest w
       <a href="#/ustawienia">Ustawieniach</a>.</span>`}
   </div>`;

@@ -42,7 +42,8 @@ const guard = (handler) => async (req, res) => {
 
 router.get('/threads', guard(async (req, res) => {
   const { q, label, pageToken, view } = req.query;
-  const preset = gmail.VIEWS[view] || gmail.VIEWS.klienci;
+  // Domyślnie pokazujemy całe konto — odsiewanie jest wyborem, nie stanem wyjściowym.
+  const preset = gmail.VIEWS[view] || gmail.VIEWS.wszystko;
 
   const ile = Math.min(Number(req.query.limit) || 25, 50);
   const odsiewamy = Boolean(preset.odsiej) && !q && !label;
@@ -54,6 +55,7 @@ router.get('/threads', guard(async (req, res) => {
     // Przy odsiewaniu bierzemy z zapasem, bo część wątków odpadnie u nas.
     maxResults: odsiewamy ? Math.min(ile * 2, 100) : ile,
     pageToken,
+    zeSmieciami: Boolean(preset.zeSmieciami),
   });
 
   let watki = data.threads;
