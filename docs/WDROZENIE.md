@@ -50,10 +50,21 @@ OUTREACH_MODE=draft
    a wtedy każde wdrożenie, przy którym baza nie przetrwa, wylogowuje z panelu
    i rozłącza konto Google.
 
-6. Zakładka **Volumes** → **New Volume** → ścieżka **`/app/data`**
+6. Podłącz dysk (wolumen) pod ścieżkę **`/app/data`**.
 
-   > To jest dysk na Twoje dane: leady, projekty, notatki, spotkania. **Bez niego stracisz
-   > wszystko przy pierwszej aktualizacji.** Nie pomijaj tego kroku.
+   Railway nie ma osobnej zakładki „Volumes" przy usłudze — wolumen dodaje się z widoku
+   projektu (tego z kafelkami usług). Trzy drogi, każda kończy się tak samo:
+
+   - **klawiszami:** `Ctrl + K` (na Macu `Cmd + K`) → wpisz `volume` → **Create Volume**
+   - **myszą:** kliknij prawym przyciskiem na puste tło widoku projektu → **Volume**
+   - **z usługi:** kliknij kafelek usługi → zakładka **Settings** → sekcja o dysku
+
+   Railway zapyta, do której usługi podpiąć dysk (wybierz panel) i o **Mount path** —
+   wpisz tam dokładnie `/app/data`. Po zatwierdzeniu usługa sama się przebuduje.
+
+   > To jest dysk na Twoje dane: leady, projekty, notatki, spotkania, a także token
+   > Google i klucz sesji. **Bez niego stracisz wszystko przy pierwszej aktualizacji**
+   > i panel będzie Cię wylogowywał po każdym wdrożeniu. Nie pomijaj tego kroku.
 
 7. Railway przebuduje projekt. W zakładce **Deployments → View logs** powinno pojawić się:
 
