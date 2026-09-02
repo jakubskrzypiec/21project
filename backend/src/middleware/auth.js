@@ -1,6 +1,7 @@
 'use strict';
 const jwt = require('jsonwebtoken');
 const { config } = require('../config');
+const { logAction } = require('../db');
 
 function clientIp(req) {
   const fwd = req.headers['x-forwarded-for'];
@@ -14,18 +15,34 @@ function signSession(email) {
   });
 }
 
-function setSessionCookie(res, token) {
+/**
+ * Flagi ciasteczka muszą być identyczne przy ustawianiu, odświeżaniu i kasowaniu —
+ * przeglądarka traktuje ciasteczka różniące się flagami jak osobne wpisy i przy
+ * niezgodności zostaje jej stary, nieważny egzemplarz.
+ */
+function cookieOpts(secure) {
+  return { httpOnly: true, sameSite: 'lax', secure, path: '/' };
+}
+
+/**
+ * O HTTPS decyduje faktyczne żądanie, nie sam PUBLIC_URL. Gdy PUBLIC_URL zostanie
+ * na hostingu nieustawiony, ciasteczko bez flagi `secure` nadal dociera, ale
+ * ustawione odwrotnie — `secure` przy połączeniu po HTTP — przepada bez śladu.
+ */
+function czySecure(req) {
+  if (req && (req.secure || req.headers['x-forwarded-proto'] === 'https')) return true;
+  return config.publicUrl.startsWith('https://');
+}
+
+function setSessionCookie(res, token, req) {
   res.cookie(config.jwt.cookieName, token, {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: config.publicUrl.startsWith('https://'),
+    ...cookieOpts(czySecure(req || res.req)),
     maxAge: config.jwt.ttlDays * 24 * 3600 * 1000,
-    path: '/',
   });
 }
 
 function clearSessionCookie(res) {
-  res.clearCookie(config.jwt.cookieName, { path: '/' });
+  res.clearCookie(config.jwt.cookieName, cookieOpts(czySecure(res.req)));
 }
 
 /** Opcjonalna zapora po IP — działa tylko, gdy ADMIN_IP_ALLOWLIST jest ustawione. */
@@ -39,16 +56,31 @@ function ipAllowlist(req, res, next) {
 
 /** Wymaga zalogowanego administratora. */
 function requireAdmin(req, res, next) {
-  const token = req.cookies?.[config.jwt.cookieName] || bearer(req);
-  if (!token) return deny(req, res);
+  const zCiastka = req.cookies?.[config.jwt.cookieName];
+  const token = zCiastka || bearer(req);
+  if (!token) return deny(req, res, 'brak_ciastka');
+  let payload;
   try {
-    const payload = jwt.verify(token, config.jwt.secret);
-    if (payload.role !== 'admin' || payload.sub !== config.admin.email) return deny(req, res);
-    req.admin = { email: payload.sub };
-    return next();
-  } catch {
-    return deny(req, res);
+    payload = jwt.verify(token, config.jwt.secret);
+  } catch (err) {
+    // Rozróżnienie jest istotne: „expired" to normalny koniec sesji, a „invalid
+    // signature" znaczy, że klucz podpisujący jest inny niż przy logowaniu —
+    // czyli baza z kluczem zniknęła między restartami.
+    return deny(req, res, err.name === 'TokenExpiredError' ? 'wygasla' : 'zly_podpis');
   }
+  if (payload.role !== 'admin' || payload.sub !== config.admin.email) return deny(req, res, 'nie_admin');
+  req.admin = { email: payload.sub };
+
+  // Sesja przesuwana: dopóki korzystasz z panelu, ważność biegnie od nowa.
+  // Bez tego ciasteczko wygasało co do sekundy po SESSION_TTL_DAYS od logowania,
+  // niezależnie od tego, czy panel był używany codziennie.
+  if (zCiastka) {
+    const zostalo = payload.exp * 1000 - Date.now();
+    if (zostalo < (config.jwt.ttlDays * 24 * 3600 * 1000) / 2) {
+      setSessionCookie(res, signSession(payload.sub), req);
+    }
+  }
+  return next();
 }
 
 function bearer(req) {
@@ -56,11 +88,17 @@ function bearer(req) {
   return h.startsWith('Bearer ') ? h.slice(7) : null;
 }
 
-function deny(req, res) {
+function deny(req, res, powod = 'brak_ciastka') {
+  // Każde odrzucenie ląduje w dzienniku z powodem — inaczej „znowu mnie wylogowało"
+  // nie da się odróżnić od zwykłego wejścia na panel bez zalogowania.
+  if (powod !== 'brak_ciastka') {
+    try { logAction('sesja.odrzucona', clientIp(req), { powod, sciezka: req.originalUrl }); }
+    catch { /* dziennik nie może blokować odpowiedzi */ }
+  }
   // Do przeglądarki wysyłamy ekran logowania, do wywołań API — czysty błąd 401.
   const isApi = req.originalUrl.startsWith('/api/');
   if (!isApi && req.accepts(['html', 'json']) === 'html') return res.redirect('/admin/login');
-  return res.status(401).json({ error: 'Wymagane logowanie.' });
+  return res.status(401).json({ error: 'Wymagane logowanie.', powod });
 }
 
 /** Prosty licznik nieudanych logowań w pamięci procesu. */

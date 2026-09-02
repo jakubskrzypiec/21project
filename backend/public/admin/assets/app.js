@@ -165,6 +165,26 @@ const scoreTag = (s) =>
 const views = {};
 
 /* --- Pulpit --- */
+/**
+ * Panel wylogowuje i rozłącza Google z jednego powodu naraz: hosting kasuje
+ * katalog z bazą przy wdrożeniu, a razem z nią klucz podpisujący sesje i token
+ * Google. Licznik uruchomień to rozstrzyga — na trwałym dysku rośnie.
+ */
+function bannerDysku(s) {
+  if (!s || s.kluczZEnv) return '';
+  if (s.liczbaStartow > 1) return '';
+  return `<div class="notice bad">
+    <strong>Panel może Cię wylogowywać przy każdym wdrożeniu.</strong>
+    Baza na serwerze jest świeża (pierwsze uruchomienie), a klucz sesji nie jest
+    ustawiony na stałe w zmiennych środowiskowych — więc przy restarcie losuje się
+    nowy i wszystkie zalogowania przestają być ważne. Tą samą drogą znika token
+    Google, stąd „konto niepołączone" i pusta Poczta.<br>
+    Dwie rzeczy do zrobienia na hostingu: podmontuj trwały dysk pod
+    <code>/app/data</code> i ustaw zmienną <code>JWT_SECRET</code> na stałą,
+    losową wartość (co najmniej 32 znaki).
+  </div>`;
+}
+
 /** Polska odmiana przez liczbę: 1 zapytanie, 2 zapytania, 5 zapytań. */
 function odmien(n, jeden, kilka, wiele) {
   const d = n % 10, s = n % 100;
@@ -225,6 +245,7 @@ views['/pulpit'] = async () => {
     <h1 class="page">Pulpit</h1>
     <p class="sub">Ostatnie 30 dni · aktualizacja ${fmtDateTime(new Date())}</p>
     ${bannerFormularza(d.formularz)}
+    ${bannerDysku(d.serwer)}
 
     <div class="grid g4">
       ${kpi(fmtNum(t.visitors), 'użytkowników', t.change.visitors)}

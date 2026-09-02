@@ -42,8 +42,13 @@ ADMIN_PASSWORD=tu-wpisz-swoje-haslo-min-10-znakow
 OUTREACH_MODE=draft
 ```
 
-   Zmień tylko wartość `ADMIN_PASSWORD` — to będzie Twoje hasło do panelu. Wymyśl długie,
-   inne niż do poczty. Klucz sesji wylosuje się sam przy pierwszym starcie.
+   Zmień wartość `ADMIN_PASSWORD` — to będzie Twoje hasło do panelu. Wymyśl długie,
+   inne niż do poczty.
+
+   Ustaw też **`JWT_SECRET`** na stałą, losową wartość (min. 32 znaki, np. z
+   `openssl rand -base64 48`). Zostawiony pusty wylosuje się sam i zapisze w bazie —
+   a wtedy każde wdrożenie, przy którym baza nie przetrwa, wylogowuje z panelu
+   i rozłącza konto Google.
 
 6. Zakładka **Volumes** → **New Volume** → ścieżka **`/app/data`**
 
@@ -169,7 +174,7 @@ Zanim to zmienisz, przeczytaj punkt 7 w `backend/README.md`.
 | Railway: `Brakuje konfiguracji w .env` | brak którejś zmiennej w **Variables** — komunikat mówi której |
 | Railway buduje, ale nic nie startuje | nie ustawiony **Root Directory = `backend`** |
 | `panel.21project.pl` nie otwiera się | DNS jeszcze nie zadziałał — odczekaj do godziny |
-| Panel prosi o hasło w kółko | brak HTTPS albo `PUBLIC_URL` nie zgadza się z adresem w przeglądarce |
+| Panel prosi o hasło w kółko | najczęściej brak wolumenu na `/app/data` albo pusty `JWT_SECRET` — sprawdź na Pulpicie, czy jest ostrzeżenie o dysku, i w logach linijkę `dysk: N. uruchomienie` (na trwałym dysku N rośnie po każdym wdrożeniu) |
 | Poczta: „Konto Google nie jest połączone" | Etap 4 niedokończony albo trzeba odnowić połączenie |
 | Google: `redirect_uri_mismatch` | adres w Google Cloud musi być **co do znaku** taki jak `GOOGLE_REDIRECT_URI` |
 | Dane zniknęły po aktualizacji | nie dodany **wolumen** na `/app/data` (Etap 2, punkt 6) |

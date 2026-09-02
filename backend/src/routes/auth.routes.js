@@ -24,7 +24,7 @@ router.post('/login', loginThrottle, async (req, res) => {
   }
 
   req.recordLoginSuccess();
-  setSessionCookie(res, signSession(email));
+  setSessionCookie(res, signSession(email), req);
   logAction('login.ok', clientIp(req), { email });
   res.json({ ok: true, email });
 });

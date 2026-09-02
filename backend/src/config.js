@@ -26,7 +26,7 @@ const config = {
 
   jwt: {
     secret: process.env.JWT_SECRET || '',
-    ttlDays: Number(process.env.SESSION_TTL_DAYS || 7),
+    ttlDays: Number(process.env.SESSION_TTL_DAYS || 30),
     cookieName: 'p21_session',
   },
 

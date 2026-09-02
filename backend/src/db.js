@@ -336,4 +336,26 @@ function ensureJwtSecret(fromEnv) {
   return stored;
 }
 
-module.exports = { db, init, getSetting, setSetting, logAction, ensureJwtSecret };
+/**
+ * Licznik uruchomień na tym konkretnym dysku. Na trwałym wolumenie rośnie
+ * z każdym restartem; jeśli po wielu wdrożeniach wciąż pokazuje 1, znaczy to,
+ * że katalog DATA_DIR jest kasowany razem z kontenerem — a wtedy przy każdym
+ * wdrożeniu ginie klucz sesji (wylogowanie) i token Google (rozłączona poczta).
+ */
+function odnotujStart() {
+  const teraz = new Date().toISOString();
+  if (!getSetting('pierwszy_start')) setSetting('pierwszy_start', teraz);
+  const n = Number(getSetting('liczba_startow', '0')) + 1;
+  setSetting('liczba_startow', n);
+  setSetting('ostatni_start', teraz);
+  return { pierwszyStart: getSetting('pierwszy_start'), liczbaStartow: n, ostatniStart: teraz };
+}
+
+const stanDysku = () => ({
+  pierwszyStart: getSetting('pierwszy_start'),
+  liczbaStartow: Number(getSetting('liczba_startow', '0')),
+  ostatniStart: getSetting('ostatni_start'),
+  kluczZEnv: Boolean(process.env.JWT_SECRET && process.env.JWT_SECRET.length >= 32),
+});
+
+module.exports = { db, init, getSetting, setSetting, logAction, ensureJwtSecret, odnotujStart, stanDysku };

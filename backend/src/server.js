@@ -5,13 +5,14 @@ const cookieParser = require('cookie-parser');
 const cron = require('node-cron');
 
 const { config, assertProductionSecrets } = require('./config');
-const { init, logAction, ensureJwtSecret } = require('./db');
+const { init, logAction, ensureJwtSecret, odnotujStart } = require('./db');
 const { requireAdmin, ipAllowlist, clientIp } = require('./middleware/auth');
 const google = require('./services/google');
 const outreach = require('./services/outreach');
 
 init();
 config.jwt.secret = ensureJwtSecret(config.jwt.secret);
+const dysk = odnotujStart();
 try {
   assertProductionSecrets();
 } catch (err) {
@@ -159,6 +160,12 @@ if (require.main === module) {
     console.log(`   panel:  ${config.publicUrl}/admin`);
     console.log(`   licznik: ${config.publicUrl}/t.js`);
     if (!google.status().connected) console.log('   uwaga: konto Google nie jest połączone (Ustawienia → Połącz Google)');
+    console.log(`   dysk: ${dysk.liczbaStartow}. uruchomienie, baza od ${dysk.pierwszyStart}`);
+    if (dysk.liczbaStartow === 1 && !process.env.JWT_SECRET) {
+      console.log('   uwaga: baza jest pusta przy starcie i JWT_SECRET nie jest ustawiony.');
+      console.log('          Jeśli powtarza się to po każdym wdrożeniu, katalog DATA_DIR nie jest');
+      console.log('          trwałym dyskiem — panel będzie wylogowywał i rozłączał konto Google.');
+    }
   });
 }
 

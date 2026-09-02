@@ -1,6 +1,6 @@
 'use strict';
 const express = require('express');
-const { db, getSetting } = require('../db');
+const { db, getSetting, stanDysku } = require('../db');
 const analytics = require('../services/analytics');
 const cal = require('../services/calendarSvc');
 const google = require('../services/google');
@@ -56,6 +56,7 @@ router.get('/', async (_req, res) => {
     outreach: { quota: outreach.quota(), inWindow: outreach.inSendingWindow() },
     integrations: { google: google.status(), ai: ai.enabled() },
     formularz: stanFormularza(),
+    serwer: stanDysku(),
   };
 
   try {
