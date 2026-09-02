@@ -455,6 +455,7 @@ views['/ruch'] = async () => {
 const MAIL_VIEWS = [
   ['wszystko', 'Wszystko'],
   ['odebrane', 'Odebrane'],
+  ['wyslane', 'Wysłane'],
   ['klienci', 'Od ludzi'],
   ['nieprzeczytane', 'Nieprzeczytane'],
   ['wazne', 'Ważne'],
@@ -478,8 +479,9 @@ views['/poczta'] = async () => {
   }
 
   const SUBS = {
-    wszystko: 'Całe konto jakubskrzypiec.dev@gmail.com — odebrane, wysłane, zarchiwizowane, wszystkie etykiety. Nic nie jest odsiewane.',
-    odebrane: 'Sama skrzynka odbiorcza, bez wysłanych i archiwum.',
+    wszystko: 'Całe konto — odebrane, zarchiwizowane, wszystkie etykiety. Bez Twojej własnej korespondencji wychodzącej; rozmowy, w których ktoś odpisał, zostają.',
+    odebrane: 'Sama skrzynka odbiorcza, bez archiwum.',
+    wyslane: 'Wiadomości wysłane z Twojego konta.',
     klienci: 'Skrzynka odbiorcza bez promocji, powiadomień i automatów — zostaje korespondencja od ludzi.',
     nieprzeczytane: 'Wszystko, czego jeszcze nie otworzyłeś.',
     wazne: 'Wątki oznaczone gwiazdką — Twoja lista rzeczy do załatwienia.',

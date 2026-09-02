@@ -47,24 +47,29 @@ router.get('/threads', guard(async (req, res) => {
 
   const ile = Math.min(Number(req.query.limit) || 25, 50);
   const odsiewamy = Boolean(preset.odsiej) && !q && !label;
+  const bezWyslanych = Boolean(preset.bezWyslanych) && !q && !label;
+  const zZapasem = odsiewamy || bezWyslanych;
 
   const data = await gmail.listThreads({
     // Własne wyszukiwanie ma pierwszeństwo nad gotowym widokiem.
     q: q ? q : preset.q,
     labelIds: label ? [label] : (q ? undefined : preset.labelIds || undefined),
     // Przy odsiewaniu bierzemy z zapasem, bo część wątków odpadnie u nas.
-    maxResults: odsiewamy ? Math.min(ile * 2, 100) : ile,
+    maxResults: zZapasem ? Math.min(ile * 2, 100) : ile,
     pageToken,
     zeSmieciami: Boolean(preset.zeSmieciami),
   });
 
   let watki = data.threads;
   let ukryte = 0;
+  const przed = watki.length;
   if (odsiewamy) {
-    const przed = watki.length;
     watki = watki.filter((t) =>
       !gmail.jestAutomatem(t.from)
       && !(t.kategorie || []).some((k) => gmail.KATEGORIE_AUTOMATOW.includes(k)));
+  }
+  if (bezWyslanych) watki = watki.filter((t) => !t.tylkoWyslane);
+  if (zZapasem) {
     ukryte = przed - watki.length;
     watki = watki.slice(0, ile);
   }
@@ -74,7 +79,7 @@ router.get('/threads', guard(async (req, res) => {
   res.json({
     ...data,
     threads: withKnownSenders(watki),
-    view: view || 'klienci',
+    view: view || 'wszystko',
     account: google.status().account || null,
     ukryte,
   });

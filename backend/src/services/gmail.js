@@ -79,7 +79,8 @@ const VIEWS = {
   // Wszystko, co jest na koncie: odebrane, wysłane, zarchiwizowane, każda etykieta.
   // Bez labelIds Gmail nie zawęża do skrzynki odbiorczej, a bez zapytania nie odsiewa
   // niczego. Spam i kosz Gmail pomija tu sam — są pod osobnym widokiem.
-  wszystko: { labelIds: null, q: '' },
+  wszystko: { labelIds: null, q: '', bezWyslanych: true },
+  wyslane:  { labelIds: ['SENT'], q: '' },
   odebrane: { labelIds: ['INBOX'], q: '-in:spam -in:trash' },
   kosz:     { labelIds: null, q: 'in:spam OR in:trash', zeSmieciami: true },
   wazne:    { labelIds: null, q: 'is:starred -in:trash' },
@@ -118,6 +119,11 @@ async function listThreads({ q = '', labelIds, maxResults = 25, pageToken, zeSmi
         subject: headerOf(last, 'Subject') || '(bez tematu)',
         date: headerOf(last, 'Date'),
         internalDate: Number(last.internalDate || 0),
+        // Wątek, w którym KAŻDA wiadomość jest wysłana przeze mnie, to czysta
+        // korespondencja wychodząca. Rozmowa, w której ktoś odpisał, ma też
+        // wiadomości bez etykiety SENT i zostaje. Liczymy to tutaj, bo zapytanie
+        // „-in:sent" działa na całe wątki i wycięłoby też rozmowy z klientami.
+        tylkoWyslane: msgs.length > 0 && msgs.every((m) => (m.labelIds || []).includes('SENT')),
         unread: labels.has('UNREAD'),
         starred: labels.has('STARRED'),
         labels: [...labels].filter((l) => !l.startsWith('CATEGORY_')),
