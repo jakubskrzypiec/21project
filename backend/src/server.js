@@ -98,6 +98,16 @@ app.get('/api/google/callback', ipAllowlist, requireAdmin, async (req, res) => {
 });
 
 /* ------------------------------- panel ---------------------------------- */
+/*
+ * Panel to jeden plik JavaScript pod stałym adresem, więc po wdrożeniu przeglądarka
+ * potrafi pokazywać starą wersję i wygląda to, jakby zmiany nie doszły. `no-cache`
+ * nie wyłącza pamięci podręcznej — wymusza tylko pytanie serwera, czy plik się zmienił.
+ */
+app.use('/admin', (_req, res, next) => {
+  res.set('Cache-Control', 'no-cache');
+  next();
+});
+
 app.get('/admin/login', ipAllowlist, (_req, res) =>
   res.sendFile(path.join(__dirname, '..', 'public', 'admin', 'login.html')));
 
