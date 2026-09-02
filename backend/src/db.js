@@ -351,7 +351,21 @@ function odnotujStart() {
   return { pierwszyStart: getSetting('pierwszy_start'), liczbaStartow: n, ostatniStart: teraz };
 }
 
+/**
+ * Znacznik wersji, która naprawdę chodzi na serwerze. Bez niego „poprawka nie
+ * działa" i „poprawka jeszcze nie doszła" wyglądają identycznie. Railway podaje
+ * skrót commita w zmiennej; lokalnie zostaje czas pliku.
+ */
+function wersjaKodu() {
+  const sha = process.env.RAILWAY_GIT_COMMIT_SHA || process.env.GIT_COMMIT || '';
+  if (sha) return sha.slice(0, 7);
+  try {
+    return new Date(require('fs').statSync(__filename).mtime).toISOString().slice(0, 16).replace('T', ' ');
+  } catch { return 'nieznana'; }
+}
+
 const stanDysku = () => ({
+  wersja: wersjaKodu(),
   pierwszyStart: getSetting('pierwszy_start'),
   liczbaStartow: Number(getSetting('liczba_startow', '0')),
   ostatniStart: getSetting('ostatni_start'),

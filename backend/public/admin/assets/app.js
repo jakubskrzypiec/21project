@@ -31,6 +31,38 @@ function przyjmijOdnowienie(res) {
   if (swiezy) zapiszToken(swiezy);
 }
 
+const POWODY_SESJI = {
+  wygasla: 'Sesja wygasła po długiej przerwie.',
+  zly_podpis: 'Serwer ma inny klucz sesji niż przy Twoim logowaniu (zniknęła baza z kluczem?).',
+  brak_ciastka: 'Przeglądarka nie odesłała ani ciasteczka, ani zapasowego tokenu.',
+  nie_admin: 'Token nie należy do konta administratora.',
+};
+
+/**
+ * Pasek zamiast natychmiastowego przerzucenia na ekran logowania. Zostajesz tam,
+ * gdzie byłeś, widzisz powód i sam decydujesz, kiedy się przelogować.
+ */
+function pokazPasekSesji(powod) {
+  if ($('#pasekSesji')) return;
+  const pasek = document.createElement('div');
+  pasek.id = 'pasekSesji';
+  pasek.className = 'notice bad';
+  pasek.style.cssText = 'position:fixed;left:16px;right:16px;bottom:16px;z-index:60;margin:0';
+  pasek.innerHTML = `<strong>Serwer odrzucił sesję.</strong>
+    ${esc(POWODY_SESJI[powod] || ('Powód: ' + (powod || 'nieznany')))}
+    Nic nie zginęło — zaloguj się ponownie, kiedy Ci wygodnie.
+    <span class="row" style="margin-top:10px">
+      <button class="btn sm" id="pasekZaloguj">Zaloguj ponownie</button>
+      <button class="btn ghost sm" id="pasekZamknij">Zamknij</button>
+    </span>`;
+  document.body.append(pasek);
+  $('#pasekZaloguj').onclick = () => {
+    zapiszToken('');
+    location.href = '/admin/login' + (powod ? `?powod=${encodeURIComponent(powod)}` : '');
+  };
+  $('#pasekZamknij').onclick = () => pasek.remove();
+}
+
 async function api(path, options = {}) {
   const res = await fetch(`/api/admin${path}`, {
     ...options,
@@ -39,10 +71,14 @@ async function api(path, options = {}) {
   });
   przyjmijOdnowienie(res);
   if (res.status === 401) {
+    // Nie wyrzucamy z panelu. Wyrzucenie w trakcie pracy gubi to, co robiłeś,
+    // i niczego nie tłumaczy — a 401 potrafi przyjść z jednego zepsutego wywołania,
+    // podczas gdy reszta sesji jest w porządku. Pokazujemy pasek i decydujesz sam.
     const powod = await res.json().then((d) => d.powod).catch(() => '');
-    zapiszToken('');
-    location.href = '/admin/login' + (powod ? `?powod=${encodeURIComponent(powod)}` : '');
-    throw new Error('Sesja wygasła.');
+    pokazPasekSesji(powod);
+    const e = new Error('Sesja odrzucona przez serwer.');
+    e.sesja = true;
+    throw e;
   }
   const data = res.status === 204 ? {} : await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || `Błąd ${res.status}`);
@@ -285,7 +321,8 @@ views['/pulpit'] = async () => {
 
   view.innerHTML = `
     <h1 class="page">Pulpit</h1>
-    <p class="sub">Ostatnie 30 dni · aktualizacja ${fmtDateTime(new Date())}</p>
+    <p class="sub">Ostatnie 30 dni · aktualizacja ${fmtDateTime(new Date())}${
+      d.serwer?.wersja ? ` · wersja na serwerze <code>${esc(d.serwer.wersja)}</code>` : ''}</p>
     ${bannerFormularza(d.formularz)}
     ${bannerDysku(d.serwer)}
 
