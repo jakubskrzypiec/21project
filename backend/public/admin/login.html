@@ -88,6 +88,23 @@ fill="currentColor" stroke="none">
 <script>
 const form = document.getElementById('loginForm');
 const err = document.getElementById('err');
+
+/*
+ * Gdy panel odsyła tutaj, dokłada powód. Bez tego każde wyrzucenie wygląda
+ * tak samo i nie da się odróżnić końca sesji od zmiany klucza na serwerze.
+ */
+const POWODY = {
+  wygasla: 'Sesja wygasła po długiej przerwie. Zaloguj się ponownie.',
+  zly_podpis: 'Serwer ma inny klucz sesji niż przy Twoim logowaniu — najczęściej znaczy to, '
+    + 'że przy wdrożeniu zniknęła baza z kluczem. Ustaw JWT_SECRET na stałe w zmiennych hostingu.',
+  brak_ciastka: 'Przeglądarka nie odesłała ciasteczka sesji ani zapasowego tokenu.',
+  nie_admin: 'Ten token nie należy do konta administratora (zmieniony ADMIN_EMAIL?).',
+};
+const powod = new URLSearchParams(location.search).get('powod');
+if (powod) {
+  err.textContent = POWODY[powod] || ('Wylogowano — powód: ' + powod);
+  err.hidden = false;
+}
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   err.hidden = true;
@@ -101,6 +118,8 @@ form.addEventListener('submit', async (e) => {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Logowanie nie powiodło się.');
+    // Zapas na wypadek zgubionego ciasteczka — panel dokłada go do każdego żądania.
+    try { if (data.token) localStorage.setItem('p21token', data.token); } catch (e3) {}
     location.href = '/admin';
   } catch (e2) {
     err.textContent = e2.message;

@@ -11,13 +11,39 @@ const esc = (s) =>
   String(s == null ? '' : s).replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+/*
+ * Sesja jedzie dwoma torami naraz: ciasteczkiem (ustawia je serwer) i tokenem
+ * schowanym w przeglądarce. Wystarczy, że dociera którykolwiek — dzięki temu
+ * zgubione ciasteczko nie wyrzuca z panelu. Serwer odsyła odnowiony token
+ * nagłówkiem, więc zapas nie zestarzeje się w tle.
+ */
+const TOKEN_KEY = 'p21token';
+const czytajToken = () => { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; } };
+const zapiszToken = (t) => { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch { /* tryb prywatny */ } };
+
+function naglowki(dodatkowe = {}) {
+  const t = czytajToken();
+  return { 'Content-Type': 'application/json', ...(t ? { Authorization: `Bearer ${t}` } : {}), ...dodatkowe };
+}
+
+function przyjmijOdnowienie(res) {
+  const swiezy = res.headers.get('X-Odnowiony-Token');
+  if (swiezy) zapiszToken(swiezy);
+}
+
 async function api(path, options = {}) {
   const res = await fetch(`/api/admin${path}`, {
-    headers: { 'Content-Type': 'application/json' },
     ...options,
+    headers: naglowki(options.headers),
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
-  if (res.status === 401) { location.href = '/admin/login'; throw new Error('Sesja wygasła.'); }
+  przyjmijOdnowienie(res);
+  if (res.status === 401) {
+    const powod = await res.json().then((d) => d.powod).catch(() => '');
+    zapiszToken('');
+    location.href = '/admin/login' + (powod ? `?powod=${encodeURIComponent(powod)}` : '');
+    throw new Error('Sesja wygasła.');
+  }
   const data = res.status === 204 ? {} : await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || `Błąd ${res.status}`);
   return data;
@@ -1507,7 +1533,8 @@ async function render() {
 addEventListener('hashchange', render);
 
 $('#logout').onclick = async () => {
-  await fetch('/api/auth/logout', { method: 'POST' });
+  await fetch('/api/auth/logout', { method: 'POST', headers: naglowki() });
+  zapiszToken('');
   location.href = '/admin/login';
 };
 
@@ -1524,8 +1551,15 @@ applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light')
 
 (async function boot() {
   try {
-    const me = await fetch('/api/auth/me').then((r) => (r.ok ? r.json() : Promise.reject()));
-    $('#whoami').textContent = me.email;
+    const res = await fetch('/api/auth/me', { headers: naglowki() });
+    przyjmijOdnowienie(res);
+    if (!res.ok) {
+      const powod = await res.json().then((d) => d.powod).catch(() => '');
+      zapiszToken('');
+      location.href = '/admin/login' + (powod ? `?powod=${encodeURIComponent(powod)}` : '');
+      return;
+    }
+    $('#whoami').textContent = (await res.json()).email;
   } catch {
     location.href = '/admin/login';
     return;

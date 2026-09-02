@@ -74,11 +74,13 @@ function requireAdmin(req, res, next) {
   // Sesja przesuwana: dopóki korzystasz z panelu, ważność biegnie od nowa.
   // Bez tego ciasteczko wygasało co do sekundy po SESSION_TTL_DAYS od logowania,
   // niezależnie od tego, czy panel był używany codziennie.
-  if (zCiastka) {
-    const zostalo = payload.exp * 1000 - Date.now();
-    if (zostalo < (config.jwt.ttlDays * 24 * 3600 * 1000) / 2) {
-      setSessionCookie(res, signSession(payload.sub), req);
-    }
+  const zostalo = payload.exp * 1000 - Date.now();
+  if (zostalo < (config.jwt.ttlDays * 24 * 3600 * 1000) / 2) {
+    const swiezy = signSession(payload.sub);
+    if (zCiastka) setSessionCookie(res, swiezy, req);
+    // Panel czyta ten nagłówek i podmienia token u siebie, więc oba tory
+    // — ciasteczko i nagłówek Authorization — odnawiają się tak samo.
+    res.set('X-Odnowiony-Token', swiezy);
   }
   return next();
 }
@@ -91,10 +93,8 @@ function bearer(req) {
 function deny(req, res, powod = 'brak_ciastka') {
   // Każde odrzucenie ląduje w dzienniku z powodem — inaczej „znowu mnie wylogowało"
   // nie da się odróżnić od zwykłego wejścia na panel bez zalogowania.
-  if (powod !== 'brak_ciastka') {
-    try { logAction('sesja.odrzucona', clientIp(req), { powod, sciezka: req.originalUrl }); }
-    catch { /* dziennik nie może blokować odpowiedzi */ }
-  }
+  try { logAction('sesja.odrzucona', clientIp(req), { powod, sciezka: req.originalUrl }); }
+  catch { /* dziennik nie może blokować odpowiedzi */ }
   // Do przeglądarki wysyłamy ekran logowania, do wywołań API — czysty błąd 401.
   const isApi = req.originalUrl.startsWith('/api/');
   if (!isApi && req.accepts(['html', 'json']) === 'html') return res.redirect('/admin/login');

@@ -24,9 +24,13 @@ router.post('/login', loginThrottle, async (req, res) => {
   }
 
   req.recordLoginSuccess();
-  setSessionCookie(res, signSession(email), req);
+  const token = signSession(email);
+  setSessionCookie(res, token, req);
   logAction('login.ok', clientIp(req), { email });
-  res.json({ ok: true, email });
+  // Token wraca też w treści odpowiedzi. Panel chowa go u siebie i dokłada do
+  // każdego żądania — dzięki temu zgubione ciasteczko (inna domena, ustawienia
+  // przeglądarki, restart) nie kończy się wylogowaniem.
+  res.json({ ok: true, email, token });
 });
 
 router.post('/logout', (req, res) => {

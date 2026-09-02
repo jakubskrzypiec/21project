@@ -122,8 +122,15 @@ app.use('/api/admin/calendar', require('./routes/calendar.routes'));
 app.use('/api/admin/outreach', require('./routes/outreach.routes'));
 app.use('/api/admin/board', require('./routes/board.routes'));
 
-app.use('/admin', ipAllowlist, requireAdmin, express.static(path.join(__dirname, '..', 'public', 'admin')));
-app.get('/admin{/*splat}', ipAllowlist, requireAdmin, (_req, res) =>
+/*
+ * Sam szkielet panelu (znaczniki, nawigacja, style) nie zawiera żadnych danych —
+ * wszystko wypełnia się dopiero wywołaniami /api/admin, a te wymagają zalogowania.
+ * Trzymanie szkieletu za ciasteczkiem miało jeden skutek uboczny: gdy ciasteczko
+ * przepadło, przeglądarka nie dostawała nawet skryptu, więc zapasowy tor sesji
+ * (nagłówek Authorization) nie miał jak zadziałać i zostawało wylogowanie.
+ */
+app.use('/admin', ipAllowlist, express.static(path.join(__dirname, '..', 'public', 'admin')));
+app.get('/admin{/*splat}', ipAllowlist, (_req, res) =>
   res.sendFile(path.join(__dirname, '..', 'public', 'admin', 'index.html')));
 
 app.use((req, res) => res.status(404).json({ error: 'Nie ma takiego adresu.', path: req.path }));
