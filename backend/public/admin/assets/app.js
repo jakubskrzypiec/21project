@@ -171,8 +171,24 @@ const views = {};
  * Google. Licznik uruchomień to rozstrzyga — na trwałym dysku rośnie.
  */
 function bannerDysku(s) {
-  if (!s || s.kluczZEnv) return '';
+  if (!s) return '';
+  // Licznik większy od jednego to dowód, że katalog przetrwał restart — wtedy nie ma o czym mówić.
   if (s.liczbaStartow > 1) return '';
+
+  // Klucz w zmiennych środowiskowych ratuje same zalogowania, ale nie dane.
+  // Token Google, leady, projekty i notatki nadal leżą w bazie na dysku.
+  if (s.kluczZEnv) {
+    return `<div class="notice warn">
+      <strong>Sprawdź, czy dysk na dane jest trwały.</strong>
+      Klucz sesji jest ustawiony na stałe, więc wylogowywanie masz już z głowy.
+      Ale baza wystartowała jako pusta — jeśli powtórzy się to po następnym wdrożeniu,
+      znaczy że katalog z danymi jest kasowany razem z kontenerem, a wtedy przy każdej
+      aktualizacji tracisz leady, projekty, notatki i połączenie z Google.<br>
+      Na hostingu dysk ma być podmontowany dokładnie pod <code>/app/data</code>.
+      Jeśli już jest, ten komunikat zniknie sam po najbliższym restarcie.
+    </div>`;
+  }
+
   return `<div class="notice bad">
     <strong>Panel może Cię wylogowywać przy każdym wdrożeniu.</strong>
     Baza na serwerze jest świeża (pierwsze uruchomienie), a klucz sesji nie jest
