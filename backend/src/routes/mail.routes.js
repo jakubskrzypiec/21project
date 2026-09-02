@@ -7,12 +7,36 @@ const { db, getSetting, setSetting } = require('../db');
 
 const router = express.Router();
 
+/*
+ * Kod 401 jest w panelu zarezerwowany dla jednej rzeczy: nieważnej sesji — panel
+ * odsyła wtedy na ekran logowania. Poczta nie ma prawa go zwracać, bo problem
+ * z kontem Google nie ma nic wspólnego z tym, czy jesteś zalogowany.
+ * Zerwane połączenie z Google to 409: „zaloguj się ponownie do Google", nie „do panelu".
+ */
+const ZERWANE_POLACZENIE = ['invalid_grant', 'invalid_client', 'unauthorized_client'];
+
+function jestZerwanePolaczenie(err) {
+  if (err.code === 'GOOGLE_NOT_CONNECTED') return true;
+  const opis = `${err.message || ''} ${err.response?.data?.error || ''}`.toLowerCase();
+  if (ZERWANE_POLACZENIE.some((k) => opis.includes(k))) return true;
+  // Google odpowiada 401 na martwy token — dla nas to nadal sprawa Google, nie sesji.
+  return err.status === 401 || err.code === 401;
+}
+
 const guard = (handler) => async (req, res) => {
   try {
     await handler(req, res);
   } catch (err) {
-    const code = err.code === 'GOOGLE_NOT_CONNECTED' ? 409 : err.status || err.code === 401 ? 401 : 500;
-    res.status(Number.isInteger(code) ? code : 500).json({ error: err.message, code: err.code || null });
+    if (jestZerwanePolaczenie(err)) {
+      const opis = err.code === 'GOOGLE_NOT_CONNECTED'
+        ? 'Konto Google nie jest połączone.'
+        : `Połączenie z Google wygasło (${err.message}). Połącz konto ponownie w Ustawieniach.`;
+      setSetting('powiadomienie_blad', JSON.stringify({ ts: new Date().toISOString(), error: opis.slice(0, 300) }));
+      return res.status(409).json({ error: opis, code: 'GOOGLE_ROZLACZONE' });
+    }
+    // Wszystko inne to awaria po drodze do Google albo nasz błąd — nigdy 401.
+    const code = Number.isInteger(err.status) && err.status >= 400 && err.status !== 401 ? err.status : 502;
+    res.status(code).json({ error: err.message, code: err.code || null });
   }
 };
 
