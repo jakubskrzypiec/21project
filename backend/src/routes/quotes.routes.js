@@ -20,6 +20,8 @@ const PAKIETY = [
   { nazwa: 'Audyt i optymalizacja SEO', cena: 1000, opis: 'Poprawki techniczne, metadane, nagłówki, linkowanie wewnętrzne i indeksacja istniejącej strony.' },
   { nazwa: 'Dodatkowa podstrona', cena: 300, opis: 'Kolejna podstrona usługowa lub lokalna w ramach tego samego projektu.' },
   { nazwa: 'Wersja obcojęzyczna', cena: 800, opis: 'Druga wersja językowa z osobnymi adresami i oznaczeniami języka. Tłumaczenie po stronie klienta.' },
+  { nazwa: 'Projekt wizytówki', cena: 200, opis: 'Awers i rewers, pliki PDF gotowe do druku. Druk osobno — wycena zależy od nakładu i papieru.' },
+  { nazwa: 'Druk wizytówek — pośrednictwo', cena: 0, opis: 'Zamówienie w drukarni, pilnowanie plików i terminu. Cenę wpisz po ustaleniu nakładu i papieru.' },
   { nazwa: 'Opieka techniczna (rok)', cena: 600, opis: 'Aktualizacje, kopie zapasowe i drobne poprawki treści przez dwanaście miesięcy.' },
 ];
 
