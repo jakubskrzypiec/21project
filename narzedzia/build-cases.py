@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Generuje podstrony realizacji z jednego szablonu.
 
-UWAGA: skrypt nadpisuje pliki realizacja-*.html w katalogu głównym.
-Szablon musi być zgodny z resztą serwisu — przy zmianie paska górnego
-albo arkuszy stylów popraw go tutaj, inaczej uruchomienie cofnie zmiany.
-Ostatnia synchronizacja: 26 sierpnia 2026.
+UWAGA: skrypt nadpisuje pliki realizacja-*/index.html, więc jego szablon musi być
+zgodny z resztą serwisu — inaczej uruchomienie cofnie zmiany wprowadzone ręcznie.
+
+Stan na 3 września 2026: adresy w szablonie są już bez końcówki .html, ale stopka
+w szablonie jest starsza niż w serwisie (brakuje w niej podstron miejskich, wizytówek
+i poradnika cenowego). Przed uruchomieniem przenieś tu aktualną stopkę z dowolnej
+podstrony realizacji, w przeciwnym razie zniknie część linkowania wewnętrznego.
 """
 import re, pathlib
 
@@ -108,12 +111,12 @@ CASES = [
 
 HEADER = '''<header class="topbar">
 <a aria-label="21 project — strona główna" class="brand" href="/"><img alt="21 project" height="1360" src="/logo.svg" width="4616"/></a>
-<nav aria-label="Nawigacja główna"><a href="/realizacje.html">Realizacje</a><a href="/oferta.html">Oferta</a><a href="/proces.html">Proces</a><a href="/kontakt.html">Kontakt</a></nav>
-<div class="headerRight"><a class="headerPhone" href="tel:+48601863788">601 863 788</a><a class="headerCta" href="/kontakt.html">Bezpłatna wycena <span aria-hidden="true">↗</span></a><button aria-controls="mobileMenu" aria-expanded="false" aria-label="Otwórz menu" class="burger" type="button"><span aria-hidden="true"></span><span aria-hidden="true"></span></button></div>
+<nav aria-label="Nawigacja główna"><a href="/realizacje/">Realizacje</a><a href="/oferta/">Oferta</a><a href="/proces/">Proces</a><a href="/kontakt/">Kontakt</a></nav>
+<div class="headerRight"><a class="headerPhone" href="tel:+48601863788">601 863 788</a><a class="headerCta" href="/kontakt/">Bezpłatna wycena <span aria-hidden="true">↗</span></a><button aria-controls="mobileMenu" aria-expanded="false" aria-label="Otwórz menu" class="burger" type="button"><span aria-hidden="true"></span><span aria-hidden="true"></span></button></div>
 </header>
 <div class="mobileMenu" hidden id="mobileMenu">
-<nav aria-label="Menu mobilne"><a href="/realizacje.html"><span>01</span>Realizacje</a><a href="/oferta.html"><span>02</span>Oferta</a><a href="/proces.html"><span>03</span>Proces</a><a href="/strony-internetowe-dla-architektow.html"><span>04</span>Dla architektów</a><a href="/pozycjonowanie-stron.html"><span>05</span>SEO</a><a href="/kontakt.html"><span>06</span>Kontakt</a></nav>
-<div class="mobileMenuFoot"><a href="tel:+48601863788">601 863 788</a><a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a><a class="mobileMenuCta" href="/kontakt.html">Bezpłatna wycena</a></div>
+<nav aria-label="Menu mobilne"><a href="/realizacje/"><span>01</span>Realizacje</a><a href="/oferta/"><span>02</span>Oferta</a><a href="/proces/"><span>03</span>Proces</a><a href="/strony-internetowe-dla-architektow/"><span>04</span>Dla architektów</a><a href="/pozycjonowanie-stron/"><span>05</span>SEO</a><a href="/kontakt/"><span>06</span>Kontakt</a></nav>
+<div class="mobileMenuFoot"><a href="tel:+48601863788">601 863 788</a><a href="mailto:jakubskrzypiec.dev@gmail.com">jakubskrzypiec.dev@gmail.com</a><a class="mobileMenuCta" href="/kontakt/">Bezpłatna wycena</a></div>
 </div>'''
 
 FOOTER = '''<footer class="footer">
@@ -121,7 +124,7 @@ FOOTER = '''<footer class="footer">
     <div class="footer__inner">
 
       <div class="footer__brand">
-        <a class="logo logo--inv logo--mark" href="index.html" aria-label="21 project — strona główna">
+        <a class="logo logo--inv logo--mark" href="/" aria-label="21 project — strona główna">
           <img src="assets/img/logo-mark.svg" width="1588" height="1356" alt="21 project">
         </a>
         <p>
@@ -131,11 +134,11 @@ FOOTER = '''<footer class="footer">
       </div>
 
       <nav class="footer__nav" aria-label="Stopka">
-        <a href="index.html#realizacje">Realizacje</a>
-        <a href="index.html#oferta">Oferta</a>
-        <a href="index.html#proces">Proces</a>
-        <a href="index.html#kontakt">Kontakt</a>
-        <a href="polityka-prywatnosci.html">Polityka prywatności</a>
+        <a href="/#realizacje">Realizacje</a>
+        <a href="/#oferta">Oferta</a>
+        <a href="/#proces">Proces</a>
+        <a href="/#kontakt">Kontakt</a>
+        <a href="/polityka-prywatnosci/">Polityka prywatności</a>
       </nav>
 
       <div class="footer__contact">
@@ -168,7 +171,7 @@ def page(c, prev, nxt):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{c['name']} — realizacja | 21 project</title>
 <meta name="description" content="{c['name']} — {place.lower()}. {c['lead']}">
-<link rel="canonical" href="https://21project.pl/realizacja-{c['slug']}.html">
+<link rel="canonical" href="https://21project.pl/realizacja-{c['slug']}/">
 <meta name="theme-color" content="#FAFAFA">
 
 <meta property="og:type" content="article">
@@ -193,7 +196,7 @@ def page(c, prev, nxt):
   <!-- ---------- nagłówek realizacji ---------- -->
   <section class="cs-hero">
     <div class="shell">
-      <a class="cs-back" href="index.html#realizacje">
+      <a class="cs-back" href="/#realizacje">
         <span aria-hidden="true">←</span> Wszystkie realizacje
       </a>
 
@@ -255,7 +258,7 @@ def page(c, prev, nxt):
         <ul class="cs-scope">
 {scope}
         </ul>
-        <a class="btn btn--dark btn--full" href="index.html#kontakt">Chcę podobną stronę</a>
+        <a class="btn btn--dark btn--full" href="/#kontakt">Chcę podobną stronę</a>
       </aside>
 
     </div>
@@ -283,11 +286,11 @@ def page(c, prev, nxt):
 
   <!-- ---------- następna realizacja ---------- -->
   <nav class="cs-nav" aria-label="Nawigacja między realizacjami">
-    <a class="cs-nav__item cs-nav__item--prev" href="realizacja-{prev['slug']}.html">
+    <a class="cs-nav__item cs-nav__item--prev" href="/realizacja-{prev['slug']}/">
       <span class="cs-nav__label"><span aria-hidden="true">←</span> Poprzednia</span>
       <span class="cs-nav__name">{prev['name']}</span>
     </a>
-    <a class="cs-nav__item cs-nav__item--next" href="realizacja-{nxt['slug']}.html">
+    <a class="cs-nav__item cs-nav__item--next" href="/realizacja-{nxt['slug']}/">
       <span class="cs-nav__label">Następna <span aria-hidden="true">→</span></span>
       <span class="cs-nav__name">{nxt['name']}</span>
     </a>
@@ -299,8 +302,8 @@ def page(c, prev, nxt):
       <h2 class="reveal">Zróbmy coś takiego dla Ciebie</h2>
       <p class="reveal">Napisz kilka zdań o firmie — odeślę wycenę i termin.</p>
       <div class="cs-cta__actions reveal">
-        <a href="index.html#kontakt" class="btn btn--light">Bezpłatna wycena</a>
-        <a href="index.html#oferta" class="btn btn--ghost-inv">Zobacz pakiety</a>
+        <a href="/#kontakt" class="btn btn--light">Bezpłatna wycena</a>
+        <a href="/#oferta" class="btn btn--ghost-inv">Zobacz pakiety</a>
       </div>
     </div>
   </section>
@@ -316,7 +319,9 @@ def main():
     for i, c in enumerate(CASES):
         prev = CASES[(i - 1) % n]
         nxt = CASES[(i + 1) % n]
-        out = ROOT / f"realizacja-{c['slug']}.html"
+        katalog = ROOT / f"realizacja-{c['slug']}"
+        katalog.mkdir(exist_ok=True)
+        out = katalog / "index.html"
         out.write_text(page(c, prev, nxt), encoding="utf-8")
         print("zapisano", out.name)
 
