@@ -214,6 +214,24 @@ CREATE TABLE IF NOT EXISTS oauth_tokens (
   updated_at    TEXT
 );
 
+CREATE TABLE IF NOT EXISTS wyceny (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  created_at  TEXT NOT NULL,
+  lead_id     INTEGER REFERENCES leads(id) ON DELETE SET NULL,
+  token       TEXT NOT NULL UNIQUE,          -- losowy klucz w adresie; wycena nie jest do zgadnięcia
+  klient      TEXT,
+  firma       TEXT,
+  pozycje     TEXT NOT NULL,                 -- JSON: [{nazwa, opis, cena}]
+  suma        REAL NOT NULL DEFAULT 0,
+  waluta      TEXT NOT NULL DEFAULT 'PLN',
+  termin      TEXT,                          -- proponowany termin realizacji, tekstem
+  wazna_do    TEXT,
+  notatka     TEXT,
+  status      TEXT NOT NULL DEFAULT 'robocza', -- robocza | wyslana | otwarta | przyjeta | odrzucona
+  otwarta_at  TEXT,
+  otwarcia    INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS audit_log (
   id     INTEGER PRIMARY KEY AUTOINCREMENT,
   ts     TEXT NOT NULL,

@@ -121,6 +121,7 @@ app.use('/api/admin/mail', require('./routes/mail.routes'));
 app.use('/api/admin/calendar', require('./routes/calendar.routes'));
 app.use('/api/admin/outreach', require('./routes/outreach.routes'));
 app.use('/api/admin/board', require('./routes/board.routes'));
+app.use('/api/admin/quotes', require('./routes/quotes.routes').router);
 
 /*
  * Sam szkielet panelu (znaczniki, nawigacja, style) nie zawiera żadnych danych —

@@ -1065,6 +1065,7 @@ views['/leady/:id'] = async (id) => {
           ${Object.entries(STATUS_LABEL).map(([k, v]) => `<option value="${k}" ${k === l.status ? 'selected' : ''}>${v}</option>`).join('')}
         </select>
         <button class="btn ghost sm" id="btnMeeting">Spotkanie</button>
+        <button class="btn ghost sm" id="btnWycena">Wystaw wycenę</button>
         <button class="btn sm" id="btnWrite">Napisz wiadomość</button>
       </div>
     </div>
@@ -1120,6 +1121,7 @@ views['/leady/:id'] = async (id) => {
     await api(`/leads/${id}`, { method: 'PATCH', body: { notes: e.target.notes.value } });
     toast('Notatki zapisane.');
   };
+  $('#btnWycena').onclick = () => kreatorWyceny(l);
   $('#btnMeeting').onclick = () => meetingModal({
     title: `Rozmowa — ${l.company || l.name || l.domain}`, lead_id: l.id, attendee_email: l.email || '',
   });
@@ -1535,6 +1537,110 @@ const fmtBytes = (b) => {
   if (b < 1024) return b + ' B';
   if (b < 1024 * 1024) return Math.round(b / 1024) + ' kB';
   return (b / 1024 / 1024).toFixed(1).replace('.', ',') + ' MB';
+};
+
+
+/* --- Wyceny ---------------------------------------------------------------
+   Każde „bezpłatna wycena" ze strony kończyło się pisaniem oferty od zera w mailu.
+   Tutaj składasz ją z pozycji, a klient dostaje link do strony z ofertą — więc
+   widać też, czy w ogóle ją otworzył, zamiast wnioskować z ciszy. */
+
+const STAN_WYCENY = { robocza: 'robocza', wyslana: 'wysłana', otwarta: 'otwarta przez klienta', przyjeta: 'przyjęta', odrzucona: 'odrzucona' };
+const KLASA_WYCENY = { otwarta: 'ok', przyjeta: 'ok', odrzucona: 'bad', wyslana: 'warn' };
+const zl = (n) => new Intl.NumberFormat('pl-PL').format(Math.round(Number(n) || 0)) + ' zł';
+
+async function kreatorWyceny(lead) {
+  const { pakiety } = await api('/quotes/pakiety');
+  const wiersze = pakiety.map((p, i) => `
+    <label class="f" style="display:flex;gap:10px;align-items:flex-start;margin:0 0 10px">
+      <input type="checkbox" name="poz${i}" value="1" style="margin-top:5px">
+      <span style="flex:1">
+        <strong>${esc(p.nazwa)}</strong>
+        <small class="muted" style="display:block">${esc(p.opis)}</small>
+      </span>
+      <input class="inp" name="cena${i}" type="number" min="0" step="50" value="${p.cena}" style="width:100px">
+    </label>`).join('');
+
+  openModal(`Wycena${lead ? ' dla ' + (lead.company || lead.name || '') : ''}`, `
+    <p class="muted small" style="margin:0 0 14px">Zaznacz pozycje i popraw ceny, jeśli trzeba. Klient dostanie link do strony z ofertą.</p>
+    ${wiersze}
+    <label class="f">Własna pozycja (opcjonalnie)
+      <input class="inp" name="wlasnaNazwa" placeholder="np. Integracja z kalendarzem rezerwacji"></label>
+    <div class="row" style="gap:10px">
+      <label class="f" style="flex:1">Cena własnej pozycji
+        <input class="inp" name="wlasnaCena" type="number" min="0" step="50" placeholder="0"></label>
+      <label class="f" style="flex:1">Ważna przez (dni)
+        <input class="inp" name="wazneDni" type="number" min="1" max="90" value="14"></label>
+    </div>
+    <label class="f">Proponowany termin
+      <input class="inp" name="termin" placeholder="np. wrzesień, 10 dni roboczych"></label>
+    <label class="f">Uwagi dla klienta
+      <textarea class="inp" name="notatka" style="min-height:5rem" placeholder="Co jest po Twojej stronie, co po jego."></textarea></label>
+  `, async (d) => {
+    const pozycje = pakiety
+      .map((p, i) => (d[`poz${i}`] ? { nazwa: p.nazwa, opis: p.opis, cena: Number(d[`cena${i}`]) || 0 } : null))
+      .filter(Boolean);
+    if (d.wlasnaNazwa?.trim()) {
+      pozycje.push({ nazwa: d.wlasnaNazwa.trim(), opis: '', cena: Number(d.wlasnaCena) || 0 });
+    }
+    if (!pozycje.length) throw new Error('Zaznacz przynajmniej jedną pozycję.');
+    const { wycena } = await api('/quotes', { method: 'POST', body: {
+      leadId: lead?.id || null, klient: lead?.name || null, firma: lead?.company || null,
+      pozycje, termin: d.termin, notatka: d.notatka, wazneDni: Number(d.wazneDni) || 14,
+    } });
+    toast(`Wycena na ${zl(wycena.suma)} gotowa.`);
+    location.hash = '#/wyceny';
+    render();
+  });
+}
+
+views['/wyceny'] = async () => {
+  view.innerHTML = '<div class="empty">Wczytywanie…</div>';
+  const { wyceny } = await api('/quotes');
+
+  view.innerHTML = `
+    <h1 class="page">Wyceny</h1>
+    <p class="sub">Oferty wysłane klientom. Widać, którą otworzyli.</p>
+    <div class="row" style="margin-bottom:18px"><button class="btn" id="nowaWycena">Nowa wycena</button></div>
+    ${wyceny.length ? pickGroup('wyceny', `<div class="card">${
+      table(['', 'Klient', 'Zakres', 'Kwota', 'Stan', 'Akcje'], wyceny, (w) => `<tr>
+        <td>${pick(w.id)}</td>
+        <td><strong>${esc(w.firma || w.klient || '—')}</strong><br>
+          <span class="muted small">${fmtDate(w.created_at)}${w.wazna_do ? ' · ważna do ' + fmtDate(w.wazna_do) : ''}</span></td>
+        <td class="small">${w.pozycje.map((p) => esc(p.nazwa)).join('<br>')}</td>
+        <td><strong>${zl(w.suma)}</strong></td>
+        <td><span class="tag ${KLASA_WYCENY[w.status] || ''}">${STAN_WYCENY[w.status] || w.status}</span>
+          ${w.otwarcia ? `<br><span class="muted small">otwarta ${w.otwarcia}×</span>` : ''}</td>
+        <td><button class="btn ghost sm" data-link="${esc(w.token)}" data-id="${w.id}" data-stan="${esc(w.status)}">Kopiuj link</button>
+          <button class="btn ghost sm" data-wyslana="${w.id}">Wysłana</button>
+          <button class="btn ghost sm" data-przyjeta="${w.id}">Przyjęta</button></td></tr>`)
+    }</div>`) : '<div class="empty">Nie ma jeszcze żadnej wyceny. Zacznij od „Nowa wycena" albo od karty leada.</div>'}
+  `;
+
+  $('#nowaWycena').onclick = () => kreatorWyceny(null);
+
+  view.querySelectorAll('[data-link]').forEach((b) => {
+    b.onclick = async () => {
+      const adres = `${location.origin}/wycena/${b.dataset.link}`;
+      try { await navigator.clipboard.writeText(adres); toast('Link skopiowany — wyślij go klientowi.'); }
+      catch { openModal('Link do wyceny', `<label class="f">Skopiuj i wyślij<input class="inp" value="${esc(adres)}"></label>`, () => {}); }
+      // Skopiowanie linku jest w praktyce wysłaniem. Bez tego wycena zostawała
+      // „robocza" i nigdy nie przeskakiwała na „otwarta", więc śledzenie nie działało.
+      if (b.dataset.stan === 'robocza') {
+        await api(`/quotes/${b.dataset.id}`, { method: 'PATCH', body: { status: 'wyslana' } }).catch(() => {});
+        render();
+      }
+    };
+  });
+  for (const [atrybut, stan] of [['data-wyslana', 'wyslana'], ['data-przyjeta', 'przyjeta']]) {
+    view.querySelectorAll(`[${atrybut}]`).forEach((b) => {
+      b.onclick = async () => {
+        await api(`/quotes/${b.getAttribute(atrybut)}`, { method: 'PATCH', body: { status: stan } });
+        toast('Zapisane.'); render();
+      };
+    });
+  }
+  bulkWire('wyceny', (id) => api(`/quotes/${id}`, { method: 'DELETE' }), { label: 'wycen' });
 };
 
 /* --- Ustawienia --- */
