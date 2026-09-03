@@ -1,6 +1,6 @@
 'use strict';
 const express = require('express');
-const { db } = require('../db');
+const { db, getSetting, setSetting } = require('../db');
 
 const router = express.Router();
 const now = () => new Date().toISOString();
@@ -135,5 +135,34 @@ function withProgress(p) {
 }
 
 const pick = (obj, keys) => Object.fromEntries(keys.filter((k) => obj[k] !== undefined).map((k) => [k, obj[k]]));
+
+/**
+ * Stan prośby o opinię. Trzymamy go przy projekcie, a nie w osobnej tabeli, bo
+ * opinia zawsze dotyczy konkretnego wdrożenia — i dzięki temu wiadomo, o co pytać.
+ */
+router.post('/:id/opinia', (req, res) => {
+  const dozwolone = ['brak', 'poproszona', 'otrzymana', 'odmowa'];
+  const stan = String(req.body?.status || '').trim();
+  if (!dozwolone.includes(stan)) {
+    return res.status(400).json({ error: `Nieznany stan opinii. Dozwolone: ${dozwolone.join(', ')}.` });
+  }
+  const tresc = String(req.body?.tresc || '').trim().slice(0, 2000) || null;
+  const info = db.prepare(
+    'UPDATE projects SET opinia_status = ?, opinia_data = ?, opinia_tresc = ?, updated_at = updated_at WHERE id = ?'
+  ).run(stan, stan === 'brak' ? null : now(), tresc, req.params.id);
+  if (!info.changes) return res.status(404).json({ error: 'Nie ma takiego projektu.' });
+  res.json({ projekt: db.prepare('SELECT id, name, client, opinia_status, opinia_data, opinia_tresc FROM projects WHERE id = ?').get(req.params.id) });
+});
+
+/** Adres do wystawiania opinii w wizytówce Google — jeden na całe konto. */
+router.get('/ustawienia/link-opinii', (_req, res) => res.json({ link: getSetting('link_opinii', '') || '' }));
+router.post('/ustawienia/link-opinii', (req, res) => {
+  const link = String(req.body?.link || '').trim();
+  if (link && !/^https:\/\/[^\s]+$/i.test(link)) {
+    return res.status(400).json({ error: 'Adres musi zaczynać się od https:// i nie zawierać spacji.' });
+  }
+  setSetting('link_opinii', link);
+  res.json({ link });
+});
 
 module.exports = router;

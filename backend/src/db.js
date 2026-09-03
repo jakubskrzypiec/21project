@@ -238,6 +238,19 @@ function migrate() {
     try { fn(); } catch (err) { console.error(`[migracja] ${opis}: ${err.message}`); }
   };
 
+  // Opinie klientów: panel ma pamiętać, kogo już poprosiłeś, żeby nie prosić dwa razy
+  // i nie zapomnieć o nikim. To jedyna rzecz, która realnie rusza lokalny pakiet Google.
+  const kolProjekty = db.prepare('PRAGMA table_info(projects)').all().map((c) => c.name);
+  for (const [name, ddl] of [
+    ['opinia_status', "TEXT NOT NULL DEFAULT 'brak'"],   // brak | poproszona | otrzymana | odmowa
+    ['opinia_data', 'TEXT'],
+    ['opinia_tresc', 'TEXT'],
+  ]) {
+    if (!kolProjekty.includes(name)) {
+      krok(`projects.${name}`, () => db.exec(`ALTER TABLE projects ADD COLUMN ${name} ${ddl}`));
+    }
+  }
+
   const kolumny = db.prepare('PRAGMA table_info(notes)').all().map((c) => c.name);
   for (const [name, ddl] of [
     ['source', 'TEXT'], ['source_ref', 'TEXT'], ['links', 'TEXT'],

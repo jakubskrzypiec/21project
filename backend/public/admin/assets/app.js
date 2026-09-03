@@ -307,6 +307,92 @@ function bannerFormularza(f) {
     ${opis(f.w30dni)} w ciągu 30 dni. ${ostatnie}</p>`;
 }
 
+/**
+ * Opinie w wizytówce Google są jedyną dźwignią lokalnego pakietu, na którą kod nie ma
+ * wpływu — dlatego panel po prostu pilnuje, żeby o nie poprosić. Najlepszy moment to
+ * kilka dni po oddaniu projektu, kiedy klient jeszcze pamięta, jak to szło.
+ */
+function wiadomoscOOpinie(projekt, link) {
+  const klient = (projekt.client || '').split(' ')[0];
+  return `Cześć${klient ? ' ' + klient : ''},\n\n`
+    + `mam nadzieję, że strona sprawdza się w praktyce. Mam do Ciebie jedną prośbę: `
+    + `jeśli współpraca była w porządku, będę bardzo wdzięczny za krótką opinię w Google. `
+    + `Dla jednoosobowej firmy takiej jak moja to naprawdę duża różnica.\n\n`
+    + (link ? `Zajmie to minutę: ${link}\n\n` : `Wyślę Ci link, wystarczy że dasz znać.\n\n`)
+    + `Dzięki i odzywaj się śmiało, gdyby coś było potrzebne.\n\nJakub`;
+}
+
+function kartaOpinii(o) {
+  if (!o) return '';
+  if (!o.oddane) return '';
+  const naglowek = `<div class="row" style="justify-content:space-between;align-items:baseline">
+      <h3 style="margin:0">Opinie od klientów</h3>
+      <span class="muted small">${o.zebrane} z ${o.oddane} oddanych projektów</span></div>`;
+
+  if (!o.czekaja.length) {
+    return `<div class="card" style="margin-top:1px">${naglowek}
+      <p class="muted small" style="margin-top:12px">Nikogo nie trzeba teraz prosić — wszystkie oddane
+      projekty są już oznaczone. Panel przypomni sam trzy dni po zamknięciu kolejnego.</p></div>`;
+  }
+
+  const brakLinku = !o.linkOpinii ? `<div class="notice warn" style="margin-top:12px">
+      Nie masz zapisanego adresu do wystawiania opinii. Wklej go w
+      <a href="#/ustawienia">Ustawieniach</a>, a trafi prosto do gotowej wiadomości.</div>` : '';
+
+  const pozycje = o.czekaja.map((p) => `<div class="event" data-opinia="${p.id}">
+      <time>${fmtDate(p.updated_at)}</time>
+      <div style="flex:1">
+        <a href="#/projekty/${p.id}"><strong>${esc(p.name)}</strong></a>
+        ${p.client ? `<br><span class="muted small">${esc(p.client)}</span>` : ''}
+        <div class="row" style="margin-top:8px;gap:8px;flex-wrap:wrap">
+          <button class="btn sm" data-kopiuj="${p.id}">Skopiuj wiadomość</button>
+          <button class="btn ghost sm" data-stan="poproszona" data-pid="${p.id}">Poproszono</button>
+          <button class="btn ghost sm" data-stan="otrzymana" data-pid="${p.id}">Mam opinię</button>
+          <button class="btn ghost sm" data-stan="odmowa" data-pid="${p.id}">Odpuszczam</button>
+        </div>
+      </div></div>`).join('');
+
+  return `<div class="card" style="margin-top:1px">${naglowek}
+    <p class="muted small" style="margin:10px 0 4px">Te projekty są oddane i nikt jeszcze nie był proszony o opinię.</p>
+    ${brakLinku}${pozycje}</div>`;
+}
+
+function wireOpinie(o) {
+  if (!o || !o.czekaja?.length) return;
+  const wgId = (id) => o.czekaja.find((p) => String(p.id) === String(id));
+
+  view.querySelectorAll('[data-kopiuj]').forEach((b) => {
+    b.onclick = async () => {
+      const tekst = wiadomoscOOpinie(wgId(b.dataset.kopiuj), o.linkOpinii);
+      try {
+        await navigator.clipboard.writeText(tekst);
+        toast('Wiadomość skopiowana — wklej ją klientowi.');
+      } catch {
+        // Schowek bywa zablokowany poza HTTPS albo bez zgody — wtedy pokazujemy tekst do ręcznego zaznaczenia.
+        openModal('Wiadomość do klienta',
+          `<label class="f">Skopiuj i wyślij<textarea class="inp" name="tresc" style="min-height:11rem">${esc(tekst)}</textarea></label>`,
+          () => {});
+      }
+    };
+  });
+
+  view.querySelectorAll('[data-stan]').forEach((b) => {
+    b.onclick = async () => {
+      const stan = b.dataset.stan;
+      const dalej = async (tresc) => {
+        await api(`/projects/${b.dataset.pid}/opinia`, { method: 'POST', body: { status: stan, tresc } });
+        toast(stan === 'otrzymana' ? 'Zapisane — prześlij mi tę opinię, wrzucę ją na stronę.' : 'Zapisane.');
+        render();
+      };
+      if (stan !== 'otrzymana') return dalej(null);
+      openModal('Treść opinii',
+        '<label class="f">Wklej, co napisał klient<textarea class="inp" name="tresc" style="min-height:8rem" '
+        + 'placeholder="Pełna treść opinii — przyda się na stronie."></textarea></label>',
+        (dane) => dalej(dane.tresc));
+    };
+  });
+}
+
 views['/pulpit'] = async () => {
   view.innerHTML = '<div class="empty">Wczytywanie…</div>';
   const d = await api('/dashboard');
@@ -378,10 +464,14 @@ views['/pulpit'] = async () => {
       </div>
     </div>
 
+    ${kartaOpinii(d.opinie)}
+
     ${!g.connected ? `<div class="notice info" style="margin-top:18px">
       Konto Google nie jest połączone — poczta, kalendarz i wysyłka są nieaktywne.
       <a href="#/ustawienia">Połącz teraz</a>.</div>` : ''}
   `;
+
+  wireOpinie(d.opinie);
 
   if (!d.mail?.error && d.mail?.unread) {
     const b = $('#badgeMail');
@@ -1450,7 +1540,11 @@ const fmtBytes = (b) => {
 /* --- Ustawienia --- */
 views['/ustawienia'] = async () => {
   view.innerHTML = '<div class="empty">Wczytywanie…</div>';
-  const g = await api('/mail/google/status');
+  const [g, opinieUst] = await Promise.all([
+    api('/mail/google/status'),
+    api('/projects/ustawienia/link-opinii').catch(() => ({ link: '' })),
+  ]);
+  const linkOpinii = opinieUst.link || '';
   const snippet = `<script defer src="${location.origin}/t.js"><\/script>`;
 
   view.innerHTML = `
@@ -1463,6 +1557,18 @@ views['/ustawienia'] = async () => {
       Zapytanie samo w sobie jest zapisane w <a href="#/leady">Leadach</a>, więc nic nie przepadło.
       Najczęstsza przyczyna to wygasłe połączenie z Google — połącz konto ponownie i wyślij próbną wiadomość.
     </div>` : ''}
+
+    <div class="card">
+      <h3>Opinie w wizytówce Google</h3>
+      <p class="small muted">Adres, pod którym klient wystawia opinię. Znajdziesz go w profilu firmy w Google:
+        <strong>Poproś o opinie</strong> — Google wygeneruje krótki link. Panel wkleja go potem
+        w gotową wiadomość do klienta.</p>
+      <form id="formLinkOpinii" class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap">
+        <input class="inp" name="link" type="url" placeholder="https://g.page/r/..." style="flex:1;min-width:260px"
+          value="${esc(linkOpinii)}">
+        <button class="btn sm" type="submit">Zapisz</button>
+      </form>
+    </div>
 
     <div class="card">
       <h3>Konto Google (poczta i kalendarz)</h3>
@@ -1514,6 +1620,15 @@ views['/ustawienia'] = async () => {
     await api('/mail/google/disconnect', { method: 'POST' });
     render();
   };
+  const formLink = $('#formLinkOpinii');
+  if (formLink) formLink.onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { link } = await api('/projects/ustawienia/link-opinii', { method: 'POST', body: { link: e.target.link.value.trim() } });
+      toast(link ? 'Adres do opinii zapisany.' : 'Adres do opinii wyczyszczony.');
+    } catch (err) { toast(err.message, true); }
+  };
+
   const btnTest = $('#btnTestMail');
   if (btnTest) btnTest.onclick = async () => {
     btnTest.disabled = true;

@@ -11,6 +11,23 @@ const ai = require('../services/ai');
 const router = express.Router();
 
 /**
+ * Opinie w wizytówce Google są tym, co rusza lokalny pakiet — a pakiet zbiera
+ * większość kliknięć na frazy typu „strony internetowe <miasto>". Panel przypomina
+ * o tym sam, bo najlepszy moment na prośbę mija kilka dni po oddaniu projektu.
+ */
+function opinieDoZebrania() {
+  const prog = new Date(Date.now() - 3 * 86400000).toISOString();
+  const czekaja = db.prepare(
+    "SELECT id, name, client, updated_at FROM projects "
+    + "WHERE status = 'live' AND opinia_status = 'brak' AND updated_at <= ? "
+    + "ORDER BY datetime(updated_at) DESC LIMIT 5"
+  ).all(prog);
+  const zebrane = db.prepare("SELECT COUNT(*) AS n FROM projects WHERE opinia_status = 'otrzymana'").get().n;
+  const oddane = db.prepare("SELECT COUNT(*) AS n FROM projects WHERE status = 'live'").get().n;
+  return { czekaja, zebrane, oddane, linkOpinii: getSetting('link_opinii', '') || null };
+}
+
+/**
  * Stan formularza kontaktowego widoczny wprost na pulpicie.
  * Zapytanie zapisuje się nawet wtedy, gdy powiadomienie na maila nie wyszło,
  * więc „brak maila" i „brak zapytania" to dwie różne awarie — i pulpit musi
@@ -57,6 +74,7 @@ router.get('/', async (_req, res) => {
     integrations: { google: google.status(), ai: ai.enabled() },
     formularz: stanFormularza(),
     serwer: stanDysku(),
+    opinie: opinieDoZebrania(),
   };
 
   try {
