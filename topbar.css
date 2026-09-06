@@ -79,3 +79,10 @@
 @media (prefers-reduced-motion:reduce){
   .topbar nav a::after,.mobileMenu,.topbar .burger span{transition:none}
 }
+
+/* =========================================================
+   Linki do social mediow (wspolne dla wszystkich stron)
+   ========================================================= */
+.socialLink{display:inline-flex;align-items:center;gap:8px;transition:color .25s}
+.socialIcon{width:16px;height:16px;flex:none}
+.mobileMenuFoot .socialLink span{text-transform:none;letter-spacing:0}

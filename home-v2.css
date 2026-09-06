@@ -549,3 +549,7 @@
   .homeV2 .v2-hero::before{width:86vw;right:-37vw;top:35%}
 }
 @media(max-width:620px){.homeV2 .v2-heroCopy h1 br:nth-of-type(2){display:block}}
+
+/* Instagram w nawigacji stopki strony glownej */
+.v2-footerMeta .socialLink.v2{gap:7px}
+.v2-footerMeta .socialLink.v2 .socialIcon{width:14px;height:14px}

@@ -695,3 +695,7 @@ h2.is-in .ln > span,.case__info h3.is-in .ln > span{transform:none}
 .detailFooterWork span{font-size:18px;transition:transform .2s ease}
 .detailFooterWork:hover span{transform:translate(3px,-3px)}
 @media(max-width:700px){.detailFooterWork{padding-bottom:24px;margin-bottom:32px}.detailFooterWork strong{font-size:34px}}
+
+/* Instagram w stopce podstron realizacji */
+.footer__contact .socialLink span{text-transform:none;letter-spacing:0}
+.footer__contact .socialLink:hover{color:#fff}
