@@ -1678,7 +1678,19 @@ views['/ustawienia'] = async () => {
 
     <div class="card">
       <h3>Konto Google (poczta i kalendarz)</h3>
-      ${g.connected
+      ${g.wygasl ? `<div class="notice bad">
+        <strong>Połączenie wygasło.</strong>
+        ${g.account ? `Konto <strong>${esc(g.account)}</strong> było połączone, ale Google odrzuca zapisany klucz` : 'Google odrzuca zapisany klucz'}
+        ${g.wygaslOd ? `(od ${fmtDateTime(g.wygaslOd)})` : ''}. Poczta, kalendarz i powiadomienia z formularza są nieczynne,
+        dopóki nie połączysz konta ponownie.<br><br>
+        <strong>Jeśli powtarza się to mniej więcej co tydzień</strong>, przyczyna jest jedna: w Google Cloud
+        ekran zgody stoi w trybie <em>Testing</em>, a w nim klucze odświeżające tracą ważność po 7 dniach.
+        Wejdź w Google Cloud Console → <em>APIs &amp; Services</em> → <em>OAuth consent screen</em>
+        i opublikuj aplikację (<em>Publish app</em>). Ostrzeżenie o niezweryfikowanej aplikacji przy logowaniu
+        jest w porządku — to Twoja własna aplikacja i Twoje własne konto.
+      </div>
+      <button class="btn" id="btnConnect">Połącz konto Google ponownie</button>`
+      : g.connected
         ? `<p>Połączone jako <strong>${esc(g.account || 'nieznane konto')}</strong>
              <span class="muted small">· ostatnia aktualizacja ${fmtDateTime(g.updatedAt)}</span></p>
            <div class="row" style="margin-top:10px">

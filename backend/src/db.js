@@ -269,6 +269,13 @@ function migrate() {
     }
   }
 
+  // Martwy token Google wygląda w bazie identycznie jak żywy — dopóki nie spróbujesz
+  // go użyć. Bez tego panel pisał „Połączone jako…" obok komunikatu o wygaśnięciu.
+  const kolTokeny = db.prepare('PRAGMA table_info(oauth_tokens)').all().map((c) => c.name);
+  if (!kolTokeny.includes('martwy_od')) {
+    krok('oauth_tokens.martwy_od', () => db.exec('ALTER TABLE oauth_tokens ADD COLUMN martwy_od TEXT'));
+  }
+
   const kolumny = db.prepare('PRAGMA table_info(notes)').all().map((c) => c.name);
   for (const [name, ddl] of [
     ['source', 'TEXT'], ['source_ref', 'TEXT'], ['links', 'TEXT'],

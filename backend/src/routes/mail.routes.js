@@ -31,6 +31,8 @@ const guard = (handler) => async (req, res) => {
       const opis = err.code === 'GOOGLE_NOT_CONNECTED'
         ? 'Konto Google nie jest połączone.'
         : `Połączenie z Google wygasło (${err.message}). Połącz konto ponownie w Ustawieniach.`;
+      // Oznaczamy token jako martwy, żeby Ustawienia przestały twierdzić, że konto jest połączone.
+      if (err.code !== 'GOOGLE_NOT_CONNECTED') google.oznaczWygasle(err.message);
       setSetting('powiadomienie_blad', JSON.stringify({ ts: new Date().toISOString(), error: opis.slice(0, 300) }));
       return res.status(409).json({ error: opis, code: 'GOOGLE_ROZLACZONE' });
     }
