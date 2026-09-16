@@ -45,9 +45,22 @@ function saveTokens(tokens, accountEmail) {
     expiry: tokens.expiry_date || null,
     updated: new Date().toISOString(),
   });
+  // Świeże tokeny znaczą, że połączenie znów żyje.
+  db.prepare('UPDATE oauth_tokens SET martwy_od = NULL WHERE provider = ?').run(PROVIDER);
 }
 
 const getStoredTokens = () => db.prepare('SELECT * FROM oauth_tokens WHERE provider = ?').get(PROVIDER);
+
+/**
+ * Google odsyła invalid_grant, gdy klucz odświeżający przestał być ważny. Sam wpis
+ * w bazie nadal wygląda poprawnie, więc trzeba go oznaczyć — inaczej panel twierdzi,
+ * że konto jest połączone, i wysyła Cię w kółko po tych samych ekranach.
+ */
+function oznaczWygasle(powod) {
+  db.prepare('UPDATE oauth_tokens SET martwy_od = COALESCE(martwy_od, ?) WHERE provider = ?')
+    .run(new Date().toISOString(), PROVIDER);
+  if (powod) console.error('[google] połączenie wygasło:', String(powod).slice(0, 200));
+}
 
 function disconnect() {
   db.prepare('DELETE FROM oauth_tokens WHERE provider = ?').run(PROVIDER);
@@ -90,13 +103,18 @@ const calendar = () => google.calendar({ version: 'v3', auth: authorized() });
 
 function status() {
   const row = getStoredTokens();
+  const wygasl = Boolean(row?.martwy_od);
   return {
     configured: isConfigured(),
-    connected: Boolean(row && row.refresh_token),
+    // Token oznaczony jako martwy to nie jest połączenie — panel ma o tym mówić wprost.
+    connected: Boolean(row && row.refresh_token) && !wygasl,
+    wygasl,
+    wygaslOd: row?.martwy_od || null,
     account: row?.account_email || null,
     scopes: row?.scope ? row.scope.split(' ') : [],
     updatedAt: row?.updated_at || null,
   };
 }
 
-module.exports = { isConfigured, authUrl, exchangeCode, gmail, calendar, status, disconnect, authorized };
+module.exports = {
+  oznaczWygasle, isConfigured, authUrl, exchangeCode, gmail, calendar, status, disconnect, authorized };

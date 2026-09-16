@@ -63,6 +63,10 @@ router.post('/api/contact', limit(5, 10 * 60 * 1000), async (req, res) => {
     setSetting('powiadomienie_blad', '');
   } catch (err) {
     const opis = err?.message || String(err);
+    // Ta sama przyczyna co w poczcie — token mógł wygasnąć między jednym a drugim zapytaniem.
+    if (/invalid_grant|invalid_client|unauthorized_client/i.test(opis)) {
+      try { require('../services/google').oznaczWygasle(opis); } catch { /* nie blokujemy odpowiedzi */ }
+    }
     console.error('[formularz] nie wysłano powiadomienia:', opis);
     logAction('contact.notify_failed', clientIp(req), { lead_id: lead.id, error: opis.slice(0, 300) });
     setSetting('powiadomienie_blad', JSON.stringify({ ts: new Date().toISOString(), error: opis.slice(0, 300) }));
