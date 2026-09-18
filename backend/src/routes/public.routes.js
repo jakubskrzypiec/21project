@@ -266,4 +266,69 @@ h1{font-size:1.5rem;margin:0 0 8px}p{color:#6b6b6b;margin:0}</style></head>
 <body><div><h1>${esc(tytul)}</h1><p>${esc(opis)}</p></div></body></html>`;
 }
 
+/* ------------------------------ brief klienta ----------------------------- */
+const { stronaFormularza, stronaPodziekowania } = require('../stronaBriefu');
+const { wszystkiePola } = require('../briefPytania');
+
+router.get('/brief/:token', limit(60, 10 * 60 * 1000), (req, res) => {
+  const b = db.prepare('SELECT * FROM briefy WHERE token = ?').get(req.params.token);
+  if (!b) return res.status(404).type('html').send(stronaBledu('Nie ma takiego briefu.',
+    'Sprawdź, czy adres nie został ucięty przy kopiowaniu.'));
+
+  if (b.status === 'wypelniony') return res.type('html').send(stronaPodziekowania(b, config.siteUrl));
+
+  // Pierwsze wejście przestawia stan na „otwarty" — widać, czy klient w ogóle zajrzał.
+  db.prepare("UPDATE briefy SET otwarcia = otwarcia + 1, otwarty_at = COALESCE(otwarty_at, ?),"
+    + " status = CASE WHEN status = 'wyslany' THEN 'otwarty' ELSE status END WHERE id = ?")
+    .run(new Date().toISOString(), b.id);
+  res.type('html').send(stronaFormularza(b, config.siteUrl));
+});
+
+router.post('/brief/:token', limit(10, 10 * 60 * 1000), (req, res) => {
+  const b = db.prepare('SELECT * FROM briefy WHERE token = ?').get(req.params.token);
+  if (!b) return res.status(404).json({ error: 'Nie ma takiego briefu.' });
+  if (b.status === 'wypelniony') return res.status(409).json({ error: 'Ten brief został już wysłany.' });
+
+  // Przyjmujemy wyłącznie pola z definicji pytań — nic spoza niej nie trafia do bazy.
+  const znane = new Map(wszystkiePola().map((p) => [p.id, p]));
+  const wejscie = req.body?.odpowiedzi || {};
+  const odpowiedzi = {};
+  for (const [klucz, wartosc] of Object.entries(wejscie)) {
+    const pole = znane.get(klucz);
+    if (!pole) continue;
+    if (Array.isArray(wartosc)) {
+      odpowiedzi[klucz] = wartosc.map((v) => String(v).slice(0, 200)).slice(0, 20);
+    } else {
+      odpowiedzi[klucz] = String(wartosc).trim().slice(0, 4000);
+    }
+  }
+  if (!odpowiedzi.firma || !odpowiedzi.email) {
+    return res.status(400).json({ error: 'Uzupełnij nazwę firmy i adres e-mail.' });
+  }
+
+  db.prepare("UPDATE briefy SET status = 'wypelniony', odpowiedzi = ?, firma = ?, email = ?,"
+    + ' wypelniony_at = ?, przeczytany = 0 WHERE id = ?')
+    .run(JSON.stringify(odpowiedzi), odpowiedzi.firma.slice(0, 160), odpowiedzi.email.slice(0, 160),
+         new Date().toISOString(), b.id);
+  logAction('brief.wypelniony', clientIp(req), { id: b.id, firma: odpowiedzi.firma.slice(0, 80) });
+
+  // Brief bez powiadomienia leżałby w panelu, dopóki ktoś by go nie zauważył.
+  powiadomOBriefie(odpowiedzi).catch(() => { /* zapisany brief jest ważniejszy niż powiadomienie */ });
+  res.json({ ok: true });
+});
+
+async function powiadomOBriefie(odpowiedzi) {
+  const google = require('../services/google');
+  const g = google.status();
+  if (!g.connected || !g.account) return;
+  const gmail = require('../services/gmail');
+  await gmail.sendMessage({
+    to: g.account,
+    subject: `Brief wypełniony: ${odpowiedzi.firma}`,
+    body: `${odpowiedzi.firma} wypełnił brief.\n\nKontakt: ${odpowiedzi.email}\n`
+      + `${odpowiedzi.telefon ? `Telefon: ${odpowiedzi.telefon}\n` : ''}`
+      + `\nCałość w panelu: ${config.publicUrl}/admin#/notatnik`,
+  });
+}
+
 module.exports = router;

@@ -232,6 +232,22 @@ CREATE TABLE IF NOT EXISTS wyceny (
   otwarcia    INTEGER NOT NULL DEFAULT 0
 );
 
+CREATE TABLE IF NOT EXISTS briefy (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  created_at    TEXT NOT NULL,
+  token         TEXT NOT NULL UNIQUE,      -- losowy klucz w adresie; brief nie jest do zgadnięcia
+  etykieta      TEXT,                      -- Twoja nazwa robocza, zanim klient poda swoją
+  lead_id       INTEGER REFERENCES leads(id) ON DELETE SET NULL,
+  status        TEXT NOT NULL DEFAULT 'wyslany',  -- wyslany | otwarty | wypelniony
+  odpowiedzi    TEXT,                      -- JSON: { id_pola: wartosc }
+  firma         TEXT,                      -- wyciągnięte z odpowiedzi, żeby nie parsować przy listowaniu
+  email         TEXT,
+  otwarcia      INTEGER NOT NULL DEFAULT 0,
+  otwarty_at    TEXT,
+  wypelniony_at TEXT,
+  przeczytany   INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS audit_log (
   id     INTEGER PRIMARY KEY AUTOINCREMENT,
   ts     TEXT NOT NULL,

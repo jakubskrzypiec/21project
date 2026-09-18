@@ -1310,15 +1310,119 @@ const STATUSY = [
 const CZEKA_NA_KLIENTA = ['czekam-na-materialy', 'wycena-wyslana', 'czeka-na-odpowiedz'];
 const nazwaStatusu = (k) => (STATUSY.find(([key]) => key === k) || [, k])[1];
 
+
+/* --- Briefy od klientów ----------------------------------------------------
+   Zamiast wyciągać kontekst przez trzy telefony i pięć maili, klient dostaje link
+   do formularza. Komplet odpowiedzi ląduje tutaj, przy kartkach i plikach — czyli
+   tam, gdzie i tak zaglądasz, zaczynając projekt. */
+
+const STAN_BRIEFU = { wyslany: 'wysłany', otwarty: 'otwarty przez klienta', wypelniony: 'wypełniony' };
+const KLASA_BRIEFU = { wypelniony: 'ok', otwarty: 'warn' };
+
+function sekcjaBriefow(dane) {
+  const b = dane?.briefy || [];
+  return `
+    <h2 class="sec">Briefy od klientów${dane?.nowe ? ` <span class="tag ok">${dane.nowe} nowe</span>` : ''}</h2>
+    <p class="sub">Wysyłasz link, klient opisuje styl, kolory, inspiracje i priorytety. Wypełniony brief wraca tutaj.</p>
+    <div class="row" style="margin-bottom:14px"><button class="btn sm" id="btnNowyBrief">Nowy brief</button></div>
+    ${b.length ? `<div class="card">${table(['Klient', 'Stan', 'Kiedy', 'Akcje'], b, (x) => `<tr${
+        x.status === 'wypelniony' && !x.przeczytany ? ' style="font-weight:600"' : ''}>
+      <td>${x.firma
+          ? `<a href="#" data-brief="${x.id}">${esc(x.firma)}</a><br><span class="muted small">${esc(x.email || '')}</span>`
+          : `${esc(x.etykieta || 'bez nazwy')}<br><span class="muted small">czeka na wypełnienie</span>`}</td>
+      <td><span class="tag ${KLASA_BRIEFU[x.status] || ''}">${STAN_BRIEFU[x.status] || x.status}</span>
+        ${x.otwarcia ? `<br><span class="muted small">otwarty ${x.otwarcia}×</span>` : ''}</td>
+      <td class="small">${fmtDate(x.wypelniony_at || x.created_at)}</td>
+      <td>${x.status === 'wypelniony'
+          ? `<button class="btn ghost sm" data-brief="${x.id}">Zobacz odpowiedzi</button>`
+          : `<button class="btn ghost sm" data-linkbrief="${esc(x.token)}">Kopiuj link</button>`}
+        <button class="btn ghost sm" data-delbrief="${x.id}">Usuń</button></td></tr>`)}</div>`
+      : '<div class="empty">Nie ma jeszcze żadnego briefu. Kliknij „Nowy brief", a dostaniesz link do wysłania klientowi.</div>'}
+  `;
+}
+
+function wireBriefy() {
+  const nowy = $('#btnNowyBrief');
+  if (nowy) nowy.onclick = () => openModal('Nowy brief',
+    `<label class="f">Dla kogo? <span class="muted small">(tylko dla Ciebie, klient tego nie widzi)</span>
+      <input class="inp" name="etykieta" placeholder="np. Pracownia Kowalska" autofocus></label>`,
+    async (d) => {
+      const { brief } = await api('/briefs', { method: 'POST', body: { etykieta: d.etykieta } });
+      const adres = `${location.origin}/brief/${brief.token}`;
+      try { await navigator.clipboard.writeText(adres); toast('Link skopiowany — wyślij go klientowi.'); }
+      catch { toast('Brief utworzony.'); }
+      render();
+    });
+
+  view.querySelectorAll('[data-linkbrief]').forEach((el) => {
+    el.onclick = async () => {
+      const adres = `${location.origin}/brief/${el.dataset.linkbrief}`;
+      try { await navigator.clipboard.writeText(adres); toast('Link skopiowany.'); }
+      catch { openModal('Link do briefu', `<label class="f">Skopiuj i wyślij<input class="inp" value="${esc(adres)}"></label>`, () => {}); }
+    };
+  });
+
+  view.querySelectorAll('[data-brief]').forEach((el) => {
+    el.onclick = async (e) => {
+      e.preventDefault();
+      const { brief } = await api(`/briefs/${el.dataset.brief}`);
+      pokazBrief(brief);
+      if (!brief.przeczytany) {
+        await api(`/briefs/${brief.id}/przeczytany`, { method: 'POST' }).catch(() => {});
+      }
+    };
+  });
+
+  view.querySelectorAll('[data-delbrief]').forEach((el) => {
+    el.onclick = async () => {
+      if (!confirm('Usunąć ten brief razem z odpowiedziami?')) return;
+      await api(`/briefs/${el.dataset.delbrief}`, { method: 'DELETE' });
+      toast('Usunięte.'); render();
+    };
+  });
+}
+
+/** Odpowiedzi grupujemy sekcjami tak samo jak w formularzu — czyta się je wtedy jak dokument, nie jak zrzut bazy. */
+function pokazBrief(b) {
+  const sekcje = [];
+  for (const p of b.pola) {
+    if (!sekcje.length || sekcje[sekcje.length - 1].tytul !== p.sekcja) sekcje.push({ tytul: p.sekcja, pola: [] });
+    sekcje[sekcje.length - 1].pola.push(p);
+  }
+  const wartosc = (p) => {
+    if (p.typ === 'ocena') {
+      const n = Number(p.wartosc) || 0;
+      return `<span style="letter-spacing:2px">${'●'.repeat(n)}${'○'.repeat(5 - n)}</span> <span class="muted small">${n}/5</span>`;
+    }
+    if (Array.isArray(p.wartosc)) return p.wartosc.map((v) => `<span class="tag">${esc(v)}</span>`).join(' ');
+    const t = String(p.wartosc);
+    if (/^https?:\/\//i.test(t)) return `<a href="${esc(t)}" target="_blank" rel="noopener">${esc(t)}</a>`;
+    return esc(t).replace(/\n/g, '<br>');
+  };
+  modal.innerHTML = `<h3>${esc(b.firma || 'Brief')}</h3>
+    <p class="muted small" style="margin:-6px 0 18px">${esc(b.email || '')}${
+      b.wypelniony_at ? ' · wypełniony ' + fmtDateTime(b.wypelniony_at) : ''}</p>
+    <div style="max-height:62vh;overflow:auto;padding-right:6px">
+      ${sekcje.map((s) => `<h4 class="sec" style="margin:18px 0 8px">${esc(s.tytul)}</h4>
+        ${s.pola.map((p) => `<div style="margin:0 0 12px">
+          <div class="muted small">${esc(p.etykieta)}</div>
+          <div>${wartosc(p)}</div></div>`).join('')}`).join('')}
+    </div>
+    <div class="row end" style="margin-top:18px"><button class="btn" id="zamknijBrief">Zamknij</button></div>`;
+  modal.showModal();
+  $('#zamknijBrief').onclick = () => modal.close();
+}
+
 views['/notatnik'] = async () => {
   const params = new URLSearchParams(location.hash.split('?')[1] || '');
   const showDone = params.get('done') === '1';
   const folder = params.get('folder') || '';
   view.innerHTML = '<div class="empty">Wczytywanie…</div>';
 
-  const [{ notes, doneCount, licznik }, filesData] = await Promise.all([
+  const [{ notes, doneCount, licznik }, filesData, briefy] = await Promise.all([
     api(`/board/notes${showDone ? '?done=1' : ''}`),
     api(`/board/files${folder ? `?folder=${encodeURIComponent(folder)}` : ''}`),
+    api('/briefs').catch(() => ({ briefy: [], nowe: 0 })),
   ]);
   const { files, folders } = filesData;
 
@@ -1341,6 +1445,8 @@ views['/notatnik'] = async () => {
       <div class="empty">
         Tablica jest pusta. Pierwsza kartka to zwykle lista rzeczy, o których łatwo zapomnieć.
       </div>`}
+
+    ${sekcjaBriefow(briefy)}
 
     <h2 class="sec">Pliki</h2>
     <p class="sub">Umowy, logotypy, materiały od klientów. Do 25 MB na plik.</p>
@@ -1376,6 +1482,7 @@ views['/notatnik'] = async () => {
     </div>`)}`;
 
   bulkWire('notatki', (id) => api(`/board/notes/${id}`, { method: 'DELETE' }), { label: 'kartek' });
+  wireBriefy();
   bulkWire('pliki', (id) => api(`/board/files/${id}`, { method: 'DELETE' }), { label: 'plików' });
 
   $('#btnNewNote').onclick = () => noteModal();
