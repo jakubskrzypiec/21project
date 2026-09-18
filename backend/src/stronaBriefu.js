@@ -62,6 +62,8 @@ button.wyslij:disabled{opacity:.55;cursor:default}
 .gotowe{background:var(--tlo);border:1px solid var(--linia);border-radius:14px;
   padding:clamp(26px,6vw,48px);text-align:center}
 .gotowe h1{margin-bottom:12px}
+.numer{white-space:nowrap;font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--linia)}
+.numer:hover{border-color:var(--ink)}
 .stopka{margin-top:26px;color:var(--muted);font-size:.83rem;text-align:center}
 .stopka a{color:var(--muted)}
 @media(prefers-color-scheme:dark){:root{--ink:#f2f2f2;--muted:#9b9b9b;--linia:#2c2c2c;--tlo:#151515;--papier:#0e0e0e}}
@@ -218,7 +220,7 @@ function stronaPodziekowania(brief, siteUrl) {
   ${brief.wypelniony_at ? esc(new Date(brief.wypelniony_at).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' })) : ''}.
   Przejrzę go i odezwę się z pierwszymi pytaniami albo od razu z kierunkiem.</p>
   <p class="lead" style="margin-top:18px">Gdyby coś jeszcze przyszło Ci do głowy — po prostu napisz
-  albo zadzwoń: <strong>601 863 788</strong>.</p>
+  albo zadzwoń: <a class="numer" href="tel:+48601863788">601&nbsp;863&nbsp;788</a>.</p>
 </div>
 <p class="stopka">21 project · <a href="${esc(siteUrl)}">21project.pl</a></p>
 </div></body></html>`;

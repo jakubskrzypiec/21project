@@ -73,10 +73,9 @@ const SEKCJE = [
     pola: [
       { id: 'zdjecia', etykieta: 'Macie własne zdjęcia?', typ: 'wybor',
         opcje: ['Tak, dobrej jakości', 'Mam, ale słabe', 'Nie mam — trzeba coś wymyślić'] },
-      { id: 'realizacje', etykieta: 'Ile realizacji chcecie pokazać?', typ: 'wybor',
-        opcje: ['Nie pokazujemy realizacji', '1–3', '4–8', 'Więcej niż 8'] },
-      { id: 'realizacje_opis', etykieta: 'Krótko o realizacjach, które warto pokazać', typ: 'obszar',
-        placeholder: 'Nazwy, miejsca, czym się wyróżniają.' },
+      { id: 'realizacje_opis', etykieta: 'Które realizacje chcecie pokazać?', typ: 'obszar',
+        placeholder: 'Nazwy albo adresy. Przy dużym portfolio wybierz te, po których chcesz dostawać '
+          + 'podobne zlecenia — na stronie lepiej działa kilka opisanych niż wszystkie wrzucone.' },
     ],
   },
   {

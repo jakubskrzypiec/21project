@@ -1334,7 +1334,8 @@ function sekcjaBriefow(dane) {
         ${x.otwarcia ? `<br><span class="muted small">otwarty ${x.otwarcia}×</span>` : ''}</td>
       <td class="small">${fmtDate(x.wypelniony_at || x.created_at)}</td>
       <td>${x.status === 'wypelniony'
-          ? `<button class="btn ghost sm" data-brief="${x.id}">Zobacz odpowiedzi</button>`
+          ? `<button class="btn ghost sm" data-brief="${x.id}">Zobacz odpowiedzi</button>
+             <button class="btn ghost sm" data-plik="${x.id}" data-firma="${esc(x.firma || '')}">Pobierz</button>`
           : `<button class="btn ghost sm" data-linkbrief="${esc(x.token)}">Kopiuj link</button>`}
         <button class="btn ghost sm" data-delbrief="${x.id}">Usuń</button></td></tr>`)}</div>`
       : '<div class="empty">Nie ma jeszcze żadnego briefu. Kliknij „Nowy brief", a dostaniesz link do wysłania klientowi.</div>'}
@@ -1370,6 +1371,26 @@ function wireBriefy() {
       if (!brief.przeczytany) {
         await api(`/briefs/${brief.id}/przeczytany`, { method: 'POST' }).catch(() => {});
       }
+    };
+  });
+
+  view.querySelectorAll('[data-plik]').forEach((el) => {
+    el.onclick = async () => {
+      // Zwykły odnośnik nie dołożyłby nagłówka z sesją, więc pobieramy przez fetch
+      // i dopiero gotowy plik podsuwamy przeglądarce.
+      try {
+        const res = await fetch(`/api/admin/briefs/${el.dataset.plik}/plik`, { headers: naglowki() });
+        if (!res.ok) throw new Error('Nie udało się pobrać pliku.');
+        const tekst = await res.text();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([tekst], { type: 'text/markdown;charset=utf-8' }));
+        a.download = `brief-${(el.dataset.firma || 'klient').toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.md`;
+        document.body.append(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        toast('Ściąga pobrana.');
+      } catch (err) { toast(err.message, true); }
     };
   });
 
