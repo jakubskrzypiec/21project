@@ -119,11 +119,14 @@ async function listThreads({ q = '', labelIds, maxResults = 25, pageToken, zeSmi
         subject: headerOf(last, 'Subject') || '(bez tematu)',
         date: headerOf(last, 'Date'),
         internalDate: Number(last.internalDate || 0),
-        // Wątek, w którym KAŻDA wiadomość jest wysłana przeze mnie, to czysta
-        // korespondencja wychodząca. Rozmowa, w której ktoś odpisał, ma też
-        // wiadomości bez etykiety SENT i zostaje. Liczymy to tutaj, bo zapytanie
-        // „-in:sent" działa na całe wątki i wycięłoby też rozmowy z klientami.
-        tylkoWyslane: msgs.length > 0 && msgs.every((m) => (m.labelIds || []).includes('SENT')),
+        // Czysta korespondencja wychodząca to wątek, w którym KAŻDA wiadomość ma
+        // etykietę SENT i ŻADNA nie trafiła do skrzynki odbiorczej. Sam warunek
+        // „wszystkie wysłane" nie wystarcza: wiadomość wysłana do samego siebie —
+        // a tak przychodzą powiadomienia z panelu — ma naraz SENT i INBOX,
+        // więc znikała z widoku „Wszystko".
+        tylkoWyslane: msgs.length > 0
+          && msgs.every((m) => (m.labelIds || []).includes('SENT'))
+          && !msgs.some((m) => (m.labelIds || []).includes('INBOX')),
         unread: labels.has('UNREAD'),
         starred: labels.has('STARRED'),
         labels: [...labels].filter((l) => !l.startsWith('CATEGORY_')),
