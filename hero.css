@@ -1,0 +1,4 @@
+/* Hero: wstęga linii zamiast siatki 3D */
+.hero-waves{position:absolute;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none;display:block}
+.sculpture{display:none}
+.stage::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 46% 36% at 50% 44%,#08090b99,#08090b00 78%),linear-gradient(90deg,#08090b 0%,#08090b00 12%,#08090b00 88%,#08090b 100%)}

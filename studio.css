@@ -1,0 +1,28 @@
+/* O Studio: duża wycięta sylwetka z poświatą przed napisem O STUDIO, tekst po prawej */
+.studio{position:relative;background:#08090b;padding:clamp(50px,6vw,100px) 4% clamp(50px,6vw,100px);isolation:isolate;overflow:hidden}
+.studio-inner{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(20px,3vw,56px);align-items:center}
+
+.studio-visual{position:relative;container-type:inline-size;aspect-ratio:4/5;width:100%;max-height:820px;overflow:hidden;background:radial-gradient(ellipse 60% 50% at 50% 40%,#4a4d55,#1f2126 48%,#08090b 74%)}
+.studio-word{position:absolute;left:0;right:0;top:17%;text-align:center;font-family:Bebas,Impact,sans-serif;font-weight:400;font-size:25cqw;letter-spacing:.02em;line-height:.8;color:#f1f3f6;white-space:nowrap;user-select:none}
+.studio-figure{position:absolute;left:12%;bottom:0;height:90%;aspect-ratio:4/5}
+.studio-figure img{display:block;width:100%;height:100%;object-fit:contain;object-position:left bottom}
+
+.studio-brand{position:absolute;left:50%;bottom:9%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.6cqw,16px);color:#fff}
+.studio-brand .mark{position:relative;display:inline-block}
+.studio-brand img{display:block;width:38cqw;filter:invert(1)}
+.studio-brand sup{position:absolute;top:-.4cqw;right:-1.3cqw;font-size:clamp(14px,3cqw,28px);line-height:1}
+.studio-brand span{font-size:clamp(10px,1.8cqw,16px);letter-spacing:.42em;padding-left:.42em;color:#c3c8d0}
+.studio-copy{display:grid;gap:clamp(16px,1.6vw,22px)}
+.studio h2{font-family:Bebas,Impact,sans-serif;font-weight:400;font-size:clamp(48px,5.6vw,92px);letter-spacing:.05em;line-height:1.02;margin:0 0 clamp(8px,1vw,16px)}
+.studio-copy p{margin:0;font-size:16px;line-height:1.85;color:#b5bcc7;max-width:56ch}
+.studio-cta{margin-top:clamp(10px,1.4vw,20px)}
+.studio-cta .cta{margin-top:0}
+
+.studio-item{opacity:0;transform:translateY(30px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.studio-item.is-in{opacity:1;transform:none}
+@media (max-width:900px){
+  .studio-inner{grid-template-columns:1fr}
+  .studio-visual{max-width:560px;margin:0 auto}
+  .studio-figure{left:2%}
+}
+@media (prefers-reduced-motion:reduce){.studio-item{opacity:1;transform:none;transition:none}}

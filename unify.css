@@ -1,0 +1,7 @@
+/* jednolite nagłówki stron i sekcji */
+.projects-title,.offer h2,.contact-head h2{font-family:Bebas,Impact,sans-serif;font-weight:400;font-size:clamp(70px,13vw,220px);letter-spacing:.03em;line-height:.85;margin:0;padding-bottom:.06em;text-shadow:none;background:linear-gradient(180deg,#fff 20%,#ffffff55 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.offer .offer-stage{margin-top:clamp(10px,2vw,30px)}
+.contact .contact-card{margin-top:clamp(10px,2vw,30px)}
+.offer-head,.contact-head{margin-bottom:clamp(10px,2vw,30px)}
+/* akcenty nad wersalikami (Ś, Ć, Ż…) nie mogą być obcinane przez gradient */
+.projects-title,.offer h2,.contact-head h2{padding-top:.16em;margin-top:-.16em}

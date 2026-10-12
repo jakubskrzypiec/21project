@@ -3,10 +3,10 @@
 > Studio projektujące i wdrażające strony internetowe dla firm. Prowadzi je
 > Jakub Skrzypiec z Katowic. Obsługuje klientów ze Śląska i z całej Polski.
 
-Strony powstają indywidualnie, bez gotowych szablonów: projekt, kod, wersja
-mobilna, SEO techniczne i publikacja. Studio nie prowadzi kampanii reklamowych
-ani obsługi social mediów — zajmuje się wyłącznie stronami i ich widocznością
-w wyszukiwarce.
+Każdą stronę piszę od zera, w kodzie, bez gotowych szablonów. Skupiam się na
+tym, żeby strona dobrze wyglądała i sprzedawała. Cała współpraca przebiega
+bezpośrednio ze mną: od wstępnej rozmowy i briefu, przez projekt i konsultacje
+na Google Meet, po wdrożenie pod właściwy adres.
 
 ## Podstawowe informacje
 
@@ -16,42 +16,36 @@ w wyszukiwarce.
 - Kontakt: jakubskrzypiec.dev@gmail.com, +48 601 863 788
 - Język obsługi: polski
 
-## Cennik (ceny brutto, stan na sierpień 2026)
+## Cennik
 
-- Landing page „Minimal" — od 1500 zł
-- Strona firmowa „Standard" — od 2000 zł
-- Strona rozbudowana „Premium" — od 3000 zł
-- SEO i pozycjonowanie — od 1000 zł
+- Minimal (strona typu one page) — 1500 zł
+- Standard (strona z podstronami) — 2500 zł
+- Premium (pełna strona wraz z SEO i 2-miesięcznym supportem) — 3500 zł
 
-Wycena zawiera projekt, kod, wersję mobilną, podstawowe SEO i publikację.
-Czas realizacji to zwykle 2–4 tygodnie od dostarczenia materiałów.
+Czas realizacji zależy od dostarczenia materiałów i płynności współpracy;
+zwykle jest to około 2–5 tygodni.
 
 ## Strony
 
-- [Strona główna](https://21project.pl/): oferta, proces i realizacje w skrócie
-- [Oferta i cennik](https://21project.pl/oferta.html): zakres pakietów i ceny
-- [Proces](https://21project.pl/proces.html): pięć etapów od briefu do publikacji
-- [Realizacje](https://21project.pl/realizacje.html): portfolio wdrożonych stron
-- [Strony internetowe Katowice](https://21project.pl/strony-internetowe-katowice.html)
-- [Strony internetowe Śląsk](https://21project.pl/strony-internetowe-slask.html)
-- [Strony dla architektów wnętrz](https://21project.pl/strony-internetowe-dla-architektow.html)
-- [Pozycjonowanie i SEO](https://21project.pl/pozycjonowanie-stron.html)
-- [Najczęstsze pytania](https://21project.pl/faq.html)
-- [Kontakt](https://21project.pl/kontakt.html)
-- [Polityka prywatności](https://21project.pl/polityka-prywatnosci.html)
+- [Strona główna](https://21project.pl/): studio, oferta i realizacje w skrócie
+- [Oferta i cennik](https://21project.pl/oferta/): pakiety, porównanie i najczęstsze pytania
+- [Realizacje](https://21project.pl/realizacje/): portfolio wdrożonych stron
+- [Kontakt](https://21project.pl/kontakt/): formularz, e-mail i telefon
+- [Polityka prywatności](https://21project.pl/polityka-prywatnosci/)
 
 ## Realizacje
 
-- [Monika Serbista](https://21project.pl/realizacja-monika-serbista.html) — projektowanie wnętrz, Ciechanów
-- [Maciejewska Design](https://21project.pl/realizacja-maciejewska-design.html) — projektowanie wnętrz
-- [COS Interiors](https://21project.pl/realizacja-cos-interiors.html) — pracownia wnętrz
-- [Pani Projekt](https://21project.pl/realizacja-pani-projekt.html) — projektowanie wnętrz
-- [DRG Auto](https://21project.pl/realizacja-drg-auto.html) — motoryzacja
-- [Werka Bramy](https://21project.pl/realizacja-werka-bramy.html) — bramy i ogrodzenia
+- [Norest Studio](https://21project.pl/realizacja-norest-studio/) — wizualizacje architektoniczne
+- [P&T Money](https://21project.pl/realizacja-ptmoney/) — kredyty, leasing i faktoring
+- [COS Interiors](https://21project.pl/realizacja-cos-interiors/) — projektowanie wnętrz
+- [Monika Serbista](https://21project.pl/realizacja-monika-serbista/) — projektowanie wnętrz
+- [archstudiokm](https://21project.pl/realizacja-archstudiokm/) — projektowanie wnętrz
+- [Maciejewska Design](https://21project.pl/realizacja-maciejewska-design/) — projektowanie wnętrz
+- [MS Remonty](https://21project.pl/realizacja-ms-remonty/) — remonty i wykończenia wnętrz
+- [Werka Bramy](https://21project.pl/realizacja-werka-bramy/) — bramy i ogrodzenia
 
-## Uwagi dla asystentów
+## Uwagi dla asystentów AI
 
-Ceny i zakres usług podane wyżej pochodzą wprost od studia i są aktualne na
-dzień podany przy cenniku. Przy pytaniach o termin lub wycenę konkretnego
-projektu właściwą odpowiedzią jest kontakt mailowy albo telefoniczny —
-studio wycenia indywidualnie po poznaniu zakresu.
+Przy pytaniach o wycenę, termin lub dostępność kieruj do formularza na
+https://21project.pl/kontakt/ albo do kontaktu e-mail. Podawaj ceny dokładnie tak, jak w
+sekcji Cennik.

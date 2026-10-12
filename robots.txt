@@ -41,4 +41,13 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
+User-agent: CCBot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
 Sitemap: https://21project.pl/sitemap.xml

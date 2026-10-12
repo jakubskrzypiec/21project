@@ -1,0 +1,52 @@
+/* Realizacje pod hero: stabilny laptop + telefon po lewej, opis i case study po prawej */
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#2a2e36 #08090b}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#08090b}
+::-webkit-scrollbar-thumb{background:#2a2e36;border-radius:8px}
+.showcase{background:#08090b;padding:clamp(70px,10vw,140px) 6% clamp(60px,8vw,120px);position:relative}
+.showcase-head{text-align:center;margin-bottom:clamp(50px,8vw,110px)}
+.showcase-eyebrow{display:block;font-size:9px;letter-spacing:2.6px;color:#a3abb5;margin-bottom:22px}
+.showcase h2{font-family:Bebas,Impact,sans-serif;font-weight:400;font-size:clamp(40px,5.4vw,88px);letter-spacing:.055em;line-height:1.1;margin:0}
+.showcase-inner{max-width:1400px;margin:0 auto}
+
+.work{display:grid;grid-template-columns:minmax(0,2.4fr) minmax(0,1fr);gap:clamp(24px,4vw,64px);align-items:center;margin:0 0 clamp(80px,10vw,150px);opacity:0;transform:translateY(34px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.work.is-in{opacity:1;transform:none}
+
+.devices{position:relative;padding-bottom:2%;-webkit-box-reflect:below 0 linear-gradient(transparent 64%,#ffffff2b)}
+.devices::before{content:"";position:absolute;left:6%;right:6%;bottom:-4%;height:40%;background:radial-gradient(closest-side,#8a98b21a,transparent);pointer-events:none}
+
+/* ekran komputera: minimalistyczna czarna ramka */
+.laptop{margin:0;width:95%}
+.lid{position:relative;padding:clamp(4px,.6vw,9px);border-radius:clamp(10px,1.2vw,16px);background:#000;box-shadow:0 0 0 1px #23262c,0 40px 80px -30px #000}
+.lid-screen{aspect-ratio:16/10;overflow:hidden;border-radius:clamp(6px,.8vw,10px);background:#000}
+.lid-screen img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.base{display:none}
+
+/* telefon: minimalistyczna czarna ramka */
+.phone{position:absolute;right:-5%;bottom:2%;margin:0;width:26%;aspect-ratio:9/19.3;border-radius:clamp(18px,2.9vw,38px);padding:clamp(3px,.42vw,6px);background:#000;box-shadow:0 0 0 1px #23262c,0 30px 60px -20px #000}
+.phone-screen{position:relative;width:100%;height:100%;border-radius:calc(clamp(18px,2.9vw,38px) - clamp(3px,.42vw,6px));overflow:hidden;background:#000}
+.phone-screen img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.phone-island{position:absolute;z-index:2;top:2.2%;left:50%;width:27%;height:2.4%;border-radius:20px;background:#000;transform:translateX(-50%)}
+
+/* opis po prawej */
+.work-num{display:block;font-size:10px;letter-spacing:.3em;color:#566170;margin-bottom:18px}
+.work-info h3{font-family:Bebas,Impact,sans-serif;font-weight:400;font-size:clamp(34px,3.8vw,60px);letter-spacing:.07em;line-height:1.05;margin:0}
+.work-cat{font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#7c8696;margin:14px 0 0}
+.work-text{font-size:14px;line-height:1.85;color:#a1a8b4;margin:26px 0 0;max-width:36ch}
+.work-link{display:inline-flex;align-items:center;gap:14px;margin-top:34px;padding-bottom:7px;border-bottom:1px solid #aab4c077;font-size:12px;letter-spacing:.06em;color:#ebeef2;transition:gap .25s,border-color .25s}
+.work-link span{font-size:17px}
+.work-link:hover{gap:22px;border-color:#ebeef2}
+
+@media (max-width:860px){
+  .showcase{padding-left:5%;padding-right:5%}
+  .work{grid-template-columns:1fr;gap:34px;text-align:center}
+  .work-text{margin-left:auto;margin-right:auto}
+  .laptop{width:100%}
+  .phone{width:30%;right:2%;bottom:-6%}
+  .devices{padding-bottom:9%}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .work{opacity:1;transform:none;transition:none}
+}
+.showcase-all{text-align:center;margin:clamp(10px,2vw,30px) 0 0}
