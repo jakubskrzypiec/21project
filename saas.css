@@ -1,0 +1,45 @@
+/* Większe projekty / SaaS */
+.saas-hero{padding-bottom:clamp(30px,5vw,70px)}
+.saas-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(30px,6vw,100px);align-items:start;max-width:1180px;margin:0 auto}
+.saas-h2{font-family:Bebas,Impact,sans-serif;font-weight:400;font-size:clamp(40px,5vw,78px);letter-spacing:.05em;line-height:1.02;margin:0}
+.saas-h2-center{text-align:center}
+.saas-intro-copy p{font-size:16px;line-height:1.85;color:#b5bcc7;margin:22px 0 0;max-width:46ch}
+.saas-list{list-style:none;margin:0;padding:0;display:grid;gap:0;border-top:1px solid #ffffff1a}
+.saas-list li{display:grid;grid-template-columns:auto 1fr;gap:clamp(16px,2vw,28px);align-items:baseline;padding:clamp(16px,1.8vw,24px) 0;border-bottom:1px solid #ffffff1a;font-size:15px;line-height:1.55;color:#e6e9ee}
+.saas-list b{font-family:Bebas,Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.06em;color:#566170}
+
+.saas-caps{position:relative;background:#08090b;isolation:isolate;overflow:hidden;padding:clamp(60px,8vw,120px) 5%;border-top:1px solid #ffffff0d}
+.saas-caps-head{text-align:center;max-width:760px;margin:0 auto}
+.saas-caps-head p{font-size:15px;line-height:1.85;color:#8f98a5;margin:22px 0 0}
+.cap-grid{max-width:1240px;margin:clamp(40px,5vw,70px) auto 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1.6vw,22px)}
+.cap{display:flex;flex-direction:column;padding:clamp(22px,2.2vw,32px);border-radius:24px;border:1px solid #ffffff1c;background:linear-gradient(180deg,#ffffff14,#ffffff05 60%,#ffffff0a);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:0 1px 0 #ffffff1a inset,0 40px 80px -40px #000;transition:border-color .3s,transform .3s}
+.cap:hover{border-color:#ffffff40;transform:translateY(-3px)}
+.cap-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:#ffffff12;color:#f1f3f6}
+.cap-icon svg{width:22px;height:22px}
+.cap h3{font-family:Bebas,Impact,sans-serif;font-weight:400;font-size:clamp(26px,2.4vw,34px);letter-spacing:.07em;line-height:1.08;margin:clamp(22px,2.4vw,34px) 0 0}
+.cap p{font-size:14px;line-height:1.8;color:#a1a8b4;margin:12px 0 0}
+
+.saas-how{padding:clamp(60px,8vw,120px) 5%;border-top:1px solid #ffffff0d;background:#08090b}
+.how-list{list-style:none;max-width:1100px;margin:clamp(36px,4vw,60px) auto 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,3vw,48px)}
+.how-list li{border-top:1px solid #ffffff33;padding-top:clamp(18px,2vw,26px)}
+.how-list b{font-family:Bebas,Impact,sans-serif;font-weight:400;font-size:clamp(40px,4vw,60px);letter-spacing:.04em;line-height:1;background:linear-gradient(180deg,#fff,#ffffff33);-webkit-background-clip:text;background-clip:text;color:transparent}
+.how-list h3{font-family:Bebas,Impact,sans-serif;font-weight:400;font-size:clamp(26px,2.4vw,34px);letter-spacing:.07em;margin:14px 0 0}
+.how-list p{font-size:14px;line-height:1.8;color:#a1a8b4;margin:10px 0 0}
+.saas-cta{border-top:1px solid #ffffff0d}
+@media (max-width:980px){.cap-grid{grid-template-columns:1fr 1fr}.saas-intro{grid-template-columns:1fr}.how-list{grid-template-columns:1fr}}
+@media (max-width:640px){.cap-grid{grid-template-columns:1fr}.cap-tag{font-size:9px}}
+
+.saas-panel{padding:clamp(60px,8vw,120px) 5%;border-top:1px solid #ffffff0d;background:#08090b}
+.panel-show{max-width:1180px;margin:clamp(36px,4vw,60px) auto 0}
+.panel-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:clamp(18px,2vw,28px)}
+.panel-tabs button{cursor:pointer;font:inherit;font-size:13px;color:#a1a8b4;background:#ffffff0d;border:1px solid #ffffff1f;border-radius:999px;padding:0 22px;min-height:44px;transition:background .25s,color .25s,border-color .25s}
+.panel-tabs button:hover{border-color:#ffffff55;color:#fff}
+.panel-tabs button[aria-pressed=true]{background:#e6e9ee;color:#12161c;border-color:#e6e9ee}
+.panel-tabs button:focus-visible{outline:2px solid #d2d9e2;outline-offset:3px}
+.panel-frame{border-radius:18px;overflow:hidden;border:1px solid #ffffff22;background:#0d0e11;box-shadow:0 60px 120px -50px #000,0 0 0 1px #00000099}
+.panel-bar{display:flex;gap:7px;align-items:center;height:34px;padding:0 16px;background:#16181d;border-bottom:1px solid #ffffff14}
+.panel-bar i{width:10px;height:10px;border-radius:50%;background:#3a3f48}
+.panel-imgs{position:relative;aspect-ratio:16/10;background:#fff}
+.panel-imgs .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transition:opacity .5s ease}
+.panel-imgs .shot.is-on{opacity:1}
+.panel-note{text-align:center;font-size:12px;color:#7c8696;margin:18px 0 0}

@@ -11,7 +11,7 @@ Strona nie ma buildu — pliki z katalogu głównego trafiają na serwer takie, 
 ├── oferta/  realizacje/  kontakt/   podstrony (każda jako katalog z index.html)
 ├── realizacja-*/                    osiem case study (zrzuty, nagranie, link do strony live)
 ├── polityka-prywatnosci/            noindex
-├── saas/                            szkic, noindex
+├── saas/                            większe projekty i panele administracyjne
 ├── style.css  showcase.css  offer.css  faq.css  projekt.css  offerpage.css
 │   hero.css  studio.css  interlude.css  unify.css      style podstron
 ├── navigation.js  showcase.js  faq.js  case.js  hero-waves.js  interlude.js

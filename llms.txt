@@ -31,6 +31,7 @@ zwykle jest to około 2–5 tygodni.
 - [Oferta i cennik](https://21project.pl/oferta/): pakiety, porównanie i najczęstsze pytania
 - [Realizacje](https://21project.pl/realizacje/): portfolio wdrożonych stron
 - [Kontakt](https://21project.pl/kontakt/): formularz, e-mail i telefon
+- [Większe projekty i panele administracyjne](https://21project.pl/saas/): aplikacje, indywidualne pomysły i panele (poczta, ruch, tablica projektów, automatyzacja maili)
 - [Polityka prywatności](https://21project.pl/polityka-prywatnosci/)
 
 ## Realizacje
