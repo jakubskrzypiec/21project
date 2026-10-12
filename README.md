@@ -24,11 +24,12 @@ Strona nie ma buildu — pliki z katalogu głównego trafiają na serwer takie, 
 
 ## Panel
 
-Panel stoi na `panel.21project.pl` (Railway). Strona łączy się z nim dwoma skryptami
-ładowanymi na każdej podstronie: `t.js` (licznik ruchu) i `form-hook.js` (formularz kontaktowy).
-Formularz ma klasę `contactForm` i pola `name`, `contact`, `plan`, `message` — nazwy muszą się
-zgadzać z `backend/src/routes/public.routes.js`. Gdy panel nie odpowiada, formularz otwiera
-program pocztowy (zapytanie nie przepada). Instrukcja: [`backend/README.md`](backend/README.md).
+Panel stoi na `panel.21project.pl` (Railway). Ruch na stronie liczy skrypt `t.js` ładowany na
+każdej podstronie. Formularz kontaktowy wysyła zapytanie z `faq.js` prosto na
+`https://panel.21project.pl/api/contact` (pola `name`, `contact`, `plan`, `message` i pułapka
+`website_url` — zgodnie z `backend/src/routes/public.routes.js`). Przy błędzie formularz pokazuje
+komunikat z e-mailem i telefonem; poczta nie jest używana. Panel przyjmuje żądania tylko
+z domen z `ALLOWED_ORIGINS`. Instrukcja: [`backend/README.md`](backend/README.md).
 
 ## SEO i wyszukiwarki AI
 
