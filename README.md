@@ -48,5 +48,5 @@ Pytania w FAQ na `/oferta/` są też w JSON-LD (`FAQPage`) — przy zmianie pyta
 `panele/lumea/` i `panele/voltra/` to statyczne, klikalne dema (marki i dane fikcyjne, `noindex`).
 Silnik jest wspólny: `panele/panel.js` (układ, wykresy SVG, kanban, kalendarz, szuflada, paleta ⌘K)
 i `panele/panel.css`; każdy panel ma własny `app.js` z danymi i widokami. Parametr `?shot` wyłącza
-pasek „demo” i wyskakujące powiadomienia — używany do zrzutów w `assets/saas/`
+pasek „demo” i wyskakujące powiadomienia, a `?empty` zeruje wszystkie liczby i czyści listy — razem (`?shot&empty`) służą do zrzutów w `assets/saas/`
 (1440×900 @2x, wersje `-960` i `-1600`).
