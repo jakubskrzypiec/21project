@@ -3,7 +3,9 @@
 (()=>{
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
-const shot=new URLSearchParams(location.search).has('shot');
+const qs=new URLSearchParams(location.search),shot=qs.has('shot'),empty=qs.has('empty');
+/* ?empty: wszystkie liczby na zero i puste listy, do zrzutów bez danych */
+const Z=s=>String(s).replace(/\d[\d\s.,]*\d|\d/g,'0').replace(/0\s*(mln|tys\.)/g,'0');
 
 const P='fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"';
 const I={
@@ -67,6 +69,7 @@ function smooth(pts){
   return d;
 }
 function spark(data,color='var(--accent)'){
+  if(empty)data=data.map(()=>0);
   const w=96,h=36,mx=Math.max(...data),mn=Math.min(...data);
   const pts=data.map((v,i)=>[i*w/(data.length-1),h-3-(v-mn)/(mx-mn||1)*(h-8)]);
   const id='g'+Math.random().toString(36).slice(2,8);
@@ -82,6 +85,7 @@ function area({series,labels,h=240,fmt=nf,ticks=4}){
   const n=labels.length,xs=i=>pl+i*iw/(n-1);
   const every=Math.ceil(n/8);
   labels.forEach((l,i)=>{if(i%every===0||i===n-1)g+=`<text x="${xs(i)}" y="${h-6}" text-anchor="middle">${l}</text>`});
+  if(empty)series=series.map(s=>({...s,data:s.data.map(()=>0)}));
   series.forEach((s,k)=>{
     const pts=s.data.map((v,i)=>[xs(i),pt+ih-v/top*ih]);
     const id='a'+k+Math.random().toString(36).slice(2,7);
@@ -102,18 +106,19 @@ function bars({groups,labels,h=220,fmt=nf,stacked=true}){
   const bw=iw/n,b=Math.min(28,bw*.56);
   labels.forEach((l,i)=>{
     const x=pl+i*bw+(bw-b)/2;let y=pt+ih;
-    groups.forEach((gr,k)=>{const hh=gr.data[i]/top*ih;y-=hh;const last=k===groups.length-1;g+=`<rect x="${x}" y="${y}" width="${b}" height="${Math.max(0,hh-(last?0:1.5))}" rx="${last?5:2}" fill="${gr.color}"><animate attributeName="height" from="0" to="${Math.max(0,hh-(last?0:1.5))}" dur=".7s" fill="freeze"/><animate attributeName="y" from="${pt+ih}" to="${y}" dur=".7s" fill="freeze"/></rect>`});
+    groups.forEach((gr,k)=>{const hh=empty?0:gr.data[i]/top*ih;y-=hh;const last=k===groups.length-1;g+=`<rect x="${x}" y="${y}" width="${b}" height="${Math.max(0,hh-(last?0:1.5))}" rx="${last?5:2}" fill="${gr.color}"><animate attributeName="height" from="0" to="${Math.max(0,hh-(last?0:1.5))}" dur=".7s" fill="freeze"/><animate attributeName="y" from="${pt+ih}" to="${y}" dur=".7s" fill="freeze"/></rect>`});
     g+=`<text x="${x+b/2}" y="${h-6}" text-anchor="middle">${l}</text>`;
   });
   return `<svg class="chart" viewBox="0 0 ${w} ${h}">${g}</svg>`;
 }
 function donut({parts,size=170,label,sub}){
+  if(empty){parts=[];label='0'}
   const r=62,c=2*Math.PI*r,tot=parts.reduce((a,p)=>a+p.v,0);let off=0,g='';
   parts.forEach(p=>{const len=p.v/tot*c;g+=`<circle r="${r}" cx="85" cy="85" fill="none" stroke="${p.color}" stroke-width="18" stroke-dasharray="${Math.max(0,len-2)} ${c}" stroke-dashoffset="${-off}" transform="rotate(-90 85 85)"/>`;off+=len});
   return `<svg viewBox="0 0 170 170" width="${size}" height="${size}" style="flex:none"><circle r="${r}" cx="85" cy="85" fill="none" stroke="var(--line-2)" stroke-width="18"/>${g}<text x="85" y="82" text-anchor="middle" style="font-size:24px;font-weight:650;fill:var(--ink);letter-spacing:-.03em">${label}</text><text x="85" y="102" text-anchor="middle" style="font-size:11px;fill:var(--ink-3)">${sub}</text></svg>`;
 }
 function legend(items){return `<div class="legend">${items.map(i=>`<span><i style="background:${i.color}"></i>${esc(i.label)}</span>`).join('')}</div>`}
-function barList(rows,fmt=nf){const mx=Math.max(...rows.map(r=>r.v));return rows.map((r,i)=>`<div class="bar-row"><span>${r.label}</span><div class="bar-track"><div class="bar-fill" style="width:${r.v/mx*100}%;animation-delay:${i*60}ms;${r.color?'background:'+r.color:''}"></div></div><span class="right num">${fmt(r.v)}</span></div>`).join('')}
+function barList(rows,fmt=nf){if(empty)rows=rows.map(r=>({...r,v:0}));const mx=Math.max(...rows.map(r=>r.v));return rows.map((r,i)=>`<div class="bar-row"><span>${r.label}</span><div class="bar-track"><div class="bar-fill" style="width:${mx?r.v/mx*100:0}%;animation-delay:${i*60}ms;${r.color?'background:'+r.color:''}"></div></div><span class="right num">${fmt(r.v)}</span></div>`).join('')}
 
 function kpi({label,value,delta,down,ic,data,arrow,note='vs poprz. okres'}){
   return `<div class="card kpi"><div class="kpi-label">${icon(ic)}${label}</div><div class="kpi-row"><div><div class="kpi-value num">${value}</div><div class="delta ${down?'down':''}">${arrow||(down?'↓':'↑')} ${delta} <span>${note}</span></div></div>${data?spark(data,down?'var(--bad)':'var(--accent)'):''}</div></div>`;
@@ -204,6 +209,7 @@ function mount(cfg){
   <div class="toasts"></div>
   ${cfg.ribbon?`<div class="demo-ribbon">${cfg.ribbon}</div>`:''}`);
 
+  if(empty){$$('.nav-count').forEach(n=>n.remove());$$('.side-card p').forEach(n=>n.textContent=Z(n.textContent));$$('.side-card .progress i').forEach(n=>n.style.width='0');$('.pop .list').innerHTML='<div class="empty">Brak powiadomień</div>';$('[data-bell] .dot')?.remove()}
   const host=$('.view-host');
   function go(){
     const id=(location.hash.replace('#/','')||cfg.home).split('?')[0];
@@ -215,6 +221,7 @@ function mount(cfg){
     const out=cfg.views[v](el);
     if(typeof out==='string')el.innerHTML=out;
     cfg.after?.[v]?.(el);
+    if(empty)zero(el);
     document.body.classList.remove('nav-open');
     window.scrollTo(0,0);
   }
@@ -240,5 +247,15 @@ function mount(cfg){
   if(!shot&&cfg.live){let i=0;setTimeout(function tick(){const l=cfg.live[i++%cfg.live.length];toast(l.t,l.s,l.ic);setTimeout(tick,16000)},6000)}
 }
 
-window.Panel={mount,icon,avatar,pill,pln,nf,esc,spark,area,bars,donut,legend,barList,kpi,kanban,week,drawer,closeDrawer,toast,colorOf,$,$$};
+function zero(el){
+  $$('.kpi-value,.kcard-val,.fnode-stat strong,.col-head .sum,.chip,[data-z]',el).forEach(n=>{if(/\d/.test(n.textContent))n.textContent=Z(n.textContent)});
+  $$('.delta',el).forEach(n=>n.style.visibility='hidden');
+  $$('.funnel-bar',el).forEach(n=>{n.style.width='4%';n.textContent='0'});
+  $$('.funnel-step>span:last-child',el).forEach(n=>n.textContent='');
+  $$('.progress i',el).forEach(n=>n.style.width='0');
+  $$('.card .list:not([data-keep])',el).forEach(n=>n.innerHTML='<div class="empty">Brak danych</div>');
+  $$('[data-keep] .pill',el).forEach(n=>n.style.visibility='hidden');
+  $$('tbody',el).forEach(n=>{n.innerHTML=`<tr><td colspan="${n.closest('table').querySelectorAll('th').length}" class="empty">Brak danych</td></tr>`});
+}
+window.Panel={empty,mount,icon,avatar,pill,pln,nf,esc,spark,area,bars,donut,legend,barList,kpi,kanban,week,drawer,closeDrawer,toast,colorOf,$,$$};
 })();
