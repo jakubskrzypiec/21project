@@ -75,6 +75,25 @@ html,body{background:#000}
 #ctaS{left:0;right:0;top:1060px;text-align:center;font-size:44px;color:#b5bcc7;font-weight:500;line-height:1.4}
 #btn{left:50%;top:1250px;transform:translateX(-50%);padding:34px 64px;border-radius:999px;background:#e6e9ee;color:#12161c;font-size:40px;font-weight:650;white-space:nowrap}
 #url{left:0;right:0;top:1430px;text-align:center;font-size:32px;color:#8f98a5;letter-spacing:.06em}
+
+/* wersja na białym tle: ?light */
+.light #stage{background:radial-gradient(ellipse at 50% 32%,#ffffff 0%,#f4f4f1 55%,#ebebe7 100%);color:#16181d}
+.light .grain{opacity:.035}
+.light .grad{background:linear-gradient(180deg,#0b0c0f 30%,#0b0c0f99 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.light #bar{background:#fff;border-color:#00000014;box-shadow:0 30px 60px -24px #0003}
+.light #bar .dots i,.light .win .wb i{background:#d4d4d0}
+.light .tab{background:#f0f0ec;color:#4a4f59}
+.light #count,.light #lost{color:#dc2626}
+.light .notif{background:#fff;border:1px solid #00000012;box-shadow:0 30px 60px -20px #0004}
+.light #lead{background:#fff;border:1px solid #00000012;box-shadow:0 50px 100px -30px #0004}
+.light #one2,.light #ctaS{color:#4a4f59}
+.light .win{background:#fff;border-color:#0000001c;box-shadow:0 60px 120px -40px #0005}
+.light .win .wb{background:#f0f0ec;border-color:#00000010}
+.light .win .wb span{color:#5b616b}
+.light #modNum,.light #url{color:#6b7380}
+.light .toast{background:#16181d;color:#f4f5f7}
+.light #logo{filter:none}
+.light #btn{background:#12161c;color:#fff}
 </style></head><body>
 <div id="stage">
   <div class="abs grain"></div>
@@ -112,7 +131,7 @@ html,body{background:#000}
   <div id="ctaT" class="abs bebas grad">Panele<br>dla firm.</div>
   <div id="ctaS" class="abs">Poczta, kalendarz, klienci i leady<br>w jednym miejscu. Wycena indywidualna.</div>
   <div id="btn" class="abs">Napisz do mnie</div>
-  <div id="url" class="abs">21PROJECT.PL/SAAS</div>
+  <div id="url" class="abs">21PROJECT.PL</div>
 </div>
 <script>
 const D=22.5; // długość rolki w sekundach
@@ -191,6 +210,7 @@ function render(t){
   show($('#btn'),t>=19.4?out(c3):0,`translateX(-50%) scale(${(.8+.2*back(c3))*pulse})`);
   show($('#url'),t>=19.6?out(c4):0);
 }
+if(location.search.includes('light'))document.documentElement.classList.add('light');
 window.render=render;window.DURATION=D;
 // podgląd na żywo, gdy strona nie jest renderowana skryptem
 if(!location.search.includes('render')){const s=$('#stage');const k=Math.min(innerWidth/1080,innerHeight/1920);s.style.transform=`scale(${k})`;const t0=performance.now();(function loop(){render(((performance.now()-t0)/1000)%D);requestAnimationFrame(loop)})()}

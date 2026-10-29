@@ -1,6 +1,6 @@
 // Renderuje rolkę klatka po klatce do MP4 (H.264, 1080×1920, 30 fps).
 // Wymaga: serwer z katalogu głównego repo na :8765 (python3 -m http.server 8765), playwright, ffmpeg.
-// Użycie: node render.js [wyjście.mp4] [--frames 1.0,4.2,…  → zamiast filmu zapisuje pojedyncze klatki PNG]
+// Użycie: node render.js [wyjście.mp4] [--light → wersja na białym tle] [--frames 1.0,4.2,…  → zamiast filmu zapisuje pojedyncze klatki PNG]
 const {chromium}=require('playwright');
 const {spawn}=require('child_process');
 const path=require('path');
@@ -9,10 +9,11 @@ const FPS=30;
   const args=process.argv.slice(2);
   const fi=args.indexOf('--frames');
   const frames=fi>=0?args[fi+1].split(',').map(Number):null;
-  const out=args.find(a=>!a.startsWith('--')&&a!==(frames&&args[fi+1]))||path.join(__dirname,'panele-reel.mp4');
+  const light=args.includes('--light');
+  const out=args.find(a=>!a.startsWith('--')&&a!==(frames&&args[fi+1]))||path.join(__dirname,light?'panele-reel-jasna.mp4':'panele-reel.mp4');
   const b=await chromium.launch();
   const p=await b.newPage({viewport:{width:1080,height:1920}});
-  await p.goto('http://localhost:8765/reklamy/panele-reel/?render');
+  await p.goto('http://localhost:8765/reklamy/panele-reel/?render'+(light?'&light':''));
   await p.evaluate(()=>document.fonts.ready);
   await p.waitForTimeout(800);
   const D=await p.evaluate(()=>window.DURATION);
