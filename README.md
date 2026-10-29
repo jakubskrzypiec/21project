@@ -50,3 +50,9 @@ Silnik jest wspólny: `panele/panel.js` (układ, wykresy SVG, kanban, kalendarz,
 i `panele/panel.css`; każdy panel ma własny `app.js` z danymi i widokami. Parametr `?shot` wyłącza
 pasek „demo” i wyskakujące powiadomienia, a `?empty` zeruje wszystkie liczby i czyści listy — razem (`?shot&empty`) służą do zrzutów w `assets/saas/`
 (1440×900 @2x, wersje `-960` i `-1600`).
+
+## Rolka reklamowa
+
+`reklamy/panele-reel/` — rolka 9:16 o panelach do Meta Ads. `index.html` to animacja (podgląd w przeglądarce
+przez serwer z katalogu głównego), `render.js` renderuje ją klatka po klatce do `panele-reel.mp4`:
+`python3 -m http.server 8765` w katalogu głównym, potem `node reklamy/panele-reel/render.js`.
