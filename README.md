@@ -11,7 +11,7 @@ Strona nie ma buildu — pliki z katalogu głównego trafiają na serwer takie, 
 ├── oferta/  realizacje/  kontakt/   podstrony (każda jako katalog z index.html)
 ├── realizacja-*/                    dziesięć case study (zrzuty, nagranie, link do strony live)
 ├── polityka-prywatnosci/            noindex
-├── saas/                            panele dla firm + case study paneli (saas/lumea-clinic, saas/voltra-energia)
+├── saas/                            panele dla firm + case study paneli (saas/effkowe-ogrody, saas/lumea-clinic, saas/voltra-energia)
 ├── panele/                          klikalne dema paneli (noindex): panel.css + panel.js wspólne, lumea/ i voltra/ z danymi
 ├── style.css  showcase.css  offer.css  faq.css  projekt.css  offerpage.css
 │   hero.css  studio.css  interlude.css  unify.css      style podstron

@@ -144,3 +144,4 @@ figure.win{margin:0}
 .stack-box{max-width:1180px;margin:clamp(40px,5vw,70px) auto 0;text-align:center}
 .stack-box .pf-tags{justify-content:center}
 @media (max-width:980px){.case-two,.mod,.mod-rev{grid-template-columns:1fr}.mod-rev .mod-shot{order:0}}
+.win.win-natural img,.case-win .win.win-natural img,.mod-shot .win.win-natural img{aspect-ratio:auto;height:auto}
