@@ -11,11 +11,12 @@ Strona nie ma buildu — pliki z katalogu głównego trafiają na serwer takie, 
 ├── oferta/  realizacje/  kontakt/   podstrony (każda jako katalog z index.html)
 ├── realizacja-*/                    dziesięć case study (zrzuty, nagranie, link do strony live)
 ├── polityka-prywatnosci/            noindex
-├── saas/                            większe projekty i panele administracyjne
+├── saas/                            panele dla firm + case study paneli (saas/effkowe-ogrody, saas/lumea-clinic, saas/voltra-energia)
+├── panele/                          klikalne dema paneli (noindex): panel.css + panel.js wspólne, lumea/ i voltra/ z danymi
 ├── style.css  showcase.css  offer.css  faq.css  projekt.css  offerpage.css
 │   hero.css  studio.css  interlude.css  unify.css      style podstron
 ├── navigation.js  showcase.js  faq.js  case.js  hero-waves.js  interlude.js
-├── assets/                          logo, fonty, zrzuty i nagrania realizacji (assets/work)
+├── assets/                          logo, fonty, zrzuty i nagrania realizacji (assets/work), zrzuty paneli (assets/saas)
 ├── sitemap.xml  robots.txt  llms.txt  pliki dla wyszukiwarek i asystentów AI
 ├── og-21project.jpg  favicon.svg
 ├── backend/                         panel administracyjny (osobna aplikacja Node.js, Railway)
@@ -41,3 +42,11 @@ z domen z `ALLOWED_ORIGINS`. Instrukcja: [`backend/README.md`](backend/README.md
 
 Po dodaniu podstrony dopisz ją do `sitemap.xml` i `llms.txt`.
 Pytania w FAQ na `/oferta/` są też w JSON-LD (`FAQPage`) — przy zmianie pytań zmień oba miejsca.
+
+## Dema paneli
+
+`panele/lumea/` i `panele/voltra/` to statyczne, klikalne dema (marki i dane fikcyjne, `noindex`).
+Silnik jest wspólny: `panele/panel.js` (układ, wykresy SVG, kanban, kalendarz, szuflada, paleta ⌘K)
+i `panele/panel.css`; każdy panel ma własny `app.js` z danymi i widokami. Parametr `?shot` wyłącza
+pasek „demo” i wyskakujące powiadomienia — używany do zrzutów w `assets/saas/`
+(1440×900 @2x, wersje `-960` i `-1600`).
