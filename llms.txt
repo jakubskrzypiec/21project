@@ -31,8 +31,13 @@ zwykle jest to około 2–5 tygodni.
 - [Oferta i cennik](https://21project.pl/oferta/): pakiety, porównanie i najczęstsze pytania
 - [Realizacje](https://21project.pl/realizacje/): portfolio wdrożonych stron
 - [Kontakt](https://21project.pl/kontakt/): formularz, e-mail i telefon
-- [Większe projekty i panele administracyjne](https://21project.pl/saas/): aplikacje, indywidualne pomysły i panele (poczta, ruch, tablica projektów, automatyzacja maili)
+- [Panele administracyjne dla firm](https://21project.pl/saas/): panele szyte pod firmę: poczta, kalendarz spotkań i rezerwacje, CRM, leady z reklam Meta/Google/TikTok, automatyzacja maili i SMS, lejek sprzedaży, wyceny online, raporty i integracje; zakres i wycena indywidualnie
 - [Polityka prywatności](https://21project.pl/polityka-prywatnosci/)
+
+## Panele administracyjne (portfolio)
+
+- [Lumea Clinic](https://21project.pl/saas/lumea-clinic/) — projekt koncepcyjny panelu dla kliniki fizjoterapii i medycyny estetycznej (kalendarz wizyt, kartoteka pacjentów, przypomnienia SMS); marka fikcyjna, demo: https://21project.pl/panele/lumea/
+- [Voltra Energia](https://21project.pl/saas/voltra-energia/) — projekt koncepcyjny panelu dla firmy montującej fotowoltaikę i pompy ciepła (leady z reklam, lejek, kalkulator ofert, harmonogram ekip); marka fikcyjna, demo: https://21project.pl/panele/voltra/
 
 ## Realizacje
 
