@@ -6,6 +6,8 @@ const express = require('express');
 const multer = require('multer');
 const { db } = require('../db');
 const { config } = require('../config');
+const refresh = require('../services/boardRefresh');
+const refreshService = refresh.createService({ db, google: require('../services/google'), ai: require('../services/ai') });
 
 const router = express.Router();
 const now = () => new Date().toISOString();
@@ -31,6 +33,47 @@ const STATUSY = [
   'zrobione',
 ];
 const ZAMKNIETY = 'zrobione';
+
+router.post('/refresh', (req, res) => {
+  try {
+    const ids = req.body?.ids;
+    if (ids !== undefined && (!Array.isArray(ids) || !ids.length || ids.some(x => !Number.isSafeInteger(x)))) {
+      return res.status(400).json({ error: 'Nieprawidłowa lista kartek.' });
+    }
+    res.status(202).json(refreshService.start(ids));
+  } catch (err) { res.status(409).json({ error: err.message }); }
+});
+router.get('/refresh', (_req, res) => {
+  const job = db.prepare('SELECT * FROM board_refreshes ORDER BY id DESC LIMIT 1').get();
+  res.json({ job: job ? { ...job, results: JSON.parse(job.results) } : null });
+});
+router.get('/backups', (_req, res) => {
+  res.json({ backups: db.prepare('SELECT id, created_at, reason FROM board_backups ORDER BY id DESC LIMIT 100').all() });
+});
+router.post('/backups', (_req, res) => res.status(201).json({ id: refresh.backup(db, 'Kopia ręczna') }));
+router.get('/backups/:id/download', (req, res) => {
+  const b = db.prepare('SELECT * FROM board_backups WHERE id=?').get(req.params.id);
+  if (!b) return res.status(404).json({ error: 'Nie znaleziono kopii.' });
+  res.attachment(`tablica-${b.id}.json`).type('json').send(JSON.stringify({ version: 1, created_at: b.created_at,
+    reason: b.reason, notes: JSON.parse(b.snapshot) }, null, 2));
+});
+router.post('/backups/:id/restore', (req, res) => {
+  if (refreshService.isBusy()) return res.status(409).json({ error: 'Poczekaj na zakończenie odświeżania.' });
+  const b = db.prepare('SELECT * FROM board_backups WHERE id=?').get(req.params.id);
+  if (!b) return res.status(404).json({ error: 'Nie znaleziono kopii.' });
+  const restored = db.transaction(() => {
+    refresh.backup(db, `Przed przywróceniem kopii ${b.id}`);
+    const fields = ['created_at', 'updated_at', 'title', 'body', 'color', 'pinned', 'status', 'done',
+      'due_date', 'position', 'project_id', 'source', 'source_ref', 'links', 'contact_emails', 'mail_summary'];
+    const statement = db.prepare(`UPDATE notes SET ${fields.map(k => `${k}=?`).join(',')} WHERE id=?`);
+    let count = 0;
+    for (const n of JSON.parse(b.snapshot)) {
+      count += statement.run(...fields.map(k => n[k] ?? null), n.id).changes;
+    }
+    return count;
+  })();
+  res.json({ restored });
+});
 
 /* ------------------------------- NOTATKI ------------------------------- */
 
@@ -59,6 +102,7 @@ router.get('/notes', (req, res) => {
       ...n,
       files: counts.get(n.id) || 0,
       links: (() => { try { return n.links ? JSON.parse(n.links) : null; } catch { return null; } })(),
+      mail_summary: (() => { try { return JSON.parse(n.mail_summary || 'null'); } catch { return null; } })(),
     })),
     statusy: STATUSY,
     licznik,
@@ -73,6 +117,9 @@ router.post('/notes', (req, res) => {
   }
   const pos = db.prepare('SELECT COALESCE(MIN(position), 0) - 1 AS p FROM notes').get().p;
   const status = STATUSY.includes(b.status) ? b.status : 'do-zrobienia';
+  let emails;
+  try { emails = refresh.parseEmails(b.contact_emails).join(', '); }
+  catch (err) { return res.status(400).json({ error: err.message }); }
   const r = db
     .prepare(
       `INSERT INTO notes (created_at, updated_at, title, body, color, pinned, status, done,
@@ -83,6 +130,7 @@ router.post('/notes', (req, res) => {
       KOLORY.includes(b.color) ? b.color : 'zolta', b.pinned ? 1 : 0,
       status, status === ZAMKNIETY ? 1 : 0,
       b.due_date || null, pos, b.project_id || null);
+  db.prepare('UPDATE notes SET contact_emails=? WHERE id=?').run(emails, r.lastInsertRowid);
   res.status(201).json({ note: db.prepare('SELECT * FROM notes WHERE id = ?').get(r.lastInsertRowid) });
 });
 
@@ -90,6 +138,9 @@ router.patch('/notes/:id', (req, res) => {
   const n = db.prepare('SELECT * FROM notes WHERE id = ?').get(req.params.id);
   if (!n) return res.status(404).json({ error: 'Nie ma takiej notatki.' });
   const b = req.body || {};
+  let emails = n.contact_emails;
+  try { if (b.contact_emails !== undefined) emails = refresh.parseEmails(b.contact_emails).join(', '); }
+  catch (err) { return res.status(400).json({ error: err.message }); }
   // Status jest źródłem prawdy; pole done trzymamy zgodne, żeby stary kod nie kłamał.
   let status = STATUSY.includes(b.status) ? b.status : n.status;
   if (b.status === undefined && b.done !== undefined) status = b.done ? ZAMKNIETY : 'do-zrobienia';
@@ -109,6 +160,8 @@ router.patch('/notes/:id', (req, res) => {
                       project_id=?, updated_at=? WHERE id=?`
   ).run(next.title, next.body, next.color, next.pinned, next.status, next.done, next.due_date,
     next.project_id, now(), n.id);
+  db.prepare('UPDATE notes SET contact_emails=?, mail_summary=? WHERE id=?')
+    .run(emails, emails !== n.contact_emails ? null : n.mail_summary, n.id);
   res.json({ note: db.prepare('SELECT * FROM notes WHERE id = ?').get(n.id) });
 });
 

@@ -6,6 +6,7 @@
   "type": "commonjs",
   "main": "src/server.js",
   "scripts": {
+    "test": "node --test test/*.test.js",
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "set-password": "node scripts/set-password.js",

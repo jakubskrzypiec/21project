@@ -25,6 +25,7 @@ function extractBody(payload) {
     return html.text
       .replace(/<style[\s\S]*?<\/style>/gi, '')
       .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/<a\b[^>]*href=["'](https?:\/\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, '$2 ($1)')
       .replace(/<br\s*\/?>/gi, '\n')
       .replace(/<\/p>/gi, '\n\n')
       .replace(/<[^>]+>/g, '')
@@ -241,4 +242,5 @@ async function unreadCount() {
 module.exports = {
   listThreads, getThread, sendMessage, createDraft, modifyThread, trashThread, labels, unreadCount,
   VIEWS, addressOf, jestAutomatem, KATEGORIE_AUTOMATOW,
+  extractBody, attachmentsOf, headerOf,
 };
