@@ -3,10 +3,11 @@ const { config } = require('../config');
 
 const enabled = () => Boolean(config.ai.apiKey);
 
-async function complete({ system, prompt, maxTokens = 1200, temperature = 0.6 }) {
+async function complete({ system, prompt, maxTokens = 1200, temperature = 0.6, requireComplete = false }) {
   if (!enabled()) throw new Error('Brak ANTHROPIC_API_KEY w .env — generowanie treści wyłączone.');
   const res = await fetch(`${config.ai.baseUrl}/v1/messages`, {
     method: 'POST',
+    signal: AbortSignal.timeout(120000),
     headers: {
       'content-type': 'application/json',
       'x-api-key': config.ai.apiKey,
@@ -22,6 +23,7 @@ async function complete({ system, prompt, maxTokens = 1200, temperature = 0.6 })
   });
   if (!res.ok) throw new Error(`Anthropic API ${res.status}: ${(await res.text()).slice(0, 300)}`);
   const data = await res.json();
+  if (requireComplete && data.stop_reason !== 'end_turn') throw new Error('Analiza nie została ukończona; kartka bez zmian.');
   return (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n').trim();
 }
 

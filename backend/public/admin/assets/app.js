@@ -152,7 +152,7 @@ function pickGroup(name, inner) {
 }
 
 /** Podpina zachowanie paska. `del(id)` kasuje jedną pozycję. */
-function bulkWire(name, del, { label = 'pozycji' } = {}) {
+function bulkWire(name, del, { label = 'pozycji', visibleOnly = false } = {}) {
   const grupa = view.querySelector(`[data-pick-group="${name}"]`);
   if (!grupa) return;
   const all = grupa.querySelector('[data-pick-all]');
@@ -161,19 +161,22 @@ function bulkWire(name, del, { label = 'pozycji' } = {}) {
   const boxes = [...grupa.querySelectorAll('[data-pick]')];
   if (!boxes.length) { grupa.querySelector('.bulk').hidden = true; return; }
 
-  const wybrane = () => boxes.filter((b) => b.checked);
+  const visible = () => boxes.filter(b => !visibleOnly || !b.closest('.pickItem')?.hidden);
+  const wybrane = () => visible().filter((b) => b.checked);
   const odswiez = () => {
+    if (visibleOnly) boxes.filter(b => b.closest('.pickItem')?.hidden).forEach(b => { b.checked = false; });
     const n = wybrane().length;
-    licznik.textContent = n ? `zaznaczono ${n} z ${boxes.length}` : 'nic nie zaznaczono';
+    const total = visible().length;
+    licznik.textContent = n ? `zaznaczono ${n} z ${total}` : 'nic nie zaznaczono';
     btn.disabled = n === 0;
-    all.checked = n === boxes.length;
-    all.indeterminate = n > 0 && n < boxes.length;
+    all.checked = total > 0 && n === total;
+    all.indeterminate = n > 0 && n < total;
     boxes.forEach((b) => (b.closest('tr, .pickItem') || b).classList.toggle('picked', b.checked));
   };
 
   // Pole wyboru nie może otwierać wątku ani kartki, na której siedzi.
   boxes.forEach((b) => { b.onclick = (e) => { e.stopPropagation(); odswiez(); }; });
-  all.onclick = () => { boxes.forEach((b) => { b.checked = all.checked; }); odswiez(); };
+  all.onclick = () => { visible().forEach((b) => { b.checked = all.checked; }); odswiez(); };
 
   btn.onclick = async () => {
     const ids = wybrane().map((b) => b.dataset.pick);
@@ -192,6 +195,7 @@ function bulkWire(name, del, { label = 'pozycji' } = {}) {
   };
 
   odswiez();
+  return odswiez;
 }
 
 function openModal(title, html, onSubmit) {
@@ -1458,11 +1462,22 @@ views['/notatnik'] = async () => {
         <a class="btn ghost sm" href="#/notatnik${showDone ? '' : '?done=1'}">
           ${showDone ? 'Ukryj zrobione' : `Pokaż zrobione (${doneCount})`}</a>
         <button class="btn" id="btnNewNote">Nowa kartka</button>
+        <button class="btn" id="btnRefreshBoard">Odśwież informacje</button>
+        <button class="btn ghost sm" id="btnBoardBackups">Kopie i przywracanie</button>
       </div>
     </div>
 
+    <div class="boardTools">
+      <label>Szukaj klienta<input class="inp" id="boardSearch" placeholder="Nazwa, e-mail lub treść"></label>
+      <label for="boardFilter">Pokaż<select class="inp" id="boardFilter" aria-label="Pokaż">
+        <option value="all">Wszystkie kartki</option><option value="mine">Ruch po mojej stronie</option>
+        <option value="waiting">Czekam na klienta</option><option value="review">Do sprawdzenia / brak adresu</option>
+        <option value="due">Z terminem</option>
+      </select></label>
+    </div>
+    <div id="boardProgress" class="small" role="status" aria-live="polite"></div>
     ${notes.length ? pickGroup('notatki', `
-      <div class="notes">${notes.map(noteCard).join('')}</div>`) : `
+      <div class="notes" id="boardCards">${notes.map(noteCard).join('')}</div>`) : `
       <div class="empty">
         Tablica jest pusta. Pierwsza kartka to zwykle lista rzeczy, o których łatwo zapomnieć.
       </div>`}
@@ -1502,11 +1517,39 @@ views['/notatnik'] = async () => {
         <td><button class="btn ghost sm" data-delfile="${f.id}">Usuń</button></td></tr>`)}
     </div>`)}`;
 
-  bulkWire('notatki', (id) => api(`/board/notes/${id}`, { method: 'DELETE' }), { label: 'kartek' });
+  const refreshSelection = bulkWire('notatki', (id) => api(`/board/notes/${id}`, { method: 'DELETE' }), { label: 'kartek', visibleOnly: true });
   wireBriefy();
   bulkWire('pliki', (id) => api(`/board/files/${id}`, { method: 'DELETE' }), { label: 'plików' });
 
   $('#btnNewNote').onclick = () => noteModal();
+  $('#btnBoardBackups').onclick = boardBackups;
+  $('#btnRefreshBoard').onclick = async () => {
+    const btn = $('#btnRefreshBoard');
+    btn.disabled = true;
+    try {
+      const job = await api('/board/refresh', { method: 'POST', body: {} });
+      downloadBoardBackup(job.backup_id).catch(() => toast('Kopia jest na serwerze. Pobierzesz ją w „Kopie i przywracanie”.', true));
+      watchBoardRefresh();
+    } catch (err) { toast(err.message, true); btn.disabled = false; }
+  };
+  const filterCards = () => {
+    const query = $('#boardSearch').value.toLocaleLowerCase('pl');
+    const filter = $('#boardFilter').value;
+    for (const n of notes) {
+      const card = view.querySelector(`[data-card-id="${n.id}"]`);
+      const a = n.mail_summary;
+      const searchable = [n.title, n.body, n.contact_emails, a?.summary, a?.next_step].join(' ').toLocaleLowerCase('pl');
+      const match = filter === 'all' || (filter === 'mine' && (a?.owner === 'Jakub' || ['do-zrobienia','do-poprawek','w-trakcie'].includes(n.status)))
+        || (filter === 'waiting' && (a?.owner === 'Klient' || CZEKA_NA_KLIENTA.includes(n.status)))
+        || (filter === 'review' && (!n.contact_emails || !a || a.needs_review))
+        || (filter === 'due' && (n.due_date || a?.due_date));
+      if (card) card.hidden = !match || !searchable.includes(query);
+    }
+    refreshSelection?.();
+  };
+  $('#boardSearch').oninput = filterCards;
+  $('#boardFilter').onchange = filterCards;
+  watchBoardRefresh();
 
 
   view.querySelectorAll('[data-note-edit]').forEach((b) => {
@@ -1587,12 +1630,97 @@ function podsumowanieStatusow(licznik, showDone) {
   return czesci.length ? `<p class="statusSums">${czesci.join('')}</p>` : '';
 }
 
+let boardRefreshTimer;
+let boardRefreshWasRunning = false;
+async function watchBoardRefresh() {
+  clearTimeout(boardRefreshTimer);
+  if (!location.hash.startsWith('#/notatnik')) return;
+  try {
+    const { job } = await api('/board/refresh');
+    const el = $('#boardProgress');
+    if (!el || !job) return;
+    const running = job.status === 'running';
+    $('#btnRefreshBoard').disabled = running;
+    el.innerHTML = `<p><b>${running ? 'Czytam pocztę' : 'Ostatnie odświeżanie'}: ${job.completed}/${job.total}</b>
+      · kopia nr ${job.backup_id} · ${esc(fmtDateTime(job.created_at))}</p>
+      ${!running ? `<details><summary>Wynik dla każdej kartki</summary><ul>${job.results.map(r =>
+        `<li><b>${esc(r.title)}</b>: ${esc(r.message)} ${r.state === 'updated' ? 'Zaktualizowano.' : r.state === 'review' ? 'Do sprawdzenia.' : ''}
+        ${(r.candidates || []).map(c => `<div><a target="_blank" rel="noopener" href="https://mail.google.com/mail/u/0/#all/${encodeURIComponent(c.thread_id)}">Sprawdź wątek</a>
+          <button class="btn ghost sm" data-confirm-contact="${r.id}" data-contact="${esc(c.email)}">Użyj ${esc(c.email)}</button></div>`).join('')}</li>`).join('')}</ul>
+        ${job.status === 'interrupted' ? '<p>Serwer uruchomiono ponownie. Nieukończone kartki wymagają kolejnego odświeżenia.</p>' : ''}</details>` : ''}`;
+    el.querySelectorAll('[data-confirm-contact]').forEach(b => { b.onclick = async () => {
+      const { notes } = await api('/board/notes?done=1');
+      const n = notes.find(n => String(n.id) === b.dataset.confirmContact);
+      if (n) noteModal({ ...n, contact_emails: b.dataset.contact });
+    }; });
+    if (running) { boardRefreshWasRunning = true; boardRefreshTimer = setTimeout(watchBoardRefresh, 2000); }
+    else if (boardRefreshWasRunning) { boardRefreshWasRunning = false; render(); }
+  } catch (err) {
+    const el = $('#boardProgress');
+    if (el) el.textContent = 'Nie udało się sprawdzić postępu. Wróć na tablicę, aby wznowić podgląd.';
+    if ($('#btnRefreshBoard')) $('#btnRefreshBoard').disabled = false;
+  }
+}
+
+function noteMailSummary(a) {
+  if (!a) return '<div class="note__mail small">Jeszcze nie sprawdzono korespondencji.</div>';
+  return `<section class="note__mail" aria-label="Ustalenia z Gmaila">
+    <div class="note__eyebrow">Z Gmaila ${a.needs_review ? '· DO SPRAWDZENIA' : ''}</div>
+    <p>${esc(a.summary)}</p>
+    <div class="note__next"><b>Ruch: ${esc(a.owner)}</b><br>${esc(a.next_step)}</div>
+    ${a.due_date ? `<p><b>Termin z maila: ${esc(fmtDate(a.due_date))}</b></p>` : ''}
+    <details><summary>Dowody i zakres sprawdzenia</summary>
+      <p class="small">Sprawdzono ${a.message_count} wiadomości / ${a.thread_count} wątków.
+      Ostatni kontakt: ${esc(fmtDateTime(a.last_contact))}. Aktualizacja: ${esc(fmtDateTime(a.checked_at))}.</p>
+      <p class="small">Treści wiadomości odczytane w całości. Załączniki: sprawdzono nazwy, bez analizy zawartości.</p>
+      ${(a.evidence || []).map(e => `<blockquote><a target="_blank" rel="noopener"
+        href="https://mail.google.com/mail/u/0/#all/${encodeURIComponent(e.thread_id)}">${esc(e.date)}</a><br>${esc(e.quote)}</blockquote>`).join('')}
+    </details>
+  </section>`;
+}
+
+async function downloadBoardBackup(id) {
+  const res = await fetch(`/api/admin/board/backups/${id}/download`, { headers: naglowki() });
+  if (!res.ok) throw new Error('Nie udało się pobrać kopii.');
+  const url = URL.createObjectURL(await res.blob());
+  const link = document.createElement('a'); link.href = url; link.download = `tablica-${id}.json`; link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function boardBackups() {
+  const { backups } = await api('/board/backups');
+  modal.innerHTML = `<h3>Kopie tablicy</h3>
+    <p class="small muted">Każde odświeżenie zapisuje kopię wszystkich kartek. Kopie zostają na serwerze; możesz też pobrać JSON na swój dysk.
+    Przywracanie cofa treść i ustawienia istniejących kartek. Nie usuwa nowych kartek i nie odtwarza usuniętych. Pliki i briefy są poza tą kopią.</p>
+    <button class="btn sm" id="newBoardBackup">Utwórz i pobierz kopię</button>
+    <div class="backupList">${backups.map(b => `<div class="backupRow"><div><b>${esc(fmtDateTime(b.created_at))}</b>
+      <br><span class="small">${esc(b.reason)}</span></div><div class="row">
+      <button class="btn ghost sm" data-backup-download="${b.id}">Pobierz</button>
+      <button class="btn ghost sm" data-backup-restore="${b.id}">Przywróć</button></div></div>`).join('') || '<p>Nie ma jeszcze kopii.</p>'}</div>
+    <div class="row end"><button class="btn" id="closeBoardBackups">Zamknij</button></div>`;
+  if (!modal.open) modal.showModal();
+  $('#closeBoardBackups').onclick = () => modal.close();
+  $('#newBoardBackup').onclick = async () => {
+    try { const { id } = await api('/board/backups', { method: 'POST', body: {} }); await downloadBoardBackup(id); await boardBackups(); }
+    catch (err) { toast(err.message, true); }
+  };
+  modal.querySelectorAll('[data-backup-download]').forEach(b => { b.onclick = () => downloadBoardBackup(b.dataset.backupDownload).catch(err => toast(err.message, true)); });
+  modal.querySelectorAll('[data-backup-restore]').forEach(b => { b.onclick = async () => {
+    if (!confirm('Przywrócić istniejące kartki do tej wersji? Bieżący stan zostanie najpierw zapisany jako nowa kopia.')) return;
+    b.disabled = true;
+    try {
+      const { restored } = await api(`/board/backups/${b.dataset.backupRestore}/restore`, { method: 'POST', body: {} });
+      modal.close(); toast(`Przywrócono ${restored} kartek.`); render();
+    } catch (err) { toast(err.message, true); b.disabled = false; }
+  }; });
+}
+
 function noteCard(n) {
   const status = n.status || 'do-zrobienia';
   const zrobiona = status === 'zrobione';
   const czeka = CZEKA_NA_KLIENTA.includes(status);
   const przeterminowana = n.due_date && !zrobiona && n.due_date < new Date().toISOString().slice(0, 10);
-  return `<article class="note pickItem note--${esc(n.color)} ${zrobiona ? 'note--done' : ''}">
+  return `<article data-card-id="${n.id}" class="note pickItem note--${esc(n.color)} ${zrobiona ? 'note--done' : ''}">
     <div class="note__top">
       ${pick(n.id)}
       <select class="note__status ${czeka ? 'note__status--czeka' : ''} ${zrobiona ? 'note__status--zrobione' : ''}"
@@ -1603,7 +1731,9 @@ function noteCard(n) {
               title="Przypnij na górze">${n.pinned ? '📌' : '📍'}</button>
     </div>
     ${n.title ? `<h3 class="note__title">${esc(n.title)}</h3>` : ''}
-    ${n.body ? `<pre class="note__body">${esc(n.body)}</pre>` : ''}
+    ${n.contact_emails ? `<div class="note__contact">${esc(n.contact_emails)}</div>` : '<div class="note__contact">Uzupełnij e-mail, aby odświeżać z Gmaila</div>'}
+    ${noteMailSummary(n.mail_summary)}
+    ${n.body ? `<div class="note__manual"><b>Moje notatki</b><pre class="note__body">${esc(n.body)}</pre></div>` : ''}
     ${noteLinks(n.links)}
     <div class="note__foot">
       ${n.source === 'poczta' ? '<span class="tag">z poczty</span>' : ''}
@@ -1639,7 +1769,10 @@ async function noteModal(note) {
   const isEdit = Boolean(note);
   openModal(isEdit ? 'Edytuj kartkę' : 'Nowa kartka', `
     <label class="f">Tytuł<input name="title" value="${esc(note?.title || '')}" placeholder="np. Strona dla Meblarni"></label>
-    <label class="f">Treść<textarea name="body" placeholder="Co trzeba zrobić…">${esc(note?.body || '')}</textarea></label>
+    <label class="f">Moje notatki — odświeżanie ich nie nadpisuje<textarea name="body" placeholder="Twoje ustalenia, pomysły, zadania…">${esc(note?.body || '')}</textarea></label>
+    <label class="f">Potwierdzone adresy klienta (przecinki oddzielają adresy)<input name="contact_emails"
+      value="${esc(note?.contact_emails || '')}" placeholder="np. studio@firma.pl"></label>
+    <p class="small muted">Dodaj również starszy adres klienta, jeśli korespondencja była prowadzona na kilku skrzynkach.</p>
     <label class="f">Status<select name="status">
       ${STATUSY.map(([k, l]) => `<option value="${k}" ${(note?.status || 'do-zrobienia') === k ? 'selected' : ''}>${l}</option>`).join('')}
     </select></label>

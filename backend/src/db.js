@@ -295,6 +295,7 @@ function migrate() {
   const kolumny = db.prepare('PRAGMA table_info(notes)').all().map((c) => c.name);
   for (const [name, ddl] of [
     ['source', 'TEXT'], ['source_ref', 'TEXT'], ['links', 'TEXT'],
+    ['contact_emails', 'TEXT'], ['mail_summary', 'TEXT'],
     ['status', "TEXT NOT NULL DEFAULT 'do-zrobienia'"],
   ]) {
     if (!kolumny.includes(name)) {
@@ -312,6 +313,18 @@ function migrate() {
   krok('indeks notes.source_ref', () => db.exec(
     'CREATE UNIQUE INDEX IF NOT EXISTS idx_notes_source ON notes(source_ref) WHERE source_ref IS NOT NULL'
   ));
+  krok('historia tablicy', () => db.exec(`
+    CREATE TABLE IF NOT EXISTS board_backups (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL,
+      reason TEXT NOT NULL, snapshot TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS board_refreshes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL,
+      finished_at TEXT, status TEXT NOT NULL, backup_id INTEGER,
+      total INTEGER NOT NULL, completed INTEGER NOT NULL DEFAULT 0,
+      results TEXT NOT NULL DEFAULT '[]'
+    );
+  `));
 }
 
 function init() {

@@ -317,7 +317,7 @@ tr.picked td{background:var(--surface-2)}
 .statusSum b{margin-right:4px;color:var(--ink);font-weight:600}
 .statusSum--czeka b{color:var(--warn)}
 
-.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));
   gap:16px;margin-bottom:16px;align-items:start}
 
 .board{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-bottom:16px}
@@ -327,11 +327,28 @@ tr.picked td{background:var(--surface-2)}
 .note{color-scheme:light;display:flex;flex-direction:column;gap:10px;padding:18px 20px 14px;
   border:1px solid var(--line);background:var(--note-bg,#fdf6d8);color:#141414;
   /* Lekkie przekrzywienie sprawia, że kartki wyglądają jak przypięte, a nie wklejone. */
-  transform:rotate(var(--tilt,-.35deg));transition:transform .16s,box-shadow .16s}
+  transform:none;transition:box-shadow .16s;min-width:0;border-radius:10px}
 .note:nth-child(2n){--tilt:.4deg}
 .note:nth-child(3n){--tilt:-.7deg}
 .note:nth-child(5n){--tilt:.65deg}
-.note:hover{transform:rotate(0deg) translateY(-2px);box-shadow:0 10px 24px rgba(10,10,10,.14)}
+.note:hover{box-shadow:0 6px 20px rgba(10,10,10,.10)}
+.note[hidden]{display:none}
+.boardTools{display:flex;flex-wrap:wrap;gap:16px;margin:18px 0}
+.boardTools label{flex:1;min-width:200px;font-size:13px}
+.boardTools .inp{display:block;width:100%;margin-top:6px}
+#boardProgress{margin:12px 0;overflow-wrap:anywhere}
+.note__contact{font-size:12px;line-height:1.5;color:#555;overflow-wrap:anywhere}
+.note__mail{background:rgba(255,255,255,.65);border:1px solid rgba(0,0,0,.08);border-radius:6px;padding:12px;font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.note__mail p{margin:6px 0 12px}
+.note__eyebrow{font-size:11px;font-weight:700;letter-spacing:.05em;color:#555}
+.note__next{border-left:3px solid #555;padding-left:10px;margin:12px 0}
+.note__mail details{font-size:12px}
+.note__mail summary{cursor:pointer}
+.note__mail blockquote{margin:10px 0;padding-left:10px;border-left:2px solid #aaa}
+.note__manual{font-size:12px;padding:4px 0}
+.note__manual>b{display:block;color:#555;margin-bottom:5px}
+.backupList{max-height:52vh;overflow:auto;margin:16px 0}
+.backupRow{padding:12px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap}
 
 .note--zolta{--note-bg:#fdf6d8}
 .note--biala{--note-bg:#fbfbfa}
