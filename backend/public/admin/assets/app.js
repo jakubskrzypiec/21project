@@ -1462,7 +1462,7 @@ views['/notatnik'] = async () => {
         <a class="btn ghost sm" href="#/notatnik${showDone ? '' : '?done=1'}">
           ${showDone ? 'Ukryj zrobione' : `Pokaż zrobione (${doneCount})`}</a>
         <button class="btn" id="btnNewNote">Nowa kartka</button>
-        <button class="btn" id="btnRefreshBoard">Odśwież informacje</button>
+        <button class="btn ghost sm" id="btnRefreshBoard">Wczytaj zapisane zmiany</button>
         <button class="btn ghost sm" id="btnBoardBackups">Kopie i przywracanie</button>
       </div>
     </div>
@@ -1475,7 +1475,7 @@ views['/notatnik'] = async () => {
         <option value="due">Z terminem</option>
       </select></label>
     </div>
-    <div id="boardProgress" class="small" role="status" aria-live="polite"></div>
+    <p class="small muted">Aktualizacja z Gmaila: napisz w czacie „zaktualizuj tablicę”. Asystent przeczyta wątki i zapisze ustalenia tutaj. „Wczytaj zapisane zmiany” odświeża widok, nie analizuje poczty.</p>
     ${notes.length ? pickGroup('notatki', `
       <div class="notes" id="boardCards">${notes.map(noteCard).join('')}</div>`) : `
       <div class="empty">
@@ -1523,15 +1523,7 @@ views['/notatnik'] = async () => {
 
   $('#btnNewNote').onclick = () => noteModal();
   $('#btnBoardBackups').onclick = boardBackups;
-  $('#btnRefreshBoard').onclick = async () => {
-    const btn = $('#btnRefreshBoard');
-    btn.disabled = true;
-    try {
-      const job = await api('/board/refresh', { method: 'POST', body: {} });
-      downloadBoardBackup(job.backup_id).catch(() => toast('Kopia jest na serwerze. Pobierzesz ją w „Kopie i przywracanie”.', true));
-      watchBoardRefresh();
-    } catch (err) { toast(err.message, true); btn.disabled = false; }
-  };
+  $('#btnRefreshBoard').onclick = () => render();
   const filterCards = () => {
     const query = $('#boardSearch').value.toLocaleLowerCase('pl');
     const filter = $('#boardFilter').value;
@@ -1549,7 +1541,6 @@ views['/notatnik'] = async () => {
   };
   $('#boardSearch').oninput = filterCards;
   $('#boardFilter').onchange = filterCards;
-  watchBoardRefresh();
 
 
   view.querySelectorAll('[data-note-edit]').forEach((b) => {
@@ -1630,38 +1621,6 @@ function podsumowanieStatusow(licznik, showDone) {
   return czesci.length ? `<p class="statusSums">${czesci.join('')}</p>` : '';
 }
 
-let boardRefreshTimer;
-let boardRefreshWasRunning = false;
-async function watchBoardRefresh() {
-  clearTimeout(boardRefreshTimer);
-  if (!location.hash.startsWith('#/notatnik')) return;
-  try {
-    const { job } = await api('/board/refresh');
-    const el = $('#boardProgress');
-    if (!el || !job) return;
-    const running = job.status === 'running';
-    $('#btnRefreshBoard').disabled = running;
-    el.innerHTML = `<p><b>${running ? 'Czytam pocztę' : 'Ostatnie odświeżanie'}: ${job.completed}/${job.total}</b>
-      · kopia nr ${job.backup_id} · ${esc(fmtDateTime(job.created_at))}</p>
-      ${!running ? `<details><summary>Wynik dla każdej kartki</summary><ul>${job.results.map(r =>
-        `<li><b>${esc(r.title)}</b>: ${esc(r.message)} ${r.state === 'updated' ? 'Zaktualizowano.' : r.state === 'review' ? 'Do sprawdzenia.' : ''}
-        ${(r.candidates || []).map(c => `<div><a target="_blank" rel="noopener" href="https://mail.google.com/mail/u/0/#all/${encodeURIComponent(c.thread_id)}">Sprawdź wątek</a>
-          <button class="btn ghost sm" data-confirm-contact="${r.id}" data-contact="${esc(c.email)}">Użyj ${esc(c.email)}</button></div>`).join('')}</li>`).join('')}</ul>
-        ${job.status === 'interrupted' ? '<p>Serwer uruchomiono ponownie. Nieukończone kartki wymagają kolejnego odświeżenia.</p>' : ''}</details>` : ''}`;
-    el.querySelectorAll('[data-confirm-contact]').forEach(b => { b.onclick = async () => {
-      const { notes } = await api('/board/notes?done=1');
-      const n = notes.find(n => String(n.id) === b.dataset.confirmContact);
-      if (n) noteModal({ ...n, contact_emails: b.dataset.contact });
-    }; });
-    if (running) { boardRefreshWasRunning = true; boardRefreshTimer = setTimeout(watchBoardRefresh, 2000); }
-    else if (boardRefreshWasRunning) { boardRefreshWasRunning = false; render(); }
-  } catch (err) {
-    const el = $('#boardProgress');
-    if (el) el.textContent = 'Nie udało się sprawdzić postępu. Wróć na tablicę, aby wznowić podgląd.';
-    if ($('#btnRefreshBoard')) $('#btnRefreshBoard').disabled = false;
-  }
-}
-
 function noteMailSummary(a) {
   if (!a) return '<div class="note__mail small">Jeszcze nie sprawdzono korespondencji.</div>';
   return `<section class="note__mail" aria-label="Ustalenia z Gmaila">
@@ -1670,9 +1629,10 @@ function noteMailSummary(a) {
     <div class="note__next"><b>Ruch: ${esc(a.owner)}</b><br>${esc(a.next_step)}</div>
     ${a.due_date ? `<p><b>Termin z maila: ${esc(fmtDate(a.due_date))}</b></p>` : ''}
     <details><summary>Dowody i zakres sprawdzenia</summary>
-      <p class="small">Sprawdzono ${a.message_count} wiadomości / ${a.thread_count} wątków.
+      <p class="small">${a.manual ? 'Ustalenia zapisane po przeglądzie korespondencji.' : `Sprawdzono ${a.message_count} wiadomości / ${a.thread_count} wątków.`}
       Ostatni kontakt: ${esc(fmtDateTime(a.last_contact))}. Aktualizacja: ${esc(fmtDateTime(a.checked_at))}.</p>
-      <p class="small">Treści wiadomości odczytane w całości. Załączniki: sprawdzono nazwy, bez analizy zawartości.</p>
+      ${a.manual ? '' : '<p class="small">Treści wiadomości odczytane w całości. Załączniki: sprawdzono nazwy, bez analizy zawartości.</p>'}
+      ${(a.sources || []).map((url,i) => `<p><a target="_blank" rel="noopener" href="${esc(url)}">Wątek Gmail ${i+1}</a></p>`).join('')}
       ${(a.evidence || []).map(e => `<blockquote><a target="_blank" rel="noopener"
         href="https://mail.google.com/mail/u/0/#all/${encodeURIComponent(e.thread_id)}">${esc(e.date)}</a><br>${esc(e.quote)}</blockquote>`).join('')}
     </details>
@@ -1690,7 +1650,7 @@ async function downloadBoardBackup(id) {
 async function boardBackups() {
   const { backups } = await api('/board/backups');
   modal.innerHTML = `<h3>Kopie tablicy</h3>
-    <p class="small muted">Każde odświeżenie zapisuje kopię wszystkich kartek. Kopie zostają na serwerze; możesz też pobrać JSON na swój dysk.
+    <p class="small muted">Każda edycja kartki zapisuje wcześniej kopię wszystkich kartek. Kopie zostają na serwerze; możesz też pobrać JSON na swój dysk.
     Przywracanie cofa treść i ustawienia istniejących kartek. Nie usuwa nowych kartek i nie odtwarza usuniętych. Pliki i briefy są poza tą kopią.</p>
     <button class="btn sm" id="newBoardBackup">Utwórz i pobierz kopię</button>
     <div class="backupList">${backups.map(b => `<div class="backupRow"><div><b>${esc(fmtDateTime(b.created_at))}</b>
@@ -1731,7 +1691,7 @@ function noteCard(n) {
               title="Przypnij na górze">${n.pinned ? '📌' : '📍'}</button>
     </div>
     ${n.title ? `<h3 class="note__title">${esc(n.title)}</h3>` : ''}
-    ${n.contact_emails ? `<div class="note__contact">${esc(n.contact_emails)}</div>` : '<div class="note__contact">Uzupełnij e-mail, aby odświeżać z Gmaila</div>'}
+    ${n.contact_emails ? `<div class="note__contact">${esc(n.contact_emails)}</div>` : '<div class="note__contact">E-mail klienta można dodać w edycji</div>'}
     ${noteMailSummary(n.mail_summary)}
     ${n.body ? `<div class="note__manual"><b>Moje notatki</b><pre class="note__body">${esc(n.body)}</pre></div>` : ''}
     ${noteLinks(n.links)}
@@ -1773,6 +1733,16 @@ async function noteModal(note) {
     <label class="f">Potwierdzone adresy klienta (przecinki oddzielają adresy)<input name="contact_emails"
       value="${esc(note?.contact_emails || '')}" placeholder="np. studio@firma.pl"></label>
     <p class="small muted">Dodaj również starszy adres klienta, jeśli korespondencja była prowadzona na kilku skrzynkach.</p>
+    ${isEdit ? `<details open><summary>Ustalenia z korespondencji</summary>
+      <p class="small muted">Wypełniane po przeczytaniu maili. Twoje notatki pozostają osobno.</p>
+      <label class="f">Na czym stanęło<textarea name="mail_summary_text">${esc(note?.mail_summary?.summary || '')}</textarea></label>
+      <label class="f">Następny krok<textarea name="mail_next_step">${esc(note?.mail_summary?.next_step || '')}</textarea></label>
+      <label class="f">Ruch po stronie<select name="mail_owner">${['Jakub','Klient','Do ustalenia'].map(x => `<option ${note?.mail_summary?.owner === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
+      <label class="f">Ostatni kontakt<input type="date" name="mail_last_contact" value="${esc(note?.mail_summary?.last_contact?.slice(0,10) || '')}"></label>
+      <label class="f">Termin wynikający z maila<input type="date" name="mail_due_date" value="${esc(note?.mail_summary?.due_date || '')}"></label>
+      <label class="f">Linki do wątków Gmaila — każdy w osobnej linii<textarea name="mail_sources">${esc((note?.mail_summary?.sources || []).join('\n'))}</textarea></label>
+      <label class="f">Pewność ustaleń<select name="mail_needs_review"><option value="0">Potwierdzone w korespondencji</option><option value="1" ${note?.mail_summary?.needs_review ? 'selected' : ''}>Do sprawdzenia</option></select></label>
+    </details>` : ''}
     <label class="f">Status<select name="status">
       ${STATUSY.map(([k, l]) => `<option value="${k}" ${(note?.status || 'do-zrobienia') === k ? 'selected' : ''}>${l}</option>`).join('')}
     </select></label>
@@ -1786,6 +1756,14 @@ async function noteModal(note) {
     </select></label>`,
     async (data) => {
       const body = { ...data, project_id: data.project_id || null, due_date: data.due_date || null };
+      if (isEdit) {
+        body.expected_updated_at = note.updated_at;
+        if (data.mail_summary_text?.trim()) body.mail_summary = {
+          summary: data.mail_summary_text, next_step: data.mail_next_step, owner: data.mail_owner,
+          due_date: data.mail_due_date || null, last_contact: data.mail_last_contact || null,
+          needs_review: data.mail_needs_review === '1', sources: data.mail_sources.split(/\r?\n/).map(x => x.trim()).filter(Boolean)
+        };
+      }
       if (isEdit) await api(`/board/notes/${note.id}`, { method: 'PATCH', body });
       else await api('/board/notes', { method: 'POST', body });
       toast(isEdit ? 'Zapisane.' : 'Kartka dodana.');

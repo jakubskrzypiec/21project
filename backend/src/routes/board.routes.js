@@ -7,7 +7,6 @@ const multer = require('multer');
 const { db } = require('../db');
 const { config } = require('../config');
 const refresh = require('../services/boardRefresh');
-const refreshService = refresh.createService({ db, google: require('../services/google'), ai: require('../services/ai') });
 
 const router = express.Router();
 const now = () => new Date().toISOString();
@@ -34,19 +33,8 @@ const STATUSY = [
 ];
 const ZAMKNIETY = 'zrobione';
 
-router.post('/refresh', (req, res) => {
-  try {
-    const ids = req.body?.ids;
-    if (ids !== undefined && (!Array.isArray(ids) || !ids.length || ids.some(x => !Number.isSafeInteger(x)))) {
-      return res.status(400).json({ error: 'Nieprawidłowa lista kartek.' });
-    }
-    res.status(202).json(refreshService.start(ids));
-  } catch (err) { res.status(409).json({ error: err.message }); }
-});
-router.get('/refresh', (_req, res) => {
-  const job = db.prepare('SELECT * FROM board_refreshes ORDER BY id DESC LIMIT 1').get();
-  res.json({ job: job ? { ...job, results: JSON.parse(job.results) } : null });
-});
+// Older browser tabs get a clear response; the board no longer calls an AI provider.
+router.post('/refresh', (_req, res) => res.status(410).json({ error: 'Aktualizacja z poczty odbywa się przez asystenta w czacie. Napisz: zaktualizuj tablicę.' }));
 router.get('/backups', (_req, res) => {
   res.json({ backups: db.prepare('SELECT id, created_at, reason FROM board_backups ORDER BY id DESC LIMIT 100').all() });
 });
@@ -58,7 +46,6 @@ router.get('/backups/:id/download', (req, res) => {
     reason: b.reason, notes: JSON.parse(b.snapshot) }, null, 2));
 });
 router.post('/backups/:id/restore', (req, res) => {
-  if (refreshService.isBusy()) return res.status(409).json({ error: 'Poczekaj na zakończenie odświeżania.' });
   const b = db.prepare('SELECT * FROM board_backups WHERE id=?').get(req.params.id);
   if (!b) return res.status(404).json({ error: 'Nie znaleziono kopii.' });
   const restored = db.transaction(() => {
@@ -138,9 +125,16 @@ router.patch('/notes/:id', (req, res) => {
   const n = db.prepare('SELECT * FROM notes WHERE id = ?').get(req.params.id);
   if (!n) return res.status(404).json({ error: 'Nie ma takiej notatki.' });
   const b = req.body || {};
+  if (b.expected_updated_at !== undefined && b.expected_updated_at !== n.updated_at) {
+    return res.status(409).json({ error: 'Kartka została zmieniona. Otwórz ją ponownie, aby zachować nowsze notatki.' });
+  }
   let emails = n.contact_emails;
   try { if (b.contact_emails !== undefined) emails = refresh.parseEmails(b.contact_emails).join(', '); }
   catch (err) { return res.status(400).json({ error: err.message }); }
+  let summary = emails !== n.contact_emails ? null : n.mail_summary;
+  try {
+    if (b.mail_summary !== undefined) summary = b.mail_summary === null ? null : JSON.stringify(refresh.manualSummary(b.mail_summary));
+  } catch (err) { return res.status(400).json({ error: err.message }); }
   // Status jest źródłem prawdy; pole done trzymamy zgodne, żeby stary kod nie kłamał.
   let status = STATUSY.includes(b.status) ? b.status : n.status;
   if (b.status === undefined && b.done !== undefined) status = b.done ? ZAMKNIETY : 'do-zrobienia';
@@ -155,13 +149,16 @@ router.patch('/notes/:id', (req, res) => {
     due_date: b.due_date !== undefined ? b.due_date : n.due_date,
     project_id: b.project_id !== undefined ? b.project_id : n.project_id,
   };
+  db.transaction(() => {
+  refresh.backup(db, `Przed edycją kartki: ${n.title || n.id}`);
   db.prepare(
     `UPDATE notes SET title=?, body=?, color=?, pinned=?, status=?, done=?, due_date=?,
                       project_id=?, updated_at=? WHERE id=?`
   ).run(next.title, next.body, next.color, next.pinned, next.status, next.done, next.due_date,
     next.project_id, now(), n.id);
   db.prepare('UPDATE notes SET contact_emails=?, mail_summary=? WHERE id=?')
-    .run(emails, emails !== n.contact_emails ? null : n.mail_summary, n.id);
+    .run(emails, summary, n.id);
+  })();
   res.json({ note: db.prepare('SELECT * FROM notes WHERE id = ?').get(n.id) });
 });
 
