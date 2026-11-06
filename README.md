@@ -20,7 +20,7 @@ Strona nie ma buildu — pliki z katalogu głównego trafiają na serwer takie, 
 ├── sitemap.xml  robots.txt  llms.txt  pliki dla wyszukiwarek i asystentów AI
 ├── og-21project.jpg  favicon.svg
 ├── backend/                         panel administracyjny (osobna aplikacja Node.js, Railway)
-└── docs/                            instrukcja wdrożenia panelu i audyty SEO (archiwum)
+└── docs/                            instrukcja wdrożenia panelu
 ```
 
 ## Panel
@@ -56,3 +56,10 @@ pasek „demo” i wyskakujące powiadomienia, a `?empty` zeruje wszystkie liczb
 `reklamy/panele-reel/` — rolka 9:16 o panelach do Meta Ads. `index.html` to animacja (podgląd w przeglądarce
 przez serwer z katalogu głównego), `render.js` renderuje ją klatka po klatce do `panele-reel.mp4`:
 `python3 -m http.server 8765` w katalogu głównym, potem `node reklamy/panele-reel/render.js`.
+
+## Konwersje w panelu
+
+- `404.html` pokazuje się pod każdym nieistniejącym adresem.
+- Konwersja w panelu = sesja z `form_submit` (zgłaszany po udanej odpowiedzi serwera), `phone_click` lub `mail_click`.
+  `contact_click` (wejście w link do kontaktu) to tylko zainteresowanie i nie wlicza się do konwersji.
+- Własne wejścia wyłączysz w danej przeglądarce adresem `https://21project.pl/?p21ignore=1` (`?p21ignore=0` włącza z powrotem).

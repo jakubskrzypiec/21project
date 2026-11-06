@@ -142,12 +142,13 @@ function summary(days = 30) {
         GROUP BY session_id HAVING COUNT(*) = 1)`
   ).get(from, to).single;
 
-  // Liczymy sesje, w których ktoś sięgnął po kontakt, a nie same kliknięcia —
-  // jedna osoba potrafi kliknąć telefon i wysłać formularz, co dawałoby ponad 100%.
+  // Konwersja = sesja z realnym kontaktem: wysłane zapytanie (potwierdzone przez serwer),
+  // kliknięcie w telefon albo w e-mail. Samo wejście w /kontakt/ (contact_click) to zainteresowanie,
+  // nie kontakt — widać je osobno w „Zdarzenia”. Liczymy sesje, nie kliknięcia, żeby nie przekroczyć 100%.
   const conversions = db.prepare(
     `SELECT COUNT(DISTINCT session_id) AS n FROM events WHERE day BETWEEN ? AND ?
        AND session_id IS NOT NULL
-       AND name IN ('form_submit','contact_click','phone_click','mail_click')`
+       AND name IN ('form_submit','phone_click','mail_click')`
   ).get(from, to).n;
 
   return {
