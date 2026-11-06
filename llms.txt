@@ -12,7 +12,7 @@ na Google Meet, po wdrożenie pod właściwy adres.
 
 - Nazwa: 21 project (Jakub Skrzypiec)
 - Siedziba: Katowice, województwo śląskie, Polska
-- Obszar działania: Katowice, Śląsk, cała Polska (praca zdalna)
+- Obszar działania: Katowice, Gliwice, Zabrze, Ruda Śląska, Chorzów i całe województwo śląskie, a zdalnie cała Polska
 - Kontakt: jakubskrzypiec.dev@gmail.com, +48 601 863 788
 - Język obsługi: polski
 
