@@ -419,7 +419,7 @@ views['/pulpit'] = async () => {
     <div class="grid g4">
       ${kpi(fmtNum(t.visitors), 'użytkowników', t.change.visitors)}
       ${kpi(fmtNum(t.views), 'odsłon', t.change.views)}
-      ${kpi(`${t.conversionRate}%`, `konwersji (${t.conversions} kontaktów)`)}
+      ${kpi(`${t.conversionRate}%`, `konwersji (${t.conversions} realnych kontaktów)`)}
       ${kpi(`${d.live.online}`, 'osób na stronie teraz')}
     </div>
 
@@ -514,7 +514,7 @@ views['/ruch'] = async () => {
       ${kpi(fmtNum(s.sessions), 'sesji')}
       ${kpi(`${s.avgSeconds}s`, 'średni czas na stronie')}
       ${kpi(`${s.bounceRate}%`, 'odrzuceń (jedna podstrona)')}
-      ${kpi(`${s.conversionRate}%`, `konwersji — ${s.conversions} kontaktów`)}
+      ${kpi(`${s.conversionRate}%`, `konwersji — ${s.conversions} realnych kontaktów`)}
     </div>
 
     <div class="card" style="margin-top:1px"><h3>Odsłony dzień po dniu</h3>${chart(ts)}</div>
@@ -527,7 +527,7 @@ views['/ruch'] = async () => {
       <div class="card"><h3>Skąd przychodzą</h3>${list(b.referrers, 'source', 'views', 'Źródło')}</div>
       <div class="card"><h3>Urządzenia</h3>${list(b.devices, 'name', 'views', 'Typ')}</div>
       <div class="card"><h3>Przeglądarki</h3>${list(b.browsers, 'name', 'views', 'Przeglądarka')}</div>
-      <div class="card"><h3>Zdarzenia (kliknięcia w kontakt)</h3>${list(b.events, 'name', 'n', 'Zdarzenie')}</div>
+      <div class="card"><h3>Zdarzenia (contact_click = wejście w Kontakt; form_submit, phone_click, mail_click = konwersje)</h3>${list(b.events, 'name', 'n', 'Zdarzenie')}</div>
       <div class="card"><h3>Kampanie UTM</h3>
         ${b.campaigns.length ? table(['Kampania', 'Źródło', 'Odsłony'], b.campaigns, (c) =>
           `<tr><td>${esc(c.campaign)}</td><td>${esc(c.source)}</td><td>${fmtNum(c.views)}</td></tr>`)

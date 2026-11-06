@@ -116,6 +116,13 @@ const TRACKER = `(function(){
   var endpoint = (document.currentScript && document.currentScript.dataset.endpoint) ||
     (document.currentScript && document.currentScript.src.replace(/\\/t\\.js.*$/, '')) || '';
   if (navigator.doNotTrack === '1') return;
+  // Własne wejścia właściciela: ?p21ignore=1 wyłącza liczenie w tej przeglądarce, ?p21ignore=0 włącza z powrotem.
+  try {
+    var ign = new URLSearchParams(location.search).get('p21ignore');
+    if (ign === '1') localStorage.setItem('p21ignore', '1');
+    if (ign === '0') localStorage.removeItem('p21ignore');
+    if (localStorage.getItem('p21ignore')) return;
+  } catch (e) { /* tryb prywatny — liczymy normalnie */ }
   var sid = sessionStorage.getItem('p21sid');
   if (!sid) { sid = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem('p21sid', sid); }
   var params = new URLSearchParams(location.search);
@@ -159,9 +166,7 @@ const TRACKER = `(function(){
     else if (/kontakt/.test(href)) post({ type: 'event', name: 'contact_click' });
   }, true);
 
-  document.addEventListener('submit', function (e) {
-    if (e.target && e.target.classList.contains('contactForm')) post({ type: 'event', name: 'form_submit' });
-  }, true);
+  // form_submit zgłasza sam formularz (faq.js) dopiero po udanej odpowiedzi serwera.
 
   window.p21 = { event: function (name, meta) { post({ type: 'event', name: name, meta: meta }); } };
 })();`;

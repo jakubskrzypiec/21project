@@ -73,8 +73,8 @@
           note.textContent = (r.data && r.data.message) || 'Dziękuję — odezwę się najszybciej, jak się da.';
           note.classList.add('isOk');
         }
-        // Zdarzenie form_submit liczy już t.js na poziomie dokumentu — drugie
-        // wywołanie zawyżałoby konwersję dwukrotnie.
+        // form_submit zgłaszamy dopiero po udanej odpowiedzi serwera (t.js już go nie liczy przy samym kliknięciu).
+        try { if (window.p21) window.p21.event('form_submit'); } catch (e) { /* licznik nie może psuć formularza */ }
         if (button) button.disabled = false;
       })
       .catch(function () {

@@ -25,6 +25,7 @@ if(f){
       const j=await r.json().catch(()=>({}));
       if(!r.ok){const m=new Error(j&&j.error?j.error:FAIL);m.userSafe=!!(j&&j.error);throw m;}
       f.reset();
+      try{window.p21&&window.p21.event('form_submit');}catch(_){}
       say(j.message||'Dziękuję — odezwę się najszybciej, jak się da.',true);
     }catch(err){
       say(err&&err.userSafe?err.message:FAIL,false);
