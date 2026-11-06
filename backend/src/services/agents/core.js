@@ -82,13 +82,47 @@ async function think(agent, { system, prompt, messages, maxTokens = 1000, temper
   return text;
 }
 
-/** Wyciąga JSON z odpowiedzi modelu, nawet gdy dopisał coś obok. */
+/** Znaki nowej linii i tabulatory wpisane wprost w tekst JSON-a — model robi to często. */
+function escapeRawNewlines(s) {
+  let out = ''; let inStr = false; let esc = false;
+  for (const ch of s) {
+    if (inStr) {
+      if (esc) { esc = false; out += ch; continue; }
+      if (ch === '\\') { esc = true; out += ch; continue; }
+      if (ch === '"') inStr = false;
+      if (ch === '\n') { out += '\\n'; continue; }
+      if (ch === '\r') continue;
+      if (ch === '\t') { out += '\\t'; continue; }
+    } else if (ch === '"') inStr = true;
+    out += ch;
+  }
+  return out;
+}
+
+/** Wyciąga JSON z odpowiedzi modelu, nawet gdy dopisał coś obok albo złamał linie w tekście. */
 function parseJson(raw) {
   const clean = String(raw).replace(/^```(?:json)?/i, '').replace(/```\s*$/, '').trim();
-  try { return JSON.parse(clean); } catch { /* szukamy dalej */ }
   const m = clean.match(/\{[\s\S]*\}/);
-  if (m) { try { return JSON.parse(m[0]); } catch { /* nic */ } }
+  for (const c of [clean, m && m[0], m && escapeRawNewlines(m[0])].filter(Boolean)) {
+    try { return JSON.parse(c); } catch { /* następna próba */ }
+  }
   throw new Error('Model nie zwrócił poprawnego JSON-a.');
+}
+
+/**
+ * Odpowiedź o ustalonych polach. Model musi „wywołać narzędzie” z danymi zgodnymi ze schematem,
+ * więc API samo pilnuje formatu. Gdy narzędzia nie użył — próbujemy odczytać JSON z tekstu.
+ */
+async function thinkJson(agent, { system, prompt, messages, maxTokens = 1000, model, name = 'odpowiedz', description = 'Zwraca wynik.', schema }) {
+  const r = await ai.call({
+    system, prompt, messages, maxTokens, model,
+    tools: [{ name, description, input_schema: schema }],
+    toolChoice: { type: 'tool', name },
+  });
+  addUsage(agent, r.usage);
+  const used = (r.content || []).find((c) => c.type === 'tool_use' && c.name === name);
+  if (used && used.input && typeof used.input === 'object') return used.input;
+  return parseJson(r.text);
 }
 
 function usageSummary(agent, days = 30) {
@@ -112,5 +146,5 @@ const isRunning = (name) => locks.has(name);
 
 module.exports = {
   isRunning, settings, saveSettings, state, saveState, log, recentLog, local, dayStartIso,
-  think, parseJson, addUsage, usageSummary, exclusive, deepMerge, nowIso,
+  think, thinkJson, parseJson, escapeRawNewlines, addUsage, usageSummary, exclusive, deepMerge, nowIso,
 };

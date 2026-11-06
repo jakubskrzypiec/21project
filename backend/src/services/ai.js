@@ -3,7 +3,7 @@ const { config } = require('../config');
 
 const enabled = () => Boolean(config.ai.apiKey);
 
-async function call({ system, prompt, messages, maxTokens = 1200, model }) {
+async function call({ system, prompt, messages, maxTokens = 1200, model, tools, toolChoice }) {
   if (!enabled()) throw new Error('Brak ANTHROPIC_API_KEY w .env — generowanie treści wyłączone.');
   const res = await fetch(`${config.ai.baseUrl}/v1/messages`, {
     method: 'POST',
@@ -19,12 +19,13 @@ async function call({ system, prompt, messages, maxTokens = 1200, model }) {
       // Bez `temperature`: nowsze modele go nie przyjmują (błąd 400 „deprecated for this model”).
       system,
       messages: messages || [{ role: 'user', content: prompt }],
+      ...(tools ? { tools, tool_choice: toolChoice || { type: 'any' } } : {}),
     }),
   });
   if (!res.ok) throw new Error(`Anthropic API ${res.status}: ${(await res.text()).slice(0, 300)}`);
   const data = await res.json();
   const text = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n').trim();
-  return { text, usage: data.usage || {}, stopReason: data.stop_reason };
+  return { text, usage: data.usage || {}, stopReason: data.stop_reason, content: data.content || [] };
 }
 
 async function complete({ requireComplete = false, ...opts }) {
