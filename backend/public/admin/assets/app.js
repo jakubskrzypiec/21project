@@ -1303,7 +1303,7 @@ const KAT_ODP = {
 };
 const ETAP = {
   found: 'znaleziona', checking: 'sprawdzam', writing: 'piszę', queued: 'mail w kolejce',
-  contacted: 'napisano', skipped: 'pominięta',
+  contacted: 'napisano', skipped: 'pominięta', parked: 'czeka na wolną pulę',
 };
 const STAN_MAILA = { agent_queued: ['w kolejce', 'warn'], sent: ['wysłany', 'ok'], failed: ['błąd', 'bad'], skipped: ['pominięty', ''] };
 const proc = (a, b) => (b ? `${Math.round((100 * (a || 0)) / b)}%` : '—');
@@ -1327,11 +1327,13 @@ views['/agenci/szczegoly'] = async () => {
   const TABS = [['przeglad', 'Przegląd'], ['odpowiedzi', 'Odpowiedzi'], ['maile', 'Maile'], ['firmy', 'Firmy'],
     ['strategia', 'Strategia i nauka'], ['ustawienia', 'Ustawienia'], ['dziennik', 'Dziennik']];
 
-  view.innerHTML = `
-    <div class="row" style="justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px">
-      <div><p class="small" style="margin:0 0 6px"><a href="#/agenci">← Mapa</a></p><h1 class="page">Handlowiec</h1>
-        <p class="sub" style="margin-bottom:0">Agent cold outreachu: szuka firm, pisze i wysyła maile, pilnuje odpowiedzi i uczy się co tydzień.</p></div>
-      <div class="row" style="gap:10px">${stan}
+  view.innerHTML = `<div class="agx">
+    <p class="small" style="margin:0 0 10px"><a href="#/agenci">← Mapa HQ</a></p>
+    <div class="agxHero">
+      <canvas id="agxAvatar" width="15" height="17" aria-hidden="true"></canvas>
+      <div style="flex:1;min-width:220px"><h1>Handlowiec</h1>
+        <p>Szuka firm, pisze i wysyła maile, pilnuje odpowiedzi i co tydzień uczy się na wynikach.</p></div>
+      <div class="row" style="gap:10px;flex-wrap:wrap">${stan}
         <button class="btn ghost sm" id="agRun">Przebieg teraz</button>
         ${s.enabled ? '<button class="btn danger" id="agStop">Zatrzymaj</button>' : '<button class="btn" id="agStart">Uruchom</button>'}
       </div>
@@ -1342,7 +1344,8 @@ views['/agenci/szczegoly'] = async () => {
       ${s.checks.googleAccount ? `· wysyła z ${esc(s.checks.googleAccount)}` : ''}</p>
     ${braki.length ? `<div class="notice warn">${braki.map((b) => `• ${b}`).join('<br>')}</div>` : ''}
     <nav class="tabs">${TABS.map(([k, n]) => `<a href="#/agenci/szczegoly?tab=${k}" class="${k === tab ? 'active' : ''}">${n}</a>`).join('')}</nav>
-    <div id="agTab"></div>`;
+    <div id="agTab"></div></div>`;
+  { const c = $('#agxAvatar').getContext('2d'); hqDrawAgent(c, 7, 15, 0, false); }
 
   const run = async (path, msg) => {
     try { const r = await api(path, { method: 'POST' }); toast(msg(r)); render(); } catch (err) { toast(err.message, true); }
@@ -1368,14 +1371,16 @@ views['/agenci/szczegoly'] = async () => {
 const HQ_W = 320;
 const HQ_H = 180;
 const HQ_ROOMS = {
-  szukanie:   { x: 12,  y: 14,  w: 70, h: 62, name: 'Wywiadownia',     glow: '#3ee0d0' },
-  biuro:      { x: 88,  y: 14,  w: 70, h: 62, name: 'Biuro sprzedaży', glow: '#ff5fa2' },
-  poczta:     { x: 164, y: 14,  w: 70, h: 62, name: 'Poczta',          glow: '#ffd166' },
-  analityk:   { x: 240, y: 14,  w: 68, h: 62, name: 'Laboratorium',    glow: '#7aa2ff', soon: 'Analityk · wkrótce' },
-  odpoczynek: { x: 12,  y: 104, w: 70, h: 62, name: 'Pokój socjalny',  glow: '#b98cff' },
-  sala:       { x: 88,  y: 104, w: 70, h: 62, name: 'Sala spotkań',    glow: '#3ee0d0' },
-  prezes:     { x: 164, y: 104, w: 70, h: 62, name: 'Gabinet prezesa', glow: '#ff5fa2', soon: 'Prezes · wkrótce' },
-  klient:     { x: 240, y: 104, w: 68, h: 62, name: 'Dział klienta',   glow: '#ffd166', soon: 'Opiekun · wkrótce' },
+  szukanie:   { x: 12,  y: 14,  w: 94,  h: 62, name: 'Wywiadownia',     glow: '#3ee0d0',
+    about: 'Tu Handlowiec szuka nowych firm na Homebooku i sprawdza ich strony: czy działają na telefonie, rok w stopce, tytuł w Google i adres e-mail. Odrzuca firmy, do których już pisałeś.' },
+  biuro:      { x: 113, y: 14,  w: 94,  h: 62, name: 'Biuro sprzedaży', glow: '#ff5fa2',
+    about: 'Tu pisze maile: problem na stronie firmy, rozwiązanie, Twoje realizacje i haczyk. Pisze też przypomnienia do firm, które nie odpisały.' },
+  poczta:     { x: 214, y: 14,  w: 94,  h: 62, name: 'Poczta',          glow: '#ffd166',
+    about: 'Tu wysyła maile między 9 a 16, w losowych odstępach, i co 30 minut czyta odpowiedzi. Na każdą odpowiedź szykuje szkic w Gmailu.' },
+  sala:       { x: 12,  y: 104, w: 145, h: 62, name: 'Sala spotkań',    glow: '#3ee0d0',
+    about: 'W poniedziałek o 6:20 siada tu i analizuje tydzień: które maile dostały odpowiedzi, która oferta i który haczyk działają. Zapisuje nowe wnioski.' },
+  odpoczynek: { x: 163, y: 104, w: 145, h: 62, name: 'Pokój socjalny',  glow: '#b98cff',
+    about: 'Tu odpoczywa: w nocy, w weekend, po wysłaniu dziennego planu albo gdy go zatrzymasz.' },
 };
 const HQ_CORRIDOR_Y = 90;
 
@@ -1448,21 +1453,24 @@ function hqFurniture(px, key, r) {
     const c = ['#ff5fa2', '#3ee0d0', '#ffd166', '#7aa2ff', '#b98cff'];
     for (let i = 0; i < 7; i++) { px(x + 2 + i * 3, y + 2, 2, 4, c[i % 5]); px(x + 2 + i * 3, y + 8, 2, 4, c[(i + 2) % 5]); }
   };
+  if (key === 'szukanie') { shelf(r.x + 68, r.y + 4); }
   if (key === 'szukanie') { shelf(r.x + 5, r.y + 4); desk(r.x + 40, r.y + 34); px(r.x + 34, r.y + 4, 30, 14, '#2a2140'); px(r.x + 35, r.y + 5, 28, 12, '#123a46');
     for (let i = 0; i < 5; i++) px(r.x + 37 + i * 5, r.y + 7 + (i % 3) * 3, 3, 2, '#3ee0d0'); plant(r.x + 6, r.y + 46); }
+  if (key === 'biuro') { desk(r.x + 72, r.y + 34, '#ff8fc0'); }
   if (key === 'biuro') { desk(r.x + 6, r.y + 34, '#ff8fc0'); desk(r.x + 42, r.y + 34, '#ff8fc0'); px(r.x + 26, r.y + 4, 18, 12, '#fff'); px(r.x + 28, r.y + 6, 14, 1, '#ff5fa2');
     px(r.x + 28, r.y + 9, 10, 1, '#8f86a6'); px(r.x + 28, r.y + 12, 12, 1, '#8f86a6'); plant(r.x + 60, r.y + 8); }
+  if (key === 'poczta') { plant(r.x + 82, r.y + 44); px(r.x + 72, r.y + 6, 16, 12, '#a08a6a'); px(r.x + 74, r.y + 8, 12, 2, '#fff'); px(r.x + 74, r.y + 12, 12, 2, '#fff'); }
   if (key === 'poczta') { for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) { px(r.x + 6 + i * 9, r.y + 4 + j * 5, 8, 4, '#a08a6a'); px(r.x + 8 + i * 9, r.y + 5 + j * 5, 4, 2, '#fff'); }
     px(r.x + 46, r.y + 30, 18, 12, '#ffd166'); px(r.x + 47, r.y + 31, 16, 3, '#e0a93c'); desk(r.x + 8, r.y + 38, '#ffd166');
     px(r.x + 50, r.y + 46, 8, 5, '#fff'); px(r.x + 50, r.y + 46, 8, 1, '#ff5fa2'); }
-  if (key === 'analityk') { px(r.x + 6, r.y + 4, 26, 14, '#2a2140'); for (let i = 0; i < 6; i++) px(r.x + 8 + i * 4, r.y + 16 - (i * 2 + 2), 3, i * 2 + 2, '#7aa2ff'); desk(r.x + 38, r.y + 34, '#7aa2ff'); }
+  if (key === 'odpoczynek') { px(r.x + 80, r.y + 4, 40, 14, '#2a2140'); px(r.x + 82, r.y + 6, 36, 10, '#3b2a6a'); px(r.x + 96, r.y + 9, 8, 4, '#b98cff');
+    px(r.x + 88, r.y + 38, 34, 8, '#b98cff'); px(r.x + 88, r.y + 34, 34, 5, '#9a6cf0'); px(r.x + 86, r.y + 34, 3, 12, '#7d55c9'); px(r.x + 121, r.y + 34, 3, 12, '#7d55c9'); plant(r.x + 130, r.y + 44); }
   if (key === 'odpoczynek') { px(r.x + 6, r.y + 36, 30, 8, '#b98cff'); px(r.x + 6, r.y + 32, 30, 5, '#9a6cf0'); px(r.x + 4, r.y + 32, 3, 12, '#7d55c9'); px(r.x + 35, r.y + 32, 3, 12, '#7d55c9');
     px(r.x + 46, r.y + 6, 10, 14, '#e8e8f0'); px(r.x + 48, r.y + 9, 6, 3, '#2a2140'); px(r.x + 44, r.y + 40, 12, 6, '#8a5a3c'); px(r.x + 48, r.y + 37, 3, 3, '#fff'); plant(r.x + 60, r.y + 44); }
+  if (key === 'sala') { shelf(r.x + 100, r.y + 4); plant(r.x + 126, r.y + 44); px(r.x + 76, r.y + 30, 18, 14, '#e8e8f0'); px(r.x + 78, r.y + 32, 14, 8, '#3ee0d0'); }
   if (key === 'sala') { px(r.x + 12, r.y + 34, 46, 10, '#8a5a3c'); px(r.x + 13, r.y + 35, 44, 8, '#a46e4b');
     for (let i = 0; i < 4; i++) { px(r.x + 16 + i * 11, r.y + 29, 6, 4, '#3c3560'); px(r.x + 16 + i * 11, r.y + 46, 6, 4, '#3c3560'); }
     px(r.x + 20, r.y + 4, 30, 14, '#fff'); px(r.x + 22, r.y + 14, 4, 3, '#3ee0d0'); px(r.x + 28, r.y + 11, 4, 6, '#ff5fa2'); px(r.x + 34, r.y + 8, 4, 9, '#ffd166'); }
-  if (key === 'prezes') { px(r.x + 18, r.y + 34, 34, 8, '#5e3b27'); px(r.x + 30, r.y + 28, 10, 6, '#2a2140'); px(r.x + 6, r.y + 4, 14, 14, '#ffd166'); px(r.x + 9, r.y + 7, 8, 8, '#fff3c4'); plant(r.x + 58, r.y + 44); }
-  if (key === 'klient') { desk(r.x + 8, r.y + 34, '#ffd166'); px(r.x + 40, r.y + 36, 20, 8, '#3ee0d0'); px(r.x + 40, r.y + 32, 20, 5, '#2bb8aa'); px(r.x + 34, r.y + 4, 24, 12, '#fff'); }
 }
 
 /** Postać agenta: 9×13 pikseli, dwie klatki chodu. */
@@ -1500,15 +1508,26 @@ views['/agenci'] = async () => {
     <div class="hqStats" id="hqStats"></div>`;
 
   const hq = $('#hq');
+  const card = $('#hqCard');
   const canvas = $('#hqCanvas');
   const ctx = canvas.getContext('2d');
   const base = document.createElement('canvas');
   base.width = HQ_W; base.height = HQ_H;
   hqDrawBase(base.getContext('2d'));
 
-  $('#hqLabels').innerHTML = Object.values(HQ_ROOMS).map((r) => `
-    <span class="hqRoom" style="left:${((r.x + 2) / HQ_W) * 100}%;top:${((r.y + r.h - 1) / HQ_H) * 100}%;--glow:${r.glow}">
-      ${esc(r.name)}${r.soon ? `<em>${esc(r.soon)}</em>` : ''}</span>`).join('');
+  $('#hqLabels').innerHTML = Object.entries(HQ_ROOMS).map(([k, r]) => `
+    <button type="button" class="hqRoom" data-room="${k}" style="left:${((r.x + 2) / HQ_W) * 100}%;top:${((r.y + r.h - 1) / HQ_H) * 100}%;--glow:${r.glow}">
+      ${esc(r.name)} <span aria-hidden="true">ⓘ</span></button>`).join('');
+  hq.querySelectorAll('[data-room]').forEach((b) => {
+    b.onclick = () => {
+      const r = HQ_ROOMS[b.dataset.room];
+      card.hidden = false;
+      card.innerHTML = `<div class="row" style="justify-content:space-between;align-items:center">
+        <strong>${esc(r.name)}</strong><button class="btn ghost sm" id="hqClose" type="button">Zamknij</button></div>
+        <p style="margin:12px 0 0;line-height:1.6">${esc(r.about)}</p>`;
+      $('#hqClose').onclick = () => { card.hidden = true; };
+    };
+  });
 
   // Stan ruchu postaci
   const me = { x: HQ_ROOMS.odpoczynek.x + 30, y: HQ_ROOMS.odpoczynek.y + 45, path: [], room: 'odpoczynek', idleUntil: 0, frame: 0 };
@@ -1562,7 +1581,6 @@ views['/agenci'] = async () => {
   };
   requestAnimationFrame(loop);
 
-  const card = $('#hqCard');
   const DZIALANIE = { action: '✓', alert: '!', report: '▤', warn: '⚠', error: '✕' };
   const renderCard = () => {
     if (!live) return;
@@ -1606,8 +1624,10 @@ views['/agenci'] = async () => {
 };
 
 async function przeglad(box, { stats: st, settings: cfg }) {
+  // cfg potrzebne też w podglądzie maila
   const a = st.last30;
-  const offers = Object.keys(OFERTA).map((k) => ({ k, ...(st.offers30.find((o) => o.offer === k) || {}), on: cfg.offers[k]?.on }));
+  const offers = Object.keys(OFERTA).map((k) => ({ k, ...(st.offers30.find((o) => o.offer === k) || {}), on: cfg.offers[k]?.on, today: (st.offersToday || {})[k] || 0, daily: cfg.offers[k]?.daily ?? 0 }));
+  const hooks = Object.entries(cfg.hooks || {}).map(([k, hk]) => ({ k, name: hk.name, on: hk.on, ...((st.hooks30 || []).find((x) => x.hook === k) || {}) }));
   const days = st.daily.length ? st.daily : [{ day: '—', sent: 0, replies: 0 }];
   const { log } = await api('/agents/handlowiec/log?kind=report&limit=1');
   box.innerHTML = `
@@ -1625,10 +1645,14 @@ async function przeglad(box, { stats: st, settings: cfg }) {
     <h2 class="sec">Wysłane dziennie (30 dni)</h2>
     <div class="card">${chart(days, 'sent')}</div>
     <h2 class="sec">Oferty: test A/B/C (30 dni)</h2>
-    <div class="card" style="padding:0">${table(['Oferta', 'Wysłane', 'Odpowiedzi', 'Zainteresowani', 'Odmowy', 'Zwroty', 'Stan'], offers, (o) => `<tr>
-      <td><strong>${OFERTA[o.k]}</strong></td><td>${fmtNum(o.sent)}</td><td>${fmtNum(o.replies)} <span class="muted small">${proc(o.replies, o.sent)}</span></td>
+    <div class="card" style="padding:0">${table(['Oferta', 'Dziś', 'Wysłane', 'Odpowiedzi', 'Zainteresowani', 'Odmowy', 'Zwroty', 'Stan'], offers, (o) => `<tr>
+      <td><strong>${OFERTA[o.k]}</strong></td><td>${o.today}/${o.daily}</td><td>${fmtNum(o.sent)}</td><td>${fmtNum(o.replies)} <span class="muted small">${proc(o.replies, o.sent)}</span></td>
       <td>${fmtNum(o.positive)} <span class="muted small">${proc(o.positive, o.sent)}</span></td><td>${fmtNum(o.refusals)}</td><td>${fmtNum(o.bounces)}</td>
       <td>${o.on ? '<span class="tag ok">włączona</span>' : '<span class="tag">wyłączona</span>'}</td></tr>`)}</div>
+    <h2 class="sec">Haczyki: który działa lepiej (30 dni)</h2>
+    <div class="card" style="padding:0">${table(['Haczyk', 'Wysłane', 'Odpowiedzi', 'Zainteresowani'], hooks, (x) => `<tr>
+      <td><strong>${esc(x.name)}</strong>${x.on ? '' : ' <span class="tag">wyłączony</span>'}</td><td>${fmtNum(x.sent)}</td>
+      <td>${fmtNum(x.replies)} <span class="muted small">${proc(x.replies, x.sent)}</span></td><td>${fmtNum(x.positive)} <span class="muted small">${proc(x.positive, x.sent)}</span></td></tr>`)}</div>
     <div class="grid g2" style="margin-top:20px">
       <div class="card"><h3>Branże</h3>${table(['Branża', 'Wysłane', 'Odp.', 'Zaint.'], st.byIndustry, (r) => `<tr>
         <td class="small">${esc(r.industry)}</td><td>${r.sent}</td><td>${r.replies} <span class="muted small">${proc(r.replies, r.sent)}</span></td><td>${r.positive}</td></tr>`)}</div>
@@ -1654,8 +1678,10 @@ async function przeglad(box, { stats: st, settings: cfg }) {
       out.innerHTML = `<div class="card">
         <p class="small muted">Strona ${esc(r.audit.host)}: ${r.audit.quality === 'dobra' ? 'porządna' : 'do poprawy'} (${r.audit.score} pkt) · oferta: ${OFERTA[r.offer]} · adres: ${esc(r.audit.email || 'nie znaleziono')}<br>
         Obserwacje: ${r.audit.reasons.map(esc).join('; ') || 'brak'}<br>Haczyk: ${esc(r.angle || '—')}</p>
-        <p><strong>${esc(r.subject)}</strong></p>
-        <pre style="white-space:pre-wrap;font:inherit">${esc(r.body)}</pre></div>`;
+        <p class="small muted">Haczyk: ${esc((cfg.hooks?.[r.hook] || {}).name || '—')}. Tak zobaczy to firma, linki są klikalne:</p>
+        <div class="agMail"><p class="agMailSubj">${esc(r.subject)}</p><div class="agMailBody"></div></div></div>`;
+      // HTML maila buduje serwer z naszego tekstu (escapowany), wstawiamy go bez skryptów.
+      out.querySelector('.agMailBody').innerHTML = r.html;
     } catch (err) { out.innerHTML = `<div class="notice bad">${esc(err.message)}</div>`; }
   };
 }
@@ -1791,12 +1817,24 @@ async function ustawienia(box, { settings: cfg }) {
         <label class="f"><input type="checkbox" name="autoLearn" ${cfg.autoLearn ? 'checked' : ''} style="display:inline;width:auto"> Nowe wnioski z nauki włączają się same (bez tego czekają na Twoją akceptację)</label>
         <label class="f">Model AI<input name="model" value="${esc(cfg.model || '')}"></label>
       </div>
-      <div class="card"><h3>Oferty (agent dzieli maile po równo, z wagami)</h3>
+      <div class="card"><h3>Podział na oferty (maili dziennie)</h3>
+        <p class="small muted" style="margin-top:0">Suma pierwszych maili: <strong id="agSum">${Object.values(cfg.offers).filter((o) => o.on).reduce((a, o) => a + (Number(o.daily) || 0), 0)}</strong> dziennie (plus przypomnienia, razem maks. ${cfg.dailyLimit}).</p>
         ${Object.entries(cfg.offers).map(([k, o]) => `<div style="margin-bottom:18px">
           <div class="row" style="gap:12px;align-items:center"><label class="small"><input type="checkbox" name="on_${k}" ${o.on ? 'checked' : ''}> <strong>${esc(o.name)}</strong></label>
-            <label class="small">waga <input type="number" step="0.5" min="0" name="w_${k}" value="${esc(o.weight)}" style="width:4.5rem;display:inline"></label></div>
+            <label class="small">dziennie <input type="number" min="0" max="100" name="w_${k}" value="${esc(o.daily ?? 10)}" style="width:4.5rem;display:inline"></label></div>
           <p class="small muted" style="margin:.3rem 0">Dla: ${esc(o.for)}</p>
           <textarea class="inp" name="d_${k}" style="min-height:8rem">${esc(o.desc)}</textarea></div>`).join('')}
+      </div>
+      <div class="card"><h3>Realizacje w mailach</h3>
+        <p class="small muted" style="margin-top:0">Agent wstawia je zawsze w tej samej formie, maks. 3, a na końcu „Więcej realizacji: 21project.pl/realizacje/”. Zaznacz, przy których ofertach pokazywać daną stronę.</p>
+        ${[...(cfg.portfolio || []), { url: '', offers: ['strona', 'panel', 'pakiet'] }].map((p) => `<div data-pf class="row" style="gap:10px;flex-wrap:wrap;margin-bottom:10px">
+          <input class="inp" name="pfUrl" value="${esc(p.url)}" placeholder="dodaj: domena.pl" style="max-width:14rem;margin:0">
+          ${Object.entries(OFERTA).map(([k, n]) => `<label class="small"><input type="checkbox" name="pfOffer" value="${k}" ${(p.offers || []).includes(k) ? 'checked' : ''}> ${n}</label>`).join('')}
+        </div>`).join('')}
+        <h3 style="margin-top:26px">Haczyki (test A/B)</h3>
+        <p class="small muted" style="margin-top:0">Agent daje je po równo. W „Przeglądzie” widać, który ma więcej odpowiedzi.</p>
+        ${Object.entries(cfg.hooks || {}).map(([k, hk]) => `<label class="small" style="display:block;margin-bottom:6px"><input type="checkbox" name="hk_on_${k}" ${hk.on ? 'checked' : ''}> <strong>${esc(hk.name)}</strong></label>
+          <textarea class="inp" name="hk_${k}" style="min-height:5rem;margin-bottom:14px">${esc(hk.text)}</textarea>`).join('')}
       </div>
       <div class="card"><h3>Źródła firm</h3>
         <label class="small"><input type="checkbox" name="hbOn" ${hb.on ? 'checked' : ''}> Homebook</label>
@@ -1812,7 +1850,7 @@ async function ustawienia(box, { settings: cfg }) {
       </div>
     </div>
     <div class="row" style="margin-top:18px;gap:10px"><button class="btn">Zapisz ustawienia</button>
-      <button type="button" class="btn ghost" id="agReset">Przywróć domyślne oferty, źródła i zwroty</button></div>
+      <button type="button" class="btn ghost" id="agReset">Przywróć domyślne oferty, realizacje, haczyki, źródła i zwroty</button></div>
   </form>`;
   $('#agCfg').onsubmit = async (e) => {
     e.preventDefault();
@@ -1823,7 +1861,12 @@ async function ustawienia(box, { settings: cfg }) {
       workdays: [...f.querySelectorAll('[name=day]:checked')].map((x) => Number(x.value)),
       unsubscribe: f.unsubscribe.value, autoLearn: f.autoLearn.checked, model: f.model.value.trim(),
       forbidden: lines(f.forbidden.value),
-      offers: Object.fromEntries(Object.keys(cfg.offers).map((k) => [k, { on: f[`on_${k}`].checked, weight: f[`w_${k}`].value, desc: f[`d_${k}`].value }])),
+      offers: Object.fromEntries(Object.keys(cfg.offers).map((k) => [k, { on: f[`on_${k}`].checked, daily: f[`w_${k}`].value, desc: f[`d_${k}`].value }])),
+      portfolio: [...f.querySelectorAll('[data-pf]')].map((row) => ({
+        url: row.querySelector('[name=pfUrl]').value,
+        offers: [...row.querySelectorAll('[name=pfOffer]:checked')].map((x) => x.value),
+      })).filter((p) => p.url.trim()),
+      hooks: Object.fromEntries(Object.keys(cfg.hooks || {}).map((k) => [k, { on: f[`hk_on_${k}`].checked, text: f[`hk_${k}`].value }])),
       sources: {
         homebook: { on: f.hbOn.checked, categories: lines(f.hbCat.value), regions: lines(f.hbReg.value) },
         google: { on: f.ggOn.checked, queries: lines(f.ggQ.value), cities: lines(f.ggC.value) },
@@ -1834,7 +1877,7 @@ async function ustawienia(box, { settings: cfg }) {
   };
   $('#agReset').onclick = async () => {
     if (!confirm('Przywrócić domyślne oferty, źródła i listę zwrotów?')) return;
-    await api('/agents/handlowiec/settings/reset', { method: 'POST', body: { fields: ['offers', 'sources', 'forbidden'] } });
+    await api('/agents/handlowiec/settings/reset', { method: 'POST', body: { fields: ['offers', 'sources', 'forbidden', 'portfolio', 'hooks'] } });
     toast('Przywrócono.'); render();
   };
 }

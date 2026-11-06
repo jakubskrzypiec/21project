@@ -8,49 +8,56 @@
 const DEFAULT_OFFERS = {
   strona: {
     on: true,
-    weight: 1,
+    daily: 10,
     name: 'Strona z SEO i widocznością w AI',
     for: 'firmy ze słabą, starą stroną albo bez własnej strony',
     desc: `Nowa strona nastawiona na zapytania od klientów, nie na samo „ładnie wyglądać”.
 SEO lokalne (żeby wyskakiwać na „{branża} {miasto}”) i optymalizacja pod wyszukiwarki AI:
 ChatGPT, Perplexity, Google AI Overviews coraz częściej same polecają firmy, a polecają te,
-o których mają uporządkowane informacje. Szybka na telefonie, z realizacjami i prostym kontaktem.
-Haczyk: bezpłatny projekt pierwszego ekranu nowej strony albo krótki test, czy ChatGPT poleca firmę.
-Realizacje: noreststudio.com, cosinteriors.pl, effkoweogrody.pl, więcej: 21project.pl/realizacje/`,
+o których mają uporządkowane informacje. Szybka na telefonie, z realizacjami i prostym kontaktem.`,
   },
   panel: {
     on: true,
-    weight: 1,
+    daily: 10,
     name: 'Panel administracyjny',
     for: 'firmy z porządną stroną, które mają dużo zapytań, klientów i projektów',
     desc: `Panel do prowadzenia firmy dopasowany do sposobu pracy: zapytania z formularza,
 klienci, wyceny, projekty, terminy i pliki w jednym miejscu zamiast maili, Excela i notatek.
 Efekt: żadne zapytanie nie ginie, wycena wychodzi w kilka minut, widać, co jest do zrobienia.
-Haczyk: bezpłatna rozmowa 15 min i makieta panelu pod ich firmę.
-Więcej: 21project.pl/saas/`,
+Więcej o panelach: 21project.pl/saas/`,
   },
   pakiet: {
     on: true,
-    weight: 1,
+    daily: 10,
     name: 'System pozyskiwania klientów',
     for: 'każda firma, która chce więcej klientów, a nie tylko nową stronę',
     desc: `Całość od jednego partnera: strona z SEO i widocznością w AI, panel do obsługi
 zapytań i kampania reklamowa (Google/Meta) ustawiona pod konkretne usługi i miasto.
-Efekt: stały dopływ zapytań i jasne liczby, ile kosztuje pozyskanie klienta.
-Haczyk: bezpłatny plan na pierwsze 90 dni, co zrobić, żeby zapytań było więcej.`,
+Efekt: stały dopływ zapytań i jasne liczby, ile kosztuje pozyskanie klienta.`,
   },
 };
 
-const DEFAULT_STRATEGY = `Jesteś najlepszym handlowcem małego studia. Nie sprzedajesz strony, sprzedajesz efekt:
+/** Realizacje wstawia system, nie model — dzięki temu adresy są zawsze dokładnie takie. */
+const DEFAULT_PORTFOLIO = [
+  { url: 'monikaserbista.pl', offers: ['strona', 'panel', 'pakiet'] },
+  { url: 'noreststudio.com', offers: ['strona', 'panel', 'pakiet'] },
+  { url: 'effkoweogrody.pl', offers: ['strona', 'pakiet'] },
+];
+const PORTFOLIO_ALL = '21project.pl/realizacje/';
+
+/** Dwa haczyki na koniec maila. Agent rotuje je po równo, statystyki pokazują, który działa. */
+const DEFAULT_HOOKS = {
+  projekt: { on: true, name: 'Darmowy projekt 1. ekranu', text: 'Mogę bezpłatnie i bez zobowiązań przygotować wstępny projekt pierwszego ekranu nowej strony dla Państwa firmy, żeby zobaczyli Państwo kierunek, zanim cokolwiek Państwo zdecydują.' },
+  audyt: { on: true, name: 'Darmowy audyt widoczności', text: 'Mogę bezpłatnie sprawdzić, czy Państwa firma pojawia się w Google i w ChatGPT, gdy klient szuka takich usług w Państwa mieście, i przesłać krótką listę, co poprawić.' },
+};
+
+const DEFAULT_STRATEGY = `Jesteś najlepszym handlowcem małego studia. Nie sprzedajesz strony, sprzedajesz rozwiązanie problemu:
 więcej zapytań od właściwych klientów i mniej czasu straconego na obsługę.
-1. Zacznij od jednej konkretnej, sprawdzonej obserwacji o tej firmie (z audytu). Bez komplementów na zapas.
-2. Nazwij realny problem tej branży. Przykład: pracownia żyje z poleceń, ale polecony klient i tak
-   sprawdza stronę, a coraz częściej pyta ChatGPT „jakiego projektanta wnętrz w Krakowie polecasz”.
-   Jeśli strona i dane firmy są słabe, klient trafia do konkurencji, choć praca jest gorsza.
-3. Pokaż efekt, a nie technologię: telefon/zapytanie, a nie „meta tagi”.
-4. Jeden haczyk bez ryzyka (coś za darmo i bez zobowiązań) i jedno łatwe pytanie na końcu,
-   na które da się odpisać jednym słowem.
-5. Pisz jak człowiek do człowieka: krótkie zdania, zwykłe słowa, zero zachwytów.`;
+Pisz jak człowiek do człowieka: krótkie zdania, zwykłe słowa, zero zachwytów i komplementów na zapas.
+Realny problem tej branży: pracownia żyje z poleceń, ale polecony klient i tak sprawdza stronę,
+a coraz częściej pyta ChatGPT „jakiego projektanta wnętrz w Krakowie polecasz”. Jeśli strona
+i dane firmy są słabe, klient trafia do konkurencji, choć jej praca jest gorsza.
+Pokazuj efekt, a nie technologię: zapytanie od klienta, a nie „meta tagi”.`;
 
 const DEFAULT_FORBIDDEN = [
   'mam nadzieję, że', 'w dzisiejszych czasach', 'w dzisiejszym cyfrowym', 'cyfrowym świecie', 'kompleksow',
@@ -75,6 +82,7 @@ function styleCheck(body, subject, { forbidden = DEFAULT_FORBIDDEN, maxWords = 1
   if (words > maxWords) problems.push(`za długi (${words} słów, maks. ${maxWords})`);
   if (/\b(ty|tobie|twoj\w*|ciebie|masz|możesz)\b/i.test(body)) problems.push('forma „Ty” zamiast „Pan/Pani/Państwo”');
   if (/https?:\/\//i.test(body)) problems.push('pełne linki z https:// — pisz same domeny, np. 21project.pl/saas/');
+  if (/google\.[a-z.]+\/url/i.test(body)) problems.push('link przez przekierowanie Google');
   if (/pozdrawiam/i.test(body)) problems.push('podpis w treści (podpis dokłada system)');
   if (subject.length > 70) problems.push('za długi temat');
   return problems;
@@ -108,28 +116,53 @@ function factsFor(lead, audit) {
 function systemPrompt(s, playbook) {
   return `${s.strategy}
 
-ZASADY PISANIA (bezwzględne):
+BUDOWA MAILA (zawsze w tej kolejności, każdy punkt to osobny akapit):
+1. „Dzień dobry,” w osobnej linii.
+2. PROBLEM: jedna konkretna, sprawdzona obserwacja o stronie tej firmy (tylko z listy obserwacji)
+   i co z niej wynika dla firmy. Gdy strona odstaje w wielu miejscach, opisz ogólne wrażenie
+   jednym zdaniem i podaj jeden przykład.
+3. ROZWIĄZANIE: co zrobiłbym w ramach oferty i jaki to daje efekt (zapytania, klienci, czas).
+4. W osobnej linii dokładnie: [REALIZACJE]  (system wstawi tu listę moich realizacji z linkami)
+5. HACZYK: przepisz własnymi słowami podany haczyk, w jednym–dwóch zdaniach.
+6. Ostatnie zdanie: „Jeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.”
+
+ZASADY (bezwzględne):
 - po polsku, forma grzecznościowa: Pan/Pani/Państwo (do firmy: Państwo),
-- zaczynasz od „Dzień dobry,” w osobnej linii,
-- maksymalnie ${s.maxWords} słów treści, 3–5 krótkich akapitów, zwykły tekst bez formatowania,
+- maksymalnie ${s.maxWords} słów treści (bez listy realizacji), zwykły tekst bez formatowania,
 - nie wymyślasz faktów o firmie: korzystasz tylko z danych i obserwacji poniżej,
 - nie obiecujesz wyników ani miejsc w Google,
-- domeny piszesz bez https:// (np. 21project.pl/realizacje/),
+- nie wpisujesz żadnych adresów stron poza podanymi w opisie oferty; domeny bez https://,
 - bez wykrzykników, bez długich myślników, bez zwrotów: ${s.forbidden.slice(0, 12).join(', ')},
-- nie podpisujesz się (podpis „Pozdrawiam / 21 Project / 21project.pl” dokłada system),
-- ostatnie zdanie to łatwe pytanie albo „Jeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.”
+- nie podpisujesz się (podpis „Pozdrawiam / 21 Project / 21project.pl” dokłada system).
 ${playbook ? `\nWNIOSKI Z POPRZEDNICH TYGODNI (stosuj je):\n${playbook}\n` : ''}
-Zwracasz wyłącznie JSON: {"subject": "...", "body": "...", "angle": "jednym zdaniem: jaki haczyk wybrałeś"}`;
+Zwracasz wyłącznie JSON: {"subject": "...", "body": "...", "angle": "jednym zdaniem: jaki problem i efekt wybrałeś"}`;
 }
 
-function firstPrompt(lead, audit, offer) {
+function firstPrompt(lead, audit, offer, hook) {
   return `OFERTA DO TEGO MAILA: ${offer.name}
 ${offer.desc}
+
+HACZYK DO TEGO MAILA: ${hook ? hook.text : 'bezpłatna, krótka rozmowa bez zobowiązań'}
 
 DANE FIRMY:
 ${factsFor(lead, audit)}
 
-Napisz pierwszego maila do tej firmy. Temat krótki, konkretny, bez clickbaitu (np. nazwa firmy albo pytanie).`;
+Napisz pierwszego maila do tej firmy. Temat krótki i konkretny, bez clickbaitu (np. nazwa firmy albo pytanie).`;
+}
+
+/** Lista realizacji dla danej oferty, z linkiem „więcej” na końcu. */
+function portfolioBlock(portfolio, offerKey) {
+  const items = (portfolio || DEFAULT_PORTFOLIO).filter((p) => p.url && (!p.offers || p.offers.includes(offerKey))).slice(0, 3);
+  return ['Kilka moich realizacji:', ...items.map((p) => p.url), `Więcej realizacji: ${PORTFOLIO_ALL}`].join('\n');
+}
+
+/** Wstawia realizacje w miejsce znacznika (albo przed haczyk, gdy model go pominął). */
+function withPortfolio(body, block) {
+  if (body.includes('[REALIZACJE]')) return body.replace(/\[REALIZACJE\]/, block);
+  const parts = body.split(/\n\n/);
+  const at = Math.max(1, parts.length - 2);
+  parts.splice(at, 0, block);
+  return parts.join('\n\n');
 }
 
 function followUpPrompt(first, offer, lead) {
@@ -145,6 +178,6 @@ Temat zostaw pusty (""), bo odpowiadamy w wątku.`;
 }
 
 module.exports = {
-  DEFAULT_OFFERS, DEFAULT_STRATEGY, DEFAULT_FORBIDDEN, SIGNATURE,
-  styleCheck, tidy, systemPrompt, firstPrompt, followUpPrompt, factsFor,
+  DEFAULT_OFFERS, DEFAULT_STRATEGY, DEFAULT_FORBIDDEN, DEFAULT_PORTFOLIO, DEFAULT_HOOKS, PORTFOLIO_ALL, SIGNATURE,
+  styleCheck, tidy, systemPrompt, firstPrompt, followUpPrompt, factsFor, portfolioBlock, withPortfolio,
 };

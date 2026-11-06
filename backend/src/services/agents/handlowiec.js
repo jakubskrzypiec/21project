@@ -42,6 +42,8 @@ const DEFAULTS = {
   unsubscribe: 'reply', // reply | link | none
   autoLearn: true,
   offers: writer.DEFAULT_OFFERS,
+  portfolio: writer.DEFAULT_PORTFOLIO,
+  hooks: writer.DEFAULT_HOOKS,
   strategy: writer.DEFAULT_STRATEGY,
   forbidden: writer.DEFAULT_FORBIDDEN,
   sources: {
@@ -149,21 +151,41 @@ async function alreadyInGmail(domain, email) {
   return gmailSvc.anyThread(parts.join(' OR '));
 }
 
-function offerCounts(days = 14) {
-  const since = new Date(Date.now() - days * 86400000).toISOString();
-  const rows = db.prepare(`SELECT offer, COUNT(*) n FROM outreach WHERE agent=? AND kind='first' AND created_at>=? GROUP BY offer`).all(AGENT, since);
+/** Ile pierwszych maili z każdej oferty powstało dziś (w kolejce i wysłanych). */
+function offerCountsToday(at = now()) {
+  const rows = db.prepare(`SELECT offer, COUNT(*) n FROM outreach WHERE agent=? AND kind='first'
+    AND status IN ('agent_queued','sent') AND created_at>=? GROUP BY offer`).all(AGENT, core.dayStartIso(at));
   return Object.fromEntries(rows.map((r) => [r.offer, r.n]));
 }
 
-/** Rotacja ofert: po równo (z wagami) spośród tych, które pasują do firmy. */
-function chooseOffer(audit, s, countsByOffer = offerCounts()) {
+/**
+ * Podział na oferty: każda ma swoją dzienną liczbę maili. Firma dostaje ofertę, która do niej
+ * pasuje (słaba strona → strona albo pakiet, porządna → panel albo pakiet) i której dzisiejsza
+ * pula jeszcze się nie skończyła. Gdy pasujące pule są pełne — zwraca null i firma czeka do jutra.
+ */
+function chooseOffer(audit, s, today = offerCountsToday()) {
   const fits = audit.quality === 'dobra' ? ['panel', 'pakiet'] : ['strona', 'pakiet'];
-  const enabled = fits.filter((k) => s.offers[k]?.on);
-  const pool = enabled.length ? enabled : Object.keys(s.offers).filter((k) => s.offers[k]?.on);
+  const pool = fits
+    .filter((k) => s.offers[k]?.on)
+    .map((k) => ({ k, left: (Number(s.offers[k].daily) || 0) - (today[k] || 0), r: Math.random() }))
+    .filter((o) => o.left > 0);
   if (!pool.length) return null;
-  return pool
-    .map((k) => ({ k, load: (countsByOffer[k] || 0) / Math.max(0.1, Number(s.offers[k].weight) || 1), r: Math.random() }))
-    .sort((a, b) => a.load - b.load || a.r - b.r)[0].k;
+  return pool.sort((a, b) => b.left - a.left || a.r - b.r)[0].k;
+}
+
+/** Czy zostało jeszcze miejsce w którejkolwiek puli ofert na dziś. */
+function offersLeftToday(s, today = offerCountsToday()) {
+  return Object.entries(s.offers).some(([k, o]) => o.on && (Number(o.daily) || 0) - (today[k] || 0) > 0);
+}
+
+/** Haczyki: po równo z ostatnich 14 dni, żeby porównanie było uczciwe. */
+function chooseHook(s) {
+  const since = new Date(Date.now() - 14 * 86400000).toISOString();
+  const used = Object.fromEntries(db.prepare(`SELECT hook, COUNT(*) n FROM outreach WHERE agent=? AND kind='first' AND created_at>=? GROUP BY hook`)
+    .all(AGENT, since).map((r) => [r.hook, r.n]));
+  const on = Object.keys(s.hooks || {}).filter((k) => s.hooks[k]?.on);
+  if (!on.length) return null;
+  return on.map((k) => ({ k, n: used[k] || 0, r: Math.random() })).sort((a, b) => a.n - b.n || a.r - b.r)[0].k;
 }
 
 function activePlaybook() {
@@ -207,26 +229,34 @@ async function qualify(lead, s) {
   if (outreach.isSuppressed(email, lead.domain) || outreach.isSuppressed(email, email.split('@')[1])) return skipLead(lead, 'adres na liście wykluczeń');
   if (await alreadyInGmail(lead.domain, email)) return skipLead(lead, 'już była korespondencja w Gmailu');
 
-  const offerKey = chooseOffer(audit, s);
-  if (!offerKey) return skipLead(lead, 'wszystkie oferty są wyłączone');
   const { text, emails, ...auditStored } = audit;
-  db.prepare("UPDATE leads SET email=?, score=?, audit=?, agent_stage='writing', updated_at=? WHERE id=?")
+  db.prepare('UPDATE leads SET email=?, score=?, audit=?, updated_at=? WHERE id=?')
     .run(email, audit.score, JSON.stringify({ ...auditStored, emails }), core.nowIso(), lead.id);
   lead.email = email;
 
+  const offerKey = chooseOffer(audit, s);
+  if (!offerKey) {
+    const reason = Object.values(s.offers).some((o) => o.on) ? 'pasujące oferty mają na dziś komplet — czeka do jutra' : 'wszystkie oferty są wyłączone';
+    db.prepare("UPDATE leads SET agent_stage='parked', agent_note=?, updated_at=? WHERE id=?").run(reason, core.nowIso(), lead.id);
+    return { ok: false, parked: true, reason };
+  }
+  db.prepare("UPDATE leads SET agent_stage='writing', updated_at=? WHERE id=?").run(core.nowIso(), lead.id);
+  const hookKey = chooseHook(s);
+
   let draft;
   try {
-    draft = await compose(s, writer.firstPrompt(lead, audit, s.offers[offerKey]));
+    draft = await compose(s, writer.firstPrompt(lead, audit, s.offers[offerKey], s.hooks?.[hookKey]));
   } catch (err) {
     return skipLead(lead, err.message.slice(0, 300));
   }
-  db.prepare(`INSERT INTO outreach (lead_id, created_at, status, to_email, subject, body, generated_by, agent, offer, kind, playbook_id)
-    VALUES (?, ?, 'agent_queued', ?, ?, ?, 'agent', ?, ?, 'first', ?)`)
-    .run(lead.id, core.nowIso(), email, draft.subject, draft.body, AGENT, offerKey, draft.playbookId);
+  const body = writer.withPortfolio(draft.body, writer.portfolioBlock(s.portfolio, offerKey));
+  db.prepare(`INSERT INTO outreach (lead_id, created_at, status, to_email, subject, body, generated_by, agent, offer, kind, playbook_id, hook)
+    VALUES (?, ?, 'agent_queued', ?, ?, ?, 'agent', ?, ?, 'first', ?, ?)`)
+    .run(lead.id, core.nowIso(), email, draft.subject, body, AGENT, offerKey, draft.playbookId, hookKey);
   db.prepare("UPDATE leads SET agent_stage='queued', agent_note=?, updated_at=? WHERE id=?")
-    .run(`oferta: ${offerKey}${draft.angle ? `; haczyk: ${draft.angle}` : ''}`, core.nowIso(), lead.id);
-  log('action', `Napisałem maila do ${lead.company || lead.domain} (${offerKey}).`, { leadId: lead.id, offer: offerKey });
-  return { ok: true, offer: offerKey };
+    .run(`oferta: ${offerKey}; haczyk: ${hookKey || '—'}${draft.angle ? `; ${draft.angle}` : ''}`, core.nowIso(), lead.id);
+  log('action', `Napisałem maila do ${lead.company || lead.domain} (${s.offers[offerKey].name}).`, { leadId: lead.id, offer: offerKey, hook: hookKey });
+  return { ok: true, offer: offerKey, hook: hookKey };
 }
 
 /* ------------------------------ follow-upy ------------------------------ */
@@ -278,7 +308,8 @@ async function sendOne(msg, s) {
   };
   if (!lead || lead.unsubscribed || outreach.isSuppressed(msg.to_email, lead.domain)) return fail('skipped', 'adres na liście wykluczeń');
 
-  const opts = { to: msg.to_email, subject: msg.subject, body: `${msg.body}${footer(s, lead)}` };
+  const text = `${msg.body}${footer(s, lead)}`;
+  const opts = { to: msg.to_email, subject: msg.subject, body: text, html: gmailSvc.textToHtml(text) };
   if (msg.kind === 'followup') {
     const parent = db.prepare('SELECT * FROM outreach WHERE id=?').get(msg.parent_id);
     if (!parent || parent.replied_at || parent.bounced) return fail('skipped', 'firma już odpowiedziała albo adres nie istnieje');
@@ -580,7 +611,9 @@ async function tick({ force = false } = {}) {
       }
       let written = 0;
       // Najwyżej kilka firm na przebieg, żeby jeden przebieg nie trwał godzinę.
-      for (let i = 0; i < 6 && need > 0; i += 1) {
+      // Firmy odłożone wczoraj (pełna pula oferty) wracają rano na początek kolejki.
+      db.prepare("UPDATE leads SET agent_stage='found' WHERE agent_stage='parked' AND updated_at<?").run(core.dayStartIso(at));
+      for (let i = 0; i < 6 && need > 0 && offersLeftToday(s); i += 1) {
         let lead = db.prepare("SELECT * FROM leads WHERE agent_stage='found' ORDER BY id LIMIT 1").get();
         if (!lead) {
           doing('searching');
@@ -618,11 +651,14 @@ async function preview(url, offerKey) {
   const s = settings();
   const audit = await siteAudit.audit(url);
   if (!audit.ok) throw new Error(`Audyt nieudany: ${audit.reason}`);
-  const key = offerKey && s.offers[offerKey] ? offerKey : chooseOffer(audit, s);
+  const key = offerKey && s.offers[offerKey] ? offerKey
+    : (chooseOffer(audit, s, {}) || (audit.quality === 'dobra' ? 'panel' : 'strona'));
+  const hookKey = chooseHook(s);
   const lead = { company: null, domain: audit.host, website: url, industry: null, city: null };
-  const draft = await compose(s, writer.firstPrompt(lead, audit, s.offers[key]));
-  return { offer: key, audit: { host: audit.host, quality: audit.quality, score: audit.score, reasons: audit.reasons, email: audit.email, title: audit.title },
-    subject: draft.subject, body: `${draft.body}${footer(s, { id: 0, unsub_token: 'podglad' })}`, angle: draft.angle };
+  const draft = await compose(s, writer.firstPrompt(lead, audit, s.offers[key], s.hooks?.[hookKey]));
+  const body = `${writer.withPortfolio(draft.body, writer.portfolioBlock(s.portfolio, key))}${footer(s, { id: 0, unsub_token: 'podglad' })}`;
+  return { offer: key, hook: hookKey, audit: { host: audit.host, quality: audit.quality, score: audit.score, reasons: audit.reasons, email: audit.email, title: audit.title },
+    subject: draft.subject, body, html: gmailSvc.textToHtml(body), angle: draft.angle };
 }
 
 /* -------------------------------- statystyki ------------------------------- */
@@ -658,6 +694,10 @@ function stats() {
     today: { ...counts(), ...one(`SELECT SUM(CASE WHEN kind='followup' THEN 1 ELSE 0 END) followups FROM outreach WHERE agent=? AND status='sent' AND sent_at>=?`, AGENT, core.dayStartIso()) },
     last30: totals(since30), allTime: totals(allTime),
     offers30: offerStats(since30), offersAll: offerStats(allTime),
+    hooks30: db.prepare(`SELECT hook, COUNT(*) sent, SUM(CASE WHEN replied_at IS NOT NULL THEN 1 ELSE 0 END) replies,
+        SUM(CASE WHEN reply_category IN ('pilne','wazne') THEN 1 ELSE 0 END) positive
+      FROM outreach WHERE agent=? AND kind='first' AND status='sent' AND sent_at>=? GROUP BY hook`).all(AGENT, since30),
+    offersToday: offerCountsToday(),
     daily, byIndustry, replyCats, funnel, skipReasons,
     usage: core.usageSummary(AGENT, 30),
   };
@@ -717,5 +757,5 @@ function status() {
 module.exports = {
   AGENT, DEFAULTS, settings, saveSettings: (patch) => core.saveSettings(AGENT, DEFAULTS, patch),
   tick, start, stop, status, today, activityNow, stats, preview, learn, savePlaybook, activatePlaybook, activePlaybook,
-  checkReplies, dailyReport, chooseOffer, counts, inWindow, sendNext, qualify, compose, POSITIVE,
+  checkReplies, dailyReport, chooseOffer, chooseHook, offerCountsToday, counts, inWindow, sendNext, qualify, compose, POSITIVE,
 };

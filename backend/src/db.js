@@ -341,7 +341,7 @@ function migrate() {
   const kolOutreach = db.prepare('PRAGMA table_info(outreach)').all().map((c) => c.name);
   for (const [name, ddl] of [
     ['agent', 'TEXT'], ['offer', 'TEXT'], ['kind', 'TEXT'], ['parent_id', 'INTEGER'],
-    ['playbook_id', 'INTEGER'], ['replied_at', 'TEXT'], ['reply_category', 'TEXT'], ['bounced', 'INTEGER DEFAULT 0'],
+    ['playbook_id', 'INTEGER'], ['hook', 'TEXT'], ['replied_at', 'TEXT'], ['reply_category', 'TEXT'], ['bounced', 'INTEGER DEFAULT 0'],
   ]) {
     if (!kolOutreach.includes(name)) {
       krok(`outreach.${name}`, () => db.exec(`ALTER TABLE outreach ADD COLUMN ${name} ${ddl}`));

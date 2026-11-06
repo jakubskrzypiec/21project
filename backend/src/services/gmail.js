@@ -165,7 +165,7 @@ function addressOf(from = '') {
   return (m ? m[1] : from).trim().toLowerCase();
 }
 
-function buildRaw({ to, subject, body, from, inReplyTo, references, cc }) {
+function buildRaw({ to, subject, body, html, from, inReplyTo, references, cc }) {
   const enc = (s) => `=?UTF-8?B?${Buffer.from(String(s), 'utf8').toString('base64')}?=`;
 
   /**
@@ -182,7 +182,8 @@ function buildRaw({ to, subject, body, from, inReplyTo, references, cc }) {
   };
 
   // Base64 w treści łamiemy co 76 znaków — tego wymaga norma i tak robią klienty poczty.
-  const tresc = Buffer.from(String(body), 'utf8').toString('base64').replace(/(.{76})/g, '$1\r\n');
+  const b64 = (t) => Buffer.from(String(t), 'utf8').toString('base64').replace(/(.{76})/g, '$1\r\n');
+  const tresc = b64(body);
 
   const naglowki = [
     `To: ${adres(to)}`,
@@ -192,9 +193,17 @@ function buildRaw({ to, subject, body, from, inReplyTo, references, cc }) {
     inReplyTo ? `In-Reply-To: ${inReplyTo}` : null,
     references ? `References: ${references}` : null,
     'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset="UTF-8"',
-    'Content-Transfer-Encoding: base64',
   ].filter((l) => l !== null);
+
+  // Z wersją HTML: tekst i HTML razem (multipart/alternative) — klient poczty wybiera lepszą.
+  if (html) {
+    const granica = `p21_${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+    naglowki.push(`Content-Type: multipart/alternative; boundary="${granica}"`);
+    const czesc = (typ, t) => `--${granica}\r\nContent-Type: ${typ}; charset="UTF-8"\r\nContent-Transfer-Encoding: base64\r\n\r\n${b64(t)}`;
+    const calosc = `${czesc('text/plain', body)}\r\n${czesc('text/html', html)}\r\n--${granica}--`;
+    return Buffer.from(`${naglowki.join('\r\n')}\r\n\r\n${calosc}`, 'utf8').toString('base64url');
+  }
+  naglowki.push('Content-Type: text/plain; charset="UTF-8"', 'Content-Transfer-Encoding: base64');
 
   // Pusta linia oddziela nagłówki od treści. Wcześniej dokładaliśmy ją do tej
   // samej tablicy, a filter(Boolean) usuwał ją razem z pustymi polami — przez co
@@ -202,10 +211,10 @@ function buildRaw({ to, subject, body, from, inReplyTo, references, cc }) {
   return Buffer.from(`${naglowki.join('\r\n')}\r\n\r\n${tresc}`, 'utf8').toString('base64url');
 }
 
-async function sendMessage({ to, subject, body, cc, threadId, inReplyTo, references }) {
+async function sendMessage({ to, subject, body, html, cc, threadId, inReplyTo, references }) {
   const account = require('./google').status().account;
   const from = account ? `${config.outreach.fromName} <${account}>` : undefined;
-  const raw = buildRaw({ to, subject, body, from, cc, inReplyTo, references });
+  const raw = buildRaw({ to, subject, body, html, from, cc, inReplyTo, references });
   const { data } = await gmail().users.messages.send({
     userId: 'me',
     requestBody: { raw, threadId: threadId || undefined },
@@ -242,6 +251,22 @@ async function getThreadMeta(id) {
   }));
 }
 
+/**
+ * Zwykły tekst → prosty HTML. Domeny (np. 21project.pl/realizacje/) stają się klikalnymi
+ * linkami prowadzącymi wprost na stronę, a w treści widać sam adres — bez przekierowań.
+ */
+function textToHtml(text) {
+  const escHtml = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const link = /(https?:\/\/[^\s<]+|(?<![@\w.-])(?:[a-z0-9-]+\.)+(?:pl|com|eu|net|org|io|studio|design)(?:\/[^\s<]*)?)/gi;
+  const body = escHtml(text).replace(link, (m) => {
+    const clean = m.replace(/[.,;:)]+$/, '');
+    const tail = m.slice(clean.length);
+    const href = /^https?:/i.test(clean) ? clean : `https://${clean}`;
+    return `<a href="${href}" style="color:#1a56db">${clean}</a>${tail}`;
+  }).replace(/\n/g, '<br>\n');
+  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.55;color:#202124">${body}</div>`;
+}
+
 const modifyThread = (id, addLabelIds = [], removeLabelIds = []) =>
   gmail().users.threads.modify({ userId: 'me', id, requestBody: { addLabelIds, removeLabelIds } });
 
@@ -259,6 +284,6 @@ async function unreadCount() {
 
 module.exports = {
   listThreads, getThread, getThreadMeta, anyThread, sendMessage, createDraft, modifyThread, trashThread, labels, unreadCount,
-  VIEWS, addressOf, jestAutomatem, KATEGORIE_AUTOMATOW,
+  VIEWS, addressOf, textToHtml, buildRaw, jestAutomatem, KATEGORIE_AUTOMATOW,
   extractBody, attachmentsOf, headerOf,
 };

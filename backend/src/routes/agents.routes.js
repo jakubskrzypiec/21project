@@ -66,8 +66,23 @@ router.patch('/handlowiec/settings', wrap((req) => {
       if (!['strona', 'panel', 'pakiet'].includes(k)) continue;
       patch.offers[k] = {};
       if (typeof v.on === 'boolean') patch.offers[k].on = v.on;
-      if (v.weight !== undefined) patch.offers[k].weight = Math.max(0, Number(v.weight) || 0);
+      if (v.daily !== undefined) patch.offers[k].daily = Math.min(100, Math.max(0, Math.round(Number(v.daily) || 0)));
       for (const f of ['name', 'desc', 'for']) if (typeof v[f] === 'string') patch.offers[k][f] = v[f];
+    }
+  }
+  if (Array.isArray(b.portfolio)) {
+    patch.portfolio = b.portfolio.slice(0, 10).map((p) => ({
+      url: String(p.url || '').trim().replace(/^https?:\/\//i, '').replace(/^www\./i, ''),
+      offers: (Array.isArray(p.offers) ? p.offers : ['strona', 'panel', 'pakiet']).filter((o) => ['strona', 'panel', 'pakiet'].includes(o)),
+    })).filter((p) => /^[a-z0-9.-]+\.[a-z]{2,}(\/\S*)?$/i.test(p.url));
+  }
+  if (b.hooks && typeof b.hooks === 'object') {
+    patch.hooks = {};
+    for (const [k, v] of Object.entries(b.hooks)) {
+      if (!['projekt', 'audyt'].includes(k)) continue;
+      patch.hooks[k] = {};
+      if (typeof v.on === 'boolean') patch.hooks[k].on = v.on;
+      if (typeof v.text === 'string' && v.text.trim()) patch.hooks[k].text = v.text.trim();
     }
   }
   if (b.sources && typeof b.sources === 'object') {
@@ -87,7 +102,7 @@ router.patch('/handlowiec/settings', wrap((req) => {
 
 /** Przywraca domyślne oferty / strategię / listę zakazanych zwrotów. */
 router.post('/handlowiec/settings/reset', wrap((req) => {
-  const which = (req.body?.fields || []).filter((f) => ['offers', 'strategy', 'forbidden', 'sources'].includes(f));
+  const which = (req.body?.fields || []).filter((f) => ['offers', 'strategy', 'forbidden', 'sources', 'portfolio', 'hooks'].includes(f));
   const patch = Object.fromEntries(which.map((f) => [f, handlowiec.DEFAULTS[f]]));
   return { settings: handlowiec.saveSettings(patch) };
 }));

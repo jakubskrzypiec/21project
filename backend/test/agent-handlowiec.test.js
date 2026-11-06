@@ -68,12 +68,27 @@ test('kontrola stylu wyłapuje typowe AI-owe zwroty, formę „Ty” i linki', (
   assert.equal(writer.tidy('A — b!'), 'A, b.');
 });
 
-test('rotacja ofert: po równo i tylko oferty pasujące do strony', () => {
+test('podział na oferty: dzienne pule i tylko oferty pasujące do strony', () => {
   const s = h.settings();
-  assert.equal(h.chooseOffer({ quality: 'dobra' }, s, { panel: 5, pakiet: 1 }), 'pakiet');
-  assert.equal(h.chooseOffer({ quality: 'slaba' }, s, { strona: 0, pakiet: 3 }), 'strona');
+  assert.equal(h.chooseOffer({ quality: 'dobra' }, s, { panel: 10, pakiet: 2 }), 'pakiet');
+  assert.equal(h.chooseOffer({ quality: 'slaba' }, s, { strona: 1, pakiet: 9 }), 'strona');
+  assert.equal(h.chooseOffer({ quality: 'slaba' }, s, { strona: 10, pakiet: 10 }), null); // komplet na dziś
   const off = { ...s, offers: { ...s.offers, panel: { ...s.offers.panel, on: false } } };
   assert.equal(h.chooseOffer({ quality: 'dobra' }, off, {}), 'pakiet');
+});
+
+test('realizacje wstawia system, a linki w HTML prowadzą wprost na stronę', () => {
+  const block = writer.portfolioBlock(writer.DEFAULT_PORTFOLIO, 'panel');
+  assert.ok(block.includes('monikaserbista.pl') && block.includes('noreststudio.com'));
+  assert.ok(!block.includes('effkoweogrody.pl')); // przy panelu bez Effkowych Ogrodów
+  assert.ok(block.endsWith('Więcej realizacji: 21project.pl/realizacje/'));
+  const html = gmail.textToHtml('Zobacz 21project.pl/realizacje/. Pisz: biuro@firma.pl');
+  assert.ok(html.includes('<a href="https://21project.pl/realizacje/"'));
+  assert.ok(html.includes('>21project.pl/realizacje/</a>.'));
+  assert.ok(!html.includes('href="https://firma.pl'));
+  assert.ok(!html.includes('google.com/url'));
+  const raw = Buffer.from(gmail.buildRaw({ to: 'a@b.pl', subject: 'T', body: 'x', html: '<b>x</b>' }), 'base64url').toString();
+  assert.ok(raw.includes('multipart/alternative') && raw.includes('text/html') && raw.includes('text/plain'));
 });
 
 test('czas lokalny: dzień roboczy i okno wysyłki w strefie Warszawy', () => {
@@ -112,7 +127,7 @@ test('pełny cykl: szukanie, duplikat z Gmaila, mail, wysyłka, odpowiedź ze sz
     // Pierwsza wersja z błędem stylu — agent musi ją poprawić.
     const body = aiCalls === 1
       ? 'Dzień dobry,\n\nW dzisiejszych czasach strona to podstawa!'
-      : 'Dzień dobry,\n\nW stopce Państwa strony widnieje rok 2014, a w Google tytuł to tylko „Home”.\n\nKlient z polecenia i tak sprawdza stronę, a coraz częściej pyta ChatGPT, kogo wybrać.\n\nMogę bezpłatnie przygotować projekt pierwszego ekranu nowej strony. Czy przesłać?';
+      : 'Dzień dobry,\n\nW stopce Państwa strony widnieje rok 2014, a w Google tytuł to tylko „Home”.\n\nKlient z polecenia i tak sprawdza stronę, a coraz częściej pyta ChatGPT, kogo wybrać.\n\n[REALIZACJE]\n\nMogę bezpłatnie przygotować projekt pierwszego ekranu nowej strony.\n\nJeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.';
     return { text: JSON.stringify({ subject: 'Strona Starej Pracowni', body, angle: 'projekt pierwszego ekranu' }), usage: { input_tokens: 800, output_tokens: 200 } };
   });
 
@@ -140,6 +155,9 @@ test('pełny cykl: szukanie, duplikat z Gmaila, mail, wysyłka, odpowiedź ze sz
     const msg = db.prepare("SELECT * FROM outreach WHERE agent='handlowiec' AND kind='first'").get();
     assert.equal(msg.status, 'sent');
     assert.ok(['strona', 'pakiet'].includes(msg.offer));
+    assert.ok(['projekt', 'audyt'].includes(msg.hook));
+    assert.ok(msg.body.includes('Kilka moich realizacji:\nmonikaserbista.pl'));
+    assert.ok(sent[0].html.includes('href="https://21project.pl/realizacje/"'));
 
     // Następny przebieg nie wysyła od razu: odstęp między mailami.
     const r2 = await h.tick();
