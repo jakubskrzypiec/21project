@@ -300,7 +300,9 @@ test('kalendarz spotkań: godziny w strefie Warszawy, wyprzedzenie, zajęte term
 test('mail z ofertą panelu kończy się propozycją spotkania z linkiem, oferta strony nie', () => {
   const s = h.settings();
   const body = 'Dzień dobry,\n\nTreść.\n\nJeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.';
-  assert.ok(writer.withMeeting(body, s.offers.panel, s.bookingUrl).endsWith('Termin można wybrać tutaj: 21project.pl/spotkanie/'));
+  const withM = writer.withMeeting(body, s.offers.panel, s.bookingUrl);
+  assert.ok(withM.endsWith('krótkiej rozmowy na Google Meet: 21project.pl/spotkanie/'));
+  assert.equal((withM.match(/zainteresowani/g) || []).length, 1); // jedno zakończenie, nie dwa
   assert.equal(writer.withMeeting(body, s.offers.strona, s.bookingUrl), body);
   assert.ok(gmail.textToHtml(writer.meetingLine()).includes('href="https://21project.pl/spotkanie/"'));
 });
