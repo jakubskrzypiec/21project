@@ -3,7 +3,7 @@ const { config } = require('../config');
 
 const enabled = () => Boolean(config.ai.apiKey);
 
-async function call({ system, prompt, messages, maxTokens = 1200, temperature = 0.6, model }) {
+async function call({ system, prompt, messages, maxTokens = 1200, model }) {
   if (!enabled()) throw new Error('Brak ANTHROPIC_API_KEY w .env — generowanie treści wyłączone.');
   const res = await fetch(`${config.ai.baseUrl}/v1/messages`, {
     method: 'POST',
@@ -16,7 +16,7 @@ async function call({ system, prompt, messages, maxTokens = 1200, temperature = 
     body: JSON.stringify({
       model: model || config.ai.model,
       max_tokens: maxTokens,
-      temperature,
+      // Bez `temperature`: nowsze modele go nie przyjmują (błąd 400 „deprecated for this model”).
       system,
       messages: messages || [{ role: 'user', content: prompt }],
     }),
