@@ -1292,6 +1292,319 @@ views['/wysylka'] = async () => {
     async (data) => { await api('/outreach/templates', { method: 'POST', body: data }); toast('Szablon zapisany.'); render(); });
 };
 
+/* --- Agenci AI: Handlowiec ------------------------------------------------
+   Jeden ekran do kontroli agenta: przycisk start/stop, wyniki, odpowiedzi
+   z gotowymi szkicami, kolejka maili, strategia (z historią wersji) i ustawienia. */
+
+const OFERTA = { strona: 'Strona + SEO/AI', panel: 'Panel', pakiet: 'Pakiet: klienci' };
+const KAT_ODP = {
+  pilne: ['pilne', 'bad'], wazne: ['ważne', 'warn'], zwykle: ['zwykłe', ''], odmowa: ['odmowa', ''],
+  automat: ['automat', ''], bounce: ['nie doszedł', 'bad'],
+};
+const ETAP = {
+  found: 'znaleziona', checking: 'sprawdzam', writing: 'piszę', queued: 'mail w kolejce',
+  contacted: 'napisano', skipped: 'pominięta',
+};
+const STAN_MAILA = { agent_queued: ['w kolejce', 'warn'], sent: ['wysłany', 'ok'], failed: ['błąd', 'bad'], skipped: ['pominięty', ''] };
+const proc = (a, b) => (b ? `${Math.round((100 * (a || 0)) / b)}%` : '—');
+const gmailLink = (threadId) => (threadId ? `https://mail.google.com/mail/u/0/#all/${threadId}` : null);
+const lines = (v) => String(v || '').split('\n').map((x) => x.trim()).filter(Boolean);
+
+views['/agenci'] = async () => {
+  const tab = new URLSearchParams(location.hash.split('?')[1] || '').get('tab') || 'przeglad';
+  view.innerHTML = '<div class="empty">Wczytywanie…</div>';
+  const d = await api('/agents/handlowiec');
+  const { status: s, settings: cfg, stats: st } = d;
+
+  const braki = [];
+  if (!s.checks.ai) braki.push('brak klucza <code>ANTHROPIC_API_KEY</code> w zmiennych serwera (Railway → Variables)');
+  if (!s.checks.google) braki.push('Gmail nie jest połączony (Ustawienia → Połącz Google)');
+
+  const stan = s.enabled
+    ? (!s.checks.ai || !s.checks.google ? '<span class="tag bad">włączony, ale zablokowany</span>'
+      : s.alive ? '<span class="tag ok">pracuje</span>' : '<span class="tag warn">włączony, ale serwer nie odpowiada</span>')
+    : '<span class="tag">zatrzymany</span>';
+  const TABS = [['przeglad', 'Przegląd'], ['odpowiedzi', 'Odpowiedzi'], ['maile', 'Maile'], ['firmy', 'Firmy'],
+    ['strategia', 'Strategia i nauka'], ['ustawienia', 'Ustawienia'], ['dziennik', 'Dziennik']];
+
+  view.innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px">
+      <div><h1 class="page">Handlowiec</h1>
+        <p class="sub" style="margin-bottom:0">Agent cold outreachu: szuka firm, pisze i wysyła maile, pilnuje odpowiedzi i uczy się co tydzień.</p></div>
+      <div class="row" style="gap:10px">${stan}
+        <button class="btn ghost sm" id="agRun">Przebieg teraz</button>
+        ${s.enabled ? '<button class="btn danger" id="agStop">Zatrzymaj</button>' : '<button class="btn" id="agStart">Uruchom</button>'}
+      </div>
+    </div>
+    <p class="small muted" style="margin:10px 0 18px">Ostatni przebieg: ${s.lastTickAt ? relTime(s.lastTickAt) : 'jeszcze nie było'}
+      · okno wysyłki: ${cfg.windowStart}:00–${cfg.windowEnd}:00, ${s.inWindow ? 'otwarte' : 'zamknięte'}
+      ${s.nextSendAt && s.enabled ? `· następny mail ok. ${fmtTime(s.nextSendAt)}` : ''}
+      ${s.checks.googleAccount ? `· wysyła z ${esc(s.checks.googleAccount)}` : ''}</p>
+    ${braki.length ? `<div class="notice warn">${braki.map((b) => `• ${b}`).join('<br>')}</div>` : ''}
+    <nav class="tabs">${TABS.map(([k, n]) => `<a href="#/agenci?tab=${k}" class="${k === tab ? 'active' : ''}">${n}</a>`).join('')}</nav>
+    <div id="agTab"></div>`;
+
+  const run = async (path, msg) => {
+    try { const r = await api(path, { method: 'POST' }); toast(msg(r)); render(); } catch (err) { toast(err.message, true); }
+  };
+  $('#agStart')?.addEventListener('click', () => run('/agents/handlowiec/start', () => 'Agent pracuje. Zatrzymasz go tym samym przyciskiem.'));
+  $('#agStop')?.addEventListener('click', () => { if (confirm('Zatrzymać agenta? Kolejka zostanie, wznowisz go jednym kliknięciem.')) run('/agents/handlowiec/stop', () => 'Agent zatrzymany.'); });
+  $('#agRun').onclick = async (e) => {
+    e.target.disabled = true; e.target.textContent = 'Pracuję…';
+    await run('/agents/handlowiec/run', (r) => r.skipped ? `Pominięto: ${r.skipped}` : `Gotowe: napisane ${r.written || 0}, wysłane ${r.sent?.ok ? 1 : 0}, nowe odpowiedzi ${r.replies?.found || 0}.`);
+  };
+
+  const box = $('#agTab');
+  const T = { przeglad, odpowiedzi, maile, firmy, strategia, ustawienia, dziennik }[tab] || przeglad;
+  await T(box, d);
+  if (tab === 'przeglad' || tab === 'dziennik') odswiezajCo(60);
+};
+
+async function przeglad(box, { stats: st, settings: cfg }) {
+  const a = st.last30;
+  const offers = Object.keys(OFERTA).map((k) => ({ k, ...(st.offers30.find((o) => o.offer === k) || {}), on: cfg.offers[k]?.on }));
+  const days = st.daily.length ? st.daily : [{ day: '—', sent: 0, replies: 0 }];
+  const { log } = await api('/agents/handlowiec/log?kind=report&limit=1');
+  box.innerHTML = `
+    <div class="grid g4">
+      ${kpi(`${st.today.sentToday}/${cfg.dailyLimit}`, 'wysłane dziś')}
+      ${kpi(fmtNum(st.today.queued), 'gotowe w kolejce')}
+      ${kpi(fmtNum(a.sent), 'pierwszych maili (30 dni)')}
+      ${kpi(proc(a.replies, a.sent), `odpowiedzi (${a.replies || 0})`)}
+      ${kpi(fmtNum(a.positive), 'zainteresowanych (pilne + ważne)')}
+      ${kpi(fmtNum(a.followups), 'przypomnień wysłanych')}
+      ${kpi(`${fmtNum(a.bounces)} / ${fmtNum(a.failed)}`, 'zwroty / błędy wysyłki')}
+      ${kpi(`${st.usage.pln} zł`, `koszt AI, 30 dni (${fmtNum(st.usage.calls)} wywołań)`)}
+    </div>
+    ${log[0] ? `<div class="notice info" style="margin-top:20px">${esc(log[0].message)}</div>` : ''}
+    <h2 class="sec">Wysłane dziennie (30 dni)</h2>
+    <div class="card">${chart(days, 'sent')}</div>
+    <h2 class="sec">Oferty: test A/B/C (30 dni)</h2>
+    <div class="card" style="padding:0">${table(['Oferta', 'Wysłane', 'Odpowiedzi', 'Zainteresowani', 'Odmowy', 'Zwroty', 'Stan'], offers, (o) => `<tr>
+      <td><strong>${OFERTA[o.k]}</strong></td><td>${fmtNum(o.sent)}</td><td>${fmtNum(o.replies)} <span class="muted small">${proc(o.replies, o.sent)}</span></td>
+      <td>${fmtNum(o.positive)} <span class="muted small">${proc(o.positive, o.sent)}</span></td><td>${fmtNum(o.refusals)}</td><td>${fmtNum(o.bounces)}</td>
+      <td>${o.on ? '<span class="tag ok">włączona</span>' : '<span class="tag">wyłączona</span>'}</td></tr>`)}</div>
+    <div class="grid g2" style="margin-top:20px">
+      <div class="card"><h3>Branże</h3>${table(['Branża', 'Wysłane', 'Odp.', 'Zaint.'], st.byIndustry, (r) => `<tr>
+        <td class="small">${esc(r.industry)}</td><td>${r.sent}</td><td>${r.replies} <span class="muted small">${proc(r.replies, r.sent)}</span></td><td>${r.positive}</td></tr>`)}</div>
+      <div class="card"><h3>Lejek firm i powody pominięcia</h3>
+        <p class="small">${st.funnel.map((f) => `${ETAP[f.stage] || esc(f.stage || '—')}: <strong>${fmtNum(f.n)}</strong>`).join(' · ') || 'Agent jeszcze nie szukał firm.'}</p>
+        ${table(['Dlaczego pominięta', 'Ile'], st.skipReasons, (r) => `<tr><td class="small">${esc(r.reason || '—')}</td><td>${r.n}</td></tr>`)}</div>
+    </div>
+    <h2 class="sec">Próbny mail</h2>
+    <p class="sub">Wpisz adres dowolnej strony. Agent zrobi audyt i napisze maila tak, jak zrobiłby to naprawdę. Nic nie zostanie wysłane.</p>
+    <form class="row" id="agPrev" style="flex-wrap:wrap;gap:10px">
+      <input class="inp" name="url" style="max-width:22rem;margin:0" placeholder="np. pracownia.pl" required>
+      <select class="inp" name="offer" style="max-width:14rem;margin:0"><option value="">oferta: wybór agenta</option>
+        ${Object.entries(OFERTA).map(([k, n]) => `<option value="${k}">${n}</option>`).join('')}</select>
+      <button class="btn sm">Napisz próbny mail</button>
+    </form>
+    <div id="agPrevOut" style="margin-top:16px"></div>`;
+  $('#agPrev').onsubmit = async (e) => {
+    e.preventDefault();
+    const out = $('#agPrevOut');
+    out.innerHTML = '<div class="empty">Audyt strony i pisanie… (do minuty)</div>';
+    try {
+      const r = await api('/agents/handlowiec/preview', { method: 'POST', body: { url: e.target.url.value, offer: e.target.offer.value } });
+      out.innerHTML = `<div class="card">
+        <p class="small muted">Strona ${esc(r.audit.host)}: ${r.audit.quality === 'dobra' ? 'porządna' : 'do poprawy'} (${r.audit.score} pkt) · oferta: ${OFERTA[r.offer]} · adres: ${esc(r.audit.email || 'nie znaleziono')}<br>
+        Obserwacje: ${r.audit.reasons.map(esc).join('; ') || 'brak'}<br>Haczyk: ${esc(r.angle || '—')}</p>
+        <p><strong>${esc(r.subject)}</strong></p>
+        <pre style="white-space:pre-wrap;font:inherit">${esc(r.body)}</pre></div>`;
+    } catch (err) { out.innerHTML = `<div class="notice bad">${esc(err.message)}</div>`; }
+  };
+}
+
+async function odpowiedzi(box) {
+  const all = new URLSearchParams(location.hash.split('?')[1] || '').get('all');
+  const { replies } = await api(`/agents/handlowiec/replies${all ? '?all=1' : ''}`);
+  box.innerHTML = `
+    <p class="sub">Firmy, które odpisały. Agent ocenił, jak pilna jest sprawa, i zapisał szkic odpowiedzi w Gmailu, w tym samym wątku. Nic nie wysyła sam: przeczytaj, popraw i wyślij z Gmaila.
+      <a href="#/agenci?tab=odpowiedzi${all ? '' : '&all=1'}">${all ? 'Pokaż tylko nowe' : 'Pokaż też obsłużone'}</a></p>
+    ${replies.length ? replies.map((r) => {
+      const [nazwa, klasa] = KAT_ODP[r.category] || [r.category, ''];
+      const link = gmailLink(r.thread_id);
+      return `<div class="card" style="margin-bottom:1px">
+        <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <span><span class="tag ${klasa}">${nazwa}</span> <strong>${esc(r.company || r.domain || r.from_addr)}</strong>
+            <span class="muted small">${esc(r.from_addr || '')} · ${fmtDateTime(r.received_at)} · ${OFERTA[r.offer] || ''}</span></span>
+          <span class="row" style="gap:8px">${link ? `<a class="btn sm" href="${link}" target="_blank" rel="noopener">Otwórz w Gmailu</a>` : ''}
+            ${r.status === 'nowa' ? `<button class="btn ghost sm" data-done="${r.id}">Obsłużone</button>` : '<span class="muted small">obsłużone</span>'}</span>
+        </div>
+        <p style="margin:.6rem 0 .3rem">${esc(r.summary || r.snippet || '')}</p>
+        ${r.draft_body ? `<details><summary class="small muted">Szkic odpowiedzi (jest już w Gmailu)</summary>
+          <pre style="white-space:pre-wrap;font:inherit;font-size:.88rem">${esc(r.draft_body)}</pre></details>` : ''}
+      </div>`;
+    }).join('') : '<div class="empty">Brak nowych odpowiedzi.</div>'}`;
+  box.querySelectorAll('[data-done]').forEach((b) => {
+    b.onclick = async () => { await api(`/agents/handlowiec/replies/${b.dataset.done}`, { method: 'PATCH', body: { status: 'obsluzona' } }); render(); };
+  });
+}
+
+async function maile(box) {
+  const { messages } = await api('/agents/handlowiec/messages?limit=150');
+  box.innerHTML = `<p class="sub">Ostatnie maile agenta: w kolejce, wysłane i pominięte. Kliknij temat, żeby przeczytać treść.</p>
+    <div class="card" style="padding:0">${table(['Kiedy', 'Firma', 'Temat', 'Oferta', 'Stan', ''], messages, (m) => {
+      const [n, k] = STAN_MAILA[m.status] || [m.status, ''];
+      return `<tr>
+        <td class="small muted">${fmtDateTime(m.sent_at || m.created_at)}</td>
+        <td class="small">${esc(m.company || m.domain || '')}<br><span class="muted">${esc(m.to_email)}</span></td>
+        <td class="small"><a href="#" data-show="${m.id}">${esc(m.subject)}</a>${m.kind === 'followup' ? ' <span class="tag">przypomnienie</span>' : ''}</td>
+        <td class="small">${OFERTA[m.offer] || ''}</td>
+        <td><span class="tag ${k}">${n}</span>${m.reply_category ? ` <span class="tag ${(KAT_ODP[m.reply_category] || [])[1] || ''}">${(KAT_ODP[m.reply_category] || [m.reply_category])[0]}</span>` : ''}
+          ${m.error && m.status !== 'sent' ? `<br><span class="muted small">${esc(m.error)}</span>` : ''}</td>
+        <td>${m.status === 'agent_queued' ? `<button class="btn ghost sm" data-drop="${m.id}">Nie wysyłaj</button>` : ''}</td></tr>`;
+    })}</div>`;
+  box.querySelectorAll('[data-show]').forEach((a) => {
+    a.onclick = (e) => {
+      e.preventDefault();
+      const m = messages.find((x) => String(x.id) === a.dataset.show);
+      openModal(m.subject, `<p class="small muted">Do: ${esc(m.to_email)} · ${OFERTA[m.offer] || ''}</p>
+        <pre style="white-space:pre-wrap;font:inherit">${esc(m.body)}</pre>
+        ${gmailLink(m.gmail_thread_id) ? `<p><a href="${gmailLink(m.gmail_thread_id)}" target="_blank" rel="noopener">Otwórz wątek w Gmailu</a></p>` : ''}`, async () => {});
+    };
+  });
+  box.querySelectorAll('[data-drop]').forEach((b) => {
+    b.onclick = async () => { await api(`/agents/handlowiec/messages/${b.dataset.drop}`, { method: 'DELETE' }); toast('Usunięte z kolejki.'); render(); };
+  });
+}
+
+async function firmy(box) {
+  const stage = new URLSearchParams(location.hash.split('?')[1] || '').get('stage') || '';
+  const { leads } = await api(`/agents/handlowiec/leads${stage ? `?stage=${stage}` : ''}`);
+  box.innerHTML = `<p class="sub">Firmy, które agent znalazł i sprawdził.
+    ${['', ...Object.keys(ETAP)].map((k) => `<a href="#/agenci?tab=firmy${k ? `&stage=${k}` : ''}" style="margin-left:10px;${k === stage ? 'font-weight:600' : ''}">${k ? ETAP[k] : 'wszystkie'}</a>`).join('')}</p>
+    <div class="card" style="padding:0">${table(['Firma', 'Miasto / branża', 'Ocena strony', 'Etap', 'Uwagi'], leads, (l) => `<tr>
+      <td class="small"><a href="#/leady/${l.id}">${esc(l.company || l.domain)}</a><br><span class="muted">${esc(l.domain || '')} ${esc(l.email || '')}</span></td>
+      <td class="small">${esc(l.city || '—')}<br><span class="muted">${esc(l.industry || '')}</span></td>
+      <td>${l.score ? scoreTag(l.score * 10 > 100 ? 100 : l.score * 10) : '—'}</td>
+      <td><span class="tag">${ETAP[l.agent_stage] || esc(l.agent_stage || '')}</span></td>
+      <td class="small muted">${esc(l.agent_note || '')}</td></tr>`)}</div>`;
+}
+
+async function strategia(box, { settings: cfg, playbook }) {
+  const { playbooks } = await api('/agents/handlowiec/playbooks');
+  box.innerHTML = `
+    <p class="sub">Strategia to stała instrukcja sprzedażowa, którą ustawiasz sam. Wnioski to to, czego agent nauczył się na wynikach:
+      co poniedziałek o 6:20 analizuje odpowiedzi z 4 tygodni i zapisuje nową wersję. Możesz ją poprawić albo wrócić do starszej.</p>
+    <div class="grid g2">
+      <div class="card"><h3>Strategia sprzedażowa (od Ciebie)</h3>
+        <textarea class="inp" id="agStrategy" style="min-height:22rem">${esc(cfg.strategy)}</textarea>
+        <div class="row" style="margin-top:10px;gap:8px"><button class="btn sm" id="agSaveStrategy">Zapisz strategię</button>
+          <button class="btn ghost sm" id="agResetStrategy">Przywróć domyślną</button></div></div>
+      <div class="card"><h3>Aktualne wnioski agenta ${playbook ? `(wersja #${playbook.id}, ${fmtDate(playbook.created_at)})` : ''}</h3>
+        <textarea class="inp" id="agPlaybook" style="min-height:22rem" placeholder="Jeszcze nie ma wniosków. Pojawią się po pierwszym tygodniu wysyłki (min. 20 maili).">${esc(playbook?.content || '')}</textarea>
+        <div class="row" style="margin-top:10px;gap:8px"><button class="btn sm" id="agSavePlaybook">Zapisz jako nową wersję</button>
+          <button class="btn ghost sm" id="agLearn">Ucz się teraz</button></div></div>
+    </div>
+    <h2 class="sec">Historia wersji</h2>
+    ${playbooks.length ? playbooks.map((p) => `<div class="card" style="margin-bottom:1px">
+      <div class="row" style="justify-content:space-between"><span><strong>#${p.id}</strong> <span class="muted small">${fmtDateTime(p.created_at)} · ${p.source === 'auto' ? 'nauka agenta' : 'Twoja zmiana'}</span>
+        ${p.active ? ' <span class="tag ok">aktywna</span>' : ''}</span>
+        ${p.active ? '' : `<button class="btn ghost sm" data-act="${p.id}">Włącz tę wersję</button>`}</div>
+      ${p.summary ? `<p class="small" style="white-space:pre-wrap">${esc(p.summary)}</p>` : ''}
+      <details><summary class="small muted">Treść</summary><pre style="white-space:pre-wrap;font:inherit;font-size:.88rem">${esc(p.content)}</pre></details>
+    </div>`).join('') : '<div class="empty">Brak wersji.</div>'}`;
+  const patch = (body, msg) => api('/agents/handlowiec/settings', { method: 'PATCH', body }).then(() => { toast(msg); render(); }).catch((e) => toast(e.message, true));
+  $('#agSaveStrategy').onclick = () => patch({ strategy: $('#agStrategy').value }, 'Strategia zapisana. Działa od następnego maila.');
+  $('#agResetStrategy').onclick = async () => {
+    if (!confirm('Przywrócić domyślną strategię?')) return;
+    await api('/agents/handlowiec/settings/reset', { method: 'POST', body: { fields: ['strategy'] } }); render();
+  };
+  $('#agSavePlaybook').onclick = async () => {
+    try { await api('/agents/handlowiec/playbooks', { method: 'POST', body: { content: $('#agPlaybook').value } }); toast('Zapisano nową wersję wniosków.'); render(); }
+    catch (err) { toast(err.message, true); }
+  };
+  $('#agLearn').onclick = async (e) => {
+    e.target.disabled = true; e.target.textContent = 'Analizuję…';
+    try { await api('/agents/handlowiec/learn', { method: 'POST' }); toast('Nowe wnioski zapisane.'); } catch (err) { toast(err.message, true); }
+    render();
+  };
+  box.querySelectorAll('[data-act]').forEach((b) => {
+    b.onclick = async () => { await api(`/agents/handlowiec/playbooks/${b.dataset.act}/activate`, { method: 'POST' }); toast('Włączono.'); render(); };
+  });
+}
+
+async function ustawienia(box, { settings: cfg }) {
+  const DNI = [[1, 'pn'], [2, 'wt'], [3, 'śr'], [4, 'cz'], [5, 'pt'], [6, 'sb'], [7, 'nd']];
+  const num = (name, label, hint = '') => `<label class="f">${label}<input type="number" min="0" name="${name}" value="${esc(cfg[name])}">${hint ? `<span class="small muted">${hint}</span>` : ''}</label>`;
+  const hb = cfg.sources.homebook;
+  const gg = cfg.sources.google;
+  box.innerHTML = `<form id="agCfg">
+    <div class="grid g2">
+      <div class="card"><h3>Tempo wysyłki</h3>
+        ${num('dailyLimit', 'Maili dziennie (z przypomnieniami)', 'Bezpiecznie dla zwykłego Gmaila: do 30–40.')}
+        ${num('hourlyLimit', 'Maks. na godzinę')}
+        <div class="row" style="gap:12px">${num('windowStart', 'Wysyłka od godziny')}${num('windowEnd', 'do godziny')}</div>
+        <label class="f">Dni wysyłki<span class="row" style="gap:12px;margin-top:8px">${DNI.map(([n, l]) => `<label class="small"><input type="checkbox" name="day" value="${n}" ${cfg.workdays.includes(n) ? 'checked' : ''}> ${l}</label>`).join('')}</span></label>
+        <div class="row" style="gap:12px">${num('followUpAfterDays', 'Przypomnienie po (dniach)')}${num('maxFollowUps', 'Ile przypomnień (0 = bez)')}</div>
+        ${num('maxWords', 'Maks. słów w mailu')}
+        <label class="f">Rezygnacja z wiadomości<select name="unsubscribe">
+          <option value="reply" ${cfg.unsubscribe === 'reply' ? 'selected' : ''}>dopisek „wystarczy odpisać nie”</option>
+          <option value="link" ${cfg.unsubscribe === 'link' ? 'selected' : ''}>link do wypisania</option>
+          <option value="none" ${cfg.unsubscribe === 'none' ? 'selected' : ''}>bez dopisku</option></select></label>
+        <label class="f"><input type="checkbox" name="autoLearn" ${cfg.autoLearn ? 'checked' : ''} style="display:inline;width:auto"> Nowe wnioski z nauki włączają się same (bez tego czekają na Twoją akceptację)</label>
+        <label class="f">Model AI<input name="model" value="${esc(cfg.model || '')}"></label>
+      </div>
+      <div class="card"><h3>Oferty (agent dzieli maile po równo, z wagami)</h3>
+        ${Object.entries(cfg.offers).map(([k, o]) => `<div style="margin-bottom:18px">
+          <div class="row" style="gap:12px;align-items:center"><label class="small"><input type="checkbox" name="on_${k}" ${o.on ? 'checked' : ''}> <strong>${esc(o.name)}</strong></label>
+            <label class="small">waga <input type="number" step="0.5" min="0" name="w_${k}" value="${esc(o.weight)}" style="width:4.5rem;display:inline"></label></div>
+          <p class="small muted" style="margin:.3rem 0">Dla: ${esc(o.for)}</p>
+          <textarea class="inp" name="d_${k}" style="min-height:8rem">${esc(o.desc)}</textarea></div>`).join('')}
+      </div>
+      <div class="card"><h3>Źródła firm</h3>
+        <label class="small"><input type="checkbox" name="hbOn" ${hb.on ? 'checked' : ''}> Homebook</label>
+        <label class="f">Kategorie (po jednej w linii)<textarea class="inp" name="hbCat" style="min-height:7rem">${esc(hb.categories.join('\n'))}</textarea></label>
+        <label class="f">Województwa<textarea class="inp" name="hbReg" style="min-height:7rem">${esc(hb.regions.join('\n'))}</textarea></label>
+        <label class="small"><input type="checkbox" name="ggOn" ${gg.on ? 'checked' : ''}> Wyszukiwanie Google</label>
+        <label class="f">Zapytania ({city} = miasto)<textarea class="inp" name="ggQ" style="min-height:7rem">${esc(gg.queries.join('\n'))}</textarea></label>
+        <label class="f">Miasta<textarea class="inp" name="ggC" style="min-height:7rem">${esc(gg.cities.join('\n'))}</textarea></label>
+      </div>
+      <div class="card"><h3>Zakazane zwroty (brzmią jak AI)</h3>
+        <textarea class="inp" name="forbidden" style="min-height:22rem">${esc(cfg.forbidden.join('\n'))}</textarea>
+        <p class="small muted">Mail z takim zwrotem, długim myślnikiem albo wykrzyknikiem wraca do poprawki, a jeśli dalej nie przejdzie kontroli, nie zostaje wysłany.</p>
+      </div>
+    </div>
+    <div class="row" style="margin-top:18px;gap:10px"><button class="btn">Zapisz ustawienia</button>
+      <button type="button" class="btn ghost" id="agReset">Przywróć domyślne oferty, źródła i zwroty</button></div>
+  </form>`;
+  $('#agCfg').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const body = {
+      dailyLimit: f.dailyLimit.value, hourlyLimit: f.hourlyLimit.value, windowStart: f.windowStart.value, windowEnd: f.windowEnd.value,
+      followUpAfterDays: f.followUpAfterDays.value, maxFollowUps: f.maxFollowUps.value, maxWords: f.maxWords.value,
+      workdays: [...f.querySelectorAll('[name=day]:checked')].map((x) => Number(x.value)),
+      unsubscribe: f.unsubscribe.value, autoLearn: f.autoLearn.checked, model: f.model.value.trim(),
+      forbidden: lines(f.forbidden.value),
+      offers: Object.fromEntries(Object.keys(cfg.offers).map((k) => [k, { on: f[`on_${k}`].checked, weight: f[`w_${k}`].value, desc: f[`d_${k}`].value }])),
+      sources: {
+        homebook: { on: f.hbOn.checked, categories: lines(f.hbCat.value), regions: lines(f.hbReg.value) },
+        google: { on: f.ggOn.checked, queries: lines(f.ggQ.value), cities: lines(f.ggC.value) },
+      },
+    };
+    try { await api('/agents/handlowiec/settings', { method: 'PATCH', body }); toast('Ustawienia zapisane.'); render(); }
+    catch (err) { toast(err.message, true); }
+  };
+  $('#agReset').onclick = async () => {
+    if (!confirm('Przywrócić domyślne oferty, źródła i listę zwrotów?')) return;
+    await api('/agents/handlowiec/settings/reset', { method: 'POST', body: { fields: ['offers', 'sources', 'forbidden'] } });
+    toast('Przywrócono.'); render();
+  };
+}
+
+async function dziennik(box) {
+  const { log } = await api('/agents/handlowiec/log?limit=200');
+  const KL = { error: 'bad', warn: 'warn', alert: 'bad', report: 'ok', action: '', info: '' };
+  const NAZWA = { error: 'błąd', warn: 'uwaga', alert: 'pilne', report: 'raport', action: 'zrobione', info: 'info' };
+  box.innerHTML = `<p class="sub">Wszystko, co agent zrobił, po kolei. Odświeża się co minutę.</p>
+    <div class="card" style="padding:0">${table(['Kiedy', 'Co', ''], log, (r) => `<tr>
+      <td class="small muted" style="white-space:nowrap">${fmtDateTime(r.ts)}</td>
+      <td><span class="tag ${KL[r.kind] || ''}">${NAZWA[r.kind] || esc(r.kind)}</span></td>
+      <td class="small" style="white-space:pre-wrap">${esc(r.message)}</td></tr>`)}</div>`;
+}
+
 /* --- Tablica: kartki i pliki --- */
 
 const KOLORY = [
