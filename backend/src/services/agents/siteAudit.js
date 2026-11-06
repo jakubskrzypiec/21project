@@ -168,11 +168,12 @@ function score(a, now = new Date()) {
   else if (a.genericTitle) { s += 2; reasons.push(`tytuł strony w Google to tylko „${a.title}”, bez nazwy firmy i usług`); }
   else if (a.dupTitle) { s += 1; reasons.push(`tytuł strony powtarza tę samą nazwę („${a.title}”) zamiast mówić, czym się Państwo zajmują`); }
   if (!a.description) { s += 1; reasons.push('Google nie dostaje opisu strony, więc w wynikach pokazuje przypadkowy fragment tekstu'); }
-  if (!a.schemaLocal) reasons.push('strona nie podaje wyszukiwarkom (także AI, jak ChatGPT) uporządkowanych danych o firmie: usług, miasta, kontaktu');
+  // Brak danych strukturalnych ma prawie każda strona — to obserwacja zapasowa, nie główna.
+  const fallback = !a.schemaLocal ? ['wyszukiwarki AI (np. ChatGPT) mają mało informacji o firmie, więc raczej jej nie polecą, gdy ktoś zapyta o takie usługi w tym mieście'] : [];
   if (a.responseMs > 6000) { s += 1; reasons.push(`strona ładuje się ponad ${Math.round(a.responseMs / 1000)} s`); }
   if (a.placeholders.length) { s += 2; reasons.push(`na stronie został tekst przykładowy z szablonu („${a.placeholders[0]}”)`); }
   if (a.size < 3000) { s += 1; reasons.push('strona jest prawie pusta'); }
-  return { score: s, reasons, quality: s >= 3 ? 'slaba' : 'dobra' };
+  return { score: s, reasons, fallbackReasons: fallback, quality: s >= 3 ? 'slaba' : 'dobra' };
 }
 
 /** Pełny audyt adresu: strona główna + podstrona kontaktowa (po adresy e-mail). */

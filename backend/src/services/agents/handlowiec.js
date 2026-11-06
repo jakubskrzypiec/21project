@@ -37,7 +37,7 @@ const DEFAULTS = {
   prospectFrom: 6,
   followUpAfterDays: 6,
   maxFollowUps: 1,
-  maxWords: 190,
+  maxWords: 130,
   model: 'claude-sonnet-5-5',
   unsubscribe: 'none', // none | reply | link — domyślnie bez dopisku (odmowy i tak trafiają na listę wykluczeń)
   autoLearn: true,
@@ -73,7 +73,11 @@ const settings = () => {
   const s = core.settings(AGENT, DEFAULTS);
   // Jednorazowo (wersja 2 ustawień): bez dopisku o rezygnacji i dłuższy limit słów na akapit „kim jestem”.
   if (!s.settingsVersion || s.settingsVersion < 2) {
-    return core.saveSettings(AGENT, DEFAULTS, { settingsVersion: 2, unsubscribe: 'none', maxWords: Math.max(Number(s.maxWords) || 0, 190) });
+    return core.saveSettings(AGENT, DEFAULTS, { settingsVersion: 3, unsubscribe: 'none', maxWords: 130 });
+  }
+  if (s.settingsVersion < 3) {
+    // Wersja 3: krótsze maile (test pokazał ok. 200 słów, cold mail najlepiej działa przy 100–130).
+    return core.saveSettings(AGENT, DEFAULTS, { settingsVersion: 3, maxWords: Math.min(Number(s.maxWords) || 130, 130) });
   }
   return s;
 };
@@ -223,7 +227,7 @@ async function compose(s, userPrompt, { kind = 'first' } = {}) {
     });
     const body = writer.tidy(out.body || '');
     const subject = writer.tidy(out.subject || '').replace(/\.$/, '');
-    const problems = writer.styleCheck(body, kind === 'first' ? subject : '', { forbidden: s.forbidden, maxWords: kind === 'first' ? s.maxWords : 90 });
+    const problems = writer.styleCheck(body, kind === 'first' ? subject : '', { forbidden: s.forbidden, maxWords: kind === 'first' ? s.maxWords + 25 : 90 }); // prompt prosi o limit, kontrola daje mały zapas
     last = { subject, body, angle: out.angle || null, problems, playbookId: playbook?.id || null };
     if (!problems.length && body && (subject || kind !== 'first')) return last;
     prompt = `${userPrompt}\n\nTwoja poprzednia wersja:\n---\n${body}\n---\nPopraw ją. Problemy: ${problems.join('; ') || 'brak tematu lub treści'}.`;

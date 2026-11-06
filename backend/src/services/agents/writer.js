@@ -119,15 +119,15 @@ function tidy(body) {
 /** Wzór stylu: mail z partii, który Jakub zaakceptował. Model ma pisać w tym tonie, nie kopiować go. */
 const DEFAULT_STYLE_EXAMPLE = `Dzień dobry,
 
-zajrzałem na stronę Państwa pracowni. Na telefonie trzeba ją powiększać palcami, a w Google wyświetla się tylko tytuł „Strona główna”, bez nazwy firmy.
+zajrzałem na stronę Państwa pracowni. Na telefonie trzeba ją powiększać palcami, a klient, który trafi na nią z polecenia, raczej nie zostanie na dłużej.
 
-Chciałem zapytać, czy nadal opłacają Państwo domenę i hosting tej strony? Jeśli tak, to szkoda, żeby strona, za którą Państwo płacą, nie pracowała w pełni na firmę. Odświeżona strona może dobrze wyglądać na telefonie, pokazywać realizacje i przynosić zapytania z Google.
+Odświeżona strona może dobrze wyglądać na telefonie, pokazywać realizacje i przynosić zapytania z Google.
 
-Nie piszę do przypadkowych firm. Pracuję z branżą architektoniczną i wnętrzarską, więc wiem, że tu klient najpierw ogląda portfolio, a dopiero potem dzwoni. Po starcie strony przez dwa miesiące się nią opiekuję: po pierwszym miesiącu spotykamy się, zbieram uwagi i na podstawie danych z Google dopracowuję SEO.
+Pracuję z branżą architektoniczną i wnętrzarską, więc wiem, że tu klient najpierw ogląda portfolio. Po starcie przez dwa miesiące opiekuję się stroną i dopracowuję SEO.
 
 [REALIZACJE]
 
-Mogę bezpłatnie i bez zobowiązań przygotować wstępny projekt pierwszego ekranu nowej strony dla Państwa firmy. Zobaczą Państwo kierunek, zanim Państwo cokolwiek zdecydują.
+Mogę bezpłatnie przygotować wstępny projekt pierwszego ekranu nowej strony, żeby zobaczyli Państwo kierunek.
 
 Jeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.`;
 
@@ -141,7 +141,10 @@ function factsFor(lead, audit) {
   ];
   if (audit.title) lines.push(`Tytuł strony w Google: „${audit.title}”`);
   if (audit.description) lines.push(`Opis strony w Google: „${audit.description.slice(0, 160)}”`);
-  if (audit.reasons?.length) lines.push('Sprawdzone obserwacje (wolno użyć tylko tych):', ...audit.reasons.map((r) => `- ${r}`));
+  if (audit.reasons?.length) lines.push('Sprawdzone obserwacje (wybierz JEDNĄ, najbardziej odczuwalną dla klienta):', ...audit.reasons.map((r) => `- ${r}`));
+  if (audit.fallbackReasons?.length) lines.push(audit.reasons?.length
+    ? 'Obserwacja zapasowa (użyj tylko, gdy żadna z powyższych nie pasuje; opisz po ludzku, bez słów „dane strukturalne”):'
+    : 'Obserwacja (opisz po ludzku, bez słów „dane strukturalne”):', ...audit.fallbackReasons.map((r) => `- ${r}`));
   if (audit.text) lines.push(`Fragment tekstu ze strony (dla kontekstu, nie cytuj go dosłownie): ${audit.text.slice(0, 600)}`);
   if (audit.note) lines.push(`Notatka z researchu (wolno z niej korzystać, nic nie dopowiadaj): ${audit.note.slice(0, 500)}`);
   return lines.join('\n');
@@ -152,18 +155,20 @@ function systemPrompt(s, playbook) {
 
 BUDOWA MAILA (zawsze w tej kolejności, każdy punkt to osobny akapit):
 1. „Dzień dobry,” w osobnej linii.
-2. PROBLEM: jedna konkretna, sprawdzona obserwacja o stronie tej firmy (tylko z listy obserwacji)
-   i co z niej wynika dla firmy. Gdy strona odstaje w wielu miejscach, opisz ogólne wrażenie
-   jednym zdaniem i podaj jeden przykład. Gdy firma NIE MA własnej strony: napisz wprost, że
+2. PROBLEM (1–2 zdania): jedna konkretna, sprawdzona obserwacja o stronie tej firmy (tylko z listy
+   obserwacji) i co z niej wynika dla firmy, po ludzku: klient, telefon, zapytanie. Nie wymieniaj
+   kilku problemów naraz. Gdy strona odstaje w wielu miejscach, opisz ogólne wrażenie jednym zdaniem. Gdy firma NIE MA własnej strony: napisz wprost, że
    nie znalazłeś jej strony, i co to oznacza (klient z polecenia albo z Google nie ma gdzie
    zobaczyć realizacji, a ChatGPT i Google polecają firmy, o których coś wiedzą).
-3. ROZWIĄZANIE: co zrobiłbym w ramach oferty i jaki to daje efekt (zapytania, klienci, czas).
-4. KIM JESTEM: dwa–trzy zdania własnymi słowami, na podstawie poniższych faktów. Spokojnie i profesjonalnie,
+3. ROZWIĄZANIE (1–2 zdania): co zrobiłbym w ramach oferty i jaki to daje efekt (zapytania, klienci, czas).
+   Bez wyliczania wszystkich elementów oferty.
+4. KIM JESTEM: jedno–dwa krótkie zdania własnymi słowami, na podstawie poniższych faktów. Spokojnie i profesjonalnie,
    bez przechwałek. Wybierz to, co pasuje do tej firmy i oferty, nie przepisuj wszystkiego:
    ${s.positioning || DEFAULT_POSITIONING}
 5. W osobnej linii dokładnie: [REALIZACJE]  (system wstawi tu listę moich realizacji z linkami)
 6. HACZYK: przepisz własnymi słowami podany haczyk, w jednym–dwóch zdaniach.
 7. Ostatnie zdanie: „Jeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.”
+Cały mail ma być krótki: tyle, ile przeczyta się w pół minuty.
 
 ZASADY (bezwzględne):
 - po polsku, forma grzecznościowa: Pan/Pani/Państwo (do firmy: Państwo),
@@ -205,12 +210,21 @@ function portfolioBlock(portfolio, offerKey) {
 }
 
 const DEFAULT_BOOKING_URL = '21project.pl/spotkanie/';
-const meetingLine = (url) => `Jeśli wolą Państwo najpierw poznać ofertę bliżej, chętnie porozmawiam na Google Meet. Termin można wybrać tutaj: ${url || DEFAULT_BOOKING_URL}`;
+const CLOSING = 'Jeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.';
+const meetingLine = (url) => `Jeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila albo od razu wybór terminu krótkiej rozmowy na Google Meet: ${url || DEFAULT_BOOKING_URL}`;
 
-/** Propozycja spotkania na samym końcu maila (dokłada system, z dokładnym linkiem). */
+/**
+ * Jedno zakończenie zamiast dwóch: przy ofertach ze spotkaniem standardowe ostatnie zdanie
+ * zamieniamy na wersję z linkiem do kalendarza (dokłada system, z dokładnym adresem).
+ */
 function withMeeting(body, offer, url) {
   if (!offer || !offer.meeting) return body;
-  return `${body.trim()}\n\n${meetingLine(url)}`;
+  const text = body.trim();
+  const paras = text.split(/\n\n/);
+  const last = paras[paras.length - 1];
+  if (/zainteresowani/i.test(last) && /odpowied/i.test(last)) paras[paras.length - 1] = meetingLine(url);
+  else paras.push(meetingLine(url));
+  return paras.join('\n\n');
 }
 
 /** Wstawia realizacje w miejsce znacznika (albo przed haczyk, gdy model go pominął). */
