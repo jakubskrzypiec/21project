@@ -240,15 +240,19 @@ test('zapytanie do API nie zawiera temperature (nowe modele go odrzucają)', asy
   assert.equal(sentBody.model, 'claude-sonnet-5-5');
 });
 
-test('odpowiedź modelu: narzędzie z polami albo JSON z łamanymi liniami', async (t) => {
+test('odpowiedź modelu: structured outputs ze ścisłym schematem, zapasowo JSON z łamanymi liniami', async (t) => {
   assert.deepEqual(core.parseJson('{"subject": "A", "body": "Dzień dobry,\n\nlinia"}'), { subject: 'A', body: 'Dzień dobry,\n\nlinia' });
   assert.deepEqual(core.parseJson('Proszę:\n```json\n{"a": "x\ty"}\n```'), { a: 'x\ty' });
-  let req;
-  t.mock.method(ai, 'call', async (opts) => {
-    req = opts;
-    return { text: '', usage: {}, content: [{ type: 'tool_use', name: 'zapisz_maila', input: { subject: 'Temat', body: 'Treść' } }] };
+  let sentBody;
+  t.mock.method(global, 'fetch', async (_url, opts) => {
+    sentBody = JSON.parse(opts.body);
+    return { ok: true, json: async () => ({ content: [{ type: 'thinking', thinking: '' }, { type: 'text', text: '{"subject":"Temat","body":"Treść"}' }], usage: {}, stop_reason: 'end_turn' }) };
   });
-  const r = await core.thinkJson('test', { system: 's', prompt: 'p', name: 'zapisz_maila', schema: { type: 'object', properties: {} } });
+  const r = await core.thinkJson('test', { system: 's', prompt: 'p', schema: { type: 'object', properties: { subject: { type: 'string' }, body: { type: 'string' } } } });
   assert.deepEqual(r, { subject: 'Temat', body: 'Treść' });
-  assert.deepEqual(req.toolChoice, { type: 'tool', name: 'zapisz_maila' });
+  assert.equal(sentBody.output_config.format.type, 'json_schema');
+  assert.deepEqual(sentBody.output_config.format.schema.required, ['subject', 'body']);
+  assert.equal(sentBody.output_config.format.schema.additionalProperties, false);
+  assert.equal('tool_choice' in sentBody, false);
+  assert.equal('temperature' in sentBody, false);
 });

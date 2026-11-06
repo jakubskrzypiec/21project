@@ -163,7 +163,7 @@ Tak brzmi mail, który się podoba (ton i długość, nie kopiuj treści):
 ${s.styleExample || DEFAULT_STYLE_EXAMPLE}
 ---
 ${playbook ? `\nWNIOSKI Z POPRZEDNICH TYGODNI (stosuj je):\n${playbook}\n` : ''}
-Gotowego maila zapisujesz narzędziem zapisz_maila: subject (temat), body (treść, akapity oddzielone pustą linią), angle (jednym zdaniem: jaki problem i efekt wybrałeś).`;
+Odpowiadasz polami: subject (temat), body (treść, akapity oddzielone pustą linią), angle (jednym zdaniem: jaki problem i efekt wybrałeś).`;
 }
 
 function firstPrompt(lead, audit, offer, hook) {

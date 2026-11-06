@@ -201,7 +201,7 @@ async function compose(s, userPrompt, { kind = 'first' } = {}) {
   let last;
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const out = await core.thinkJson(AGENT, {
-      system, prompt, maxTokens: 1500, model: s.model || undefined, name: 'zapisz_maila', description: 'Zapisuje gotowego maila.',
+      system, prompt, maxTokens: 8000, model: s.model || undefined,
       schema: {
         type: 'object',
         properties: {
@@ -427,8 +427,7 @@ async function handleReply(o, thread, incoming, s) {
   }
   const full = await gmailSvc.getThread(o.gmail_thread_id);
   const r = await core.thinkJson(AGENT, {
-    system: REPLY_SYSTEM, prompt: threadText(full), maxTokens: 900, model: s.model || undefined,
-    name: 'ocen_odpowiedz', description: 'Zapisuje ocenę odpowiedzi i szkic odpowiedzi.',
+    system: REPLY_SYSTEM, prompt: threadText(full), maxTokens: 8000, model: s.model || undefined,
     schema: {
       type: 'object',
       properties: {
@@ -569,8 +568,7 @@ Zwróć JSON:
  "summary": "3–5 zdań dla właściciela firmy: co działa, co nie, co zmieniasz i dlaczego",
  "ownerTips": ["1–3 rzeczy, które właściciel może zrobić, żeby wyniki były lepsze"]}`;
   const r = await core.thinkJson(AGENT, {
-    system: LEARN_SYSTEM, prompt, maxTokens: 2000, model: s.model || undefined,
-    name: 'zapisz_wnioski', description: 'Zapisuje nowe wnioski dla handlowca.',
+    system: LEARN_SYSTEM, prompt, maxTokens: 12000, model: s.model || undefined,
     schema: {
       type: 'object',
       properties: { playbook: { type: 'string' }, summary: { type: 'string' }, ownerTips: { type: 'array', items: { type: 'string' } } },
