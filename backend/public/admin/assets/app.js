@@ -1360,8 +1360,250 @@ views['/agenci/szczegoly'] = async () => {
   if (tab === 'przeglad' || tab === 'dziennik') odswiezajCo(60);
 };
 
-// Mapa agentów jest w budowie — do tego czasu „Agenci” otwiera widok szczegółów.
-views['/agenci'] = (...a) => views['/agenci/szczegoly'](...a);
+/* --- Mapa agentów: „21 Project HQ” ----------------------------------------
+   Pixel-artowa siedziba rysowana na płótnie 320×180 i powiększana bez wygładzania.
+   Agent chodzi do pokoju, który odpowiada temu, co właśnie robi. Kliknięcie w niego
+   otwiera krótką kartę: co robi, liczby z dziś, ostatnie czynności i start/stop. */
+
+const HQ_W = 320;
+const HQ_H = 180;
+const HQ_ROOMS = {
+  szukanie:   { x: 12,  y: 14,  w: 70, h: 62, name: 'Wywiadownia',     glow: '#3ee0d0' },
+  biuro:      { x: 88,  y: 14,  w: 70, h: 62, name: 'Biuro sprzedaży', glow: '#ff5fa2' },
+  poczta:     { x: 164, y: 14,  w: 70, h: 62, name: 'Poczta',          glow: '#ffd166' },
+  analityk:   { x: 240, y: 14,  w: 68, h: 62, name: 'Laboratorium',    glow: '#7aa2ff', soon: 'Analityk · wkrótce' },
+  odpoczynek: { x: 12,  y: 104, w: 70, h: 62, name: 'Pokój socjalny',  glow: '#b98cff' },
+  sala:       { x: 88,  y: 104, w: 70, h: 62, name: 'Sala spotkań',    glow: '#3ee0d0' },
+  prezes:     { x: 164, y: 104, w: 70, h: 62, name: 'Gabinet prezesa', glow: '#ff5fa2', soon: 'Prezes · wkrótce' },
+  klient:     { x: 240, y: 104, w: 68, h: 62, name: 'Dział klienta',   glow: '#ffd166', soon: 'Opiekun · wkrótce' },
+};
+const HQ_CORRIDOR_Y = 90;
+
+// Co agent robi → gdzie stoi i co mówi.
+const HQ_ACT = {
+  searching: { room: 'szukanie',   say: 'Szukam nowych firm' },
+  writing:   { room: 'biuro',      say: 'Piszę maile' },
+  sending:   { room: 'poczta',     say: 'Wysyłam maile' },
+  replies:   { room: 'poczta',     say: 'Czytam odpowiedzi' },
+  learning:  { room: 'sala',       say: 'Analizuję wyniki tygodnia' },
+  done:      { room: 'odpoczynek', say: 'Plan na dziś zrobiony' },
+  sleeping:  { room: 'odpoczynek', say: 'Odpoczywam do rana' },
+  weekend:   { room: 'odpoczynek', say: 'Weekend' },
+  stopped:   { room: 'odpoczynek', say: 'Zatrzymany' },
+  blocked:   { room: 'odpoczynek', say: 'Coś mnie blokuje' },
+};
+
+function hqRoomSpots(r) {
+  return [
+    { x: r.x + r.w * 0.3, y: r.y + r.h * 0.72 },
+    { x: r.x + r.w * 0.55, y: r.y + r.h * 0.62 },
+    { x: r.x + r.w * 0.75, y: r.y + r.h * 0.75 },
+  ];
+}
+
+/** Statyczna plansza: tło, kadłub, pokoje i meble. Rysowana raz. */
+function hqDrawBase(ctx) {
+  const px = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
+  // Kosmos
+  px(0, 0, HQ_W, HQ_H, '#120a24');
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < 90; i++) px(rnd() * HQ_W, rnd() * HQ_H, 1, 1, rnd() > 0.8 ? '#ffd6f0' : '#5b4a8a');
+  // Kadłub stacji
+  px(4, 6, HQ_W - 8, HQ_H - 12, '#ff4fa0');
+  px(6, 8, HQ_W - 12, HQ_H - 16, '#2a2140');
+  px(7, 9, HQ_W - 14, HQ_H - 18, '#1c1630');
+  // Korytarz
+  px(8, HQ_CORRIDOR_Y - 10, HQ_W - 16, 20, '#2e2848');
+  for (let x = 10; x < HQ_W - 10; x += 8) px(x, HQ_CORRIDOR_Y - 1, 4, 1, '#3c3560');
+  px(8, HQ_CORRIDOR_Y - 10, HQ_W - 16, 1, '#3ee0d0');
+  px(8, HQ_CORRIDOR_Y + 9, HQ_W - 16, 1, '#3ee0d0');
+
+  for (const [key, r] of Object.entries(HQ_ROOMS)) {
+    // Ściana i podłoga
+    px(r.x - 1, r.y - 1, r.w + 2, r.h + 2, r.glow);
+    px(r.x, r.y, r.w, r.h, '#d9d3e6');
+    px(r.x, r.y, r.w, 20, '#b9b0cc');
+    px(r.x, r.y + 20, r.w, 1, '#8f86a6');
+    for (let x = r.x; x < r.x + r.w; x += 10) px(x, r.y + 21, 1, r.h - 21, '#cec7dc');
+    // Drzwi do korytarza
+    const top = r.y < HQ_CORRIDOR_Y;
+    px(r.x + r.w / 2 - 6, top ? r.y + r.h : r.y - 2, 12, 2, '#2e2848');
+    hqFurniture(px, key, r);
+    if (r.soon) {
+      ctx.fillStyle = 'rgba(18,10,36,.55)';
+      ctx.fillRect(r.x, r.y, r.w, r.h);
+    }
+  }
+}
+
+function hqFurniture(px, key, r) {
+  const desk = (x, y, screen = '#3ee0d0') => {
+    px(x, y, 18, 6, '#8a5a3c'); px(x, y + 6, 2, 5, '#5e3b27'); px(x + 16, y + 6, 2, 5, '#5e3b27');
+    px(x + 5, y - 8, 9, 7, '#2a2140'); px(x + 6, y - 7, 7, 5, screen); px(x + 9, y - 1, 1, 1, '#2a2140');
+  };
+  const plant = (x, y) => { px(x, y + 5, 5, 4, '#a0522d'); px(x - 1, y, 7, 5, '#3faa5a'); px(x + 1, y - 2, 3, 2, '#5fd17a'); };
+  const shelf = (x, y) => {
+    px(x, y, 22, 14, '#6b4a34');
+    const c = ['#ff5fa2', '#3ee0d0', '#ffd166', '#7aa2ff', '#b98cff'];
+    for (let i = 0; i < 7; i++) { px(x + 2 + i * 3, y + 2, 2, 4, c[i % 5]); px(x + 2 + i * 3, y + 8, 2, 4, c[(i + 2) % 5]); }
+  };
+  if (key === 'szukanie') { shelf(r.x + 5, r.y + 4); desk(r.x + 40, r.y + 34); px(r.x + 34, r.y + 4, 30, 14, '#2a2140'); px(r.x + 35, r.y + 5, 28, 12, '#123a46');
+    for (let i = 0; i < 5; i++) px(r.x + 37 + i * 5, r.y + 7 + (i % 3) * 3, 3, 2, '#3ee0d0'); plant(r.x + 6, r.y + 46); }
+  if (key === 'biuro') { desk(r.x + 6, r.y + 34, '#ff8fc0'); desk(r.x + 42, r.y + 34, '#ff8fc0'); px(r.x + 26, r.y + 4, 18, 12, '#fff'); px(r.x + 28, r.y + 6, 14, 1, '#ff5fa2');
+    px(r.x + 28, r.y + 9, 10, 1, '#8f86a6'); px(r.x + 28, r.y + 12, 12, 1, '#8f86a6'); plant(r.x + 60, r.y + 8); }
+  if (key === 'poczta') { for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) { px(r.x + 6 + i * 9, r.y + 4 + j * 5, 8, 4, '#a08a6a'); px(r.x + 8 + i * 9, r.y + 5 + j * 5, 4, 2, '#fff'); }
+    px(r.x + 46, r.y + 30, 18, 12, '#ffd166'); px(r.x + 47, r.y + 31, 16, 3, '#e0a93c'); desk(r.x + 8, r.y + 38, '#ffd166');
+    px(r.x + 50, r.y + 46, 8, 5, '#fff'); px(r.x + 50, r.y + 46, 8, 1, '#ff5fa2'); }
+  if (key === 'analityk') { px(r.x + 6, r.y + 4, 26, 14, '#2a2140'); for (let i = 0; i < 6; i++) px(r.x + 8 + i * 4, r.y + 16 - (i * 2 + 2), 3, i * 2 + 2, '#7aa2ff'); desk(r.x + 38, r.y + 34, '#7aa2ff'); }
+  if (key === 'odpoczynek') { px(r.x + 6, r.y + 36, 30, 8, '#b98cff'); px(r.x + 6, r.y + 32, 30, 5, '#9a6cf0'); px(r.x + 4, r.y + 32, 3, 12, '#7d55c9'); px(r.x + 35, r.y + 32, 3, 12, '#7d55c9');
+    px(r.x + 46, r.y + 6, 10, 14, '#e8e8f0'); px(r.x + 48, r.y + 9, 6, 3, '#2a2140'); px(r.x + 44, r.y + 40, 12, 6, '#8a5a3c'); px(r.x + 48, r.y + 37, 3, 3, '#fff'); plant(r.x + 60, r.y + 44); }
+  if (key === 'sala') { px(r.x + 12, r.y + 34, 46, 10, '#8a5a3c'); px(r.x + 13, r.y + 35, 44, 8, '#a46e4b');
+    for (let i = 0; i < 4; i++) { px(r.x + 16 + i * 11, r.y + 29, 6, 4, '#3c3560'); px(r.x + 16 + i * 11, r.y + 46, 6, 4, '#3c3560'); }
+    px(r.x + 20, r.y + 4, 30, 14, '#fff'); px(r.x + 22, r.y + 14, 4, 3, '#3ee0d0'); px(r.x + 28, r.y + 11, 4, 6, '#ff5fa2'); px(r.x + 34, r.y + 8, 4, 9, '#ffd166'); }
+  if (key === 'prezes') { px(r.x + 18, r.y + 34, 34, 8, '#5e3b27'); px(r.x + 30, r.y + 28, 10, 6, '#2a2140'); px(r.x + 6, r.y + 4, 14, 14, '#ffd166'); px(r.x + 9, r.y + 7, 8, 8, '#fff3c4'); plant(r.x + 58, r.y + 44); }
+  if (key === 'klient') { desk(r.x + 8, r.y + 34, '#ffd166'); px(r.x + 40, r.y + 36, 20, 8, '#3ee0d0'); px(r.x + 40, r.y + 32, 20, 5, '#2bb8aa'); px(r.x + 34, r.y + 4, 24, 12, '#fff'); }
+}
+
+/** Postać agenta: 9×13 pikseli, dwie klatki chodu. */
+function hqDrawAgent(ctx, x, y, frame, moving, color = '#ff5fa2') {
+  const px = (dx, dy, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(Math.round(x - 4 + dx), Math.round(y - 13 + dy), w, h); };
+  const bob = !moving && frame % 2 ? 1 : 0;
+  px(0, 13, 9, 1, 'rgba(0,0,0,.25)');
+  px(2, 0 + bob, 5, 2, '#3a2418');          // włosy
+  px(1, 1 + bob, 1, 3, '#3a2418');
+  px(2, 2 + bob, 5, 4, '#f2c29b');          // twarz
+  px(3, 3 + bob, 1, 1, '#2a2140'); px(5, 3 + bob, 1, 1, '#2a2140');
+  px(1, 6 + bob, 7, 4, color);              // koszula
+  px(4, 6 + bob, 1, 3, '#fff');             // krawat-akcent
+  px(0, 7 + bob, 1, 3, '#f2c29b'); px(8, 7 + bob, 1, 3, '#f2c29b');
+  const l = moving ? (frame % 2 ? 1 : -1) : 0;
+  px(2, 10, 2, 3 + Math.max(0, l), '#2a2140');   // nogi
+  px(5, 10, 2, 3 + Math.max(0, -l), '#2a2140');
+}
+
+views['/agenci'] = async () => {
+  view.innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px">
+      <div><h1 class="page">21 Project HQ</h1>
+        <p class="sub" style="margin-bottom:0">Twoja firma, Twoi agenci. Kliknij w agenta, żeby zobaczyć, co dziś zrobił.</p></div>
+      <a class="btn ghost sm" href="#/agenci/szczegoly">Szczegóły i ustawienia</a>
+    </div>
+    <div class="hq" id="hq">
+      <canvas id="hqCanvas" width="${HQ_W}" height="${HQ_H}" aria-label="Mapa siedziby z agentami"></canvas>
+      <div id="hqLabels"></div>
+      <button class="hqAgent" id="hqAgent" type="button" aria-label="Handlowiec — pokaż kartę">
+        <span class="hqTag">Handlowiec</span><span class="hqSay" id="hqSay"></span>
+      </button>
+      <aside class="hqCard" id="hqCard" hidden></aside>
+    </div>
+    <div class="hqStats" id="hqStats"></div>`;
+
+  const hq = $('#hq');
+  const canvas = $('#hqCanvas');
+  const ctx = canvas.getContext('2d');
+  const base = document.createElement('canvas');
+  base.width = HQ_W; base.height = HQ_H;
+  hqDrawBase(base.getContext('2d'));
+
+  $('#hqLabels').innerHTML = Object.values(HQ_ROOMS).map((r) => `
+    <span class="hqRoom" style="left:${((r.x + 2) / HQ_W) * 100}%;top:${((r.y + r.h - 1) / HQ_H) * 100}%;--glow:${r.glow}">
+      ${esc(r.name)}${r.soon ? `<em>${esc(r.soon)}</em>` : ''}</span>`).join('');
+
+  // Stan ruchu postaci
+  const me = { x: HQ_ROOMS.odpoczynek.x + 30, y: HQ_ROOMS.odpoczynek.y + 45, path: [], room: 'odpoczynek', idleUntil: 0, frame: 0 };
+  let live = null;
+
+  const goTo = (roomKey) => {
+    const target = HQ_ROOMS[roomKey];
+    const spot = hqRoomSpots(target)[Math.floor(Math.random() * 3)];
+    if (roomKey === me.room) { me.path = [spot]; return; }
+    const from = HQ_ROOMS[me.room];
+    const door = (r) => ({ x: r.x + r.w / 2, y: r.y < HQ_CORRIDOR_Y ? r.y + r.h + 2 : r.y - 2 });
+    me.path = [door(from), { x: door(from).x, y: HQ_CORRIDOR_Y + 4 }, { x: door(target).x, y: HQ_CORRIDOR_Y + 4 }, door(target), spot];
+    me.room = roomKey;
+  };
+
+  const agentBtn = $('#hqAgent');
+  let last = performance.now();
+  let alive = true;
+  const loop = (t) => {
+    if (!alive || !document.body.contains(canvas)) { alive = false; return; }
+    const dt = Math.min(0.1, (t - last) / 1000); last = t;
+    me.frame = Math.floor(t / 220);
+    const next = me.path[0];
+    let moving = false;
+    if (next) {
+      const dx = next.x - me.x; const dy = next.y - me.y; const d = Math.hypot(dx, dy);
+      const step = 34 * dt;
+      if (d <= step) { me.x = next.x; me.y = next.y; me.path.shift(); if (!me.path.length) me.idleUntil = t + 2500 + Math.random() * 4000; }
+      else { me.x += (dx / d) * step; me.y += (dy / d) * step; moving = true; }
+    } else if (t > me.idleUntil && live) {
+      // Spacer po swoim pokoju, żeby nie stał jak posąg (śpiący i zatrzymany stoją).
+      if (!['sleeping', 'stopped', 'weekend', 'blocked'].includes(live.status.activity)) goTo(me.room);
+      else me.idleUntil = t + 5000;
+    }
+    ctx.drawImage(base, 0, 0);
+    // Migające światełka na ścianach
+    for (const r of Object.values(HQ_ROOMS)) {
+      if (r.soon) continue;
+      ctx.fillStyle = (Math.floor(t / 600) + r.x) % 3 ? r.glow : '#ffffff';
+      ctx.fillRect(r.x + r.w - 4, r.y + 2, 2, 2);
+    }
+    const sleeping = live && ['sleeping', 'stopped', 'weekend'].includes(live.status.activity);
+    hqDrawAgent(ctx, me.x, me.y, me.frame, moving);
+    if (sleeping && !moving) {
+      ctx.fillStyle = '#fff'; const z = Math.floor(t / 500) % 3;
+      ctx.fillRect(Math.round(me.x + 5 + z), Math.round(me.y - 17 - z * 2), 3, 1);
+    }
+    agentBtn.style.left = `${(me.x / HQ_W) * 100}%`;
+    agentBtn.style.top = `${(me.y / HQ_H) * 100}%`;
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+
+  const card = $('#hqCard');
+  const DZIALANIE = { action: '✓', alert: '!', report: '▤', warn: '⚠', error: '✕' };
+  const renderCard = () => {
+    if (!live) return;
+    const s = live.status;
+    const a = HQ_ACT[s.activity] || HQ_ACT.sleeping;
+    card.innerHTML = `
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <strong>Handlowiec</strong><button class="btn ghost sm" id="hqClose" type="button">Zamknij</button></div>
+      <p class="hqNow"><span class="hqDot ${s.enabled ? 'on' : ''}"></span>${esc(a.say)}</p>
+      <div class="hqMini">
+        <div><b>${live.today.sentToday}<small>/${live.dailyLimit}</small></b><span>wysłane dziś</span></div>
+        <div><b>${live.today.replies}</b><span>odpowiedzi dziś</span></div>
+        <div><b>${live.today.checked}</b><span>firm sprawdzonych</span></div>
+      </div>
+      <p class="small muted" style="margin:14px 0 6px">Ostatnio</p>
+      <ul class="hqList">${live.recent.slice(0, 5).map((r) => `<li><span>${DZIALANIE[r.kind] || '·'}</span>${esc(r.message.split('\n')[0])}<em>${relTime(r.ts)}</em></li>`).join('') || '<li>Jeszcze nic dziś nie zrobił.</li>'}</ul>
+      <div class="row" style="gap:8px;margin-top:14px;flex-wrap:wrap">
+        ${s.enabled ? '<button class="btn danger sm" id="hqStop" type="button">Zatrzymaj</button>' : '<button class="btn sm" id="hqStart" type="button">Uruchom</button>'}
+        <a class="btn ghost sm" href="#/agenci/szczegoly">Szczegóły</a></div>`;
+    $('#hqClose').onclick = () => { card.hidden = true; };
+    const act = async (path, msg) => { try { await api(path, { method: 'POST' }); toast(msg); await refresh(); } catch (e) { toast(e.message, true); } };
+    $('#hqStart')?.addEventListener('click', () => act('/agents/handlowiec/start', 'Handlowiec wrócił do pracy.'));
+    $('#hqStop')?.addEventListener('click', () => { if (confirm('Zatrzymać Handlowca?')) act('/agents/handlowiec/stop', 'Handlowiec zatrzymany.'); });
+  };
+  agentBtn.onclick = () => { card.hidden = !card.hidden; renderCard(); };
+
+  const refresh = async () => {
+    try { live = await api('/agents/handlowiec/live'); } catch { return; }
+    const a = HQ_ACT[live.status.activity] || HQ_ACT.sleeping;
+    $('#hqSay').textContent = a.say;
+    if (a.room !== me.room || !me.path.length) { if (a.room !== me.room) goTo(a.room); }
+    const t = live.today;
+    $('#hqStats').innerHTML = `
+      <div><b>${t.sentToday}<small>/${live.dailyLimit}</small></b><span>maili wysłanych dziś</span></div>
+      <div><b>${t.replies}</b><span>odpowiedzi dziś</span></div>
+      <a href="#/agenci/szczegoly?tab=odpowiedzi" class="${t.waiting ? 'hot' : ''}"><b>${t.waiting}</b><span>${t.waiting ? 'czeka na Twoją odpowiedź' : 'nic na Ciebie nie czeka'}</span></a>`;
+    if (!card.hidden) renderCard();
+  };
+  await refresh();
+  const timer = setInterval(() => { if (!document.body.contains(canvas)) { clearInterval(timer); return; } if (!document.hidden) refresh(); }, 30000);
+};
 
 async function przeglad(box, { stats: st, settings: cfg }) {
   const a = st.last30;
