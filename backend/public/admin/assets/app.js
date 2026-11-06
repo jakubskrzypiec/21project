@@ -1319,7 +1319,6 @@ views['/agenci'] = async () => {
   const braki = [];
   if (!s.checks.ai) braki.push('brak klucza <code>ANTHROPIC_API_KEY</code> w zmiennych serwera (Railway → Variables)');
   if (!s.checks.google) braki.push('Gmail nie jest połączony (Ustawienia → Połącz Google)');
-  if (!s.checks.cse) braki.push('wyszukiwanie Google jest wyłączone: brak <code>GOOGLE_CSE_KEY</code> i <code>GOOGLE_CSE_CX</code> (agent korzysta wtedy tylko z Homebooka)');
 
   const stan = s.enabled
     ? (!s.checks.ai || !s.checks.google ? '<span class="tag bad">włączony, ale zablokowany</span>'

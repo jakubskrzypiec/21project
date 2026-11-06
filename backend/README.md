@@ -156,7 +156,8 @@ Serwer budzi go co 5 minut; stan trzyma w bazie, więc restart ani nowe wdrożen
 Co robi:
 
 1. **Szuka firm**: Homebook (kategorie × województwa) i wyszukiwanie Google (`GOOGLE_CSE_KEY` + `GOOGLE_CSE_CX`).
-   Każde źródło pamięta, gdzie skończyło.
+   Każde źródło pamięta, gdzie skończyło. Uwaga: Google nie wydaje już kluczy Custom Search nowym kontom
+   (usługa kończy się 1.01.2027), więc w praktyce źródłem jest Homebook.
 2. **Sprawdza stronę**: HTTPS, telefon, rok w stopce (bez stopek motywów), tytuł i opis w Google, dane dla
    wyszukiwarek AI, adres e-mail ze strony i z podstrony kontaktowej.
 3. **Odsiewa duplikaty**: baza leadów, lista wykluczeń i **cały Gmail** (z koszem i spamem) po domenie i adresie.
