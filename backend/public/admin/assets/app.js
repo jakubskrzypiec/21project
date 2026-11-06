@@ -1310,7 +1310,7 @@ const proc = (a, b) => (b ? `${Math.round((100 * (a || 0)) / b)}%` : '—');
 const gmailLink = (threadId) => (threadId ? `https://mail.google.com/mail/u/0/#all/${threadId}` : null);
 const lines = (v) => String(v || '').split('\n').map((x) => x.trim()).filter(Boolean);
 
-views['/agenci'] = async () => {
+views['/agenci/szczegoly'] = async () => {
   const tab = new URLSearchParams(location.hash.split('?')[1] || '').get('tab') || 'przeglad';
   view.innerHTML = '<div class="empty">Wczytywanie…</div>';
   const d = await api('/agents/handlowiec');
@@ -1329,7 +1329,7 @@ views['/agenci'] = async () => {
 
   view.innerHTML = `
     <div class="row" style="justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px">
-      <div><h1 class="page">Handlowiec</h1>
+      <div><p class="small" style="margin:0 0 6px"><a href="#/agenci">← Mapa</a></p><h1 class="page">Handlowiec</h1>
         <p class="sub" style="margin-bottom:0">Agent cold outreachu: szuka firm, pisze i wysyła maile, pilnuje odpowiedzi i uczy się co tydzień.</p></div>
       <div class="row" style="gap:10px">${stan}
         <button class="btn ghost sm" id="agRun">Przebieg teraz</button>
@@ -1341,7 +1341,7 @@ views['/agenci'] = async () => {
       ${s.nextSendAt && s.enabled ? `· następny mail ok. ${fmtTime(s.nextSendAt)}` : ''}
       ${s.checks.googleAccount ? `· wysyła z ${esc(s.checks.googleAccount)}` : ''}</p>
     ${braki.length ? `<div class="notice warn">${braki.map((b) => `• ${b}`).join('<br>')}</div>` : ''}
-    <nav class="tabs">${TABS.map(([k, n]) => `<a href="#/agenci?tab=${k}" class="${k === tab ? 'active' : ''}">${n}</a>`).join('')}</nav>
+    <nav class="tabs">${TABS.map(([k, n]) => `<a href="#/agenci/szczegoly?tab=${k}" class="${k === tab ? 'active' : ''}">${n}</a>`).join('')}</nav>
     <div id="agTab"></div>`;
 
   const run = async (path, msg) => {
@@ -1359,6 +1359,9 @@ views['/agenci'] = async () => {
   await T(box, d);
   if (tab === 'przeglad' || tab === 'dziennik') odswiezajCo(60);
 };
+
+// Mapa agentów jest w budowie — do tego czasu „Agenci” otwiera widok szczegółów.
+views['/agenci'] = (...a) => views['/agenci/szczegoly'](...a);
 
 async function przeglad(box, { stats: st, settings: cfg }) {
   const a = st.last30;
@@ -1420,7 +1423,7 @@ async function odpowiedzi(box) {
   const { replies } = await api(`/agents/handlowiec/replies${all ? '?all=1' : ''}`);
   box.innerHTML = `
     <p class="sub">Firmy, które odpisały. Agent ocenił, jak pilna jest sprawa, i zapisał szkic odpowiedzi w Gmailu, w tym samym wątku. Nic nie wysyła sam: przeczytaj, popraw i wyślij z Gmaila.
-      <a href="#/agenci?tab=odpowiedzi${all ? '' : '&all=1'}">${all ? 'Pokaż tylko nowe' : 'Pokaż też obsłużone'}</a></p>
+      <a href="#/agenci/szczegoly?tab=odpowiedzi${all ? '' : '&all=1'}">${all ? 'Pokaż tylko nowe' : 'Pokaż też obsłużone'}</a></p>
     ${replies.length ? replies.map((r) => {
       const [nazwa, klasa] = KAT_ODP[r.category] || [r.category, ''];
       const link = gmailLink(r.thread_id);
@@ -1473,7 +1476,7 @@ async function firmy(box) {
   const stage = new URLSearchParams(location.hash.split('?')[1] || '').get('stage') || '';
   const { leads } = await api(`/agents/handlowiec/leads${stage ? `?stage=${stage}` : ''}`);
   box.innerHTML = `<p class="sub">Firmy, które agent znalazł i sprawdził.
-    ${['', ...Object.keys(ETAP)].map((k) => `<a href="#/agenci?tab=firmy${k ? `&stage=${k}` : ''}" style="margin-left:10px;${k === stage ? 'font-weight:600' : ''}">${k ? ETAP[k] : 'wszystkie'}</a>`).join('')}</p>
+    ${['', ...Object.keys(ETAP)].map((k) => `<a href="#/agenci/szczegoly?tab=firmy${k ? `&stage=${k}` : ''}" style="margin-left:10px;${k === stage ? 'font-weight:600' : ''}">${k ? ETAP[k] : 'wszystkie'}</a>`).join('')}</p>
     <div class="card" style="padding:0">${table(['Firma', 'Miasto / branża', 'Ocena strony', 'Etap', 'Uwagi'], leads, (l) => `<tr>
       <td class="small"><a href="#/leady/${l.id}">${esc(l.company || l.domain)}</a><br><span class="muted">${esc(l.domain || '')} ${esc(l.email || '')}</span></td>
       <td class="small">${esc(l.city || '—')}<br><span class="muted">${esc(l.industry || '')}</span></td>

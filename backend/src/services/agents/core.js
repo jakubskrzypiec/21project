@@ -108,7 +108,9 @@ async function exclusive(name, fn) {
   try { return await fn(); } finally { locks.delete(name); }
 }
 
+const isRunning = (name) => locks.has(name);
+
 module.exports = {
-  settings, saveSettings, state, saveState, log, recentLog, local, dayStartIso,
+  isRunning, settings, saveSettings, state, saveState, log, recentLog, local, dayStartIso,
   think, parseJson, addUsage, usageSummary, exclusive, deepMerge, nowIso,
 };
