@@ -448,6 +448,7 @@ Przy małej liczbie odpowiedzi mów ostrożnie i zaproponuj jeden test zamiast r
 
 async function learn({ force = false } = {}) {
   const s = settings();
+  core.saveState(AGENT, { activity: 'learning', learningAt: core.nowIso() });
   const since = new Date(Date.now() - 28 * 86400000).toISOString();
   const total = db.prepare("SELECT COUNT(*) n FROM outreach WHERE agent=? AND kind='first' AND status='sent' AND sent_at>=?").get(AGENT, since).n;
   if (total < 20 && !force) {
@@ -559,7 +560,9 @@ async function tick({ force = false } = {}) {
     }
 
     const out = {};
+    const doing = (activity) => core.saveState(AGENT, { activity });
     const state = st();
+    doing('replies');
     if (force || !state.lastReplyCheck || Date.now() - Date.parse(state.lastReplyCheck) > 30 * 60000) {
       out.replies = await checkReplies(s);
     }
@@ -572,6 +575,7 @@ async function tick({ force = false } = {}) {
       const c = counts(at);
       let need = s.dailyLimit - c.sentToday - c.queued;
       if (need > 0) {
+        doing('writing');
         need -= await planFollowUps(s, Math.min(need, 5));
       }
       let written = 0;
@@ -579,11 +583,13 @@ async function tick({ force = false } = {}) {
       for (let i = 0; i < 6 && need > 0; i += 1) {
         let lead = db.prepare("SELECT * FROM leads WHERE agent_stage='found' ORDER BY id LIMIT 1").get();
         if (!lead) {
+          doing('searching');
           if (!(await findCandidates(s))) break;
           lead = db.prepare("SELECT * FROM leads WHERE agent_stage='found' ORDER BY id LIMIT 1").get();
           if (!lead) break;
         }
         try {
+          doing('writing');
           const r = await qualify(lead, s);
           if (r.ok) { written += 1; need -= 1; }
         } catch (err) {
@@ -594,7 +600,7 @@ async function tick({ force = false } = {}) {
       out.written = written;
     }
 
-    if (inWindow(s, at)) out.sent = await sendNext(s, at);
+    if (inWindow(s, at)) { doing('sending'); out.sent = await sendNext(s, at); }
 
     if (s.workdays.includes(l.dow) && l.hourFloat >= s.windowEnd && st().lastReportDay !== l.day) {
       dailyReport(at);
@@ -657,12 +663,43 @@ function stats() {
   };
 }
 
+/**
+ * Co agent robi w tej chwili — dla mapy w panelu. Gdy akurat trwa przebieg, bierzemy to,
+ * co sam zgłosił; między przebiegami wynika to z planu dnia.
+ */
+function activityNow(s, state, at = now()) {
+  if (!s.enabled) return 'stopped';
+  if (!ai.enabled() || !google.status().connected) return 'blocked';
+  if (state.learningAt && Date.now() - Date.parse(state.learningAt) < 10 * 60000) return 'learning';
+  if (core.isRunning(AGENT) && state.activity) return state.activity;
+  const l = core.local(at);
+  if (!s.workdays.includes(l.dow)) return 'weekend';
+  if (inWindow(s, at)) {
+    const c = counts(at);
+    return c.sentToday >= s.dailyLimit ? 'done' : 'sending';
+  }
+  if (l.hourFloat >= Math.min(s.prospectFrom, s.windowStart) && l.hourFloat < s.windowStart) return 'writing';
+  return l.hourFloat >= s.windowEnd ? 'done' : 'sleeping';
+}
+
+function today(at = now()) {
+  const dayStart = core.dayStartIso(at);
+  const one = (sql, ...p) => db.prepare(sql).get(...p).n;
+  return {
+    ...counts(at),
+    replies: one("SELECT COUNT(*) n FROM agent_replies WHERE created_at>=? AND category NOT IN ('bounce','automat')", dayStart),
+    waiting: one("SELECT COUNT(*) n FROM agent_replies WHERE status='nowa' AND category IN ('pilne','wazne')"),
+    checked: one("SELECT COUNT(*) n FROM leads WHERE source='agent' AND updated_at>=? AND agent_stage IN ('skipped','queued','contacted')", dayStart),
+  };
+}
+
 function status() {
   const s = settings();
   const state = st();
   const lastTick = state.lastTickAt ? Date.parse(state.lastTickAt) : 0;
   return {
     enabled: s.enabled,
+    activity: activityNow(s, state),
     alive: Date.now() - lastTick < 15 * 60000,
     lastTickAt: state.lastTickAt || null,
     nextSendAt: state.nextSendAt || null,
@@ -679,6 +716,6 @@ function status() {
 
 module.exports = {
   AGENT, DEFAULTS, settings, saveSettings: (patch) => core.saveSettings(AGENT, DEFAULTS, patch),
-  tick, start, stop, status, stats, preview, learn, savePlaybook, activatePlaybook, activePlaybook,
+  tick, start, stop, status, today, activityNow, stats, preview, learn, savePlaybook, activatePlaybook, activePlaybook,
   checkReplies, dailyReport, chooseOffer, counts, inWindow, sendNext, qualify, compose, POSITIVE,
 };

@@ -15,6 +15,19 @@ router.get('/', wrap(() => ({
   agents: [{ id: handlowiec.AGENT, name: 'Handlowiec', role: 'Cold outreach: szuka firm, pisze i wysyła maile, pilnuje odpowiedzi.', ...handlowiec.status() }],
 })));
 
+/** Lekki stan dla mapy: co robi, liczby z dziś i kilka ostatnich czynności. */
+router.get('/handlowiec/live', wrap(() => {
+  const s = handlowiec.settings();
+  return {
+    status: handlowiec.status(),
+    today: handlowiec.today(),
+    dailyLimit: s.dailyLimit,
+    windowStart: s.windowStart,
+    windowEnd: s.windowEnd,
+    recent: core.recentLog(handlowiec.AGENT, { limit: 40 }).filter((r) => r.kind !== 'info').slice(0, 8),
+  };
+}));
+
 router.get('/handlowiec', wrap(() => ({
   status: handlowiec.status(),
   settings: handlowiec.settings(),
