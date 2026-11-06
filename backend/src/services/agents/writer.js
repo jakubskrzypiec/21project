@@ -9,6 +9,7 @@ const DEFAULT_OFFERS = {
   strona: {
     on: true,
     daily: 10,
+    meeting: false,
     name: 'Strona z SEO i widocznością w AI',
     for: 'firmy ze słabą, starą stroną albo bez własnej strony',
     desc: `Nowa strona nastawiona na zapytania od klientów, nie na samo „ładnie wyglądać”.
@@ -20,6 +21,7 @@ Dwa miesiące opieki po starcie: po miesiącu spotkanie, uwagi klienta, poprawki
   panel: {
     on: true,
     daily: 10,
+    meeting: true,
     name: 'Panel administracyjny',
     for: 'firmy z porządną stroną, które mają dużo zapytań, klientów i projektów',
     desc: `Panel do prowadzenia firmy dopasowany do sposobu pracy: zapytania z formularza,
@@ -31,6 +33,7 @@ Więcej o panelach: 21project.pl/saas/`,
   pakiet: {
     on: true,
     daily: 10,
+    meeting: true,
     name: 'System pozyskiwania klientów',
     for: 'każda firma, która chce więcej klientów, a nie tylko nową stronę',
     desc: `Całość od jednego partnera: strona z SEO i widocznością w AI, panel do obsługi
@@ -41,9 +44,10 @@ W pakiecie dwa miesiące opieki: po miesiącu spotkanie, uwagi i poprawki, dopra
 };
 
 /** Kim jestem — fakty, z których agent pisze własnymi słowami akapit przed realizacjami. */
-const DEFAULT_POSITIONING = `To nie jest kolejna masowa wiadomość od agencji. Pracuję z branżą architektoniczną i wnętrzarską:
-architektami, projektantami wnętrz i ogrodów oraz firmami, które z nimi współpracują. Znam to, jak w tej
-branży pozyskuje się klientów: polecenia, portfolio, zaufanie i to, czy firmę widać w Google i w ChatGPT.
+const DEFAULT_POSITIONING = `To nie jest kolejna masowa wiadomość od agencji. Pracuję z branżą architektoniczną, wnętrzarską
+i budowlaną w szerokim sensie: z architektami, projektantami wnętrz i ogrodów, pracowniami, wykonawcami,
+stolarzami, producentami i firmami, które z nimi współpracują. Znam to, jak w tej branży pozyskuje się
+klientów: polecenia, portfolio, zaufanie i to, czy firmę widać w Google i w ChatGPT.
 Nie sprzedaję samego wyglądu strony, tylko rozwiązanie problemu: stronę, która przynosi zapytania.
 Po starcie strony przez dwa miesiące się nią opiekuję: po pierwszym miesiącu spotykam się z klientem,
 pytam, co działa, zbieram uwagi i poprawki, a SEO dopracowujemy na podstawie pierwszych danych z Google.`;
@@ -119,7 +123,7 @@ zajrzałem na stronę Państwa pracowni. Na telefonie trzeba ją powiększać pa
 
 Chciałem zapytać, czy nadal opłacają Państwo domenę i hosting tej strony? Jeśli tak, to szkoda, żeby strona, za którą Państwo płacą, nie pracowała w pełni na firmę. Odświeżona strona może dobrze wyglądać na telefonie, pokazywać realizacje i przynosić zapytania z Google.
 
-Nie piszę do przypadkowych firm. Pracuję z architektami i projektantami wnętrz, więc wiem, że w tej branży klient najpierw ogląda portfolio, a dopiero potem dzwoni. Po starcie strony przez dwa miesiące się nią opiekuję: po pierwszym miesiącu spotykamy się, zbieram uwagi i na podstawie danych z Google dopracowuję SEO.
+Nie piszę do przypadkowych firm. Pracuję z branżą architektoniczną i wnętrzarską, więc wiem, że tu klient najpierw ogląda portfolio, a dopiero potem dzwoni. Po starcie strony przez dwa miesiące się nią opiekuję: po pierwszym miesiącu spotykamy się, zbieram uwagi i na podstawie danych z Google dopracowuję SEO.
 
 [REALIZACJE]
 
@@ -200,6 +204,15 @@ function portfolioBlock(portfolio, offerKey) {
   return ['Kilka moich realizacji:', ...items.map((p) => p.url), `Więcej realizacji: ${PORTFOLIO_ALL}`].join('\n');
 }
 
+const DEFAULT_BOOKING_URL = '21project.pl/spotkanie/';
+const meetingLine = (url) => `Jeśli wolą Państwo najpierw poznać ofertę bliżej, chętnie porozmawiam na Google Meet. Termin można wybrać tutaj: ${url || DEFAULT_BOOKING_URL}`;
+
+/** Propozycja spotkania na samym końcu maila (dokłada system, z dokładnym linkiem). */
+function withMeeting(body, offer, url) {
+  if (!offer || !offer.meeting) return body;
+  return `${body.trim()}\n\n${meetingLine(url)}`;
+}
+
 /** Wstawia realizacje w miejsce znacznika (albo przed haczyk, gdy model go pominął). */
 function withPortfolio(body, block) {
   if (body.includes('[REALIZACJE]')) return body.replace(/\[REALIZACJE\]/, block);
@@ -224,4 +237,5 @@ Temat zostaw pusty (""), bo odpowiadamy w wątku.`;
 module.exports = {
   DEFAULT_OFFERS, DEFAULT_STRATEGY, DEFAULT_FORBIDDEN, DEFAULT_STYLE_EXAMPLE, DEFAULT_POSITIONING, DEFAULT_PORTFOLIO, DEFAULT_HOOKS, PORTFOLIO_ALL, SIGNATURE,
   styleCheck, tidy, systemPrompt, firstPrompt, followUpPrompt, factsFor, portfolioBlock, withPortfolio,
+  withMeeting, meetingLine, DEFAULT_BOOKING_URL,
 };

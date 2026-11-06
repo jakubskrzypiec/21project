@@ -280,3 +280,27 @@ test('przypomnienie nie wychodzi, gdy firma odpisała poza wątkiem', async (t) 
   assert.equal(db.prepare('SELECT status FROM outreach WHERE id=?').get(fu).status, 'skipped');
   assert.ok(db.prepare('SELECT replied_at FROM outreach WHERE id=?').get(first).replied_at);
 });
+
+test('kalendarz spotkań: godziny w strefie Warszawy, wyprzedzenie, zajęte terminy i przerwa', () => {
+  const booking = require('../src/services/booking');
+  // 10:00 w Warszawie zimą to 09:00 UTC, latem 08:00 UTC.
+  assert.equal(booking.zonedToUtc(2026, 11, 9, 10, 0).toISOString(), '2026-11-09T09:00:00.000Z');
+  assert.equal(booking.zonedToUtc(2026, 7, 6, 10, 0).toISOString(), '2026-07-06T08:00:00.000Z');
+  const s = { ...booking.DEFAULTS, horizonDays: 7 };
+  const now = new Date('2026-11-06T09:00:00Z'); // piątek 10:00
+  const slots = booking.candidateSlots(s, now);
+  assert.ok(slots.length > 0);
+  assert.ok(slots.every((x) => x.start.getTime() >= now.getTime() + 12 * 3600000)); // min. 12 h wyprzedzenia
+  assert.equal(slots[0].start.toISOString(), '2026-11-09T09:00:00.000Z'); // pn 10:00, weekend pominięty
+  const busy = [[Date.parse('2026-11-09T09:30:00Z'), Date.parse('2026-11-09T10:00:00Z')]];
+  assert.equal(booking.isFree(slots[0], busy, 15), false); // koliduje z przerwą 15 min
+  assert.equal(booking.isFree(slots[0], busy, 0), true);
+});
+
+test('mail z ofertą panelu kończy się propozycją spotkania z linkiem, oferta strony nie', () => {
+  const s = h.settings();
+  const body = 'Dzień dobry,\n\nTreść.\n\nJeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.';
+  assert.ok(writer.withMeeting(body, s.offers.panel, s.bookingUrl).endsWith('Termin można wybrać tutaj: 21project.pl/spotkanie/'));
+  assert.equal(writer.withMeeting(body, s.offers.strona, s.bookingUrl), body);
+  assert.ok(gmail.textToHtml(writer.meetingLine()).includes('href="https://21project.pl/spotkanie/"'));
+});

@@ -47,6 +47,7 @@ const DEFAULTS = {
   strategy: writer.DEFAULT_STRATEGY,
   styleExample: writer.DEFAULT_STYLE_EXAMPLE,
   positioning: writer.DEFAULT_POSITIONING,
+  bookingUrl: writer.DEFAULT_BOOKING_URL,
   forbidden: writer.DEFAULT_FORBIDDEN,
   sources: {
     order: ['homebook', 'google'],
@@ -301,7 +302,7 @@ async function writeFirst(lead, s, audit, email) {
   } catch (err) {
     return skipLead(lead, err.message.slice(0, 300));
   }
-  const body = writer.withPortfolio(draft.body, writer.portfolioBlock(s.portfolio, offerKey));
+  const body = writer.withMeeting(writer.withPortfolio(draft.body, writer.portfolioBlock(s.portfolio, offerKey)), s.offers[offerKey], s.bookingUrl);
   db.prepare(`INSERT INTO outreach (lead_id, created_at, status, to_email, subject, body, generated_by, agent, offer, kind, playbook_id, hook)
     VALUES (?, ?, 'agent_queued', ?, ?, ?, 'agent', ?, ?, 'first', ?, ?)`)
     .run(lead.id, core.nowIso(), email, draft.subject, body, AGENT, offerKey, draft.playbookId, hookKey);
@@ -424,7 +425,9 @@ Kategorie:
 - "automat": autoresponder, urlop, zmiana adresu.
 Szkic odpowiedzi pisz po polsku, formą Pan/Pani/Państwo, krótko, konkretnie, bez wykrzykników
 i długich myślników, bez podpisu (dokłada go system). Przy „odmowa” podziękuj w jednym zdaniu.
-Przy „automat” szkic zostaw pusty. Nie wymyślaj cen ani terminów — zaproponuj krótką rozmowę.
+Przy „automat” szkic zostaw pusty. Nie wymyślaj cen ani terminów. Gdy firma jest zainteresowana albo pyta
+o szczegóły, zaproponuj krótką rozmowę na Google Meet i napisz, że termin można wybrać pod linkiem {{BOOKING}}
+(wpisz ten adres dokładnie tak). Nie proponuj konkretnych godzin.
 Zwróć JSON: {"category": "...", "summary": "jedno zdanie po polsku", "optOut": true/false, "draft": "..."}`;
 
 function threadText(thread) {
@@ -443,7 +446,7 @@ async function handleReply(o, thread, incoming, s) {
   }
   const full = await gmailSvc.getThread(o.gmail_thread_id);
   const r = await core.thinkJson(AGENT, {
-    system: REPLY_SYSTEM, prompt: threadText(full), maxTokens: 8000, model: s.model || undefined,
+    system: REPLY_SYSTEM.replace('{{BOOKING}}', s.bookingUrl || writer.DEFAULT_BOOKING_URL), prompt: threadText(full), maxTokens: 8000, model: s.model || undefined,
     schema: {
       type: 'object',
       properties: {
@@ -732,7 +735,7 @@ async function preview(url, offerKey) {
   const hookKey = chooseHook(s);
   const lead = { company: null, domain: audit.host, website: url, industry: null, city: null };
   const draft = await compose(s, writer.firstPrompt(lead, audit, s.offers[key], s.hooks?.[hookKey]));
-  const body = `${writer.withPortfolio(draft.body, writer.portfolioBlock(s.portfolio, key))}${footer(s, { id: 0, unsub_token: 'podglad' })}`;
+  const body = `${writer.withMeeting(writer.withPortfolio(draft.body, writer.portfolioBlock(s.portfolio, key)), s.offers[key], s.bookingUrl)}${footer(s, { id: 0, unsub_token: 'podglad' })}`;
   return { offer: key, hook: hookKey, audit: { host: audit.host, quality: audit.quality, score: audit.score, reasons: audit.reasons, email: audit.email, title: audit.title },
     subject: draft.subject, body, html: gmailSvc.textToHtml(body), angle: draft.angle };
 }
@@ -838,7 +841,7 @@ async function sendTestsInner({ url, company, city, industry, note } = {}) {
   for (const [i, key] of keys.entries()) {
     const hookKey = hooks[i % Math.max(1, hooks.length)] || null;
     const draft = await compose(s, writer.firstPrompt(lead, audit, s.offers[key], s.hooks?.[hookKey]));
-    const body = `${writer.withPortfolio(draft.body, writer.portfolioBlock(s.portfolio, key))}${footer(s, { id: 0, unsub_token: 'test' })}`;
+    const body = `${writer.withMeeting(writer.withPortfolio(draft.body, writer.portfolioBlock(s.portfolio, key)), s.offers[key], s.bookingUrl)}${footer(s, { id: 0, unsub_token: 'test' })}`;
     const subject = `[TEST: ${s.offers[key].name}] ${draft.subject}`;
     await gmailSvc.sendMessage({ to: account, subject, body, html: gmailSvc.textToHtml(body) });
     out.push({ offer: key, hook: hookKey, subject, body, html: gmailSvc.textToHtml(body) });

@@ -76,6 +76,26 @@ router.post('/api/contact', limit(5, 10 * 60 * 1000), async (req, res) => {
 });
 
 /** Link wypisania z wiadomości handlowych (jednym kliknięciem, bez logowania). */
+/* ------------------------- kalendarz spotkań ------------------------- */
+const booking = require('../services/booking');
+
+router.get('/api/booking/slots', limit(60, 10 * 60 * 1000), async (_req, res) => {
+  try { res.json(await booking.availableSlots()); }
+  catch (err) { res.status(503).json({ error: err.message }); }
+});
+
+router.post('/api/booking', limit(5, 30 * 60 * 1000), async (req, res) => {
+  const b = req.body || {};
+  if (b.website_url) return res.json({ ok: true }); // pułapka na boty
+  try {
+    const r = await booking.book(b);
+    logAction('booking.create', clientIp(req), { start: r.start });
+    res.status(201).json({ ok: true, ...r });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 router.get('/u/:token', (req, res) => {
   const lead = db.prepare('SELECT * FROM leads WHERE unsub_token = ?').get(req.params.token);
   if (lead) {

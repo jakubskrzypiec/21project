@@ -172,7 +172,11 @@ Co robi:
 8. **Import firm bez stron**: zakładka Firmy → wklej tabelę albo CSV (Firma;E-mail;Miasto;Branża;Strona;Notatka).
    Zaimportowane firmy idą przed Homebookiem; przy darmowej poczcie (gmail, wp…) duplikat sprawdzany jest po samym adresie.
 9. **Test**: w Przeglądzie przycisk „Wyślij mi 3 testowe maile” — po jednym z każdej oferty, na Twoją skrzynkę.
-10. **Uczy się** w każdy poniedziałek o 6:20: porównuje maile z odpowiedzią i bez, zapisuje nową wersję wniosków.
+10. **Spotkania**: przy ofercie panelu i pakietu mail kończy się propozycją rozmowy na Google Meet z linkiem
+   21project.pl/spotkanie/. Strona pokazuje wolne terminy z Kalendarza Google (freebusy + spotkania z panelu), a rezerwacja
+   tworzy wydarzenie z linkiem Meet i zaproszeniem dla klienta. Ustawienia: Agenci → Ustawienia → Kalendarz spotkań.
+   API: `GET /api/booking/slots`, `POST /api/booking` (publiczne, z limitem), `GET/PATCH /api/admin/calendar/booking`.
+11. **Uczy się** w każdy poniedziałek o 6:20: porównuje maile z odpowiedzią i bez, zapisuje nową wersję wniosków.
    Wszystkie wersje są w zakładce „Strategia i nauka” i można wrócić do starszej.
 
 Potrzebne zmienne na serwerze: `ANTHROPIC_API_KEY` (bez niego agent nie pisze) i połączone konto Google.

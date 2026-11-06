@@ -1901,7 +1901,8 @@ async function ustawienia(box, { settings: cfg }) {
         <p class="small muted" style="margin-top:0">Suma pierwszych maili: <strong id="agSum">${Object.values(cfg.offers).filter((o) => o.on).reduce((a, o) => a + (Number(o.daily) || 0), 0)}</strong> dziennie (plus przypomnienia, razem maks. ${cfg.dailyLimit}).</p>
         ${Object.entries(cfg.offers).map(([k, o]) => `<div style="margin-bottom:18px">
           <div class="row" style="gap:12px;align-items:center"><label class="small"><input type="checkbox" name="on_${k}" ${o.on ? 'checked' : ''}> <strong>${esc(o.name)}</strong></label>
-            <label class="small">dziennie <input type="number" min="0" max="100" name="w_${k}" value="${esc(o.daily ?? 10)}" style="width:4.5rem;display:inline"></label></div>
+            <label class="small">dziennie <input type="number" min="0" max="100" name="w_${k}" value="${esc(o.daily ?? 10)}" style="width:4.5rem;display:inline"></label>
+            <label class="small"><input type="checkbox" name="m_${k}" ${o.meeting ? 'checked' : ''}> proponuj spotkanie na Meet</label></div>
           <p class="small muted" style="margin:.3rem 0">Dla: ${esc(o.for)}</p>
           <textarea class="inp" name="d_${k}" style="min-height:8rem">${esc(o.desc)}</textarea></div>`).join('')}
       </div>
@@ -1915,6 +1916,11 @@ async function ustawienia(box, { settings: cfg }) {
         <p class="small muted" style="margin-top:0">Agent daje je po równo. W „Przeglądzie” widać, który ma więcej odpowiedzi.</p>
         ${Object.entries(cfg.hooks || {}).map(([k, hk]) => `<label class="small" style="display:block;margin-bottom:6px"><input type="checkbox" name="hk_on_${k}" ${hk.on ? 'checked' : ''}> <strong>${esc(hk.name)}</strong></label>
           <textarea class="inp" name="hk_${k}" style="min-height:5rem;margin-bottom:14px">${esc(hk.text)}</textarea>`).join('')}
+      </div>
+      <div class="card"><h3>Kalendarz spotkań (Google Meet)</h3>
+        <p class="small muted" style="margin-top:0">Klient wybiera wolny termin na stronie, a wydarzenie z linkiem Meet pojawia się w Twoim Kalendarzu Google. Zajęte godziny z kalendarza są ukryte.</p>
+        <label class="f">Link w mailach<input name="bookingUrl" value="${esc(cfg.bookingUrl || '21project.pl/spotkanie/')}"></label>
+        <div id="agBooking"><p class="small muted">Wczytywanie ustawień kalendarza…</p></div>
       </div>
       <div class="card"><h3>Źródła firm</h3>
         <label class="small"><input type="checkbox" name="hbOn" ${hb.on ? 'checked' : ''}> Homebook</label>
@@ -1932,6 +1938,25 @@ async function ustawienia(box, { settings: cfg }) {
     <div class="row" style="margin-top:18px;gap:10px"><button class="btn">Zapisz ustawienia</button>
       <button type="button" class="btn ghost" id="agReset">Przywróć domyślne oferty, realizacje, haczyki, źródła i zwroty</button></div>
   </form>`;
+  // Ustawienia kalendarza mają osobny zapis (to funkcja panelu, nie tylko agenta).
+  api('/calendar/booking').then(({ settings: b }) => {
+    const DN = [[1, 'pn'], [2, 'wt'], [3, 'śr'], [4, 'cz'], [5, 'pt'], [6, 'sb'], [7, 'nd']];
+    const n = (k, l) => `<label class="f">${l}<input type="number" min="0" data-b="${k}" value="${esc(b[k])}"></label>`;
+    $('#agBooking').innerHTML = `
+      <label class="small"><input type="checkbox" data-b="enabled" ${b.enabled ? 'checked' : ''}> rezerwacje włączone</label>
+      <label class="f" style="margin-top:12px">Tytuł spotkania<input data-b="title" value="${esc(b.title)}"></label>
+      <div class="row" style="gap:12px">${n('dayStart', 'Od godziny')}${n('dayEnd', 'Do godziny')}</div>
+      <div class="row" style="gap:12px">${n('slotMinutes', 'Długość (min)')}${n('bufferMinutes', 'Przerwa (min)')}</div>
+      <div class="row" style="gap:12px">${n('minNoticeHours', 'Najwcześniej za (godz.)')}${n('horizonDays', 'Na ile dni do przodu')}</div>
+      <label class="f">Dni<span class="row" style="gap:12px;margin-top:8px">${DN.map(([d, l]) => `<label class="small"><input type="checkbox" data-bday="${d}" ${b.workdays.includes(d) ? 'checked' : ''}> ${l}</label>`).join('')}</span></label>
+      <button type="button" class="btn sm" id="agBookSave">Zapisz kalendarz</button>
+      <a class="btn ghost sm" href="https://21project.pl/spotkanie/" target="_blank" rel="noopener">Otwórz stronę rezerwacji</a>`;
+    $('#agBookSave').onclick = async () => {
+      const body = { workdays: [...document.querySelectorAll('[data-bday]:checked')].map((x) => Number(x.dataset.bday)) };
+      document.querySelectorAll('[data-b]').forEach((x) => { body[x.dataset.b] = x.type === 'checkbox' ? x.checked : x.type === 'number' ? Number(x.value) : x.value; });
+      try { await api('/calendar/booking', { method: 'PATCH', body }); toast('Kalendarz zapisany.'); } catch (err) { toast(err.message, true); }
+    };
+  }).catch((err) => { $('#agBooking').innerHTML = `<p class="small" style="color:var(--bad)">${esc(err.message)}</p>`; });
   $('#agCfg').onsubmit = async (e) => {
     e.preventDefault();
     const f = e.target;
@@ -1941,7 +1966,8 @@ async function ustawienia(box, { settings: cfg }) {
       workdays: [...f.querySelectorAll('[name=day]:checked')].map((x) => Number(x.value)),
       unsubscribe: f.unsubscribe.value, autoLearn: f.autoLearn.checked, model: f.model.value.trim(),
       forbidden: lines(f.forbidden.value),
-      offers: Object.fromEntries(Object.keys(cfg.offers).map((k) => [k, { on: f[`on_${k}`].checked, daily: f[`w_${k}`].value, desc: f[`d_${k}`].value }])),
+      offers: Object.fromEntries(Object.keys(cfg.offers).map((k) => [k, { on: f[`on_${k}`].checked, daily: f[`w_${k}`].value, meeting: f[`m_${k}`].checked, desc: f[`d_${k}`].value }])),
+      bookingUrl: f.bookingUrl.value,
       portfolio: [...f.querySelectorAll('[data-pf]')].map((row) => ({
         url: row.querySelector('[name=pfUrl]').value,
         offers: [...row.querySelectorAll('[name=pfOffer]:checked')].map((x) => x.value),
