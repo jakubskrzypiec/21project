@@ -14,10 +14,21 @@
 
   function fail(msg) { $('bk-status').textContent = msg; }
 
+  var keyToParts = function (k) { var a = k.split('-'); return { y: +a[0], m: +a[1], d: +a[2] }; };
+  var todayKey = dayKey(new Date().toISOString());
+  var view = null;     // { y, m } — wyświetlany miesiąc
+  var minView = null;
+  var maxView = null;
+  var selectedDay = null;
+
   function renderSlots(key) {
+    selectedDay = key;
     var box = $('bk-slots');
     box.innerHTML = '';
-    Array.prototype.forEach.call($('bk-days').children, function (b) { b.setAttribute('aria-pressed', String(b.dataset.day === key)); });
+    renderMonth();
+    var t = $('bk-daytitle');
+    t.hidden = false;
+    t.textContent = fmtDay(byDay[key][0].start) + ', ' + fmtDate(byDay[key][0].start) + ' · wybierz godzinę';
     byDay[key].forEach(function (s) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'bk-slot'; b.textContent = fmtTime(s.start); b.setAttribute('aria-pressed', 'false');
@@ -32,22 +43,55 @@
     });
   }
 
+  /** Kratka miesiąca: od poniedziałku, dni z wolnymi terminami można kliknąć. */
+  function renderMonth() {
+    var grid = $('bk-grid');
+    grid.innerHTML = '';
+    ['pn', 'wt', 'śr', 'cz', 'pt', 'sb', 'nd'].forEach(function (d) {
+      var h = document.createElement('div'); h.className = 'bk-wd'; h.textContent = d; grid.appendChild(h);
+    });
+    var first = new Date(Date.UTC(view.y, view.m - 1, 1));
+    var lead = (first.getUTCDay() + 6) % 7;
+    var days = new Date(Date.UTC(view.y, view.m, 0)).getUTCDate();
+    for (var i = 0; i < lead; i++) { var e = document.createElement('div'); e.className = 'bk-cell empty'; grid.appendChild(e); }
+    for (var d = 1; d <= days; d++) {
+      var key = view.y + '-' + String(view.m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      var free = Boolean(byDay[key]);
+      var c = document.createElement(free ? 'button' : 'div');
+      c.className = 'bk-cell' + (free ? ' free' : '') + (key === todayKey ? ' today' : '');
+      c.textContent = String(d);
+      if (free) {
+        c.type = 'button';
+        c.setAttribute('aria-pressed', String(key === selectedDay));
+        c.setAttribute('aria-label', fmtDay(byDay[key][0].start) + ', ' + fmtDate(byDay[key][0].start) + ': ' + byDay[key].length + ' wolnych terminów');
+        (function (k) { c.onclick = function () { renderSlots(k); }; })(key);
+      }
+      grid.appendChild(c);
+    }
+    $('bk-month').textContent = first.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    var idx = function (v) { return v.y * 12 + v.m; };
+    $('bk-prev').disabled = idx(view) <= idx(minView);
+    $('bk-next').disabled = idx(view) >= idx(maxView);
+  }
+
+  function shift(n) {
+    var t = view.y * 12 + (view.m - 1) + n;
+    view = { y: Math.floor(t / 12), m: (t % 12) + 1 };
+    renderMonth();
+  }
+
   fetch(API + '/api/booking/slots').then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.error || 'Błąd'); return d; }); })
     .then(function (d) {
       if (!d.enabled || !d.slots.length) { fail('Na razie nie ma wolnych terminów. Napisz na jakubskrzypiec.dev@gmail.com, a ustalimy go mailowo.'); return; }
       d.slots.forEach(function (s) { (byDay[dayKey(s.start)] = byDay[dayKey(s.start)] || []).push(s); });
-      $('bk-status').textContent = 'Wybierz dzień i godzinę. Rozmowa trwa ok. ' + d.slotMinutes + ' minut.';
-      var days = $('bk-days');
-      Object.keys(byDay).forEach(function (key, i) {
-        var b = document.createElement('button');
-        b.type = 'button'; b.className = 'bk-day'; b.dataset.day = key;
-        b.innerHTML = '<span></span><small></small>';
-        b.firstChild.textContent = fmtDay(byDay[key][0].start);
-        b.lastChild.textContent = fmtDate(byDay[key][0].start);
-        b.onclick = function () { renderSlots(key); };
-        days.appendChild(b);
-        if (i === 0) renderSlots(key);
-      });
+      var keys = Object.keys(byDay).sort();
+      var a = keyToParts(keys[0]); var z = keyToParts(keys[keys.length - 1]);
+      minView = { y: a.y, m: a.m }; maxView = { y: z.y, m: z.m }; view = { y: a.y, m: a.m };
+      $('bk-status').textContent = 'Wybierz dzień w kalendarzu, a potem godzinę. Rozmowa trwa ok. ' + d.slotMinutes + ' minut.';
+      $('bk-cal').hidden = false;
+      $('bk-prev').onclick = function () { shift(-1); };
+      $('bk-next').onclick = function () { shift(1); };
+      renderMonth();
     })
     .catch(function (e) { fail(e.message || 'Nie udało się wczytać terminów. Napisz na jakubskrzypiec.dev@gmail.com.'); });
 
