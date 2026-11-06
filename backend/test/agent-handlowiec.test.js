@@ -190,3 +190,40 @@ test('pełny cykl: szukanie, duplikat z Gmaila, mail, wysyłka, odpowiedź ze sz
     Date.now = realNow;
   }
 });
+
+test('import listy: nagłówki po polsku, duplikaty i firma bez strony obsłużona przed Homebookiem', async (t) => {
+  const csv = 'Firma;E-mail;Miasto;Branża;Strona;Notatka\n'
+    + 'Stolarnia Kowalski;kowalski.stolarnia@gmail.com;Gliwice;stolarstwo;brak;tylko profil na Facebooku, 40 opinii w Google\n'
+    + 'Duplikat;KOWALSKI.stolarnia@gmail.com;Gliwice;stolarstwo;;\n'
+    + 'Bez maila;;Opole;;;\n';
+  const r = h.importLeads(csv);
+  assert.equal(r.added, 1);
+  assert.equal(r.skipped.length, 2);
+  const lead = db.prepare("SELECT * FROM leads WHERE email='kowalski.stolarnia@gmail.com'").get();
+  assert.equal(lead.source, 'import');
+  assert.equal(lead.domain, null); // gmail.com to nie domena firmy
+  assert.equal(h.parseTable('A\tb@c.pl\tKraków')[0].email, 'b@c.pl'); // bez nagłówka, z arkusza
+
+  let prompt = '';
+  let gmailQuery = '';
+  t.mock.method(google, 'status', () => ({ connected: true, account: 'jakub@21project.pl' }));
+  t.mock.method(gmail, 'anyThread', async (q) => { gmailQuery = q; return false; });
+  t.mock.method(ai, 'call', async ({ messages }) => {
+    prompt = messages[0].content;
+    return { text: JSON.stringify({ subject: 'Stolarnia Kowalski', body: 'Dzień dobry,\n\nnie znalazłem strony Państwa stolarni.\n\n[REALIZACJE]\n\nMogę przygotować projekt.\n\nJeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.' }), usage: {} };
+  });
+  const q = await h.qualify(lead, h.settings());
+  assert.ok(q.ok || q.parked, JSON.stringify(q));
+  assert.equal(gmailQuery, '"kowalski.stolarnia@gmail.com"'); // nie szukamy całego gmail.com
+  if (q.ok) {
+    assert.ok(prompt.includes('BRAK WŁASNEJ STRONY'));
+    assert.ok(prompt.includes('40 opinii w Google'));
+    assert.ok(['strona', 'pakiet'].includes(q.offer));
+  }
+});
+
+test('styl: myślnik między słowami i gwiazdki wracają do poprawki', () => {
+  assert.ok(writer.styleCheck('Dzień dobry,\n\nstrona - stara.', 'T').some((p) => p.includes('myślnik')));
+  assert.ok(writer.styleCheck('Dzień dobry,\n\n**ważne**', 'T').some((p) => p.includes('formatowanie')));
+  assert.ok(writer.styleCheck('Dzień dobry,\n\nPozwolę sobie napisać.', 'T').some((p) => p.includes('pozwolę sobie')));
+});
