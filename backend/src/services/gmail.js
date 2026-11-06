@@ -213,15 +213,33 @@ async function sendMessage({ to, subject, body, cc, threadId, inReplyTo, referen
   return { id: data.id, threadId: data.threadId };
 }
 
-async function createDraft({ to, subject, body, threadId }) {
+async function createDraft({ to, subject, body, threadId, inReplyTo, references }) {
   const account = require('./google').status().account;
   const from = account ? `${config.outreach.fromName} <${account}>` : undefined;
-  const raw = buildRaw({ to, subject, body, from });
+  const raw = buildRaw({ to, subject, body, from, inReplyTo, references });
   const { data } = await gmail().users.drafts.create({
     userId: 'me',
     requestBody: { message: { raw, threadId: threadId || undefined } },
   });
   return { id: data.id, messageId: data.message?.id, threadId: data.message?.threadId };
+}
+
+/** Ile wątków pasuje do zapytania — razem z koszem i spamem. Do sprawdzania, czy już pisaliśmy. */
+async function anyThread(q) {
+  const { data } = await gmail().users.threads.list({ userId: 'me', q, maxResults: 1, includeSpamTrash: true });
+  return (data.threads || []).length > 0;
+}
+
+/** Lekka wersja wątku: same nagłówki, bez treści. */
+async function getThreadMeta(id) {
+  const { data } = await gmail().users.threads.get({
+    userId: 'me', id, format: 'metadata', metadataHeaders: ['From', 'Subject', 'Date', 'Message-ID'],
+  });
+  return (data.messages || []).map((m) => ({
+    id: m.id, from: headerOf(m, 'From'), subject: headerOf(m, 'Subject'),
+    messageId: headerOf(m, 'Message-ID'), internalDate: Number(m.internalDate || 0),
+    labels: m.labelIds || [], snippet: m.snippet || '',
+  }));
 }
 
 const modifyThread = (id, addLabelIds = [], removeLabelIds = []) =>
@@ -240,7 +258,7 @@ async function unreadCount() {
 }
 
 module.exports = {
-  listThreads, getThread, sendMessage, createDraft, modifyThread, trashThread, labels, unreadCount,
+  listThreads, getThread, getThreadMeta, anyThread, sendMessage, createDraft, modifyThread, trashThread, labels, unreadCount,
   VIEWS, addressOf, jestAutomatem, KATEGORIE_AUTOMATOW,
   extractBody, attachmentsOf, headerOf,
 };

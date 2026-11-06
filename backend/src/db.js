@@ -310,6 +310,53 @@ function migrate() {
     ));
   }
 
+  // Agenci AI. Wspólna podstawa dla wszystkich agentów: dziennik, zużycie tokenów,
+  // wersje strategii i odpowiedzi od firm. Handlowiec jest pierwszy, następni
+  // korzystają z tych samych tabel.
+  krok('tabele agentów', () => db.exec(`
+    CREATE TABLE IF NOT EXISTS agent_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT NOT NULL, agent TEXT NOT NULL,
+      kind TEXT NOT NULL, message TEXT NOT NULL, meta TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_agent_log ON agent_log(agent, ts);
+    CREATE TABLE IF NOT EXISTS agent_usage (
+      day TEXT NOT NULL, agent TEXT NOT NULL, calls INTEGER NOT NULL DEFAULT 0,
+      input_tokens INTEGER NOT NULL DEFAULT 0, output_tokens INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (day, agent)
+    );
+    CREATE TABLE IF NOT EXISTS agent_playbooks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL, agent TEXT NOT NULL,
+      source TEXT NOT NULL, content TEXT NOT NULL, summary TEXT, stats TEXT,
+      active INTEGER NOT NULL DEFAULT 0
+    );
+    CREATE TABLE IF NOT EXISTS agent_replies (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL,
+      outreach_id INTEGER REFERENCES outreach(id) ON DELETE SET NULL,
+      lead_id INTEGER REFERENCES leads(id) ON DELETE SET NULL,
+      thread_id TEXT NOT NULL, gmail_message_id TEXT UNIQUE, from_addr TEXT,
+      received_at TEXT, snippet TEXT, category TEXT, summary TEXT,
+      draft_body TEXT, gmail_draft_id TEXT, status TEXT NOT NULL DEFAULT 'nowa'
+    );
+  `));
+  const kolOutreach = db.prepare('PRAGMA table_info(outreach)').all().map((c) => c.name);
+  for (const [name, ddl] of [
+    ['agent', 'TEXT'], ['offer', 'TEXT'], ['kind', 'TEXT'], ['parent_id', 'INTEGER'],
+    ['playbook_id', 'INTEGER'], ['replied_at', 'TEXT'], ['reply_category', 'TEXT'], ['bounced', 'INTEGER DEFAULT 0'],
+  ]) {
+    if (!kolOutreach.includes(name)) {
+      krok(`outreach.${name}`, () => db.exec(`ALTER TABLE outreach ADD COLUMN ${name} ${ddl}`));
+    }
+  }
+  const kolLeads = db.prepare('PRAGMA table_info(leads)').all().map((c) => c.name);
+  for (const [name, ddl] of [['agent_stage', 'TEXT'], ['agent_note', 'TEXT']]) {
+    if (!kolLeads.includes(name)) krok(`leads.${name}`, () => db.exec(`ALTER TABLE leads ADD COLUMN ${name} ${ddl}`));
+  }
+  krok('indeksy agentów', () => db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_outreach_agent ON outreach(agent, status);
+    CREATE INDEX IF NOT EXISTS idx_leads_stage ON leads(agent_stage);
+    CREATE INDEX IF NOT EXISTS idx_leads_domain ON leads(domain);
+  `));
+
   krok('indeks notes.source_ref', () => db.exec(
     'CREATE UNIQUE INDEX IF NOT EXISTS idx_notes_source ON notes(source_ref) WHERE source_ref IS NOT NULL'
   ));

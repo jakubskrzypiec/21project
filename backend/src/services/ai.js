@@ -3,7 +3,7 @@ const { config } = require('../config');
 
 const enabled = () => Boolean(config.ai.apiKey);
 
-async function complete({ system, prompt, maxTokens = 1200, temperature = 0.6, requireComplete = false }) {
+async function call({ system, prompt, messages, maxTokens = 1200, temperature = 0.6, model }) {
   if (!enabled()) throw new Error('Brak ANTHROPIC_API_KEY w .env — generowanie treści wyłączone.');
   const res = await fetch(`${config.ai.baseUrl}/v1/messages`, {
     method: 'POST',
@@ -14,17 +14,23 @@ async function complete({ system, prompt, maxTokens = 1200, temperature = 0.6, r
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: config.ai.model,
+      model: model || config.ai.model,
       max_tokens: maxTokens,
       temperature,
       system,
-      messages: [{ role: 'user', content: prompt }],
+      messages: messages || [{ role: 'user', content: prompt }],
     }),
   });
   if (!res.ok) throw new Error(`Anthropic API ${res.status}: ${(await res.text()).slice(0, 300)}`);
   const data = await res.json();
-  if (requireComplete && data.stop_reason !== 'end_turn') throw new Error('Analiza nie została ukończona; kartka bez zmian.');
-  return (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n').trim();
+  const text = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n').trim();
+  return { text, usage: data.usage || {}, stopReason: data.stop_reason };
+}
+
+async function complete({ requireComplete = false, ...opts }) {
+  const { text, stopReason } = await call(opts);
+  if (requireComplete && stopReason !== 'end_turn') throw new Error('Analiza nie została ukończona; kartka bez zmian.');
+  return text;
 }
 
 const SYSTEM = `Jesteś asystentem Jakuba Skrzypca, który prowadzi studio 21 project (21project.pl)
@@ -100,4 +106,4 @@ async function summarizeThread(messages) {
   });
 }
 
-module.exports = { enabled, complete, draftOutreach, summarizeThread };
+module.exports = { enabled, call, complete, draftOutreach, summarizeThread };

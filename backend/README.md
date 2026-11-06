@@ -148,6 +148,34 @@ wyjdzie automatycznie. Wysyłka na adresy osób prywatnych i kupowane bazy — n
 
 ---
 
+## 7a. Agent „Handlowiec” (cold outreach)
+
+Zakładka **Agenci** w panelu. Agent pracuje na serwerze, sam, dopóki nie klikniesz „Zatrzymaj”.
+Serwer budzi go co 5 minut; stan trzyma w bazie, więc restart ani nowe wdrożenie go nie przerywa.
+
+Co robi:
+
+1. **Szuka firm**: Homebook (kategorie × województwa) i wyszukiwanie Google (`GOOGLE_CSE_KEY` + `GOOGLE_CSE_CX`).
+   Każde źródło pamięta, gdzie skończyło.
+2. **Sprawdza stronę**: HTTPS, telefon, rok w stopce (bez stopek motywów), tytuł i opis w Google, dane dla
+   wyszukiwarek AI, adres e-mail ze strony i z podstrony kontaktowej.
+3. **Odsiewa duplikaty**: baza leadów, lista wykluczeń i **cały Gmail** (z koszem i spamem) po domenie i adresie.
+4. **Pisze maila** jedną z trzech ofert, po równo (strona z SEO/AI, panel, pakiet „system pozyskiwania klientów”).
+   Słaba strona dostaje ofertę strony albo pakietu, porządna: panelu albo pakietu. Tekst przechodzi kontrolę
+   stylu (zakazane zwroty, myślniki, wykrzykniki, forma „Ty”, długość); jeśli brzmi jak AI, wraca do poprawki.
+5. **Wysyła** w oknie godzinowym, w dni robocze, w losowych odstępach, w limicie dziennym (domyślnie 30).
+6. **Przypomina** raz po 6 dniach bez odpowiedzi, w tym samym wątku.
+7. **Pilnuje odpowiedzi** co 30 minut: ocenia je (pilne / ważne / zwykłe / odmowa / automat / zwrot),
+   zapisuje **szkic odpowiedzi w Gmailu** (nie wysyła go) i zatrzymuje przypomnienia. Zwroty i odmowy trafiają
+   na listę wykluczeń.
+8. **Uczy się** w każdy poniedziałek o 6:20: porównuje maile z odpowiedzią i bez, zapisuje nową wersję wniosków.
+   Wszystkie wersje są w zakładce „Strategia i nauka” i można wrócić do starszej.
+
+Potrzebne zmienne na serwerze: `ANTHROPIC_API_KEY` (bez niego agent nie pisze) i połączone konto Google.
+Jeśli aplikacja Google jest w trybie testowym, token wygasa po 7 dniach i agent stanie — przełącz ją
+na produkcję (patrz sekcja 3). Ceny AI: kilkanaście–kilkadziesiąt zł miesięcznie przy 30 mailach dziennie;
+licznik jest na ekranie agenta.
+
 ## 8. Wdrożenie na serwer
 
 Backend musi stać na serwerze z Node.js (VPS, Railway, Render, Fly.io). GitHub Pages nie uruchomi

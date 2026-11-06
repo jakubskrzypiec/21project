@@ -123,6 +123,7 @@ app.use('/api/admin/outreach', require('./routes/outreach.routes'));
 app.use('/api/admin/board', require('./routes/board.routes'));
 app.use('/api/admin/quotes', require('./routes/quotes.routes').router);
 app.use('/api/admin/briefs', require('./routes/briefs.routes'));
+app.use('/api/admin/agents', require('./routes/agents.routes'));
 
 /*
  * Sam szkielet panelu (znaczniki, nawigacja, style) nie zawiera żadnych danych —
@@ -161,6 +162,23 @@ function schedule() {
         console.log(`[sprzątanie] usunięto ${r.views} odsłon i ${r.events} zdarzeń sprzed ${r.cutoff}`);
       }
     } catch (err) { console.error('[sprzątanie]', err.message); }
+  }, { timezone: config.outreach.timezone });
+
+  // Agenci AI. Handlowiec sam pilnuje dni roboczych, okna i limitów — tu tylko go budzimy.
+  const handlowiec = require('./services/agents/handlowiec');
+  cron.schedule('*/5 * * * *', async () => {
+    try {
+      const r = await handlowiec.tick();
+      if (r?.sent?.ok) console.log('[handlowiec] wysłano maila');
+    } catch (err) {
+      console.error('[handlowiec]', err.message);
+      try { require('./services/agents/core').log('handlowiec', 'error', `Przebieg przerwany: ${err.message}`); } catch { /* baza niedostępna */ }
+    }
+  }, { timezone: config.outreach.timezone });
+  // Cotygodniowa nauka na wynikach — poniedziałek rano, przed wysyłką.
+  cron.schedule('20 6 * * 1', async () => {
+    try { if (handlowiec.settings().enabled) await handlowiec.learn(); }
+    catch (err) { require('./services/agents/core').log('handlowiec', 'error', `Nauka: ${err.message}`); }
   }, { timezone: config.outreach.timezone });
 
   // Odpowiedzi od leadów — dwa razy dziennie.
