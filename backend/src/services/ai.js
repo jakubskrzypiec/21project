@@ -3,7 +3,7 @@ const { config } = require('../config');
 
 const enabled = () => Boolean(config.ai.apiKey);
 
-async function call({ system, prompt, messages, maxTokens = 1200, model, tools, toolChoice }) {
+async function call({ system, prompt, messages, maxTokens = 1200, model, jsonSchema }) {
   if (!enabled()) throw new Error('Brak ANTHROPIC_API_KEY w .env — generowanie treści wyłączone.');
   const res = await fetch(`${config.ai.baseUrl}/v1/messages`, {
     method: 'POST',
@@ -19,11 +19,15 @@ async function call({ system, prompt, messages, maxTokens = 1200, model, tools, 
       // Bez `temperature`: nowsze modele go nie przyjmują (błąd 400 „deprecated for this model”).
       system,
       messages: messages || [{ role: 'user', content: prompt }],
-      ...(tools ? { tools, tool_choice: toolChoice || { type: 'any' } } : {}),
+      // Structured outputs: API gwarantuje, że odpowiedź to poprawny JSON zgodny ze schematem.
+      ...(jsonSchema ? { output_config: { format: { type: 'json_schema', schema: jsonSchema } } } : {}),
     }),
   });
   if (!res.ok) throw new Error(`Anthropic API ${res.status}: ${(await res.text()).slice(0, 300)}`);
   const data = await res.json();
+  if (data.stop_reason === 'refusal') throw new Error('Model odmówił odpowiedzi na to zapytanie.');
+  // Ucięty JSON i tak byłby nie do odczytania — mówimy wprost, co się stało. Zwykły tekst oddajemy jak dawniej.
+  if (jsonSchema && data.stop_reason === 'max_tokens') throw new Error('Odpowiedź modelu została ucięta (limit długości).');
   const text = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n').trim();
   return { text, usage: data.usage || {}, stopReason: data.stop_reason, content: data.content || [] };
 }

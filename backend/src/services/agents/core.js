@@ -109,19 +109,26 @@ function parseJson(raw) {
   throw new Error('Model nie zwrócił poprawnego JSON-a.');
 }
 
+/** Schemat w trybie ścisłym: każdy obiekt ma wszystkie pola wymagane i nic ponad nie. */
+function strictSchema(schema) {
+  if (!schema || typeof schema !== 'object') return schema;
+  const out = { ...schema };
+  if (out.type === 'object' && out.properties) {
+    out.properties = Object.fromEntries(Object.entries(out.properties).map(([k, v]) => [k, strictSchema(v)]));
+    out.required = Object.keys(out.properties);
+    out.additionalProperties = false;
+  }
+  if (out.type === 'array' && out.items) out.items = strictSchema(out.items);
+  return out;
+}
+
 /**
- * Odpowiedź o ustalonych polach. Model musi „wywołać narzędzie” z danymi zgodnymi ze schematem,
- * więc API samo pilnuje formatu. Gdy narzędzia nie użył — próbujemy odczytać JSON z tekstu.
+ * Odpowiedź o ustalonych polach przez structured outputs (output_config.format):
+ * API samo pilnuje, żeby był to poprawny JSON zgodny ze schematem.
  */
-async function thinkJson(agent, { system, prompt, messages, maxTokens = 1000, model, name = 'odpowiedz', description = 'Zwraca wynik.', schema }) {
-  const r = await ai.call({
-    system, prompt, messages, maxTokens, model,
-    tools: [{ name, description, input_schema: schema }],
-    toolChoice: { type: 'tool', name },
-  });
+async function thinkJson(agent, { system, prompt, messages, maxTokens = 8000, model, schema }) {
+  const r = await ai.call({ system, prompt, messages, maxTokens, model, jsonSchema: strictSchema(schema) });
   addUsage(agent, r.usage);
-  const used = (r.content || []).find((c) => c.type === 'tool_use' && c.name === name);
-  if (used && used.input && typeof used.input === 'object') return used.input;
   return parseJson(r.text);
 }
 
@@ -146,5 +153,5 @@ const isRunning = (name) => locks.has(name);
 
 module.exports = {
   isRunning, settings, saveSettings, state, saveState, log, recentLog, local, dayStartIso,
-  think, thinkJson, parseJson, escapeRawNewlines, addUsage, usageSummary, exclusive, deepMerge, nowIso,
+  think, thinkJson, parseJson, escapeRawNewlines, strictSchema, addUsage, usageSummary, exclusive, deepMerge, nowIso,
 };
