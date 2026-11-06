@@ -37,15 +37,16 @@ const DEFAULTS = {
   prospectFrom: 6,
   followUpAfterDays: 6,
   maxFollowUps: 1,
-  maxWords: 150,
+  maxWords: 190,
   model: 'claude-sonnet-5-5',
-  unsubscribe: 'reply', // reply | link | none
+  unsubscribe: 'none', // none | reply | link — domyślnie bez dopisku (odmowy i tak trafiają na listę wykluczeń)
   autoLearn: true,
   offers: writer.DEFAULT_OFFERS,
   portfolio: writer.DEFAULT_PORTFOLIO,
   hooks: writer.DEFAULT_HOOKS,
   strategy: writer.DEFAULT_STRATEGY,
   styleExample: writer.DEFAULT_STYLE_EXAMPLE,
+  positioning: writer.DEFAULT_POSITIONING,
   forbidden: writer.DEFAULT_FORBIDDEN,
   sources: {
     order: ['homebook', 'google'],
@@ -67,7 +68,14 @@ const DEFAULTS = {
   },
 };
 
-const settings = () => core.settings(AGENT, DEFAULTS);
+const settings = () => {
+  const s = core.settings(AGENT, DEFAULTS);
+  // Jednorazowo (wersja 2 ustawień): bez dopisku o rezygnacji i dłuższy limit słów na akapit „kim jestem”.
+  if (!s.settingsVersion || s.settingsVersion < 2) {
+    return core.saveSettings(AGENT, DEFAULTS, { settingsVersion: 2, unsubscribe: 'none', maxWords: Math.max(Number(s.maxWords) || 0, 190) });
+  }
+  return s;
+};
 const st = () => core.state(AGENT);
 const log = (kind, msg, meta) => core.log(AGENT, kind, msg, meta);
 const now = () => new Date();
@@ -362,6 +370,14 @@ async function sendOne(msg, s) {
     if (thread.some((m) => !gmailSvc.addressOf(m.from).includes(account))) {
       db.prepare('UPDATE outreach SET replied_at=? WHERE id=?').run(core.nowIso(), parent.id);
       return fail('skipped', 'w wątku jest już odpowiedź');
+    }
+    // Odpowiedź mogła przyjść poza wątkiem: z innego adresu tej firmy albo w nowej wiadomości.
+    const since = Math.floor(Date.parse(parent.sent_at) / 1000);
+    const who = FREE_MAIL.test(msg.to_email) ? `from:${msg.to_email}` : `from:(${msg.to_email} OR @${msg.to_email.split('@')[1]})`;
+    if (await gmailSvc.anyThread(`${who} after:${since}`)) {
+      db.prepare('UPDATE outreach SET replied_at=? WHERE id=?').run(core.nowIso(), parent.id);
+      log('info', `Bez przypomnienia do ${msg.to_email}: firma odezwała się poza wątkiem. Sprawdź skrzynkę.`);
+      return fail('skipped', 'firma odpisała poza wątkiem');
     }
     const lastMsg = thread[thread.length - 1];
     Object.assign(opts, { threadId: parent.gmail_thread_id, inReplyTo: lastMsg?.messageId, references: lastMsg?.messageId });
@@ -790,7 +806,19 @@ function importLeads(text) {
  * Trzy maile testowe — po jednym z każdej oferty — wysłane na Twoje konto Gmail.
  * Firma to podana strona albo opis firmy bez strony. Nic nie trafia do kolejki ani statystyk.
  */
-async function sendTests({ url, company, city, industry, note } = {}) {
+async function sendTests(opts = {}) {
+  core.saveState(AGENT, { testingAt: core.nowIso() });
+  try {
+    return await sendTestsInner(opts);
+  } catch (err) {
+    log('error', `Maile testowe (${opts.url || opts.company || '—'}) nie wyszły: ${err.message}`);
+    throw err;
+  } finally {
+    core.saveState(AGENT, { testingAt: null });
+  }
+}
+
+async function sendTestsInner({ url, company, city, industry, note } = {}) {
   const s = settings();
   const account = google.status().account;
   if (!account) throw new Error('Gmail nie jest połączony.');
@@ -866,9 +894,11 @@ function stats() {
  * co sam zgłosił; między przebiegami wynika to z planu dnia.
  */
 function activityNow(s, state, at = now()) {
+  if (state.testingAt && Date.now() - Date.parse(state.testingAt) < 5 * 60000) return 'testing';
   if (!s.enabled) return 'stopped';
   if (!ai.enabled() || !google.status().connected) return 'blocked';
   if (state.learningAt && Date.now() - Date.parse(state.learningAt) < 10 * 60000) return 'learning';
+  if (state.testingAt && Date.now() - Date.parse(state.testingAt) < 5 * 60000) return 'testing';
   if (core.isRunning(AGENT) && state.activity) return state.activity;
   const l = core.local(at);
   if (!s.workdays.includes(l.dow)) return 'weekend';

@@ -149,7 +149,8 @@ test('pełny cykl: szukanie, duplikat z Gmaila, mail, wysyłka, odpowiedź ze sz
     assert.equal(skipped.agent_note, 'już była korespondencja w Gmailu');
     assert.equal(sent.length, 1);
     assert.equal(sent[0].to, 'biuro@stara-pracownia.pl');
-    assert.ok(sent[0].body.endsWith('wystarczy odpisać „nie”.'));
+    assert.ok(sent[0].body.endsWith('Pozdrawiam\n21 Project\n21project.pl'));
+    assert.ok(!sent[0].body.includes('odpisać „nie”'));
     assert.ok(sent[0].body.includes('Pozdrawiam\n21 Project\n21project.pl'));
     assert.ok(!/[—!]/.test(sent[0].body));
     const msg = db.prepare("SELECT * FROM outreach WHERE agent='handlowiec' AND kind='first'").get();
@@ -255,4 +256,27 @@ test('odpowiedź modelu: structured outputs ze ścisłym schematem, zapasowo JSO
   assert.equal(sentBody.output_config.format.schema.additionalProperties, false);
   assert.equal('tool_choice' in sentBody, false);
   assert.equal('temperature' in sentBody, false);
+});
+
+test('przypomnienie nie wychodzi, gdy firma odpisała poza wątkiem', async (t) => {
+  const ts = new Date(Date.now() - 8 * 86400000).toISOString();
+  const lid = db.prepare(`INSERT INTO leads (created_at, updated_at, source, status, company, domain, email, agent_stage)
+    VALUES (?, ?, 'agent', 'contacted', 'Firma F', 'firmaf.pl', 'biuro@firmaf.pl', 'contacted')`).run(ts, ts).lastInsertRowid;
+  const first = db.prepare(`INSERT INTO outreach (lead_id, created_at, status, to_email, subject, body, agent, offer, kind, sent_at, gmail_thread_id)
+    VALUES (?, ?, 'sent', 'biuro@firmaf.pl', 'Temat', 'Treść', 'handlowiec', 'strona', 'first', ?, 'tf')`).run(lid, ts, ts).lastInsertRowid;
+  const fu = db.prepare(`INSERT INTO outreach (lead_id, created_at, status, to_email, subject, body, agent, offer, kind, parent_id)
+    VALUES (?, ?, 'agent_queued', 'biuro@firmaf.pl', 'Re: Temat', 'Przypomnienie', 'handlowiec', 'strona', 'followup', ?)`).run(lid, ts, first).lastInsertRowid;
+  let query = '';
+  let sentCount = 0;
+  t.mock.method(google, 'status', () => ({ connected: true, account: 'jakub@21project.pl' }));
+  t.mock.method(gmail, 'getThreadMeta', async () => [{ id: 'a', from: 'jakub@21project.pl', messageId: '<a>' }]);
+  t.mock.method(gmail, 'anyThread', async (q) => { query = q; return true; });
+  t.mock.method(gmail, 'sendMessage', async () => { sentCount += 1; return { id: 'x', threadId: 'y' }; });
+  db.prepare("UPDATE outreach SET status='skipped' WHERE agent='handlowiec' AND status='agent_queued' AND id<>?").run(fu);
+  core.saveState('handlowiec', { nextSendAt: null });
+  await h.sendNext(h.settings(), new Date());
+  assert.equal(sentCount, 0);
+  assert.ok(query.includes('@firmaf.pl') && query.includes('after:'));
+  assert.equal(db.prepare('SELECT status FROM outreach WHERE id=?').get(fu).status, 'skipped');
+  assert.ok(db.prepare('SELECT replied_at FROM outreach WHERE id=?').get(first).replied_at);
 });

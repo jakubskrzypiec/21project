@@ -14,7 +14,8 @@ const DEFAULT_OFFERS = {
     desc: `Nowa strona nastawiona na zapytania od klientów, nie na samo „ładnie wyglądać”.
 SEO lokalne (żeby wyskakiwać na „{branża} {miasto}”) i optymalizacja pod wyszukiwarki AI:
 ChatGPT, Perplexity, Google AI Overviews coraz częściej same polecają firmy, a polecają te,
-o których mają uporządkowane informacje. Szybka na telefonie, z realizacjami i prostym kontaktem.`,
+o których mają uporządkowane informacje. Szybka na telefonie, z realizacjami i prostym kontaktem.
+Dwa miesiące opieki po starcie: po miesiącu spotkanie, uwagi klienta, poprawki i dopracowanie SEO.`,
   },
   panel: {
     on: true,
@@ -24,6 +25,7 @@ o których mają uporządkowane informacje. Szybka na telefonie, z realizacjami 
     desc: `Panel do prowadzenia firmy dopasowany do sposobu pracy: zapytania z formularza,
 klienci, wyceny, projekty, terminy i pliki w jednym miejscu zamiast maili, Excela i notatek.
 Efekt: żadne zapytanie nie ginie, wycena wychodzi w kilka minut, widać, co jest do zrobienia.
+Po wdrożeniu przez dwa miesiące poprawiam panel według tego, jak się z niego korzysta.
 Więcej o panelach: 21project.pl/saas/`,
   },
   pakiet: {
@@ -33,9 +35,18 @@ Więcej o panelach: 21project.pl/saas/`,
     for: 'każda firma, która chce więcej klientów, a nie tylko nową stronę',
     desc: `Całość od jednego partnera: strona z SEO i widocznością w AI, panel do obsługi
 zapytań i kampania reklamowa (Google/Meta) ustawiona pod konkretne usługi i miasto.
-Efekt: stały dopływ zapytań i jasne liczby, ile kosztuje pozyskanie klienta.`,
+Efekt: stały dopływ zapytań i jasne liczby, ile kosztuje pozyskanie klienta.
+W pakiecie dwa miesiące opieki: po miesiącu spotkanie, uwagi i poprawki, dopracowanie SEO i kampanii na danych.`,
   },
 };
+
+/** Kim jestem — fakty, z których agent pisze własnymi słowami akapit przed realizacjami. */
+const DEFAULT_POSITIONING = `To nie jest kolejna masowa wiadomość od agencji. Pracuję z branżą architektoniczną i wnętrzarską:
+architektami, projektantami wnętrz i ogrodów oraz firmami, które z nimi współpracują. Znam to, jak w tej
+branży pozyskuje się klientów: polecenia, portfolio, zaufanie i to, czy firmę widać w Google i w ChatGPT.
+Nie sprzedaję samego wyglądu strony, tylko rozwiązanie problemu: stronę, która przynosi zapytania.
+Po starcie strony przez dwa miesiące się nią opiekuję: po pierwszym miesiącu spotykam się z klientem,
+pytam, co działa, zbieram uwagi i poprawki, a SEO dopracowujemy na podstawie pierwszych danych z Google.`;
 
 /** Realizacje wstawia system, nie model — dzięki temu adresy są zawsze dokładnie takie. */
 const DEFAULT_PORTFOLIO = [
@@ -108,6 +119,8 @@ zajrzałem na stronę Państwa pracowni. Na telefonie trzeba ją powiększać pa
 
 Chciałem zapytać, czy nadal opłacają Państwo domenę i hosting tej strony? Jeśli tak, to szkoda, żeby strona, za którą Państwo płacą, nie pracowała w pełni na firmę. Odświeżona strona może dobrze wyglądać na telefonie, pokazywać realizacje i przynosić zapytania z Google.
 
+Nie piszę do przypadkowych firm. Pracuję z architektami i projektantami wnętrz, więc wiem, że w tej branży klient najpierw ogląda portfolio, a dopiero potem dzwoni. Po starcie strony przez dwa miesiące się nią opiekuję: po pierwszym miesiącu spotykamy się, zbieram uwagi i na podstawie danych z Google dopracowuję SEO.
+
 [REALIZACJE]
 
 Mogę bezpłatnie i bez zobowiązań przygotować wstępny projekt pierwszego ekranu nowej strony dla Państwa firmy. Zobaczą Państwo kierunek, zanim Państwo cokolwiek zdecydują.
@@ -141,9 +154,12 @@ BUDOWA MAILA (zawsze w tej kolejności, każdy punkt to osobny akapit):
    nie znalazłeś jej strony, i co to oznacza (klient z polecenia albo z Google nie ma gdzie
    zobaczyć realizacji, a ChatGPT i Google polecają firmy, o których coś wiedzą).
 3. ROZWIĄZANIE: co zrobiłbym w ramach oferty i jaki to daje efekt (zapytania, klienci, czas).
-4. W osobnej linii dokładnie: [REALIZACJE]  (system wstawi tu listę moich realizacji z linkami)
-5. HACZYK: przepisz własnymi słowami podany haczyk, w jednym–dwóch zdaniach.
-6. Ostatnie zdanie: „Jeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.”
+4. KIM JESTEM: dwa–trzy zdania własnymi słowami, na podstawie poniższych faktów. Spokojnie i profesjonalnie,
+   bez przechwałek. Wybierz to, co pasuje do tej firmy i oferty, nie przepisuj wszystkiego:
+   ${s.positioning || DEFAULT_POSITIONING}
+5. W osobnej linii dokładnie: [REALIZACJE]  (system wstawi tu listę moich realizacji z linkami)
+6. HACZYK: przepisz własnymi słowami podany haczyk, w jednym–dwóch zdaniach.
+7. Ostatnie zdanie: „Jeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.”
 
 ZASADY (bezwzględne):
 - po polsku, forma grzecznościowa: Pan/Pani/Państwo (do firmy: Państwo),
@@ -206,6 +222,6 @@ Temat zostaw pusty (""), bo odpowiadamy w wątku.`;
 }
 
 module.exports = {
-  DEFAULT_OFFERS, DEFAULT_STRATEGY, DEFAULT_FORBIDDEN, DEFAULT_STYLE_EXAMPLE, DEFAULT_PORTFOLIO, DEFAULT_HOOKS, PORTFOLIO_ALL, SIGNATURE,
+  DEFAULT_OFFERS, DEFAULT_STRATEGY, DEFAULT_FORBIDDEN, DEFAULT_STYLE_EXAMPLE, DEFAULT_POSITIONING, DEFAULT_PORTFOLIO, DEFAULT_HOOKS, PORTFOLIO_ALL, SIGNATURE,
   styleCheck, tidy, systemPrompt, firstPrompt, followUpPrompt, factsFor, portfolioBlock, withPortfolio,
 };

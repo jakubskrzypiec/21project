@@ -1388,6 +1388,7 @@ const HQ_CORRIDOR_Y = 90;
 const HQ_ACT = {
   searching: { room: 'szukanie',   say: 'Szukam nowych firm' },
   writing:   { room: 'biuro',      say: 'Piszę maile' },
+  testing:   { room: 'biuro',      say: 'Piszę maile testowe dla Ciebie' },
   sending:   { room: 'poczta',     say: 'Wysyłam maile' },
   replies:   { room: 'poczta',     say: 'Czytam odpowiedzi' },
   learning:  { room: 'sala',       say: 'Analizuję wyniki tygodnia' },
@@ -1833,6 +1834,11 @@ async function strategia(box, { settings: cfg, playbook }) {
         <div class="row" style="margin-top:10px;gap:8px"><button class="btn sm" id="agSavePlaybook">Zapisz jako nową wersję</button>
           <button class="btn ghost sm" id="agLearn">Ucz się teraz</button></div></div>
     </div>
+    <div class="card" style="margin-top:12px"><h3>Kim jestem: fakty do akapitu przed realizacjami</h3>
+      <p class="small muted" style="margin-top:0">Agent pisze z tego 2–3 zdania własnymi słowami, dopasowane do firmy. Wpisz tylko prawdę: to, co naprawdę robisz.</p>
+      <textarea class="inp" id="agPos" style="min-height:10rem">${esc(cfg.positioning || '')}</textarea>
+      <div class="row" style="margin-top:10px;gap:8px"><button class="btn sm" id="agSavePos">Zapisz</button>
+        <button class="btn ghost sm" id="agResetPos">Przywróć domyślne</button></div></div>
     <div class="card" style="margin-top:12px"><h3>Wzór stylu: tak mają brzmieć maile</h3>
       <p class="small muted" style="margin-top:0">Agent pisze w tym tonie i tej długości, ale nie kopiuje treści. <code>[REALIZACJE]</code> to miejsce na listę realizacji. Wklej tu maila, który najbardziej Ci się podoba.</p>
       <textarea class="inp" id="agStyle" style="min-height:16rem">${esc(cfg.styleExample || '')}</textarea>
@@ -1847,6 +1853,8 @@ async function strategia(box, { settings: cfg, playbook }) {
       <details><summary class="small muted">Treść</summary><pre style="white-space:pre-wrap;font:inherit;font-size:.88rem">${esc(p.content)}</pre></details>
     </div>`).join('') : '<div class="empty">Brak wersji.</div>'}`;
   const patch = (body, msg) => api('/agents/handlowiec/settings', { method: 'PATCH', body }).then(() => { toast(msg); render(); }).catch((e) => toast(e.message, true));
+  $('#agSavePos').onclick = () => patch({ positioning: $('#agPos').value }, 'Zapisane. Działa od następnego maila.');
+  $('#agResetPos').onclick = async () => { await api('/agents/handlowiec/settings/reset', { method: 'POST', body: { fields: ['positioning'] } }); render(); };
   $('#agSaveStyle').onclick = () => patch({ styleExample: $('#agStyle').value }, 'Wzór stylu zapisany.');
   $('#agResetStyle').onclick = async () => { await api('/agents/handlowiec/settings/reset', { method: 'POST', body: { fields: ['styleExample'] } }); render(); };
   $('#agSaveStrategy').onclick = () => patch({ strategy: $('#agStrategy').value }, 'Strategia zapisana. Działa od następnego maila.');
@@ -1883,9 +1891,9 @@ async function ustawienia(box, { settings: cfg }) {
         <div class="row" style="gap:12px">${num('followUpAfterDays', 'Przypomnienie po (dniach)')}${num('maxFollowUps', 'Ile przypomnień (0 = bez)')}</div>
         ${num('maxWords', 'Maks. słów w mailu')}
         <label class="f">Rezygnacja z wiadomości<select name="unsubscribe">
+          <option value="none" ${cfg.unsubscribe === 'none' ? 'selected' : ''}>bez dopisku</option>
           <option value="reply" ${cfg.unsubscribe === 'reply' ? 'selected' : ''}>dopisek „wystarczy odpisać nie”</option>
-          <option value="link" ${cfg.unsubscribe === 'link' ? 'selected' : ''}>link do wypisania</option>
-          <option value="none" ${cfg.unsubscribe === 'none' ? 'selected' : ''}>bez dopisku</option></select></label>
+          <option value="link" ${cfg.unsubscribe === 'link' ? 'selected' : ''}>link do wypisania</option></select></label>
         <label class="f"><input type="checkbox" name="autoLearn" ${cfg.autoLearn ? 'checked' : ''} style="display:inline;width:auto"> Nowe wnioski z nauki włączają się same (bez tego czekają na Twoją akceptację)</label>
         <label class="f">Model AI<input name="model" value="${esc(cfg.model || '')}"></label>
       </div>
