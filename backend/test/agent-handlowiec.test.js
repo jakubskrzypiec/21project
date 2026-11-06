@@ -116,13 +116,18 @@ test('pełny cykl: szukanie, duplikat z Gmaila, mail, wysyłka, odpowiedź ze sz
     return { text: JSON.stringify({ subject: 'Strona Starej Pracowni', body, angle: 'projekt pierwszego ekranu' }), usage: { input_tokens: 800, output_tokens: 200 } };
   });
 
-  h.saveSettings({ enabled: true });
   const realNow = Date.now;
   const fixed = Date.parse('2026-11-06T09:00:00Z'); // piątek, 10:00 w Warszawie
   Date.now = () => fixed;
   const RealDate = Date;
   global.Date = class extends RealDate { constructor(...a) { super(...(a.length ? a : [fixed])); } static now() { return fixed; } };
   try {
+    // Zatrzymany agent przy ręcznym przebiegu niczego nie pisze ani nie wysyła.
+    h.saveSettings({ enabled: false });
+    const r0 = await h.tick({ force: true });
+    assert.equal(r0.written, undefined);
+    assert.equal(sent.length, 0);
+    h.saveSettings({ enabled: true });
     const r = await h.tick();
     assert.equal(r.written, 1, JSON.stringify(r));
     const skipped = db.prepare("SELECT agent_note FROM leads WHERE domain='juz-pisalismy.pl'").get();

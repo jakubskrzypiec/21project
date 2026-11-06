@@ -27,7 +27,7 @@ router.get('/handlowiec/log', wrap((req) => ({ log: core.recentLog(handlowiec.AG
 router.post('/handlowiec/start', wrap((req) => { handlowiec.start(); logAction('agent.start', clientIp(req), { agent: 'handlowiec' }); return { status: handlowiec.status() }; }));
 router.post('/handlowiec/stop', wrap((req) => { handlowiec.stop(); logAction('agent.stop', clientIp(req), { agent: 'handlowiec' }); return { status: handlowiec.status() }; }));
 
-/** Jeden przebieg na żądanie — nawet gdy agent jest zatrzymany (wtedy nie wysyła poza oknem). */
+/** Jeden przebieg na żądanie. Zatrzymany agent tylko sprawdza odpowiedzi — niczego nie wysyła. */
 router.post('/handlowiec/run', wrap(() => handlowiec.tick({ force: true })));
 
 const NUM = ['dailyLimit', 'hourlyLimit', 'windowStart', 'windowEnd', 'prospectFrom', 'followUpAfterDays', 'maxFollowUps', 'maxWords'];

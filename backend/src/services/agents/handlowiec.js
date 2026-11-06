@@ -564,6 +564,9 @@ async function tick({ force = false } = {}) {
       out.replies = await checkReplies(s);
     }
 
+    // Zatrzymany agent nigdy nie szuka firm ani nie wysyła — ręczny przebieg tylko sprawdza odpowiedzi.
+    if (!s.enabled) return out;
+
     const l = core.local(at);
     if (s.workdays.includes(l.dow) && l.hourFloat >= Math.min(s.prospectFrom, s.windowStart) && l.hourFloat < s.windowEnd) {
       const c = counts(at);
