@@ -45,6 +45,7 @@ const DEFAULTS = {
   portfolio: writer.DEFAULT_PORTFOLIO,
   hooks: writer.DEFAULT_HOOKS,
   strategy: writer.DEFAULT_STRATEGY,
+  styleExample: writer.DEFAULT_STYLE_EXAMPLE,
   forbidden: writer.DEFAULT_FORBIDDEN,
   sources: {
     order: ['homebook', 'google'],
@@ -214,10 +215,27 @@ async function compose(s, userPrompt, { kind = 'first' } = {}) {
 }
 
 /** Audyt + duplikaty + wybór oferty + mail do kolejki. */
+const FREE_MAIL = /@(gmail\.com|googlemail\.com|wp\.pl|o2\.pl|onet\.pl|onet\.eu|op\.pl|interia\.(pl|eu)|poczta\.fm|vp\.pl|tlen\.pl|gazeta\.pl|outlook\.com|hotmail\.com|live\.com|yahoo\.com|icloud\.com|proton\.me|protonmail\.com|int\.pl|buziaczek\.pl)$/i;
+
+/** „Audyt” firmy bez strony: jedyna pewna obserwacja to brak strony, reszta z notatki z researchu. */
+function noSiteAudit(lead) {
+  return {
+    ok: true, host: null, noOwnSite: true, quality: 'brak', score: 10,
+    reasons: ['firma nie ma własnej strony internetowej (nie znalazłem jej w sieci)'],
+    note: lead.notes && !/^źródło:/.test(lead.notes) ? lead.notes : null, email: lead.email,
+  };
+}
+
 async function qualify(lead, s) {
   db.prepare("UPDATE leads SET agent_stage='checking', updated_at=? WHERE id=?").run(core.nowIso(), lead.id);
+  if (lead.source === 'import' && !lead.website) return qualifyNoSite(lead, s);
   const audit = await siteAudit.audit(lead.website || lead.domain);
-  if (!audit.ok) return skipLead(lead, audit.reason);
+  if (!audit.ok) {
+    // Zaimportowana firma ma adres od Ciebie — gdy strona nie działa, traktujemy ją jak firmę bez strony.
+    if (lead.source === 'import' && lead.email) return qualifyNoSite(lead, s, `strona ${lead.website} nie działa`);
+    return skipLead(lead, audit.reason);
+  }
+  if (lead.source === 'import' && lead.email && !audit.email) audit.email = lead.email;
   if (audit.host !== lead.domain) {
     if (knownDomain(audit.host)) return skipLead(lead, `przekierowanie na znaną już domenę ${audit.host}`);
     db.prepare('UPDATE leads SET domain=? WHERE id=?').run(audit.host, lead.id);
@@ -228,10 +246,26 @@ async function qualify(lead, s) {
   if (db.prepare('SELECT 1 FROM leads WHERE email=? AND id<>?').get(email, lead.id)) return skipLead(lead, 'ten adres e-mail jest już w bazie');
   if (outreach.isSuppressed(email, lead.domain) || outreach.isSuppressed(email, email.split('@')[1])) return skipLead(lead, 'adres na liście wykluczeń');
   if (await alreadyInGmail(lead.domain, email)) return skipLead(lead, 'już była korespondencja w Gmailu');
+  return writeFirst(lead, s, audit, email);
+}
 
+/** Firma bez strony (z importu): duplikaty po adresie, a po domenie tylko gdy to nie darmowa poczta. */
+async function qualifyNoSite(lead, s, why) {
+  const email = String(lead.email || '').toLowerCase();
+  if (!email) return skipLead(lead, 'brak adresu e-mail w imporcie');
+  const domain = FREE_MAIL.test(email) ? null : email.split('@')[1];
+  if (outreach.isSuppressed(email, domain || '')) return skipLead(lead, 'adres na liście wykluczeń');
+  const seen = domain ? await alreadyInGmail(domain, email) : await gmailSvc.anyThread(`"${email}"`);
+  if (seen) return skipLead(lead, 'już była korespondencja w Gmailu');
+  const audit = noSiteAudit(lead);
+  if (why) audit.reasons = [`firma podaje stronę, ale ${why} — klient trafia w pustkę`];
+  return writeFirst(lead, s, audit, email);
+}
+
+async function writeFirst(lead, s, audit, email) {
   const { text, emails, ...auditStored } = audit;
   db.prepare('UPDATE leads SET email=?, score=?, audit=?, updated_at=? WHERE id=?')
-    .run(email, audit.score, JSON.stringify({ ...auditStored, emails }), core.nowIso(), lead.id);
+    .run(email, audit.score, JSON.stringify({ ...auditStored, emails: emails || [email] }), core.nowIso(), lead.id);
   lead.email = email;
 
   const offerKey = chooseOffer(audit, s);
@@ -614,11 +648,12 @@ async function tick({ force = false } = {}) {
       // Firmy odłożone wczoraj (pełna pula oferty) wracają rano na początek kolejki.
       db.prepare("UPDATE leads SET agent_stage='found' WHERE agent_stage='parked' AND updated_at<?").run(core.dayStartIso(at));
       for (let i = 0; i < 6 && need > 0 && offersLeftToday(s); i += 1) {
-        let lead = db.prepare("SELECT * FROM leads WHERE agent_stage='found' ORDER BY id LIMIT 1").get();
+        const NEXT = "SELECT * FROM leads WHERE agent_stage='found' ORDER BY CASE source WHEN 'import' THEN 0 ELSE 1 END, id LIMIT 1";
+        let lead = db.prepare(NEXT).get();
         if (!lead) {
           doing('searching');
           if (!(await findCandidates(s))) break;
-          lead = db.prepare("SELECT * FROM leads WHERE agent_stage='found' ORDER BY id LIMIT 1").get();
+          lead = db.prepare(NEXT).get();
           if (!lead) break;
         }
         try {
@@ -659,6 +694,104 @@ async function preview(url, offerKey) {
   const body = `${writer.withPortfolio(draft.body, writer.portfolioBlock(s.portfolio, key))}${footer(s, { id: 0, unsub_token: 'podglad' })}`;
   return { offer: key, hook: hookKey, audit: { host: audit.host, quality: audit.quality, score: audit.score, reasons: audit.reasons, email: audit.email, title: audit.title },
     subject: draft.subject, body, html: gmailSvc.textToHtml(body), angle: draft.angle };
+}
+
+/* ---------------------------------- import ---------------------------------- */
+
+const COLS = {
+  company: /^(firma|nazwa|nazwa firmy|company)$/i,
+  email: /^(e-?mail|mail|adres e-?mail)$/i,
+  city: /^(miasto|miejscowość|miejscowosc|city)$/i,
+  industry: /^(branża|branza|kategoria|industry)$/i,
+  website: /^(strona|www|website|url)$/i,
+  phone: /^(telefon|tel|phone)$/i,
+  notes: /^(notatka|uwagi|opis|note|notes)$/i,
+};
+
+/** Wklejona tabela (CSV ze średnikami/przecinkami albo z arkusza, z tabulatorami) → wiersze. */
+function parseTable(text) {
+  const lines = String(text || '').replace(/\r/g, '').split('\n').filter((l) => l.trim());
+  if (!lines.length) return [];
+  const sep = ['\t', ';', ','].map((c) => [c, lines[0].split(c).length]).sort((a, b) => b[1] - a[1])[0][0];
+  const split = (line) => {
+    const out = []; let cur = ''; let q = false;
+    for (const ch of line) {
+      if (ch === '"') q = !q;
+      else if (ch === sep && !q) { out.push(cur.trim()); cur = ''; }
+      else cur += ch;
+    }
+    out.push(cur.trim());
+    return out;
+  };
+  const first = split(lines[0]);
+  const header = first.map((h) => Object.keys(COLS).find((k) => COLS[k].test(h.trim())) || null);
+  const hasHeader = header.some(Boolean);
+  const order = hasHeader ? header : ['company', 'email', 'city', 'industry', 'website', 'notes'];
+  return (hasHeader ? lines.slice(1) : lines).map((l) => {
+    const cells = split(l);
+    const row = {};
+    order.forEach((k, i) => { if (k && cells[i]) row[k] = cells[i]; });
+    // Adres e-mail rozpoznajemy też wtedy, gdy stoi w innej kolumnie.
+    if (!row.email) row.email = cells.find((c) => /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(c));
+    return row;
+  });
+}
+
+function importLeads(text) {
+  const rows = parseTable(text);
+  const result = { added: 0, skipped: [] };
+  const ts = core.nowIso();
+  for (const r of rows.slice(0, 1000)) {
+    const email = String(r.email || '').trim().toLowerCase();
+    const label = r.company || email || '(pusty wiersz)';
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(email)) { result.skipped.push({ firma: label, powod: 'brak poprawnego adresu e-mail' }); continue; }
+    const website = r.website && !/^(brak|nie ma|-|—)$/i.test(r.website) ? r.website.trim() : null;
+    const domain = website ? siteAudit.hostOf(website) : (FREE_MAIL.test(email) ? null : email.split('@')[1]);
+    if (db.prepare('SELECT 1 FROM leads WHERE email=?').get(email)) { result.skipped.push({ firma: label, powod: 'ten adres jest już w bazie' }); continue; }
+    if (domain && knownDomain(domain)) { result.skipped.push({ firma: label, powod: `domena ${domain} jest już w bazie` }); continue; }
+    if (outreach.isSuppressed(email, domain || '')) { result.skipped.push({ firma: label, powod: 'na liście wykluczeń' }); continue; }
+    db.prepare(`INSERT INTO leads (created_at, updated_at, source, status, company, email, phone, website, domain, city, industry, notes, tags, agent_stage)
+      VALUES (?, ?, 'import', 'new', ?, ?, ?, ?, ?, ?, ?, ?, ?, 'found')`)
+      .run(ts, ts, r.company || null, email, r.phone || null, website, domain, r.city || null, r.industry || null, r.notes || null, website ? 'import' : 'import,bez-strony');
+    result.added += 1;
+  }
+  log('action', `Import listy: dodano ${result.added} firm, pominięto ${result.skipped.length}. Zajmę się nimi przed firmami z Homebooka.`);
+  return result;
+}
+
+/* ------------------------------ maile testowe ------------------------------ */
+
+/**
+ * Trzy maile testowe — po jednym z każdej oferty — wysłane na Twoje konto Gmail.
+ * Firma to podana strona albo opis firmy bez strony. Nic nie trafia do kolejki ani statystyk.
+ */
+async function sendTests({ url, company, city, industry, note } = {}) {
+  const s = settings();
+  const account = google.status().account;
+  if (!account) throw new Error('Gmail nie jest połączony.');
+  let audit;
+  const lead = { company: company || null, city: city || null, industry: industry || null, notes: note || null, email: account };
+  if (url) {
+    audit = await siteAudit.audit(url);
+    if (!audit.ok) throw new Error(`Audyt nieudany: ${audit.reason}`);
+    lead.domain = audit.host; lead.website = url;
+  } else {
+    if (!company) throw new Error('Podaj stronę albo nazwę firmy bez strony.');
+    audit = noSiteAudit(lead);
+  }
+  const hooks = Object.keys(s.hooks || {}).filter((k) => s.hooks[k]?.on);
+  const out = [];
+  const keys = Object.keys(s.offers);
+  for (const [i, key] of keys.entries()) {
+    const hookKey = hooks[i % Math.max(1, hooks.length)] || null;
+    const draft = await compose(s, writer.firstPrompt(lead, audit, s.offers[key], s.hooks?.[hookKey]));
+    const body = `${writer.withPortfolio(draft.body, writer.portfolioBlock(s.portfolio, key))}${footer(s, { id: 0, unsub_token: 'test' })}`;
+    const subject = `[TEST: ${s.offers[key].name}] ${draft.subject}`;
+    await gmailSvc.sendMessage({ to: account, subject, body, html: gmailSvc.textToHtml(body) });
+    out.push({ offer: key, hook: hookKey, subject, body, html: gmailSvc.textToHtml(body) });
+  }
+  log('action', `Wysłałem 3 maile testowe na ${account} (${url || company}).`);
+  return { to: account, mails: out };
 }
 
 /* -------------------------------- statystyki ------------------------------- */
@@ -756,6 +889,6 @@ function status() {
 
 module.exports = {
   AGENT, DEFAULTS, settings, saveSettings: (patch) => core.saveSettings(AGENT, DEFAULTS, patch),
-  tick, start, stop, status, today, activityNow, stats, preview, learn, savePlaybook, activatePlaybook, activePlaybook,
+  tick, start, stop, status, today, activityNow, importLeads, parseTable, sendTests, stats, preview, learn, savePlaybook, activatePlaybook, activePlaybook,
   checkReplies, dailyReport, chooseOffer, chooseHook, offerCountsToday, counts, inWindow, sendNext, qualify, compose, POSITIVE,
 };

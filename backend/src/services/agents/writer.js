@@ -60,6 +60,8 @@ i dane firmy są słabe, klient trafia do konkurencji, choć jej praca jest gors
 Pokazuj efekt, a nie technologię: zapytanie od klienta, a nie „meta tagi”.`;
 
 const DEFAULT_FORBIDDEN = [
+  'pozwolę sobie', 'chciałbym zaproponować', 'w ramach współpracy', 'pragnę', 'zwracam się', 'oferujemy kompleksow',
+  'wyróżnić się na tle', 'przyciągnąć uwagę', 'kluczow', 'niezwykle', 'doskonał', 'idealne rozwiązanie', 'warto zainwestować',
   'mam nadzieję, że', 'w dzisiejszych czasach', 'w dzisiejszym cyfrowym', 'cyfrowym świecie', 'kompleksow',
   'innowacyjn', 'nowoczesne rozwiązania', 'zachęcam do kontaktu', 'nie wahaj', 'serdecznie zapraszam',
   'z przyjemnością', 'gwarantuj', 'wzrost sprzedaży o', 'pierwsze miejsce w google', 'synerg', 'holistyczn',
@@ -77,7 +79,8 @@ function styleCheck(body, subject, { forbidden = DEFAULT_FORBIDDEN, maxWords = 1
   for (const f of forbidden) if (f && low.includes(f.toLowerCase())) problems.push(`zakazany zwrot: „${f}”`);
   if (/[—–]/.test(text)) problems.push('długie myślniki (— –) — typowe dla AI, zamień na przecinek lub kropkę');
   if (/!/.test(text)) problems.push('wykrzyknik');
-  if (/\*\*|^#|^\s*[-•]\s/m.test(body)) problems.push('formatowanie (pogrubienia, nagłówki lub wypunktowania)');
+  if (/\*|__|^#|^\s*[-•–]\s|[\u{1F300}-\u{1FAFF}]/mu.test(body)) problems.push('formatowanie (gwiazdki, podkreślenia, nagłówki, wypunktowania lub emotki)');
+  if (/\s-\s/.test(body)) problems.push('myślnik między słowami — zamień na przecinek albo kropkę');
   const words = body.split(/\s+/).filter(Boolean).length;
   if (words > maxWords) problems.push(`za długi (${words} słów, maks. ${maxWords})`);
   if (/\b(ty|tobie|twoj\w*|ciebie|masz|możesz)\b/i.test(body)) problems.push('forma „Ty” zamiast „Pan/Pani/Państwo”');
@@ -98,10 +101,23 @@ function tidy(body) {
     .trim();
 }
 
+/** Wzór stylu: mail z partii, który Jakub zaakceptował. Model ma pisać w tym tonie, nie kopiować go. */
+const DEFAULT_STYLE_EXAMPLE = `Dzień dobry,
+
+zajrzałem na stronę Państwa pracowni. Na telefonie trzeba ją powiększać palcami, a w Google wyświetla się tylko tytuł „Strona główna”, bez nazwy firmy.
+
+Chciałem zapytać, czy nadal opłacają Państwo domenę i hosting tej strony? Jeśli tak, to szkoda, żeby strona, za którą Państwo płacą, nie pracowała w pełni na firmę. Odświeżona strona może dobrze wyglądać na telefonie, pokazywać realizacje i przynosić zapytania z Google.
+
+[REALIZACJE]
+
+Mogę bezpłatnie i bez zobowiązań przygotować wstępny projekt pierwszego ekranu nowej strony dla Państwa firmy. Zobaczą Państwo kierunek, zanim Państwo cokolwiek zdecydują.
+
+Jeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.`;
+
 function factsFor(lead, audit) {
   const lines = [
     `Firma: ${lead.company || audit.host || '—'}`,
-    `Strona: ${audit.host || lead.domain || 'brak własnej strony'}`,
+    `Strona: ${audit.noOwnSite && !audit.host ? 'BRAK WŁASNEJ STRONY' : audit.host || lead.domain || 'brak własnej strony'}`,
     `Branża: ${lead.industry || 'nieznana'}`,
     `Miasto: ${lead.city || 'nieznane'}`,
     `Osoba: ${lead.name || 'nieznana, pisz do „Państwa”'}`,
@@ -110,6 +126,7 @@ function factsFor(lead, audit) {
   if (audit.description) lines.push(`Opis strony w Google: „${audit.description.slice(0, 160)}”`);
   if (audit.reasons?.length) lines.push('Sprawdzone obserwacje (wolno użyć tylko tych):', ...audit.reasons.map((r) => `- ${r}`));
   if (audit.text) lines.push(`Fragment tekstu ze strony (dla kontekstu, nie cytuj go dosłownie): ${audit.text.slice(0, 600)}`);
+  if (audit.note) lines.push(`Notatka z researchu (wolno z niej korzystać, nic nie dopowiadaj): ${audit.note.slice(0, 500)}`);
   return lines.join('\n');
 }
 
@@ -120,7 +137,9 @@ BUDOWA MAILA (zawsze w tej kolejności, każdy punkt to osobny akapit):
 1. „Dzień dobry,” w osobnej linii.
 2. PROBLEM: jedna konkretna, sprawdzona obserwacja o stronie tej firmy (tylko z listy obserwacji)
    i co z niej wynika dla firmy. Gdy strona odstaje w wielu miejscach, opisz ogólne wrażenie
-   jednym zdaniem i podaj jeden przykład.
+   jednym zdaniem i podaj jeden przykład. Gdy firma NIE MA własnej strony: napisz wprost, że
+   nie znalazłeś jej strony, i co to oznacza (klient z polecenia albo z Google nie ma gdzie
+   zobaczyć realizacji, a ChatGPT i Google polecają firmy, o których coś wiedzą).
 3. ROZWIĄZANIE: co zrobiłbym w ramach oferty i jaki to daje efekt (zapytania, klienci, czas).
 4. W osobnej linii dokładnie: [REALIZACJE]  (system wstawi tu listę moich realizacji z linkami)
 5. HACZYK: przepisz własnymi słowami podany haczyk, w jednym–dwóch zdaniach.
@@ -134,6 +153,15 @@ ZASADY (bezwzględne):
 - nie wpisujesz żadnych adresów stron poza podanymi w opisie oferty; domeny bez https://,
 - bez wykrzykników, bez długich myślników, bez zwrotów: ${s.forbidden.slice(0, 12).join(', ')},
 - nie podpisujesz się (podpis „Pozdrawiam / 21 Project / 21project.pl” dokłada system).
+
+JAK MA BRZMIEĆ: jak mail od jednej osoby do drugiej, pisany ręcznie w kilka minut. Spokojnie,
+konkretnie, bez zachwytów i bez sprzedażowego zadęcia. Krótkie zdania. Zwykłe słowa, które
+właściciel małej firmy powiedziałby przez telefon. Zero wyliczanek na trzy, zero metafor,
+zero pytań retorycznych. Bez pogrubień, podkreśleń, gwiazdek, punktorów i emotek.
+Tak brzmi mail, który się podoba (ton i długość, nie kopiuj treści):
+---
+${s.styleExample || DEFAULT_STYLE_EXAMPLE}
+---
 ${playbook ? `\nWNIOSKI Z POPRZEDNICH TYGODNI (stosuj je):\n${playbook}\n` : ''}
 Zwracasz wyłącznie JSON: {"subject": "...", "body": "...", "angle": "jednym zdaniem: jaki problem i efekt wybrałeś"}`;
 }
@@ -178,6 +206,6 @@ Temat zostaw pusty (""), bo odpowiadamy w wątku.`;
 }
 
 module.exports = {
-  DEFAULT_OFFERS, DEFAULT_STRATEGY, DEFAULT_FORBIDDEN, DEFAULT_PORTFOLIO, DEFAULT_HOOKS, PORTFOLIO_ALL, SIGNATURE,
+  DEFAULT_OFFERS, DEFAULT_STRATEGY, DEFAULT_FORBIDDEN, DEFAULT_STYLE_EXAMPLE, DEFAULT_PORTFOLIO, DEFAULT_HOOKS, PORTFOLIO_ALL, SIGNATURE,
   styleCheck, tidy, systemPrompt, firstPrompt, followUpPrompt, factsFor, portfolioBlock, withPortfolio,
 };

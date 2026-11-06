@@ -169,7 +169,10 @@ Co robi:
 7. **Pilnuje odpowiedzi** co 30 minut: ocenia je (pilne / ważne / zwykłe / odmowa / automat / zwrot),
    zapisuje **szkic odpowiedzi w Gmailu** (nie wysyła go) i zatrzymuje przypomnienia. Zwroty i odmowy trafiają
    na listę wykluczeń.
-8. **Uczy się** w każdy poniedziałek o 6:20: porównuje maile z odpowiedzią i bez, zapisuje nową wersję wniosków.
+8. **Import firm bez stron**: zakładka Firmy → wklej tabelę albo CSV (Firma;E-mail;Miasto;Branża;Strona;Notatka).
+   Zaimportowane firmy idą przed Homebookiem; przy darmowej poczcie (gmail, wp…) duplikat sprawdzany jest po samym adresie.
+9. **Test**: w Przeglądzie przycisk „Wyślij mi 3 testowe maile” — po jednym z każdej oferty, na Twoją skrzynkę.
+10. **Uczy się** w każdy poniedziałek o 6:20: porównuje maile z odpowiedzią i bez, zapisuje nową wersję wniosków.
    Wszystkie wersje są w zakładce „Strategia i nauka” i można wrócić do starszej.
 
 Potrzebne zmienne na serwerze: `ANTHROPIC_API_KEY` (bez niego agent nie pisze) i połączone konto Google.

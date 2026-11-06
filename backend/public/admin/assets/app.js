@@ -1660,8 +1660,24 @@ async function przeglad(box, { stats: st, settings: cfg }) {
         <p class="small">${st.funnel.map((f) => `${ETAP[f.stage] || esc(f.stage || '—')}: <strong>${fmtNum(f.n)}</strong>`).join(' · ') || 'Agent jeszcze nie szukał firm.'}</p>
         ${table(['Dlaczego pominięta', 'Ile'], st.skipReasons, (r) => `<tr><td class="small">${esc(r.reason || '—')}</td><td>${r.n}</td></tr>`)}</div>
     </div>
-    <h2 class="sec">Próbny mail</h2>
-    <p class="sub">Wpisz adres dowolnej strony. Agent zrobi audyt i napisze maila tak, jak zrobiłby to naprawdę. Nic nie zostanie wysłane.</p>
+    <h2 class="sec">Test: 3 maile na Twoją skrzynkę</h2>
+    <p class="sub">Agent napisze po jednym mailu z każdej oferty i wyśle je do Ciebie (temat zaczyna się od [TEST]). Zobaczysz je dokładnie tak, jak klient. Do firmy nic nie wychodzi.</p>
+    <form class="card" id="agTest" style="display:grid;gap:12px">
+      <div class="row" style="gap:16px;flex-wrap:wrap">
+        <label class="small"><input type="radio" name="mode" value="site" checked> firma ze stroną</label>
+        <label class="small"><input type="radio" name="mode" value="nosite"> firma bez strony</label></div>
+      <div data-mode="site"><input class="inp" name="url" style="max-width:24rem;margin:0" placeholder="adres strony, np. pracownia.pl"></div>
+      <div data-mode="nosite" hidden><div style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+        <input class="inp" name="company" style="margin:0" placeholder="nazwa firmy">
+        <input class="inp" name="city" style="margin:0" placeholder="miasto">
+        <input class="inp" name="industry" style="margin:0" placeholder="branża, np. stolarstwo">
+        <input class="inp" name="note" style="margin:0" placeholder="notatka, np. tylko Facebook, 40 opinii"></div></div>
+      <div><button class="btn sm">Wyślij mi 3 testowe maile</button></div>
+    </form>
+    <div id="agTestOut" style="margin-top:14px"></div>
+
+    <h2 class="sec">Szybki podgląd jednego maila</h2>
+    <p class="sub">Bez wysyłania, tylko na ekranie.</p>
     <form class="row" id="agPrev" style="flex-wrap:wrap;gap:10px">
       <input class="inp" name="url" style="max-width:22rem;margin:0" placeholder="np. pracownia.pl" required>
       <select class="inp" name="offer" style="max-width:14rem;margin:0"><option value="">oferta: wybór agenta</option>
@@ -1669,6 +1685,27 @@ async function przeglad(box, { stats: st, settings: cfg }) {
       <button class="btn sm">Napisz próbny mail</button>
     </form>
     <div id="agPrevOut" style="margin-top:16px"></div>`;
+  const tf = $('#agTest');
+  tf.querySelectorAll('[name=mode]').forEach((r) => {
+    r.onchange = () => tf.querySelectorAll('[data-mode]').forEach((d) => { d.hidden = d.dataset.mode !== tf.mode.value; });
+  });
+  tf.onsubmit = async (e) => {
+    e.preventDefault();
+    const out = $('#agTestOut');
+    const body = tf.mode.value === 'site' ? { url: tf.url.value.trim() }
+      : { company: tf.company.value.trim(), city: tf.city.value.trim(), industry: tf.industry.value.trim(), note: tf.note.value.trim() };
+    if (!body.url && !body.company) { toast('Podaj stronę albo nazwę firmy.', true); return; }
+    const btn = tf.querySelector('button'); btn.disabled = true; btn.textContent = 'Piszę 3 maile… (do 2 minut)';
+    out.innerHTML = '';
+    try {
+      const r = await api('/agents/handlowiec/test-send', { method: 'POST', body });
+      out.innerHTML = `<div class="notice info">Wysłane na ${esc(r.to)}. Sprawdź skrzynkę. Poniżej to samo:</div>`
+        + r.mails.map((m, i) => `<div class="agMail" style="margin-bottom:12px"><p class="small muted" style="margin:0 0 6px">${OFERTA[m.offer]} · haczyk: ${esc((cfg.hooks?.[m.hook] || {}).name || '—')}</p>
+          <p class="agMailSubj">${esc(m.subject)}</p><div class="agMailBody" data-i="${i}"></div></div>`).join('');
+      r.mails.forEach((m, i) => { out.querySelector(`[data-i="${i}"]`).innerHTML = m.html; });
+    } catch (err) { out.innerHTML = `<div class="notice bad">${esc(err.message)}</div>`; }
+    btn.disabled = false; btn.textContent = 'Wyślij mi 3 testowe maile';
+  };
   $('#agPrev').onsubmit = async (e) => {
     e.preventDefault();
     const out = $('#agPrevOut');
@@ -1743,7 +1780,18 @@ async function maile(box) {
 async function firmy(box) {
   const stage = new URLSearchParams(location.hash.split('?')[1] || '').get('stage') || '';
   const { leads } = await api(`/agents/handlowiec/leads${stage ? `?stage=${stage}` : ''}`);
-  box.innerHTML = `<p class="sub">Firmy, które agent znalazł i sprawdził.
+  box.innerHTML = `
+    <div class="card" style="margin-bottom:20px"><h3>Import listy firm (np. bez stron)</h3>
+      <p class="small" style="margin-top:0">Wklej tabelę z arkusza albo wybierz plik CSV. Kolumny: <strong>Firma, E-mail, Miasto, Branża, Strona, Notatka</strong>.
+        Wystarczy firma i e-mail. Puste pole „Strona” albo „brak” oznacza firmę bez strony. Agent sprawdzi każdą w Gmailu i zajmie się nimi przed Homebookiem.</p>
+      <textarea class="inp" id="agImpText" style="min-height:9rem" placeholder="Firma;E-mail;Miasto;Branża;Strona;Notatka
+Stolarnia Kowalski;kowalski@gmail.com;Gliwice;stolarstwo;brak;tylko Facebook, 40 opinii w Google"></textarea>
+      <div class="row" style="gap:10px;flex-wrap:wrap;margin-top:10px">
+        <input type="file" id="agImpFile" accept=".csv,.tsv,.txt">
+        <button class="btn sm" id="agImp" type="button">Importuj</button>
+        <button class="btn ghost sm" id="agImpPrompt" type="button">Skopiuj polecenie dla ChatGPT</button></div>
+      <div id="agImpOut" style="margin-top:12px"></div></div>
+    <p class="sub">Firmy, które agent znalazł i sprawdził.
     ${['', ...Object.keys(ETAP)].map((k) => `<a href="#/agenci/szczegoly?tab=firmy${k ? `&stage=${k}` : ''}" style="margin-left:10px;${k === stage ? 'font-weight:600' : ''}">${k ? ETAP[k] : 'wszystkie'}</a>`).join('')}</p>
     <div class="card" style="padding:0">${table(['Firma', 'Miasto / branża', 'Ocena strony', 'Etap', 'Uwagi'], leads, (l) => `<tr>
       <td class="small"><a href="#/leady/${l.id}">${esc(l.company || l.domain)}</a><br><span class="muted">${esc(l.domain || '')} ${esc(l.email || '')}</span></td>
@@ -1751,6 +1799,23 @@ async function firmy(box) {
       <td>${l.score ? scoreTag(l.score * 10 > 100 ? 100 : l.score * 10) : '—'}</td>
       <td><span class="tag">${ETAP[l.agent_stage] || esc(l.agent_stage || '')}</span></td>
       <td class="small muted">${esc(l.agent_note || '')}</td></tr>`)}</div>`;
+  $('#agImpFile').onchange = async (e) => { const f = e.target.files[0]; if (f) $('#agImpText').value = await f.text(); };
+  $('#agImpPrompt').onclick = async () => {
+    const txt = `Znajdź 30 firm z branży [BRANŻA] w [MIASTO / WOJEWÓDZTWO], które NIE MAJĄ własnej strony internetowej (mają tylko profil w Google, na Facebooku albo w katalogu), ale podają publicznie adres e-mail. Sprawdź, że strona naprawdę nie istnieje. Wynik podaj jako tabelę z kolumnami oddzielonymi średnikiem, z nagłówkiem: Firma;E-mail;Miasto;Branża;Strona;Notatka. W kolumnie Strona wpisz "brak". W Notatce napisz krótko, co wiesz o firmie (np. liczba opinii w Google, czym się zajmuje). Nie wymyślaj adresów e-mail: tylko takie, które firma sama podaje.`;
+    try { await navigator.clipboard.writeText(txt); toast('Skopiowano. Wklej w ChatGPT i uzupełnij branżę i miasto.'); }
+    catch { openModal('Polecenie dla ChatGPT', `<textarea class="inp" style="min-height:12rem">${esc(txt)}</textarea>`, async () => {}); }
+  };
+  $('#agImp').onclick = async (e) => {
+    const out = $('#agImpOut');
+    e.target.disabled = true;
+    try {
+      const r = await api('/agents/handlowiec/import', { method: 'POST', body: { text: $('#agImpText').value } });
+      out.innerHTML = `<div class="notice ${r.added ? 'info' : 'warn'}">Dodano ${r.added} firm. ${r.skipped.length ? `Pominięto ${r.skipped.length}:` : ''}
+        ${r.skipped.slice(0, 30).map((x) => `<br>• ${esc(x.firma)}: ${esc(x.powod)}`).join('')}</div>`;
+      if (r.added) setTimeout(render, 2500);
+    } catch (err) { out.innerHTML = `<div class="notice bad">${esc(err.message)}</div>`; }
+    e.target.disabled = false;
+  };
 }
 
 async function strategia(box, { settings: cfg, playbook }) {
@@ -1768,6 +1833,11 @@ async function strategia(box, { settings: cfg, playbook }) {
         <div class="row" style="margin-top:10px;gap:8px"><button class="btn sm" id="agSavePlaybook">Zapisz jako nową wersję</button>
           <button class="btn ghost sm" id="agLearn">Ucz się teraz</button></div></div>
     </div>
+    <div class="card" style="margin-top:12px"><h3>Wzór stylu: tak mają brzmieć maile</h3>
+      <p class="small muted" style="margin-top:0">Agent pisze w tym tonie i tej długości, ale nie kopiuje treści. <code>[REALIZACJE]</code> to miejsce na listę realizacji. Wklej tu maila, który najbardziej Ci się podoba.</p>
+      <textarea class="inp" id="agStyle" style="min-height:16rem">${esc(cfg.styleExample || '')}</textarea>
+      <div class="row" style="margin-top:10px;gap:8px"><button class="btn sm" id="agSaveStyle">Zapisz wzór</button>
+        <button class="btn ghost sm" id="agResetStyle">Przywróć domyślny</button></div></div>
     <h2 class="sec">Historia wersji</h2>
     ${playbooks.length ? playbooks.map((p) => `<div class="card" style="margin-bottom:1px">
       <div class="row" style="justify-content:space-between"><span><strong>#${p.id}</strong> <span class="muted small">${fmtDateTime(p.created_at)} · ${p.source === 'auto' ? 'nauka agenta' : 'Twoja zmiana'}</span>
@@ -1777,6 +1847,8 @@ async function strategia(box, { settings: cfg, playbook }) {
       <details><summary class="small muted">Treść</summary><pre style="white-space:pre-wrap;font:inherit;font-size:.88rem">${esc(p.content)}</pre></details>
     </div>`).join('') : '<div class="empty">Brak wersji.</div>'}`;
   const patch = (body, msg) => api('/agents/handlowiec/settings', { method: 'PATCH', body }).then(() => { toast(msg); render(); }).catch((e) => toast(e.message, true));
+  $('#agSaveStyle').onclick = () => patch({ styleExample: $('#agStyle').value }, 'Wzór stylu zapisany.');
+  $('#agResetStyle').onclick = async () => { await api('/agents/handlowiec/settings/reset', { method: 'POST', body: { fields: ['styleExample'] } }); render(); };
   $('#agSaveStrategy').onclick = () => patch({ strategy: $('#agStrategy').value }, 'Strategia zapisana. Działa od następnego maila.');
   $('#agResetStrategy').onclick = async () => {
     if (!confirm('Przywrócić domyślną strategię?')) return;

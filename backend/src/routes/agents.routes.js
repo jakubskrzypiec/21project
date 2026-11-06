@@ -56,7 +56,7 @@ router.patch('/handlowiec/settings', wrap((req) => {
   if (patch.dailyLimit > 100) throw new Error('Limit dzienny powyżej 100 maili to proszenie się o blokadę konta Gmail.');
   if (patch.windowStart !== undefined && patch.windowEnd !== undefined && patch.windowStart >= patch.windowEnd) throw new Error('Okno wysyłki: początek musi być przed końcem.');
   if (Array.isArray(b.workdays)) patch.workdays = b.workdays.map(Number).filter((d) => d >= 1 && d <= 7);
-  for (const k of ['strategy', 'model']) if (typeof b[k] === 'string') patch[k] = b[k];
+  for (const k of ['strategy', 'model', 'styleExample']) if (typeof b[k] === 'string') patch[k] = b[k];
   if (Array.isArray(b.forbidden)) patch.forbidden = b.forbidden.map(String).map((x) => x.trim()).filter(Boolean);
   if (['reply', 'link', 'none'].includes(b.unsubscribe)) patch.unsubscribe = b.unsubscribe;
   if (typeof b.autoLearn === 'boolean') patch.autoLearn = b.autoLearn;
@@ -102,7 +102,7 @@ router.patch('/handlowiec/settings', wrap((req) => {
 
 /** Przywraca domyślne oferty / strategię / listę zakazanych zwrotów. */
 router.post('/handlowiec/settings/reset', wrap((req) => {
-  const which = (req.body?.fields || []).filter((f) => ['offers', 'strategy', 'forbidden', 'sources', 'portfolio', 'hooks'].includes(f));
+  const which = (req.body?.fields || []).filter((f) => ['offers', 'strategy', 'forbidden', 'sources', 'portfolio', 'hooks', 'styleExample'].includes(f));
   const patch = Object.fromEntries(which.map((f) => [f, handlowiec.DEFAULTS[f]]));
   return { settings: handlowiec.saveSettings(patch) };
 }));
@@ -110,6 +110,24 @@ router.post('/handlowiec/settings/reset', wrap((req) => {
 router.post('/handlowiec/preview', wrap(async (req) => {
   if (!req.body?.url) throw new Error('Podaj adres strony.');
   return handlowiec.preview(String(req.body.url), req.body.offer);
+}));
+
+router.post('/handlowiec/import', wrap((req) => {
+  const text = String(req.body?.text || '');
+  if (!text.trim()) throw new Error('Wklej listę firm albo wybierz plik CSV.');
+  if (text.length > 2_000_000) throw new Error('Plik jest za duży (maks. ok. 1000 firm naraz).');
+  return handlowiec.importLeads(text);
+}));
+
+router.post('/handlowiec/test-send', wrap(async (req) => {
+  const b = req.body || {};
+  return handlowiec.sendTests({
+    url: b.url ? String(b.url).trim() : null,
+    company: b.company ? String(b.company).trim() : null,
+    city: b.city ? String(b.city).trim() : null,
+    industry: b.industry ? String(b.industry).trim() : null,
+    note: b.note ? String(b.note).trim() : null,
+  });
 }));
 
 router.get('/handlowiec/messages', wrap((req) => {
