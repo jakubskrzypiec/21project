@@ -227,3 +227,15 @@ test('styl: myślnik między słowami i gwiazdki wracają do poprawki', () => {
   assert.ok(writer.styleCheck('Dzień dobry,\n\n**ważne**', 'T').some((p) => p.includes('formatowanie')));
   assert.ok(writer.styleCheck('Dzień dobry,\n\nPozwolę sobie napisać.', 'T').some((p) => p.includes('pozwolę sobie')));
 });
+
+test('zapytanie do API nie zawiera temperature (nowe modele go odrzucają)', async (t) => {
+  let sentBody;
+  t.mock.method(global, 'fetch', async (_url, opts) => {
+    sentBody = JSON.parse(opts.body);
+    return { ok: true, json: async () => ({ content: [{ type: 'text', text: 'ok' }], usage: {}, stop_reason: 'end_turn' }) };
+  });
+  const r = await ai.call({ system: 's', prompt: 'p', temperature: 0.7, model: 'claude-sonnet-5-5' });
+  assert.equal(r.text, 'ok');
+  assert.equal('temperature' in sentBody, false);
+  assert.equal(sentBody.model, 'claude-sonnet-5-5');
+});
