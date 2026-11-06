@@ -197,17 +197,27 @@ function activePlaybook() {
 async function compose(s, userPrompt, { kind = 'first' } = {}) {
   const playbook = activePlaybook();
   const system = writer.systemPrompt({ ...s, maxWords: kind === 'first' ? s.maxWords : 80 }, playbook?.content);
-  const messages = [{ role: 'user', content: userPrompt }];
+  let prompt = userPrompt;
   let last;
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const raw = await core.think(AGENT, { system, messages, maxTokens: 900, temperature: 0.8, model: s.model || undefined });
-    const out = core.parseJson(raw);
+    const out = await core.thinkJson(AGENT, {
+      system, prompt, maxTokens: 1500, model: s.model || undefined, name: 'zapisz_maila', description: 'Zapisuje gotowego maila.',
+      schema: {
+        type: 'object',
+        properties: {
+          subject: { type: 'string', description: 'Temat maila (pusty przy przypomnieniu w wątku).' },
+          body: { type: 'string', description: 'Treść maila, akapity oddzielone pustą linią.' },
+          angle: { type: 'string', description: 'Jednym zdaniem: jaki problem i efekt wybrałeś.' },
+        },
+        required: ['subject', 'body'],
+      },
+    });
     const body = writer.tidy(out.body || '');
     const subject = writer.tidy(out.subject || '').replace(/\.$/, '');
     const problems = writer.styleCheck(body, kind === 'first' ? subject : '', { forbidden: s.forbidden, maxWords: kind === 'first' ? s.maxWords : 90 });
     last = { subject, body, angle: out.angle || null, problems, playbookId: playbook?.id || null };
     if (!problems.length && body && (subject || kind !== 'first')) return last;
-    messages.push({ role: 'assistant', content: raw }, { role: 'user', content: `Popraw tekst. Problemy: ${problems.join('; ') || 'brak tematu lub treści'}. Zwróć znowu sam JSON.` });
+    prompt = `${userPrompt}\n\nTwoja poprzednia wersja:\n---\n${body}\n---\nPopraw ją. Problemy: ${problems.join('; ') || 'brak tematu lub treści'}.`;
   }
   const err = new Error(`tekst nie przeszedł kontroli stylu: ${last.problems.join('; ')}`);
   err.draft = last;
@@ -416,8 +426,18 @@ async function handleReply(o, thread, incoming, s) {
     return;
   }
   const full = await gmailSvc.getThread(o.gmail_thread_id);
-  const raw = await core.think(AGENT, { system: REPLY_SYSTEM, prompt: threadText(full), maxTokens: 700, temperature: 0.4, model: s.model || undefined });
-  const r = core.parseJson(raw);
+  const r = await core.thinkJson(AGENT, {
+    system: REPLY_SYSTEM, prompt: threadText(full), maxTokens: 900, model: s.model || undefined,
+    name: 'ocen_odpowiedz', description: 'Zapisuje ocenę odpowiedzi i szkic odpowiedzi.',
+    schema: {
+      type: 'object',
+      properties: {
+        category: { type: 'string', enum: ['pilne', 'wazne', 'zwykle', 'odmowa', 'automat'] },
+        summary: { type: 'string' }, optOut: { type: 'boolean' }, draft: { type: 'string' },
+      },
+      required: ['category', 'summary', 'optOut', 'draft'],
+    },
+  });
   const category = ['pilne', 'wazne', 'zwykle', 'odmowa', 'automat'].includes(r.category) ? r.category : 'zwykle';
   let draftId = null;
   const draftBody = category === 'automat' ? '' : writer.tidy(r.draft || '');
@@ -548,8 +568,15 @@ Zwróć JSON:
 {"playbook": "nowe wnioski dla handlowca, maks. 180 słów, konkretne reguły: co robić, czego unikać, 3 przykładowe tematy",
  "summary": "3–5 zdań dla właściciela firmy: co działa, co nie, co zmieniasz i dlaczego",
  "ownerTips": ["1–3 rzeczy, które właściciel może zrobić, żeby wyniki były lepsze"]}`;
-  const raw = await core.think(AGENT, { system: LEARN_SYSTEM, prompt, maxTokens: 1400, temperature: 0.4, model: s.model || undefined });
-  const r = core.parseJson(raw);
+  const r = await core.thinkJson(AGENT, {
+    system: LEARN_SYSTEM, prompt, maxTokens: 2000, model: s.model || undefined,
+    name: 'zapisz_wnioski', description: 'Zapisuje nowe wnioski dla handlowca.',
+    schema: {
+      type: 'object',
+      properties: { playbook: { type: 'string' }, summary: { type: 'string' }, ownerTips: { type: 'array', items: { type: 'string' } } },
+      required: ['playbook', 'summary'],
+    },
+  });
   if (!r.playbook) throw new Error('Brak nowych wniosków w odpowiedzi modelu.');
   const summary = [r.summary, ...(r.ownerTips || []).map((t) => `• ${t}`)].filter(Boolean).join('\n');
   const tx = db.transaction(() => {

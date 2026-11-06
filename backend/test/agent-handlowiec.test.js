@@ -208,8 +208,8 @@ test('import listy: nagłówki po polsku, duplikaty i firma bez strony obsłużo
   let gmailQuery = '';
   t.mock.method(google, 'status', () => ({ connected: true, account: 'jakub@21project.pl' }));
   t.mock.method(gmail, 'anyThread', async (q) => { gmailQuery = q; return false; });
-  t.mock.method(ai, 'call', async ({ messages }) => {
-    prompt = messages[0].content;
+  t.mock.method(ai, 'call', async (o) => {
+    prompt = o.prompt || o.messages[0].content;
     return { text: JSON.stringify({ subject: 'Stolarnia Kowalski', body: 'Dzień dobry,\n\nnie znalazłem strony Państwa stolarni.\n\n[REALIZACJE]\n\nMogę przygotować projekt.\n\nJeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.' }), usage: {} };
   });
   const q = await h.qualify(lead, h.settings());
@@ -238,4 +238,17 @@ test('zapytanie do API nie zawiera temperature (nowe modele go odrzucają)', asy
   assert.equal(r.text, 'ok');
   assert.equal('temperature' in sentBody, false);
   assert.equal(sentBody.model, 'claude-sonnet-5-5');
+});
+
+test('odpowiedź modelu: narzędzie z polami albo JSON z łamanymi liniami', async (t) => {
+  assert.deepEqual(core.parseJson('{"subject": "A", "body": "Dzień dobry,\n\nlinia"}'), { subject: 'A', body: 'Dzień dobry,\n\nlinia' });
+  assert.deepEqual(core.parseJson('Proszę:\n```json\n{"a": "x\ty"}\n```'), { a: 'x\ty' });
+  let req;
+  t.mock.method(ai, 'call', async (opts) => {
+    req = opts;
+    return { text: '', usage: {}, content: [{ type: 'tool_use', name: 'zapisz_maila', input: { subject: 'Temat', body: 'Treść' } }] };
+  });
+  const r = await core.thinkJson('test', { system: 's', prompt: 'p', name: 'zapisz_maila', schema: { type: 'object', properties: {} } });
+  assert.deepEqual(r, { subject: 'Temat', body: 'Treść' });
+  assert.deepEqual(req.toolChoice, { type: 'tool', name: 'zapisz_maila' });
 });
