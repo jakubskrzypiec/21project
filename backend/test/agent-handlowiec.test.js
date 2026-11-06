@@ -149,7 +149,8 @@ test('pełny cykl: szukanie, duplikat z Gmaila, mail, wysyłka, odpowiedź ze sz
     assert.equal(skipped.agent_note, 'już była korespondencja w Gmailu');
     assert.equal(sent.length, 1);
     assert.equal(sent[0].to, 'biuro@stara-pracownia.pl');
-    assert.ok(sent[0].body.endsWith('wystarczy odpisać „nie”.'));
+    assert.ok(sent[0].body.endsWith('Pozdrawiam\n21 Project\n21project.pl'));
+    assert.ok(!sent[0].body.includes('odpisać „nie”'));
     assert.ok(sent[0].body.includes('Pozdrawiam\n21 Project\n21project.pl'));
     assert.ok(!/[—!]/.test(sent[0].body));
     const msg = db.prepare("SELECT * FROM outreach WHERE agent='handlowiec' AND kind='first'").get();
@@ -255,4 +256,51 @@ test('odpowiedź modelu: structured outputs ze ścisłym schematem, zapasowo JSO
   assert.equal(sentBody.output_config.format.schema.additionalProperties, false);
   assert.equal('tool_choice' in sentBody, false);
   assert.equal('temperature' in sentBody, false);
+});
+
+test('przypomnienie nie wychodzi, gdy firma odpisała poza wątkiem', async (t) => {
+  const ts = new Date(Date.now() - 8 * 86400000).toISOString();
+  const lid = db.prepare(`INSERT INTO leads (created_at, updated_at, source, status, company, domain, email, agent_stage)
+    VALUES (?, ?, 'agent', 'contacted', 'Firma F', 'firmaf.pl', 'biuro@firmaf.pl', 'contacted')`).run(ts, ts).lastInsertRowid;
+  const first = db.prepare(`INSERT INTO outreach (lead_id, created_at, status, to_email, subject, body, agent, offer, kind, sent_at, gmail_thread_id)
+    VALUES (?, ?, 'sent', 'biuro@firmaf.pl', 'Temat', 'Treść', 'handlowiec', 'strona', 'first', ?, 'tf')`).run(lid, ts, ts).lastInsertRowid;
+  const fu = db.prepare(`INSERT INTO outreach (lead_id, created_at, status, to_email, subject, body, agent, offer, kind, parent_id)
+    VALUES (?, ?, 'agent_queued', 'biuro@firmaf.pl', 'Re: Temat', 'Przypomnienie', 'handlowiec', 'strona', 'followup', ?)`).run(lid, ts, first).lastInsertRowid;
+  let query = '';
+  let sentCount = 0;
+  t.mock.method(google, 'status', () => ({ connected: true, account: 'jakub@21project.pl' }));
+  t.mock.method(gmail, 'getThreadMeta', async () => [{ id: 'a', from: 'jakub@21project.pl', messageId: '<a>' }]);
+  t.mock.method(gmail, 'anyThread', async (q) => { query = q; return true; });
+  t.mock.method(gmail, 'sendMessage', async () => { sentCount += 1; return { id: 'x', threadId: 'y' }; });
+  db.prepare("UPDATE outreach SET status='skipped' WHERE agent='handlowiec' AND status='agent_queued' AND id<>?").run(fu);
+  core.saveState('handlowiec', { nextSendAt: null });
+  await h.sendNext(h.settings(), new Date());
+  assert.equal(sentCount, 0);
+  assert.ok(query.includes('@firmaf.pl') && query.includes('after:'));
+  assert.equal(db.prepare('SELECT status FROM outreach WHERE id=?').get(fu).status, 'skipped');
+  assert.ok(db.prepare('SELECT replied_at FROM outreach WHERE id=?').get(first).replied_at);
+});
+
+test('kalendarz spotkań: godziny w strefie Warszawy, wyprzedzenie, zajęte terminy i przerwa', () => {
+  const booking = require('../src/services/booking');
+  // 10:00 w Warszawie zimą to 09:00 UTC, latem 08:00 UTC.
+  assert.equal(booking.zonedToUtc(2026, 11, 9, 10, 0).toISOString(), '2026-11-09T09:00:00.000Z');
+  assert.equal(booking.zonedToUtc(2026, 7, 6, 10, 0).toISOString(), '2026-07-06T08:00:00.000Z');
+  const s = { ...booking.DEFAULTS, horizonDays: 7 };
+  const now = new Date('2026-11-06T09:00:00Z'); // piątek 10:00
+  const slots = booking.candidateSlots(s, now);
+  assert.ok(slots.length > 0);
+  assert.ok(slots.every((x) => x.start.getTime() >= now.getTime() + 12 * 3600000)); // min. 12 h wyprzedzenia
+  assert.equal(slots[0].start.toISOString(), '2026-11-09T09:00:00.000Z'); // pn 10:00, weekend pominięty
+  const busy = [[Date.parse('2026-11-09T09:30:00Z'), Date.parse('2026-11-09T10:00:00Z')]];
+  assert.equal(booking.isFree(slots[0], busy, 15), false); // koliduje z przerwą 15 min
+  assert.equal(booking.isFree(slots[0], busy, 0), true);
+});
+
+test('mail z ofertą panelu kończy się propozycją spotkania z linkiem, oferta strony nie', () => {
+  const s = h.settings();
+  const body = 'Dzień dobry,\n\nTreść.\n\nJeśli byliby Państwo zainteresowani, wystarczy krótka odpowiedź na tego maila.';
+  assert.ok(writer.withMeeting(body, s.offers.panel, s.bookingUrl).endsWith('Termin można wybrać tutaj: 21project.pl/spotkanie/'));
+  assert.equal(writer.withMeeting(body, s.offers.strona, s.bookingUrl), body);
+  assert.ok(gmail.textToHtml(writer.meetingLine()).includes('href="https://21project.pl/spotkanie/"'));
 });

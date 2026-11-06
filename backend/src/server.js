@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 });
 
 /* CORS wyłącznie dla publicznych końcówek wywoływanych ze strony. */
-const PUBLIC_CORS = ['/api/track', '/api/contact', '/t.js'];
+const PUBLIC_CORS = ['/api/track', '/api/contact', '/api/booking', '/t.js'];
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (origin && PUBLIC_CORS.some((p) => req.path.startsWith(p)) && config.allowedOrigins.includes(origin)) {

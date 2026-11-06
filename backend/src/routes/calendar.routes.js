@@ -25,6 +25,26 @@ router.get('/free-slots', guard(async (req, res) => {
   res.json({ slots: await cal.freeSlots({ from, to, slotMinutes: Number(req.query.minutes) || 60 }) });
 }));
 
+/* Ustawienia publicznego kalendarza spotkań (21project.pl/spotkanie/). */
+const booking = require('../services/booking');
+router.get('/booking', guard(async (_req, res) => res.json({ settings: booking.settings() })));
+router.patch('/booking', guard(async (req, res) => {
+  const b = req.body || {};
+  const patch = {};
+  for (const k of ['dayStart', 'dayEnd', 'slotMinutes', 'bufferMinutes', 'minNoticeHours', 'horizonDays']) {
+    if (b[k] === undefined) continue;
+    const n = Number(b[k]);
+    if (!Number.isFinite(n) || n < 0) return res.status(400).json({ error: `Niepoprawna wartość: ${k}` });
+    patch[k] = n;
+  }
+  if ((patch.dayStart ?? booking.settings().dayStart) >= (patch.dayEnd ?? booking.settings().dayEnd)) return res.status(400).json({ error: 'Początek dnia musi być przed końcem.' });
+  if (patch.slotMinutes !== undefined && (patch.slotMinutes < 15 || patch.slotMinutes > 120)) return res.status(400).json({ error: 'Długość spotkania: od 15 do 120 minut.' });
+  if (Array.isArray(b.workdays)) patch.workdays = b.workdays.map(Number).filter((d) => d >= 1 && d <= 7);
+  if (typeof b.enabled === 'boolean') patch.enabled = b.enabled;
+  if (typeof b.title === 'string' && b.title.trim()) patch.title = b.title.trim().slice(0, 80);
+  res.json({ settings: booking.saveSettings(patch) });
+}));
+
 router.post('/', guard(async (req, res) => {
   const b = req.body || {};
   if (!b.title || !b.starts_at) return res.status(400).json({ error: 'Wymagany tytuł i data rozpoczęcia.' });

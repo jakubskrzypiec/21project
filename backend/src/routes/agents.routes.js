@@ -56,7 +56,8 @@ router.patch('/handlowiec/settings', wrap((req) => {
   if (patch.dailyLimit > 100) throw new Error('Limit dzienny powyżej 100 maili to proszenie się o blokadę konta Gmail.');
   if (patch.windowStart !== undefined && patch.windowEnd !== undefined && patch.windowStart >= patch.windowEnd) throw new Error('Okno wysyłki: początek musi być przed końcem.');
   if (Array.isArray(b.workdays)) patch.workdays = b.workdays.map(Number).filter((d) => d >= 1 && d <= 7);
-  for (const k of ['strategy', 'model', 'styleExample']) if (typeof b[k] === 'string') patch[k] = b[k];
+  for (const k of ['strategy', 'model', 'styleExample', 'positioning']) if (typeof b[k] === 'string') patch[k] = b[k];
+  if (typeof b.bookingUrl === 'string' && b.bookingUrl.trim()) patch.bookingUrl = b.bookingUrl.trim().replace(/^https?:\/\//i, '');
   if (Array.isArray(b.forbidden)) patch.forbidden = b.forbidden.map(String).map((x) => x.trim()).filter(Boolean);
   if (['reply', 'link', 'none'].includes(b.unsubscribe)) patch.unsubscribe = b.unsubscribe;
   if (typeof b.autoLearn === 'boolean') patch.autoLearn = b.autoLearn;
@@ -66,6 +67,7 @@ router.patch('/handlowiec/settings', wrap((req) => {
       if (!['strona', 'panel', 'pakiet'].includes(k)) continue;
       patch.offers[k] = {};
       if (typeof v.on === 'boolean') patch.offers[k].on = v.on;
+      if (typeof v.meeting === 'boolean') patch.offers[k].meeting = v.meeting;
       if (v.daily !== undefined) patch.offers[k].daily = Math.min(100, Math.max(0, Math.round(Number(v.daily) || 0)));
       for (const f of ['name', 'desc', 'for']) if (typeof v[f] === 'string') patch.offers[k][f] = v[f];
     }
@@ -102,7 +104,7 @@ router.patch('/handlowiec/settings', wrap((req) => {
 
 /** Przywraca domyślne oferty / strategię / listę zakazanych zwrotów. */
 router.post('/handlowiec/settings/reset', wrap((req) => {
-  const which = (req.body?.fields || []).filter((f) => ['offers', 'strategy', 'forbidden', 'sources', 'portfolio', 'hooks', 'styleExample'].includes(f));
+  const which = (req.body?.fields || []).filter((f) => ['offers', 'strategy', 'forbidden', 'sources', 'portfolio', 'hooks', 'styleExample', 'positioning'].includes(f));
   const patch = Object.fromEntries(which.map((f) => [f, handlowiec.DEFAULTS[f]]));
   return { settings: handlowiec.saveSettings(patch) };
 }));
