@@ -306,3 +306,20 @@ test('mail z ofertą panelu kończy się propozycją spotkania z linkiem, oferta
   assert.equal(writer.withMeeting(body, s.offers.strona, s.bookingUrl), body);
   assert.ok(gmail.textToHtml(writer.meetingLine()).includes('href="https://21project.pl/spotkanie/"'));
 });
+
+test('audyt: złośliwy kod strony nie blokuje serwera (analiza w czasie liniowym)', () => {
+  const cases = [
+    '<div aria-hidden="true">x</span>'.repeat(20000),
+    `<img src="data:image/png;base64,${'A'.repeat(1_000_000)}">`,
+    `<div ${'a'.repeat(300000)}>`,
+    `${'a.'.repeat(200000)}@`,
+    `x@${'a.'.repeat(100000)}`,
+    '<span class="icon" '.repeat(30000),
+  ];
+  for (const html of cases) {
+    const t = Date.now();
+    siteAudit.analyzeHtml(html);
+    assert.ok(Date.now() - t < 2000, `analiza trwała ${Date.now() - t} ms`);
+  }
+  assert.deepEqual(siteAudit.extractEmails('Pisz: biuro@firma.pl lub jan.kowalski [at] firma.com.pl.'), ['biuro@firma.pl', 'jan.kowalski@firma.com.pl']);
+});
