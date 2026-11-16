@@ -356,4 +356,49 @@ async function powiadomOBriefie(odpowiedzi) {
   });
 }
 
+/* ------------------------ strona projektu dla klienta ------------------------ */
+const review = require('../services/clientReview');
+const { stronaProjektu } = require('../stronaProjektu');
+
+router.get('/projekt/:token', limit(120, 10 * 60 * 1000), (req, res) => {
+  const p = review.projectByToken(req.params.token);
+  if (!p) return res.status(404).type('html').send(stronaBledu('Nie ma takiej strony projektu.',
+    'Link mógł zostać wyłączony albo ucięty przy kopiowaniu. Napisz do mnie, wyślę nowy.'));
+  res.set('Cache-Control', 'no-store');
+  res.type('html').send(stronaProjektu(p, review.reviewData(p.id), { base: `/projekt/${req.params.token}`, token: req.params.token }));
+});
+
+router.get('/projekt/:token/zrzut/:id', limit(600, 10 * 60 * 1000), (req, res) => {
+  const p = review.projectByToken(req.params.token);
+  if (!p) return res.status(404).end();
+  const shot = db.prepare(`SELECT s.* FROM review_shots s JOIN review_rounds r ON r.id = s.round_id
+    WHERE s.id = ? AND r.project_id = ?`).get(req.params.id, p.id);
+  const file = shot && review.shotFile(shot);
+  if (!file) return res.status(404).end();
+  res.set('Cache-Control', 'private, max-age=86400');
+  res.sendFile(file);
+});
+
+router.post('/projekt/:token/poprawki', limit(20, 10 * 60 * 1000), async (req, res) => {
+  const p = review.projectByToken(req.params.token);
+  if (!p) return res.status(404).json({ error: 'Link do projektu jest nieaktywny.' });
+  let r;
+  try { r = review.submitFeedback(p, req.body || {}); } catch (err) { return res.status(400).json({ error: err.message }); }
+  logAction('review.feedback', clientIp(req), { project_id: p.id, count: r.count });
+  res.json({ ok: true, count: r.count });
+  // Powiadomienie po odpowiedzi — zapisane poprawki są ważniejsze niż mail.
+  try {
+    const google = require('../services/google');
+    const g = google.status();
+    if (!g.connected || !g.account) return;
+    await require('../services/gmail').sendMessage({
+      to: g.account,
+      subject: `Poprawki od klienta: ${p.name} (${r.count})`,
+      body: `${p.client || p.name} wysłał ${r.count} ${r.count === 1 ? 'poprawkę' : 'poprawek'} do wersji ${r.round.no}.\n`
+        + (r.sections.length ? `Sekcje: ${r.sections.join(', ')}\n` : '')
+        + `\nZobacz w panelu: ${config.publicUrl}/admin#/projekty/${p.id}`,
+    });
+  } catch (err) { console.error('[projekt] powiadomienie o poprawkach:', err.message); }
+});
+
 module.exports = router;

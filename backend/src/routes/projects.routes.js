@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
 const { db, getSetting, setSetting } = require('../db');
+const review = require('../services/clientReview');
 
 const router = express.Router();
 const now = () => new Date().toISOString();
@@ -11,7 +12,7 @@ router.get('/', (req, res) => {
   const rows = status
     ? db.prepare('SELECT * FROM projects WHERE status = ? ORDER BY COALESCE(deadline, updated_at)').all(status)
     : db.prepare('SELECT * FROM projects ORDER BY CASE status WHEN \'wstrzymany\' THEN 1 ELSE 0 END, COALESCE(deadline, updated_at)').all();
-  res.json({ projects: rows.map(withProgress) });
+  res.json({ projects: rows.map((p) => ({ ...withProgress(p), newFeedback: review.newFeedbackCount(p.id) })) });
 });
 
 router.get('/summary', (_req, res) => {
@@ -70,11 +71,11 @@ router.patch('/:id', (req, res) => {
   if (!p) return res.status(404).json({ error: 'Nie znaleziono projektu.' });
   const b = req.body || {};
   if (b.status && !STATUSES.includes(b.status)) return res.status(400).json({ error: 'Nieznany status.' });
-  const next = { ...p, ...pick(b, ['name', 'client', 'lead_id', 'status', 'budget', 'paid', 'currency', 'deadline', 'url', 'repo', 'description', 'color']) };
+  const next = { ...p, ...pick(b, ['name', 'client', 'lead_id', 'status', 'budget', 'paid', 'currency', 'deadline', 'url', 'repo', 'description', 'color', 'client_note']) };
   db.prepare(
     `UPDATE projects SET name=@name, client=@client, lead_id=@lead_id, status=@status, budget=@budget,
        paid=@paid, currency=@currency, deadline=@deadline, url=@url, repo=@repo, description=@description,
-       color=@color, updated_at=@updated_at WHERE id=@id`
+       color=@color, client_note=@client_note, updated_at=@updated_at WHERE id=@id`
   ).run({ ...next, updated_at: now() });
   res.json({ project: withProgress(db.prepare('SELECT * FROM projects WHERE id = ?').get(p.id)) });
 });
@@ -163,6 +164,44 @@ router.post('/ustawienia/link-opinii', (req, res) => {
   }
   setSetting('link_opinii', link);
   res.json({ link });
+});
+
+/* --------------------- strona projektu dla klienta (panel) --------------------- */
+const sharing = (p) => ({ on: Boolean(p.share_on), url: p.share_token ? `${require('../config').config.publicUrl}/projekt/${p.share_token}` : null });
+
+router.get('/:id/review', (req, res) => {
+  const p = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
+  if (!p) return res.status(404).json({ error: 'Nie znaleziono projektu.' });
+  res.json({ sharing: sharing(p), client_note: p.client_note || '', rounds: review.reviewData(p.id), newCount: review.newFeedbackCount(p.id) });
+});
+router.post('/:id/review/share', (req, res) => {
+  try { review.setSharing(Number(req.params.id), Boolean(req.body?.on)); }
+  catch (err) { return res.status(400).json({ error: err.message }); }
+  res.json({ sharing: sharing(db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id)) });
+});
+router.post('/:id/review/reset-link', (req, res) => {
+  review.resetToken(Number(req.params.id));
+  res.json({ sharing: sharing(db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id)) });
+});
+router.post('/:id/review/rounds', (req, res) => {
+  try { res.json({ round: review.startRound(Number(req.params.id), req.body?.url) }); }
+  catch (err) { res.status(400).json({ error: err.message }); }
+});
+router.delete('/:id/review/rounds/:roundId', (req, res) => {
+  review.deleteRound(Number(req.params.id), Number(req.params.roundId));
+  res.json({ ok: true });
+});
+router.patch('/:id/review/feedback/:fid', (req, res) => {
+  review.setFeedbackStatus(Number(req.params.id), Number(req.params.fid), req.body?.status);
+  res.json({ ok: true });
+});
+router.get('/:id/review/shots/:shotId', (req, res) => {
+  const shot = db.prepare(`SELECT s.* FROM review_shots s JOIN review_rounds r ON r.id = s.round_id
+    WHERE s.id = ? AND r.project_id = ?`).get(req.params.shotId, req.params.id);
+  const file = shot && review.shotFile(shot);
+  if (!file) return res.status(404).end();
+  res.set('Cache-Control', 'private, max-age=86400');
+  res.sendFile(file);
 });
 
 module.exports = router;

@@ -257,6 +257,39 @@ CREATE TABLE IF NOT EXISTS audit_log (
   ip     TEXT,
   meta   TEXT
 );
+
+-- Strona projektu dla klienta: rundy zrzutów strony, zrzuty sekcji i poprawki klienta.
+CREATE TABLE IF NOT EXISTS review_rounds (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL,
+  no         INTEGER NOT NULL,             -- runda 1, 2, 3… w obrębie projektu
+  url        TEXT NOT NULL,
+  status     TEXT NOT NULL DEFAULT 'robie', -- robie | gotowe | blad
+  error      TEXT
+);
+CREATE TABLE IF NOT EXISTS review_shots (
+  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+  round_id INTEGER NOT NULL REFERENCES review_rounds(id) ON DELETE CASCADE,
+  device   TEXT NOT NULL,                  -- komputer | telefon
+  idx      INTEGER NOT NULL,
+  label    TEXT,
+  file     TEXT NOT NULL,
+  width    INTEGER NOT NULL,
+  height   INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS review_feedback (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  round_id      INTEGER NOT NULL REFERENCES review_rounds(id) ON DELETE CASCADE,
+  shot_id       INTEGER REFERENCES review_shots(id) ON DELETE CASCADE,  -- NULL = uwaga ogólna
+  submission    TEXT NOT NULL,             -- jedno „Wyślij poprawki” = jedna paczka
+  created_at    TEXT NOT NULL,
+  text          TEXT,
+  drawing       TEXT,                      -- JSON: kreski w pikselach zrzutu
+  status        TEXT NOT NULL DEFAULT 'nowa'  -- nowa | poprawione
+);
+CREATE INDEX IF NOT EXISTS idx_review_rounds_project ON review_rounds(project_id);
+CREATE INDEX IF NOT EXISTS idx_review_feedback_round ON review_feedback(round_id);
 `;
 
 /**
@@ -281,6 +314,9 @@ function migrate() {
     ['opinia_status', "TEXT NOT NULL DEFAULT 'brak'"],   // brak | poproszona | otrzymana | odmowa
     ['opinia_data', 'TEXT'],
     ['opinia_tresc', 'TEXT'],
+    ['share_token', 'TEXT'],          // link dla klienta: /projekt/<token>
+    ['share_on', 'INTEGER NOT NULL DEFAULT 0'],
+    ['client_note', 'TEXT'],          // krótka notka od Ciebie na stronie klienta
   ]) {
     if (!kolProjekty.includes(name)) {
       krok(`projects.${name}`, () => db.exec(`ALTER TABLE projects ADD COLUMN ${name} ${ddl}`));
