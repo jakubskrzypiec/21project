@@ -317,8 +317,13 @@ tr.picked td{background:var(--surface-2)}
 .statusSum b{margin-right:4px;color:var(--ink);font-weight:600}
 .statusSum--czeka b{color:var(--warn)}
 
-.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));
-  gap:16px;margin-bottom:16px;align-items:start}
+/* Kafelki w rzędzie mają równą wysokość (stretch), stopka zawsze na dole kartki. */
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr));
+  gap:20px;margin-bottom:16px;align-items:stretch}
+.note__drag{cursor:grab;user-select:none;touch-action:none;font-size:16px;line-height:1;color:#8a8a8a;padding:2px 2px 2px 0}
+.note__drag:hover{color:#111}
+.note--dragging{opacity:.85;box-shadow:0 18px 40px rgba(0,0,0,.25);z-index:5;position:relative;cursor:grabbing}
+.note--dragging .note__drag{cursor:grabbing}
 
 .board{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-bottom:16px}
 
@@ -347,41 +352,6 @@ tr.picked td{background:var(--surface-2)}
 .note__mail blockquote{margin:10px 0;padding-left:10px;border-left:2px solid #aaa}
 .note__manual{font-size:12px;padding:4px 0}
 .note__manual>b{display:block;color:#555;margin-bottom:5px}
-/* Tablica według pilności */
-.today{border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:10px;padding:14px 18px;margin:6px 0 18px;background:var(--card,transparent)}
-.today--ok{border-left-color:var(--ok)}
-.today__head{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3,#666);margin-bottom:6px}
-.today p{margin:0}
-.today__list{margin:0;padding-left:20px;display:grid;gap:6px}
-.today__list a{color:inherit;text-decoration:none}
-.today__list a:hover b{text-decoration:underline}
-.today__why{display:inline-block;margin-left:6px;font-size:12px;color:var(--warn)}
-.today__why.is-bad{color:var(--bad);font-weight:600}
-.boardSec{margin:0 0 18px}
-.boardSec>summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;padding:8px 0 12px}
-.boardSec>summary::-webkit-details-marker{display:none}
-.boardSec>summary::before{content:'▸';font-size:12px;color:var(--ink-3,#777);transition:transform .15s}
-.boardSec[open]>summary::before{transform:rotate(90deg)}
-.boardSec__title{font-size:17px;font-weight:600;letter-spacing:-.01em}
-.boardSec__count{font-size:12px;font-weight:600;padding:1px 9px;border-radius:999px;background:var(--line);}
-.boardSec--ruch .boardSec__count{background:var(--bad-bg);color:var(--bad)}
-.boardSec--czeka .boardSec__count{background:var(--warn-bg);color:var(--warn)}
-.boardSec__desc{font-size:12px;color:var(--ink-3,#777);flex-basis:100%;padding-left:20px}
-/* Równe kartki: siatka rozciąga je do wysokości rzędu, tekst kroku ucięty do 3 linii. */
-.notes--even{align-items:stretch;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
-.note--compact{gap:8px;padding:14px 16px 10px}
-.note--compact .note__title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.note--urgent{box-shadow:inset 3px 0 0 #c2410c}
-.note--flash{outline:3px solid #c2410c;outline-offset:2px}
-.note__why{font-size:12px;font-weight:600;color:#555}
-.note__why.is-bad{color:#b42318}
-.note__why.is-wait{color:#8a6a12}
-.note__step{margin:0;font-size:13.5px;line-height:1.5;color:#222;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:3em}
-.note__chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font-size:11.5px;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(10,10,10,.12);color:#333;white-space:nowrap}
-.chip--warn{background:#fbf0d8;border-color:transparent;color:#8a6a12}
-.chip--bad{background:#fde4e1;border-color:transparent;color:#b42318;font-weight:600}
-.noteDetails{color-scheme:light;background:var(--note-bg,#fdf6d8);color:#141414;border-radius:10px;padding:14px;display:grid;gap:10px;max-height:62vh;overflow:auto}
 .backupList{max-height:52vh;overflow:auto;margin:16px 0}
 .backupRow{padding:12px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap}
 
@@ -522,3 +492,163 @@ tr.picked td{background:var(--surface-2)}
 .agMailBody div{color:var(--ink)!important}
 .agMailBody a{color:#1a56db}
 [data-theme="dark"] .agMailBody a{color:#7aa2ff}
+
+/* ==========================================================================
+   WYGLĄD „MOTION” (2026-11): czarno-biały, szkło, pastylki, płynny ruch.
+   Nakładka na reguły wyżej — tokeny i kształty. Domyślnie ciemny; jasny
+   wariant ma te same kształty. Kolory stanów zostają przygaszone.
+   ========================================================================== */
+@font-face{font-family:'General Sans';src:url('general-sans-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'General Sans';src:url('general-sans-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'General Sans';src:url('general-sans-600.woff2') format('woff2');font-weight:600 700;font-style:normal;font-display:swap}
+
+:root{
+  --font:'General Sans',Inter,system-ui,sans-serif;
+  --r-lg:22px; --r-md:16px; --r-sm:12px;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --glass:rgba(10,10,10,.03);
+  --glass-2:rgba(10,10,10,.06);
+  --glow:rgba(0,0,0,.06);
+}
+[data-theme="dark"]{
+  --bg:#040605;
+  --paper:#0b0d0c;
+  --surface:#0d0f0e;
+  --surface-2:#131615;
+  --ink:#ffffff;
+  --ink-2:#cfd2d0;
+  --ink-3:#8c918f;
+  --ink-4:#5f6462;
+  --line:rgba(255,255,255,.11);
+  --line-soft:rgba(255,255,255,.06);
+  --line-strong:rgba(255,255,255,.32);
+  --accent:#ffffff;
+  --accent-ink:#040605;
+  --glass:rgba(255,255,255,.035);
+  --glass-2:rgba(255,255,255,.07);
+  --glow:rgba(255,255,255,.10);
+}
+
+body{font-family:var(--font);letter-spacing:.005em}
+/* Poświata u dołu ekranu — jak gradient na wzorze, tylko w szarościach. */
+body::before{content:'';position:fixed;inset:auto -20% -45% -20%;height:85vh;z-index:-1;pointer-events:none;
+  background:radial-gradient(60% 60% at 30% 100%,var(--glow),transparent 70%),radial-gradient(50% 55% at 85% 100%,var(--glow),transparent 70%)}
+html,body{background:var(--bg)}
+.shell{background:transparent}
+
+h1.page{font-weight:500;letter-spacing:-.045em;font-size:clamp(34px,3.8vw,52px)}
+h2.sec{font-weight:500;letter-spacing:-.025em;font-size:22px}
+.card h3,.kicker,label.f,th,.day h4{color:var(--ink-3)!important;letter-spacing:.09em}
+
+/* Menu boczne: przezroczyste, aktywna pozycja jako jasna pastylka. */
+.side{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-right:1px solid var(--line)}
+.side nav{gap:4px}
+.side nav a{padding:9px 14px;border:0;border-radius:999px;transition:background .25s var(--ease),color .25s var(--ease),transform .25s var(--ease)}
+.side nav a:hover{background:var(--glass-2);color:var(--ink);transform:translateX(3px)}
+.side nav a.active{background:var(--ink);color:var(--bg);border:0}
+.side nav a b{border-radius:999px;background:var(--bg);color:var(--ink)}
+.side nav a:not(.active) b{background:var(--ink);color:var(--bg)}
+.sideFoot{border-top-color:var(--line)}
+
+/* Karty i siatki: szkło z zaokrągleniem zamiast kresek. */
+.card{background:var(--glass);border:1px solid var(--line);border-radius:var(--r-lg);
+  transition:border-color .3s var(--ease),transform .3s var(--ease),box-shadow .3s var(--ease)}
+.grid{background:none;gap:14px;margin-bottom:14px}
+.grid>*{background:var(--glass);border:1px solid var(--line);border-radius:var(--r-lg)}
+.grid .card{border:1px solid var(--line)}
+.grid>*:hover,.card:hover{border-color:var(--line-strong)}
+.kpi .value{font-weight:500;letter-spacing:-.05em}
+.mailLayout{background:none;border:0;gap:14px}
+.mailLayout>*{background:var(--glass);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.day{background:var(--glass);border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:10px}
+.day+.day{border-top:1px solid var(--line)}
+.msg{border-radius:var(--r-md);background:var(--glass)}
+.threadItem{border-left:0;transition:background .2s var(--ease)}
+.threadItem.active{background:var(--glass-2);box-shadow:inset 3px 0 0 var(--ink)}
+
+/* Przyciski: pastylki, główny biały na czarnym, wciśnięcie lekko zmniejsza. */
+.btn{border-radius:999px;padding:11px 22px;letter-spacing:.04em;font-weight:500;
+  transition:background .25s var(--ease),color .25s var(--ease),border-color .25s var(--ease),transform .15s var(--ease)}
+.btn:active{transform:scale(.96)}
+.btn.ghost{background:var(--glass);border-color:var(--line);color:var(--ink-2)}
+.btn.ghost:hover{background:var(--glass-2);border-color:var(--line-strong);color:var(--ink)}
+.btn.sm{padding:7px 14px}
+.themeBtn{border-radius:999px;transition:all .25s var(--ease)}
+
+/* Pola formularzy: zaokrąglone, szklane, miękki fokus. */
+label.f input,label.f select,label.f textarea,.inp{border-radius:var(--r-sm);background:var(--glass);border-color:var(--line);
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease)}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--line-strong)!important;box-shadow:0 0 0 4px var(--glass-2);background:var(--glass-2)}
+.filePick{border-radius:999px;background:var(--glass)}
+.bulk{border-radius:999px;background:var(--glass);padding:8px 16px}
+
+/* Tabele, zakładki, plakietki, komunikaty. */
+th{border-bottom:1px solid var(--line)}
+tbody tr{transition:background .2s var(--ease)}
+tbody tr:hover{background:var(--glass-2)}
+.tabs{border-bottom:0;gap:8px}
+.tabs a{padding:8px 16px;border:1px solid var(--line);border-radius:999px;margin:0;transition:all .25s var(--ease)}
+.tabs a:hover{background:var(--glass-2)}
+.tabs a.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tag{background:var(--glass);border-color:var(--line)}
+.notice{border-radius:var(--r-md);border-left-width:3px}
+.chart div{border-radius:4px 4px 0 0;background:var(--ink)}
+
+/* Okno modalne i powiadomienia: zaokrąglone, wjeżdżają miękko. */
+dialog{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);box-shadow:0 40px 120px rgba(0,0,0,.5)}
+dialog[open]{animation:pop .35s var(--ease)}
+dialog::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(6px)}
+#toast div{border-radius:999px;padding:12px 20px;animation:toastIn .4s var(--ease)}
+.loginCard{border-radius:var(--r-lg);background:var(--glass);backdrop-filter:blur(10px)}
+
+/* Kartki na tablicy: ciemne szkło, kolor kartki jako kropka i cienki pasek u góry. */
+[data-theme="dark"] .note{--note-ink:#f4f4f4;background:var(--surface);color:var(--note-ink);border:1px solid var(--line);
+  border-radius:var(--r-lg);box-shadow:inset 0 2px 0 var(--note-accent,#fff3);color-scheme:dark}
+.note{border-radius:var(--r-lg);transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease)}
+.note:hover{transform:translateY(-3px)}
+.note--zolta{--note-accent:#f5d76e}.note--biala{--note-accent:#ffffff}.note--zielona{--note-accent:#7fd4a0}
+.note--rozowa{--note-accent:#f2a2bd}.note--niebieska{--note-accent:#8fb6f2}
+[data-theme="dark"] .note__title{color:#fff}
+[data-theme="dark"] .note__body,[data-theme="dark"] .note__contact,[data-theme="dark"] .note__manual>b,
+[data-theme="dark"] .note__eyebrow{color:var(--ink-3)}
+[data-theme="dark"] .note__mail{background:var(--glass);border-color:var(--line);color:var(--ink-2)}
+[data-theme="dark"] .note__next{border-left-color:var(--note-accent,#fff)}
+[data-theme="dark"] .note__mail blockquote{border-left-color:var(--line-strong)}
+[data-theme="dark"] .note__status{background:var(--glass-2);border-color:var(--line);color:var(--ink-2);border-radius:999px}
+[data-theme="dark"] .note__status--czeka{background:var(--warn-bg);color:var(--warn)}
+[data-theme="dark"] .note__foot{border-top-color:var(--line)}
+[data-theme="dark"] .note__foot .tag{background:var(--glass);border-color:var(--line);color:var(--ink-2)}
+[data-theme="dark"] .note__actions button{color:var(--ink-3)}
+[data-theme="dark"] .note__actions button:hover{color:#fff}
+[data-theme="dark"] .note .pick{accent-color:#fff}
+[data-theme="dark"] .note.picked{outline-color:#fff}
+[data-theme="dark"] .note__drag{color:var(--ink-4)}
+[data-theme="dark"] .note__drag:hover{color:#fff}
+[data-theme="dark"] .noteLink{background:var(--glass);border-color:var(--line);color:var(--ink-2);border-radius:999px}
+[data-theme="dark"] .noteLink:hover{background:var(--glass-2);border-color:var(--line-strong)}
+.note{position:relative}
+.note--dragging{transform:scale(1.02) rotate(.4deg)!important;box-shadow:0 30px 70px rgba(0,0,0,.55)!important}
+
+/* ----------------------------- ruch (motion) ----------------------------- */
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+/* Każdy widok wchodzi kaskadą: nagłówek, potem kolejne bloki. */
+#view>*{animation:rise .6s var(--ease) both}
+#view>*:nth-child(2){animation-delay:.05s}#view>*:nth-child(3){animation-delay:.1s}
+#view>*:nth-child(4){animation-delay:.15s}#view>*:nth-child(5){animation-delay:.2s}
+#view>*:nth-child(n+6){animation-delay:.25s}
+.grid>*,.notes>.note{animation:rise .55s var(--ease) both}
+.grid>*:nth-child(2),.notes>.note:nth-child(2){animation-delay:.04s}
+.grid>*:nth-child(3),.notes>.note:nth-child(3){animation-delay:.08s}
+.grid>*:nth-child(4),.notes>.note:nth-child(4){animation-delay:.12s}
+.grid>*:nth-child(5),.notes>.note:nth-child(5){animation-delay:.16s}
+.grid>*:nth-child(n+6),.notes>.note:nth-child(n+6){animation-delay:.2s}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+@media (max-width:960px){
+  .side{backdrop-filter:none}
+  .side nav{gap:4px 6px}
+  .side nav a{padding:6px 12px}
+}

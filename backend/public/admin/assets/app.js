@@ -2177,12 +2177,14 @@ views['/notatnik'] = async () => {
     <div class="boardTools">
       <label>Szukaj klienta<input class="inp" id="boardSearch" placeholder="Nazwa, e-mail lub treść"></label>
       <label for="boardFilter">Pokaż<select class="inp" id="boardFilter" aria-label="Pokaż">
-        <option value="all">Wszystkie kartki</option><option value="review">Do sprawdzenia / brak adresu</option>
+        <option value="all">Wszystkie kartki</option><option value="mine">Ruch po mojej stronie</option>
+        <option value="waiting">Czekam na klienta</option><option value="review">Do sprawdzenia / brak adresu</option>
         <option value="due">Z terminem</option>
       </select></label>
     </div>
     <p class="small muted">Aktualizacja z Gmaila: napisz w czacie „zaktualizuj tablicę”. Asystent przeczyta wątki i zapisze ustalenia tutaj. „Wczytaj zapisane zmiany” odświeża widok, nie analizuje poczty.</p>
-    ${notes.length ? pickGroup('notatki', tablicaPriorytetow(notes)) : `
+    ${notes.length ? pickGroup('notatki', `
+      <div class="notes" id="boardCards">${notes.map(noteCard).join('')}</div>`) : `
       <div class="empty">
         Tablica jest pusta. Pierwsza kartka to zwykle lista rzeczy, o których łatwo zapomnieć.
       </div>`}
@@ -2236,7 +2238,8 @@ views['/notatnik'] = async () => {
       const card = view.querySelector(`[data-card-id="${n.id}"]`);
       const a = n.mail_summary;
       const searchable = [n.title, n.body, n.contact_emails, a?.summary, a?.next_step].join(' ').toLocaleLowerCase('pl');
-      const match = filter === 'all'
+      const match = filter === 'all' || (filter === 'mine' && (a?.owner === 'Jakub' || ['do-zrobienia','do-poprawek','w-trakcie'].includes(n.status)))
+        || (filter === 'waiting' && (a?.owner === 'Klient' || CZEKA_NA_KLIENTA.includes(n.status)))
         || (filter === 'review' && (!n.contact_emails || !a || a.needs_review))
         || (filter === 'due' && (n.due_date || a?.due_date));
       if (card) card.hidden = !match || !searchable.includes(query);
@@ -2273,19 +2276,7 @@ views['/notatnik'] = async () => {
       render();
     };
   });
-  view.querySelectorAll('[data-note-details]').forEach((b) => {
-    b.onclick = () => noteDetails(notes.find((x) => String(x.id) === b.dataset.noteDetails));
-  });
-  view.querySelectorAll('[data-jump]').forEach((a) => {
-    a.onclick = (e) => {
-      e.preventDefault();
-      const card = view.querySelector(`[data-card-id="${a.dataset.jump}"]`);
-      if (!card) return;
-      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      card.classList.add('note--flash');
-      setTimeout(() => card.classList.remove('note--flash'), 1600);
-    };
-  });
+  wireNoteDrag($('#boardCards'));
   view.querySelectorAll('[data-delfile]').forEach((b) => {
     b.onclick = async () => {
       if (!confirm('Usunąć plik na stałe?')) return;
@@ -2386,65 +2377,33 @@ async function boardBackups() {
   }; });
 }
 
-/**
- * Tablica ułożona według pilności (reguły w boardPriority.js): pasek „Dziś zrób”,
- * potem Twój ruch, czekasz na klienta, spokojne (zwinięte) i zrobione.
- */
-function tablicaPriorytetow(notes) {
-  const dzis = BoardPriority.dzisiaj();
-  const { ruch, czeka, spokoj, zrobione } = BoardPriority.uloz(notes, dzis);
-  const siatka = (lista) => `<div class="notes notes--even">${lista.map(({ n, o }) => noteCard(n, o)).join('')}</div>`;
-  const dzisZrob = ruch.slice(0, 3);
-  const pasek = dzisZrob.length ? `<section class="today" aria-label="Dziś zrób">
-      <div class="today__head">Dziś zrób</div>
-      <ol class="today__list">${dzisZrob.map(({ n, o }) => `<li><a href="#" data-jump="${n.id}">
-        <b>${esc(n.title || 'Bez tytułu')}</b>: ${esc(n.mail_summary?.next_step || n.body?.split('\n')[0] || 'zajrzyj do kartki')}
-        <span class="today__why ${o.pilne ? 'is-bad' : ''}">${esc(o.powod)}</span></a></li>`).join('')}</ol>
-    </section>` : '<section class="today today--ok"><div class="today__head">Dziś zrób</div><p>Nic pilnego po Twojej stronie. Piłka jest u klientów.</p></section>';
-  const sekcja = (klasa, tytul, opis, lista, otwarta = true) => lista.length ? `
-    <details class="boardSec boardSec--${klasa}" ${otwarta ? 'open' : ''}>
-      <summary><span class="boardSec__title">${tytul}</span> <span class="boardSec__count">${lista.length}</span>
-        <span class="boardSec__desc">${opis}</span></summary>
-      ${siatka(lista)}
-    </details>` : '';
-  return `${pasek}
-    ${sekcja('ruch', 'Twój ruch', 'od najpilniejszego: po terminie, termin blisko, klient czeka na Ciebie, przypomnienia', ruch)}
-    ${sekcja('czeka', 'Czekasz na klienta', `po ${BoardPriority.CISZA_DNI_ROBOCZYCH} dniach roboczych ciszy kartka sama wraca do „Twój ruch”`, czeka)}
-    ${sekcja('spokoj', 'Spokojne', 'wstrzymane i bez ruchu, bez terminu', spokoj, false)}
-    ${sekcja('zrobione', 'Zrobione', '', zrobione, false)}`;
-}
-
-function noteCard(n, o = BoardPriority.ocen(n, BoardPriority.dzisiaj())) {
+function noteCard(n) {
   const status = n.status || 'do-zrobienia';
   const zrobiona = status === 'zrobione';
   const czeka = CZEKA_NA_KLIENTA.includes(status);
-  const a = n.mail_summary;
-  const krok = a?.next_step || (n.body ? n.body.split('\n').find((l) => l.trim()) : '') || '';
-  const kontakt = o.dniOdKontaktu === null || o.dniOdKontaktu === undefined ? null
-    : o.dniOdKontaktu === 0 ? 'dziś' : o.dniOdKontaktu === 1 ? 'wczoraj' : `${o.dniOdKontaktu} dni temu`;
-  return `<article data-card-id="${n.id}" class="note note--compact pickItem note--${esc(n.color)} ${zrobiona ? 'note--done' : ''} ${o.pilne ? 'note--urgent' : ''}">
+  const przeterminowana = n.due_date && !zrobiona && n.due_date < new Date().toISOString().slice(0, 10);
+  return `<article data-card-id="${n.id}" class="note pickItem note--${esc(n.color)} ${zrobiona ? 'note--done' : ''}">
     <div class="note__top">
+      <span class="note__drag" data-note-drag title="Przeciągnij, żeby zmienić kolejność" aria-label="Przeciągnij">⠿</span>
       ${pick(n.id)}
       <select class="note__status ${czeka ? 'note__status--czeka' : ''} ${zrobiona ? 'note__status--zrobione' : ''}"
               data-note-status="${n.id}" title="Zmień status">
         ${STATUSY.map(([k, l]) => `<option value="${k}" ${k === status ? 'selected' : ''}>${l}</option>`).join('')}
       </select>
       <button class="note__pin ${n.pinned ? 'on' : ''}" data-note-pin="${n.id}" data-pinned="${n.pinned}"
-              title="Przypnij na górze sekcji">${n.pinned ? '📌' : '📍'}</button>
+              title="Przypnij na górze">${n.pinned ? '📌' : '📍'}</button>
     </div>
-    <h3 class="note__title">${esc(n.title || 'Bez tytułu')}</h3>
-    <div class="note__why ${o.pilne ? 'is-bad' : o.sekcja === 'czeka' ? 'is-wait' : ''}">${esc(o.powod)}</div>
-    <p class="note__step">${krok ? esc(krok) : '<span class="muted">Brak następnego kroku. Uzupełnij w edycji albo poproś asystenta o przegląd poczty.</span>'}</p>
-    <div class="note__chips">
-      ${o.termin ? `<span class="chip ${o.doTerminu < 0 ? 'chip--bad' : o.pilne ? 'chip--warn' : ''}" title="Termin">📅 ${esc(fmtDate(o.termin))}</span>` : ''}
-      ${kontakt ? `<span class="chip" title="Ostatni kontakt">⏱ ${esc(kontakt)}</span>` : ''}
-      ${o.ruch ? `<span class="chip" title="Czyj ruch">👤 ${o.ruch === 'Jakub' ? 'Ty' : 'Klient'}</span>` : ''}
-    </div>
+    ${n.title ? `<h3 class="note__title">${esc(n.title)}</h3>` : ''}
+    ${n.contact_emails ? `<div class="note__contact">${esc(n.contact_emails)}</div>` : '<div class="note__contact">E-mail klienta można dodać w edycji</div>'}
+    ${noteMailSummary(n.mail_summary)}
+    ${n.body ? `<div class="note__manual"><b>Moje notatki</b><pre class="note__body">${esc(n.body)}</pre></div>` : ''}
+    ${noteLinks(n.links)}
     <div class="note__foot">
+      ${n.source === 'poczta' ? '<span class="tag">z poczty</span>' : ''}
+      ${n.due_date ? `<span class="tag ${przeterminowana ? 'bad' : ''}">${fmtDate(n.due_date)}</span>` : ''}
       ${n.project_name ? `<span class="tag">${esc(n.project_name)}</span>` : ''}
       ${n.files ? `<span class="tag">${n.files} plik(ów)</span>` : ''}
       <span class="note__actions">
-        <button data-note-details="${n.id}" title="Pełne ustalenia z Gmaila, notatki i linki">szczegóły</button>
         <button data-note-edit="${n.id}" title="Edytuj">edytuj</button>
         <button data-note-del="${n.id}" title="Usuń">usuń</button>
       </span>
@@ -2452,22 +2411,51 @@ function noteCard(n, o = BoardPriority.ocen(n, BoardPriority.dzisiaj())) {
   </article>`;
 }
 
-/** Pełna kartka w okienku: ustalenia z Gmaila, dowody, notatki, linki. */
-function noteDetails(n) {
-  if (!n) return;
-  modal.innerHTML = `<h3>${esc(n.title || 'Kartka')}</h3>
-    <div class="noteDetails note--${esc(n.color)}">
-      ${n.contact_emails ? `<div class="note__contact">${esc(n.contact_emails)}</div>` : '<div class="note__contact">E-mail klienta można dodać w edycji</div>'}
-      ${noteMailSummary(n.mail_summary)}
-      ${n.body ? `<div class="note__manual"><b>Moje notatki</b><pre class="note__body">${esc(n.body)}</pre></div>` : ''}
-      ${noteLinks(n.links)}
-      <div class="small muted">${n.source === 'poczta' ? 'Kartka z poczty · ' : ''}${n.due_date ? `Termin na kartce: ${esc(fmtDate(n.due_date))}` : ''}</div>
-    </div>
-    <div class="row end" style="margin-top:16px">
-      <button class="btn ghost" id="detEdit">Edytuj</button><button class="btn" id="detClose">Zamknij</button></div>`;
-  if (!modal.open) modal.showModal();
-  $('#detClose').onclick = () => modal.close();
-  $('#detEdit').onclick = () => { modal.close(); noteModal(n); };
+/**
+ * Przeciąganie kartek za uchwyt ⠿ — myszką i palcem (zdarzenia pointer, nie HTML5 drag,
+ * który nie działa na telefonie). Po puszczeniu zapisuje nową kolejność.
+ */
+function wireNoteDrag(grid) {
+  if (!grid) return;
+  grid.querySelectorAll('[data-note-drag]').forEach((handle) => {
+    handle.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      const card = handle.closest('.note');
+      const startOrder = [...grid.children].map((c) => c.dataset.cardId).join(',');
+      card.classList.add('note--dragging');
+      const move = (ev) => {
+        const under = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.note');
+        if (!under || under === card || under.parentElement !== grid) return;
+        const kids = [...grid.children];
+        const after = kids.indexOf(under) > kids.indexOf(card);
+        const first = [...grid.children].map((c) => c.getBoundingClientRect());
+        under[after ? 'after' : 'before'](card);
+        // Płynne przesunięcie pozostałych kartek (FLIP).
+        [...grid.children].forEach((c, i) => {
+          const was = first[i]; const now = c.getBoundingClientRect();
+          if (!was || c === card) return;
+          const dx = was.left - now.left; const dy = was.top - now.top;
+          if (dx || dy) c.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }], { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' });
+        });
+      };
+      const up = async () => {
+        window.removeEventListener('pointermove', move);
+        window.removeEventListener('pointerup', up);
+        window.removeEventListener('pointercancel', up);
+        card.classList.remove('note--dragging');
+        const ids = [...grid.children].map((c) => Number(c.dataset.cardId));
+        if (ids.join(',') === startOrder) return;
+        try { await api('/board/notes/reorder', { method: 'POST', body: { ids } }); toast('Kolejność zapisana.'); }
+        catch (err) { toast(err.message, true); render(); }
+      };
+      // Nasłuch na oknie, nie na uchwycie: przeniesienie kartki w drzewie strony zrywa
+      // przechwycenie wskaźnika, więc uchwyt przestałby dostawać ruchy.
+      window.addEventListener('pointermove', move);
+      window.addEventListener('pointerup', up);
+      window.addEventListener('pointercancel', up);
+    });
+  });
 }
 
 /** Odnośniki dopisane przez skanowanie poczty: wątek, strona, social media. */
