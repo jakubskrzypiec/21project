@@ -18,6 +18,12 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
+# Przeglądarka do zrzutów sekcji na stronie projektu dla klienta (Playwright, sam
+# silnik bez okna) razem z bibliotekami systemowymi, których potrzebuje.
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN npx playwright install --with-deps --only-shell chromium \
+ && rm -rf /var/lib/apt/lists/*
+
 COPY . .
 
 # Katalog na bazę danych. Na hostingu podmontuj tu wolumen (dysk trwały).

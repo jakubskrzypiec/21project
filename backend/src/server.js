@@ -25,6 +25,8 @@ try {
 const app = express();
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
+// Poprawki klienta z rysunkami bywają większe niż zwykły formularz.
+app.use('/projekt', express.json({ limit: '6mb' }));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false, limit: '256kb' }));
 app.use(cookieParser());

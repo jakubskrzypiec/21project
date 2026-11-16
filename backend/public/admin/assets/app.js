@@ -864,7 +864,8 @@ views['/projekty'] = async () => {
         <div class="row" style="justify-content:space-between">
           <span class="row" style="gap:8px">${pick(p.id)}
             <a href="#/projekty/${p.id}"><strong>${esc(p.name)}</strong></a></span>
-          <span class="tag ${p.status === 'live' ? 'ok' : p.status === 'wstrzymany' ? 'bad' : ''}">${esc(p.status)}</span>
+          <span class="row" style="gap:6px">${p.newFeedback ? `<a class="tag bad" href="#/projekty/${p.id}">${p.newFeedback} ${p.newFeedback === 1 ? 'nowa poprawka' : 'nowe poprawki'}</a>` : ''}
+          <span class="tag ${p.status === 'live' ? 'ok' : p.status === 'wstrzymany' ? 'bad' : ''}">${esc(p.status)}</span></span>
         </div>
         <p class="muted small" style="margin:.35rem 0">${esc(p.client || 'bez klienta')} ·
           ${p.deadline ? `termin ${fmtDate(p.deadline)}` : 'bez terminu'} ·
@@ -923,6 +924,8 @@ views['/projekty/:id'] = async (id) => {
       ${kpi(p.deadline ? fmtDate(p.deadline) : '—', 'termin')}
     </div>
 
+    <div id="reviewBox"><div class="empty">Wczytywanie strony dla klienta…</div></div>
+
     <div class="grid g2" style="margin-top:1px">
       <div class="card">
         <h3>Zadania</h3>
@@ -964,6 +967,7 @@ views['/projekty/:id'] = async (id) => {
     render();
   };
   $('#btnMeeting').onclick = () => meetingModal({ title: `Spotkanie — ${p.name}`, project_id: p.id });
+  reviewSection(p);
   $('#taskForm').onsubmit = async (e) => {
     e.preventDefault();
     await api(`/projects/${id}/tasks`, { method: 'POST', body: { title: e.target.title.value } });
@@ -988,6 +992,115 @@ views['/projekty/:id'] = async (id) => {
     };
   });
 };
+
+/* --- Strona projektu dla klienta: link, zrzuty w rundach, poprawki z rysunkami --- */
+function strokeSvg(st, w) {
+  const RED = '#ff453a';
+  const p = st.pts;
+  if (st.tool === 'pen') return `<polyline points="${p.map((q) => q.join(',')).join(' ')}" fill="none" stroke="${RED}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const [a, b] = [p[0], p[p.length - 1]];
+  if (st.tool === 'rect') return `<rect x="${Math.min(a[0], b[0])}" y="${Math.min(a[1], b[1])}" width="${Math.abs(b[0] - a[0])}" height="${Math.abs(b[1] - a[1])}" fill="none" stroke="${RED}" stroke-width="${w}" rx="${w}"/>`;
+  const ang = Math.atan2(b[1] - a[1], b[0] - a[0]); const L = w * 5;
+  const h1 = [b[0] - L * Math.cos(ang - 0.5), b[1] - L * Math.sin(ang - 0.5)];
+  const h2 = [b[0] - L * Math.cos(ang + 0.5), b[1] - L * Math.sin(ang + 0.5)];
+  return `<g stroke="${RED}" stroke-width="${w}" stroke-linecap="round" fill="none"><line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/><polyline points="${h1.join(',')} ${b.join(',')} ${h2.join(',')}"/></g>`;
+}
+
+async function reviewSection(p) {
+  const box = $('#reviewBox');
+  if (!box) return;
+  const hashNow = location.hash;
+  let d;
+  try { d = await api(`/projects/${p.id}/review`); } catch (err) { box.innerHTML = `<div class="notice bad">${esc(err.message)}</div>`; return; }
+  const latest = d.rounds[0];
+  const roundHtml = (r, open) => {
+    const nowe = r.feedback.filter((f) => f.status === 'nowa').length;
+    const ogolne = r.feedback.filter((f) => !f.shot_id);
+    const shotsWith = r.shots.map((s) => ({ s, fb: r.feedback.filter((f) => f.shot_id === s.id) }));
+    const fbRow = (f) => `<label class="fbRow ${f.status === 'poprawione' ? 'is-done' : ''}"><input type="checkbox" data-fb="${f.id}" ${f.status === 'poprawione' ? 'checked' : ''}>
+      <span>${f.text ? esc(f.text) : '<i class="muted">zaznaczenie na zrzucie</i>'}<br><small class="muted">${fmtDateTime(f.created_at)}</small></span></label>`;
+    return `<details class="card rv" ${open ? 'open' : ''}>
+      <summary><b>Wersja ${r.no}</b> <span class="muted small">· ${fmtDateTime(r.created_at)} · ${r.status === 'robie' ? 'robię zrzuty…' : r.status === 'blad' ? `błąd: ${esc(r.error || '')}` : `${r.shots.length} zrzutów · ${r.feedback.length} poprawek`}</span>
+        ${nowe ? `<span class="tag bad">${nowe} do zrobienia</span>` : ''}</summary>
+      ${ogolne.length ? `<div class="rvGeneral"><h3>Uwagi ogólne</h3>${ogolne.map(fbRow).join('')}</div>` : ''}
+      <div class="rvShots">${shotsWith.filter(({ s, fb }) => fb.length || r === latest).map(({ s, fb }) => {
+        const w = Math.max(3, Math.round(s.width / 260));
+        const draw = fb.filter((f) => f.drawing).map((f) => f.drawing.map((x) => strokeSvg(x, w)).join('')).join('');
+        return `<div class="rvShot rvShot--${s.device} ${fb.length ? 'has-fb' : ''}">
+          <div class="rvShot__head"><b>${esc(s.label || `Sekcja ${s.idx + 1}`)}</b><span class="muted small">${s.device}</span></div>
+          <div class="rvStage"><div class="rvStage__in"><img data-shot-src="/projects/${p.id}/review/shots/${s.id}" width="${s.width}" height="${s.height}" alt="">
+            ${draw ? `<svg viewBox="0 0 ${s.width} ${s.height}" preserveAspectRatio="none">${draw}</svg>` : ''}</div></div>
+          ${fb.map(fbRow).join('')}
+        </div>`;
+      }).join('') || '<p class="muted small">Brak poprawek do tej wersji.</p>'}</div>
+      <div class="row end"><button class="btn ghost sm" data-del-round="${r.id}">Usuń tę wersję</button></div>
+    </details>`;
+  };
+  box.innerHTML = `
+    <h2 class="sec">Strona dla klienta ${d.newCount ? `<span class="tag bad">${d.newCount} nowe poprawki</span>` : ''}</h2>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Link dla klienta</h3>
+        ${d.sharing.on ? `
+          <div class="row"><input class="inp" id="rvLink" readonly value="${esc(d.sharing.url)}" style="flex:1;margin:0;min-width:12rem">
+            <button class="btn sm" id="rvCopy">Kopiuj</button><a class="btn ghost sm" href="${esc(d.sharing.url)}" target="_blank" rel="noopener">Otwórz</a></div>
+          <p class="small muted">Klient wchodzi bez logowania. Widzi etap, termin, Twoją notkę i ostatnią wersję zrzutów.</p>
+          <div class="row"><button class="btn ghost sm" id="rvOff">Wyłącz link</button><button class="btn ghost sm" id="rvReset">Nowy link (stary przestanie działać)</button></div>`
+        : `<p class="small muted">Włącz, żeby dostać prywatny link do wysłania klientowi.</p><button class="btn" id="rvOn">Włącz link dla klienta</button>`}
+        <label class="f" style="margin:18px 0 0">Notka dla klienta<textarea class="inp" id="rvNote" style="min-height:5rem" placeholder="np. W tym tygodniu kończę sekcję realizacji. Proszę o uwagi do piątku.">${esc(d.client_note)}</textarea></label>
+        <div class="row end" style="margin-top:8px"><button class="btn ghost sm" id="rvNoteSave">Zapisz notkę</button></div>
+      </div>
+      <div class="card">
+        <h3>Zrzuty strony</h3>
+        <p class="small muted">Panel otwiera stronę i robi zdjęcia każdej sekcji: na komputer i na telefon. Każde kliknięcie to nowa wersja do skomentowania.</p>
+        <div class="row"><input class="inp" id="rvUrl" value="${esc(p.url || '')}" placeholder="https://wersja-testowa-klienta.pl" style="flex:1;margin:0;min-width:12rem">
+          <button class="btn" id="rvShoot" ${latest?.status === 'robie' ? 'disabled' : ''}>${latest?.status === 'robie' ? 'Robię zrzuty…' : 'Zrób zrzuty'}</button></div>
+        ${latest?.status === 'robie' ? '<p class="small muted">Trwa to zwykle 20–60 sekund. Strona odświeży się sama.</p>' : ''}
+        ${latest?.status === 'blad' ? `<div class="notice bad" style="margin-top:12px">Ostatnie zrzuty się nie udały: ${esc(latest.error || '')}</div>` : ''}
+      </div>
+    </div>
+    ${d.rounds.map((r, i) => roundHtml(r, i === 0)).join('')}`;
+
+  // Zdjęcia przez fetch z nagłówkiem sesji — tak samo działają pobierania plików w panelu.
+  box.querySelectorAll('img[data-shot-src]').forEach(async (img) => {
+    try {
+      const res = await fetch(`/api/admin${img.dataset.shotSrc}`, { headers: naglowki() });
+      if (res.ok) img.src = URL.createObjectURL(await res.blob());
+    } catch { /* pominięte zdjęcie */ }
+  });
+  const again = () => reviewSection(p);
+  const act = (fn) => async () => { try { await fn(); again(); } catch (err) { toast(err.message, true); } };
+  $('#rvOn') && ($('#rvOn').onclick = act(() => api(`/projects/${p.id}/review/share`, { method: 'POST', body: { on: true } })));
+  $('#rvOff') && ($('#rvOff').onclick = act(() => api(`/projects/${p.id}/review/share`, { method: 'POST', body: { on: false } })));
+  $('#rvReset') && ($('#rvReset').onclick = act(async () => {
+    if (!confirm('Stary link przestanie działać. Utworzyć nowy?')) throw new Error('Anulowano.');
+    await api(`/projects/${p.id}/review/reset-link`, { method: 'POST', body: {} });
+  }));
+  $('#rvCopy') && ($('#rvCopy').onclick = async () => {
+    try { await navigator.clipboard.writeText($('#rvLink').value); } catch { $('#rvLink').select(); document.execCommand('copy'); }
+    toast('Link skopiowany.');
+  });
+  $('#rvNoteSave').onclick = async () => {
+    await api(`/projects/${p.id}`, { method: 'PATCH', body: { client_note: $('#rvNote').value } });
+    toast('Notka zapisana. Klient zobaczy ją od razu.');
+  };
+  $('#rvShoot').onclick = act(async () => {
+    const url = $('#rvUrl').value.trim();
+    if (url && url !== p.url) { await api(`/projects/${p.id}`, { method: 'PATCH', body: { url } }); p.url = url; }
+    await api(`/projects/${p.id}/review/rounds`, { method: 'POST', body: { url } });
+    toast('Robię zrzuty — to potrwa chwilę.');
+  });
+  box.querySelectorAll('[data-fb]').forEach((cb) => {
+    cb.onchange = act(() => api(`/projects/${p.id}/review/feedback/${cb.dataset.fb}`, { method: 'PATCH', body: { status: cb.checked ? 'poprawione' : 'nowa' } }));
+  });
+  box.querySelectorAll('[data-del-round]').forEach((b) => {
+    b.onclick = act(async () => {
+      if (!confirm('Usunąć tę wersję razem ze zrzutami i poprawkami?')) throw new Error('Anulowano.');
+      await api(`/projects/${p.id}/review/rounds/${b.dataset.delRound}`, { method: 'DELETE' });
+    });
+  });
+  if (latest?.status === 'robie') setTimeout(() => { if (location.hash === hashNow) again(); }, 3000);
+}
 
 /* --- Leady --- */
 views['/leady'] = async () => {
