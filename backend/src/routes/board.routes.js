@@ -170,6 +170,15 @@ router.delete('/notes/:id', (req, res) => {
 /** Przesuwanie kartki w lewo/prawo na tablicy.
  *  Tablica jest jedną listą, więc sąsiada szukamy wśród wszystkich kartek
  *  o tym samym przypięciu — status nie dzieli już kolejności. */
+/** Nowa kolejność po przeciągnięciu kartek myszką: lista id od góry do dołu. */
+router.post('/notes/reorder', (req, res) => {
+  const ids = Array.isArray(req.body?.ids) ? req.body.ids.map(Number).filter(Number.isInteger) : [];
+  if (!ids.length || ids.length > 1000) return res.status(400).json({ error: 'Brak kolejności kartek.' });
+  const set = db.prepare('UPDATE notes SET position = ? WHERE id = ?');
+  db.transaction(() => ids.forEach((id, i) => set.run((i + 1) * 10, id)))();
+  res.json({ ok: true });
+});
+
 router.post('/notes/:id/move', (req, res) => {
   const dir = req.body?.direction === 'up' ? -1 : 1;
   const n = db.prepare('SELECT * FROM notes WHERE id = ?').get(req.params.id);

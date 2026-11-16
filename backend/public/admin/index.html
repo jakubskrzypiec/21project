@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="/admin/assets/style.css">
 <script>
 // Wariant kolorystyczny ustawiamy przed pierwszym rysowaniem, żeby nie mrugnęło.
-try { var t = localStorage.getItem('p21theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+// Domyślnie ciemny (nowy wygląd); jasny tylko, gdy sam go wybierzesz.
+try { var t = localStorage.getItem('p21theme') || 'dark'; if (t === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (e) { document.documentElement.dataset.theme = 'dark'; }
 </script>
 </head>
 <body>
@@ -98,7 +99,6 @@ fill="currentColor" stroke="none">
 </div>
 <div id="toast"></div>
 <dialog id="modal"></dialog>
-<script src="/admin/assets/boardPriority.js"></script>
 <script src="/admin/assets/app.js"></script>
 </body>
 </html>
