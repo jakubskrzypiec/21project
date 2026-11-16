@@ -143,15 +143,22 @@ function usageSummary(agent, days = 30) {
 
 /** Prosta blokada, żeby dwa przebiegi agenta nie nakładały się na siebie. */
 const locks = new Set();
+// Agenci pracują w osobnym procesie (src/agentRunner.js). Proces panelu dostaje od niego
+// sygnał „pracuję / skończyłem”, żeby mapa i status pokazywały prawdę.
+const remoteBusy = new Set();
+const tell = (name, busy) => { try { if (process.send) process.send({ type: 'busy', name, busy }); } catch { /* rodzic zniknął */ } };
 async function exclusive(name, fn) {
   if (locks.has(name)) return { skipped: 'poprzedni przebieg jeszcze trwa' };
   locks.add(name);
-  try { return await fn(); } finally { locks.delete(name); }
+  tell(name, true);
+  try { return await fn(); } finally { locks.delete(name); tell(name, false); }
 }
 
-const isRunning = (name) => locks.has(name);
+const isRunning = (name) => locks.has(name) || remoteBusy.has(name);
+const setRemoteBusy = (name, busy) => (busy ? remoteBusy.add(name) : remoteBusy.delete(name));
 
 module.exports = {
+  setRemoteBusy,
   isRunning, settings, saveSettings, state, saveState, log, recentLog, local, dayStartIso,
   think, thinkJson, parseJson, escapeRawNewlines, strictSchema, addUsage, usageSummary, exclusive, deepMerge, nowIso,
 };

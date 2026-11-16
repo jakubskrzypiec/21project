@@ -33,8 +33,12 @@ function parseHomebookTitle(title) {
   const company = parts[0] || null;
   const mid = parts.length >= 3 ? parts.slice(1, -1).join(' - ') : '';
   // Miasto to końcowe słowa pisane wielką literą: „… wnętrz KATOWICE” albo „… wnętrz Kędzierzyn-Koźle”.
-  const cityM = mid.match(/((?:\p{Lu}[\p{L}-]*\s?)+)$/u);
-  let city = cityM ? cityM[1].trim().replace(/^((Architekt|Projektant|Firma|Producent|Sklep|Fotograf|Artysta|Designer|Wykonawca|Ogrody)\S*\s+)+/i, '') : null;
+  // Końcowe słowa od wielkiej litery zbieramy od tyłu, słowo po słowie. Wcześniej robił to
+  // wzorzec z zagnieżdżonym „+”, który przy pechowym tytule liczył się minutami.
+  const words = mid.trim().split(/\s+/);
+  const tail = [];
+  while (words.length && /^\p{Lu}[\p{L}-]*$/u.test(words[words.length - 1])) tail.unshift(words.pop());
+  let city = tail.length ? tail.join(' ').replace(/^((Architekt|Projektant|Firma|Producent|Sklep|Fotograf|Artysta|Designer|Wykonawca|Ogrody)\S*\s+)+/i, '') : null;
   if (city && city === city.toUpperCase()) {
     city = city.toLowerCase().replace(/(^|[\s-])\p{L}/gu, (c) => c.toUpperCase());
   }
