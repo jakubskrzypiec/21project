@@ -164,22 +164,9 @@ function schedule() {
     } catch (err) { console.error('[sprzątanie]', err.message); }
   }, { timezone: config.outreach.timezone });
 
-  // Agenci AI. Handlowiec sam pilnuje dni roboczych, okna i limitów — tu tylko go budzimy.
-  const handlowiec = require('./services/agents/handlowiec');
-  cron.schedule('*/5 * * * *', async () => {
-    try {
-      const r = await handlowiec.tick();
-      if (r?.sent?.ok) console.log('[handlowiec] wysłano maila');
-    } catch (err) {
-      console.error('[handlowiec]', err.message);
-      try { require('./services/agents/core').log('handlowiec', 'error', `Przebieg przerwany: ${err.message}`); } catch { /* baza niedostępna */ }
-    }
-  }, { timezone: config.outreach.timezone });
-  // Cotygodniowa nauka na wynikach — poniedziałek rano, przed wysyłką.
-  cron.schedule('20 6 * * 1', async () => {
-    try { if (handlowiec.settings().enabled) await handlowiec.learn(); }
-    catch (err) { require('./services/agents/core').log('handlowiec', 'error', `Nauka: ${err.message}`); }
-  }, { timezone: config.outreach.timezone });
+  // Agenci AI (Handlowiec) mają własny harmonogram w osobnym procesie — patrz
+  // src/agentRunner.js. Dzięki temu nawet zawieszony agent nie zatrzyma panelu.
+  require('./services/agents/runner').start();
 
   // Odpowiedzi od leadów — dwa razy dziennie.
   cron.schedule('0 8,16 * * *', async () => {
@@ -190,7 +177,31 @@ function schedule() {
   }, { timezone: config.outreach.timezone });
 }
 
+/**
+ * Strażnik: osobny wątek co kilka sekund sprawdza, czy główny wątek żyje. Jeśli od minuty
+ * nie odpowiada, zabija proces, a Railway uruchamia go od nowa — zamiast wisieć godzinami.
+ */
+function watchdog() {
+  const { Worker } = require('node:worker_threads');
+  const beat = new Int32Array(new SharedArrayBuffer(4));
+  setInterval(() => Atomics.store(beat, 0, Math.floor(Date.now() / 1000) % 2_000_000_000), 1000).unref();
+  Atomics.store(beat, 0, Math.floor(Date.now() / 1000) % 2_000_000_000);
+  const w = new Worker(`
+    const { workerData } = require('node:worker_threads');
+    const beat = workerData;
+    setInterval(() => {
+      const age = Math.floor(Date.now() / 1000) % 2_000_000_000 - Atomics.load(beat, 0);
+      if (age > 60) {
+        require('fs').writeSync(2, '[strażnik] serwer nie odpowiada od ' + age + ' s — restart\\n');
+        process.kill(process.pid, 'SIGKILL');
+      }
+    }, 5000);
+  `, { eval: true, workerData: beat });
+  w.unref();
+}
+
 if (require.main === module) {
+  watchdog();
   schedule();
   app.listen(config.port, () => {
     console.log(`21project panel → ${config.publicUrl} (port ${config.port}, tryb ${config.env})`);

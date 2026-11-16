@@ -3,6 +3,7 @@ const express = require('express');
 const { db, logAction } = require('../db');
 const core = require('../services/agents/core');
 const handlowiec = require('../services/agents/handlowiec');
+const runner = require('../services/agents/runner');
 const { clientIp } = require('../middleware/auth');
 
 const router = express.Router();
@@ -41,7 +42,7 @@ router.post('/handlowiec/start', wrap((req) => { handlowiec.start(); logAction('
 router.post('/handlowiec/stop', wrap((req) => { handlowiec.stop(); logAction('agent.stop', clientIp(req), { agent: 'handlowiec' }); return { status: handlowiec.status() }; }));
 
 /** Jeden przebieg na żądanie. Zatrzymany agent tylko sprawdza odpowiedzi — niczego nie wysyła. */
-router.post('/handlowiec/run', wrap(() => handlowiec.tick({ force: true })));
+router.post('/handlowiec/run', wrap(() => runner.call('tick', { force: true })));
 
 const NUM = ['dailyLimit', 'hourlyLimit', 'windowStart', 'windowEnd', 'prospectFrom', 'followUpAfterDays', 'maxFollowUps', 'maxWords'];
 router.patch('/handlowiec/settings', wrap((req) => {
@@ -176,6 +177,6 @@ router.post('/handlowiec/playbooks', wrap((req) => {
   return { id: handlowiec.savePlaybook(req.body.content) };
 }));
 router.post('/handlowiec/playbooks/:id/activate', wrap((req) => { handlowiec.activatePlaybook(Number(req.params.id)); return { ok: true }; }));
-router.post('/handlowiec/learn', wrap(() => handlowiec.learn({ force: true })));
+router.post('/handlowiec/learn', wrap(() => runner.call('learn', { force: true })));
 
 module.exports = router;

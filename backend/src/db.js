@@ -7,6 +7,8 @@ const { config } = require('./config');
 fs.mkdirSync(config.dataDir, { recursive: true });
 const db = new Database(path.join(config.dataDir, 'panel.sqlite'));
 db.pragma('journal_mode = WAL');
+// Panel i proces agentów piszą do tej samej bazy — przy zderzeniu chwilę czekamy zamiast błędu.
+db.pragma('busy_timeout = 5000');
 db.pragma('foreign_keys = ON');
 
 const SCHEMA = `

@@ -323,3 +323,10 @@ test('audyt: złośliwy kod strony nie blokuje serwera (analiza w czasie liniowy
   }
   assert.deepEqual(siteAudit.extractEmails('Pisz: biuro@firma.pl lub jan.kowalski [at] firma.com.pl.'), ['biuro@firma.pl', 'jan.kowalski@firma.com.pl']);
 });
+
+test('homebook: tytuł z długim ciągiem wielkich liter nie zawiesza parsera', () => {
+  const t = Date.now();
+  sources.parseHomebookTitle(`Firma - Architekt ${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.repeat(3)}! - homebook`);
+  assert.ok(Date.now() - t < 200);
+  assert.equal(sources.parseHomebookTitle('Studio X - Architekt / projektant wnętrz KATOWICE - homebook').city, 'Katowice');
+});
