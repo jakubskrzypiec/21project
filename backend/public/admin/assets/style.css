@@ -347,6 +347,41 @@ tr.picked td{background:var(--surface-2)}
 .note__mail blockquote{margin:10px 0;padding-left:10px;border-left:2px solid #aaa}
 .note__manual{font-size:12px;padding:4px 0}
 .note__manual>b{display:block;color:#555;margin-bottom:5px}
+/* Tablica według pilności */
+.today{border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:10px;padding:14px 18px;margin:6px 0 18px;background:var(--card,transparent)}
+.today--ok{border-left-color:var(--ok)}
+.today__head{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3,#666);margin-bottom:6px}
+.today p{margin:0}
+.today__list{margin:0;padding-left:20px;display:grid;gap:6px}
+.today__list a{color:inherit;text-decoration:none}
+.today__list a:hover b{text-decoration:underline}
+.today__why{display:inline-block;margin-left:6px;font-size:12px;color:var(--warn)}
+.today__why.is-bad{color:var(--bad);font-weight:600}
+.boardSec{margin:0 0 18px}
+.boardSec>summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;padding:8px 0 12px}
+.boardSec>summary::-webkit-details-marker{display:none}
+.boardSec>summary::before{content:'▸';font-size:12px;color:var(--ink-3,#777);transition:transform .15s}
+.boardSec[open]>summary::before{transform:rotate(90deg)}
+.boardSec__title{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.boardSec__count{font-size:12px;font-weight:600;padding:1px 9px;border-radius:999px;background:var(--line);}
+.boardSec--ruch .boardSec__count{background:var(--bad-bg);color:var(--bad)}
+.boardSec--czeka .boardSec__count{background:var(--warn-bg);color:var(--warn)}
+.boardSec__desc{font-size:12px;color:var(--ink-3,#777);flex-basis:100%;padding-left:20px}
+/* Równe kartki: siatka rozciąga je do wysokości rzędu, tekst kroku ucięty do 3 linii. */
+.notes--even{align-items:stretch;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.note--compact{gap:8px;padding:14px 16px 10px}
+.note--compact .note__title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.note--urgent{box-shadow:inset 3px 0 0 #c2410c}
+.note--flash{outline:3px solid #c2410c;outline-offset:2px}
+.note__why{font-size:12px;font-weight:600;color:#555}
+.note__why.is-bad{color:#b42318}
+.note__why.is-wait{color:#8a6a12}
+.note__step{margin:0;font-size:13.5px;line-height:1.5;color:#222;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:3em}
+.note__chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:11.5px;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(10,10,10,.12);color:#333;white-space:nowrap}
+.chip--warn{background:#fbf0d8;border-color:transparent;color:#8a6a12}
+.chip--bad{background:#fde4e1;border-color:transparent;color:#b42318;font-weight:600}
+.noteDetails{color-scheme:light;background:var(--note-bg,#fdf6d8);color:#141414;border-radius:10px;padding:14px;display:grid;gap:10px;max-height:62vh;overflow:auto}
 .backupList{max-height:52vh;overflow:auto;margin:16px 0}
 .backupRow{padding:12px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap}
 

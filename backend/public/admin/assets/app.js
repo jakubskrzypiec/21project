@@ -2177,14 +2177,12 @@ views['/notatnik'] = async () => {
     <div class="boardTools">
       <label>Szukaj klienta<input class="inp" id="boardSearch" placeholder="Nazwa, e-mail lub treść"></label>
       <label for="boardFilter">Pokaż<select class="inp" id="boardFilter" aria-label="Pokaż">
-        <option value="all">Wszystkie kartki</option><option value="mine">Ruch po mojej stronie</option>
-        <option value="waiting">Czekam na klienta</option><option value="review">Do sprawdzenia / brak adresu</option>
+        <option value="all">Wszystkie kartki</option><option value="review">Do sprawdzenia / brak adresu</option>
         <option value="due">Z terminem</option>
       </select></label>
     </div>
     <p class="small muted">Aktualizacja z Gmaila: napisz w czacie „zaktualizuj tablicę”. Asystent przeczyta wątki i zapisze ustalenia tutaj. „Wczytaj zapisane zmiany” odświeża widok, nie analizuje poczty.</p>
-    ${notes.length ? pickGroup('notatki', `
-      <div class="notes" id="boardCards">${notes.map(noteCard).join('')}</div>`) : `
+    ${notes.length ? pickGroup('notatki', tablicaPriorytetow(notes)) : `
       <div class="empty">
         Tablica jest pusta. Pierwsza kartka to zwykle lista rzeczy, o których łatwo zapomnieć.
       </div>`}
@@ -2238,8 +2236,7 @@ views['/notatnik'] = async () => {
       const card = view.querySelector(`[data-card-id="${n.id}"]`);
       const a = n.mail_summary;
       const searchable = [n.title, n.body, n.contact_emails, a?.summary, a?.next_step].join(' ').toLocaleLowerCase('pl');
-      const match = filter === 'all' || (filter === 'mine' && (a?.owner === 'Jakub' || ['do-zrobienia','do-poprawek','w-trakcie'].includes(n.status)))
-        || (filter === 'waiting' && (a?.owner === 'Klient' || CZEKA_NA_KLIENTA.includes(n.status)))
+      const match = filter === 'all'
         || (filter === 'review' && (!n.contact_emails || !a || a.needs_review))
         || (filter === 'due' && (n.due_date || a?.due_date));
       if (card) card.hidden = !match || !searchable.includes(query);
@@ -2276,10 +2273,17 @@ views['/notatnik'] = async () => {
       render();
     };
   });
-  view.querySelectorAll('[data-note-move]').forEach((b) => {
-    b.onclick = async () => {
-      await api(`/board/notes/${b.dataset.noteMove}/move`, { method: 'POST', body: { direction: b.dataset.dir } });
-      render();
+  view.querySelectorAll('[data-note-details]').forEach((b) => {
+    b.onclick = () => noteDetails(notes.find((x) => String(x.id) === b.dataset.noteDetails));
+  });
+  view.querySelectorAll('[data-jump]').forEach((a) => {
+    a.onclick = (e) => {
+      e.preventDefault();
+      const card = view.querySelector(`[data-card-id="${a.dataset.jump}"]`);
+      if (!card) return;
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('note--flash');
+      setTimeout(() => card.classList.remove('note--flash'), 1600);
     };
   });
   view.querySelectorAll('[data-delfile]').forEach((b) => {
@@ -2382,12 +2386,43 @@ async function boardBackups() {
   }; });
 }
 
-function noteCard(n) {
+/**
+ * Tablica ułożona według pilności (reguły w boardPriority.js): pasek „Dziś zrób”,
+ * potem Twój ruch, czekasz na klienta, spokojne (zwinięte) i zrobione.
+ */
+function tablicaPriorytetow(notes) {
+  const dzis = BoardPriority.dzisiaj();
+  const { ruch, czeka, spokoj, zrobione } = BoardPriority.uloz(notes, dzis);
+  const siatka = (lista) => `<div class="notes notes--even">${lista.map(({ n, o }) => noteCard(n, o)).join('')}</div>`;
+  const dzisZrob = ruch.slice(0, 3);
+  const pasek = dzisZrob.length ? `<section class="today" aria-label="Dziś zrób">
+      <div class="today__head">Dziś zrób</div>
+      <ol class="today__list">${dzisZrob.map(({ n, o }) => `<li><a href="#" data-jump="${n.id}">
+        <b>${esc(n.title || 'Bez tytułu')}</b>: ${esc(n.mail_summary?.next_step || n.body?.split('\n')[0] || 'zajrzyj do kartki')}
+        <span class="today__why ${o.pilne ? 'is-bad' : ''}">${esc(o.powod)}</span></a></li>`).join('')}</ol>
+    </section>` : '<section class="today today--ok"><div class="today__head">Dziś zrób</div><p>Nic pilnego po Twojej stronie. Piłka jest u klientów.</p></section>';
+  const sekcja = (klasa, tytul, opis, lista, otwarta = true) => lista.length ? `
+    <details class="boardSec boardSec--${klasa}" ${otwarta ? 'open' : ''}>
+      <summary><span class="boardSec__title">${tytul}</span> <span class="boardSec__count">${lista.length}</span>
+        <span class="boardSec__desc">${opis}</span></summary>
+      ${siatka(lista)}
+    </details>` : '';
+  return `${pasek}
+    ${sekcja('ruch', 'Twój ruch', 'od najpilniejszego: po terminie, termin blisko, klient czeka na Ciebie, przypomnienia', ruch)}
+    ${sekcja('czeka', 'Czekasz na klienta', `po ${BoardPriority.CISZA_DNI_ROBOCZYCH} dniach roboczych ciszy kartka sama wraca do „Twój ruch”`, czeka)}
+    ${sekcja('spokoj', 'Spokojne', 'wstrzymane i bez ruchu, bez terminu', spokoj, false)}
+    ${sekcja('zrobione', 'Zrobione', '', zrobione, false)}`;
+}
+
+function noteCard(n, o = BoardPriority.ocen(n, BoardPriority.dzisiaj())) {
   const status = n.status || 'do-zrobienia';
   const zrobiona = status === 'zrobione';
   const czeka = CZEKA_NA_KLIENTA.includes(status);
-  const przeterminowana = n.due_date && !zrobiona && n.due_date < new Date().toISOString().slice(0, 10);
-  return `<article data-card-id="${n.id}" class="note pickItem note--${esc(n.color)} ${zrobiona ? 'note--done' : ''}">
+  const a = n.mail_summary;
+  const krok = a?.next_step || (n.body ? n.body.split('\n').find((l) => l.trim()) : '') || '';
+  const kontakt = o.dniOdKontaktu === null || o.dniOdKontaktu === undefined ? null
+    : o.dniOdKontaktu === 0 ? 'dziś' : o.dniOdKontaktu === 1 ? 'wczoraj' : `${o.dniOdKontaktu} dni temu`;
+  return `<article data-card-id="${n.id}" class="note note--compact pickItem note--${esc(n.color)} ${zrobiona ? 'note--done' : ''} ${o.pilne ? 'note--urgent' : ''}">
     <div class="note__top">
       ${pick(n.id)}
       <select class="note__status ${czeka ? 'note__status--czeka' : ''} ${zrobiona ? 'note__status--zrobione' : ''}"
@@ -2395,26 +2430,44 @@ function noteCard(n) {
         ${STATUSY.map(([k, l]) => `<option value="${k}" ${k === status ? 'selected' : ''}>${l}</option>`).join('')}
       </select>
       <button class="note__pin ${n.pinned ? 'on' : ''}" data-note-pin="${n.id}" data-pinned="${n.pinned}"
-              title="Przypnij na górze">${n.pinned ? '📌' : '📍'}</button>
+              title="Przypnij na górze sekcji">${n.pinned ? '📌' : '📍'}</button>
     </div>
-    ${n.title ? `<h3 class="note__title">${esc(n.title)}</h3>` : ''}
-    ${n.contact_emails ? `<div class="note__contact">${esc(n.contact_emails)}</div>` : '<div class="note__contact">E-mail klienta można dodać w edycji</div>'}
-    ${noteMailSummary(n.mail_summary)}
-    ${n.body ? `<div class="note__manual"><b>Moje notatki</b><pre class="note__body">${esc(n.body)}</pre></div>` : ''}
-    ${noteLinks(n.links)}
+    <h3 class="note__title">${esc(n.title || 'Bez tytułu')}</h3>
+    <div class="note__why ${o.pilne ? 'is-bad' : o.sekcja === 'czeka' ? 'is-wait' : ''}">${esc(o.powod)}</div>
+    <p class="note__step">${krok ? esc(krok) : '<span class="muted">Brak następnego kroku. Uzupełnij w edycji albo poproś asystenta o przegląd poczty.</span>'}</p>
+    <div class="note__chips">
+      ${o.termin ? `<span class="chip ${o.doTerminu < 0 ? 'chip--bad' : o.pilne ? 'chip--warn' : ''}" title="Termin">📅 ${esc(fmtDate(o.termin))}</span>` : ''}
+      ${kontakt ? `<span class="chip" title="Ostatni kontakt">⏱ ${esc(kontakt)}</span>` : ''}
+      ${o.ruch ? `<span class="chip" title="Czyj ruch">👤 ${o.ruch === 'Jakub' ? 'Ty' : 'Klient'}</span>` : ''}
+    </div>
     <div class="note__foot">
-      ${n.source === 'poczta' ? '<span class="tag">z poczty</span>' : ''}
-      ${n.due_date ? `<span class="tag ${przeterminowana ? 'bad' : ''}">${fmtDate(n.due_date)}</span>` : ''}
       ${n.project_name ? `<span class="tag">${esc(n.project_name)}</span>` : ''}
       ${n.files ? `<span class="tag">${n.files} plik(ów)</span>` : ''}
       <span class="note__actions">
-        <button data-note-move="${n.id}" data-dir="up" title="Wyżej">↑</button>
-        <button data-note-move="${n.id}" data-dir="down" title="Niżej">↓</button>
+        <button data-note-details="${n.id}" title="Pełne ustalenia z Gmaila, notatki i linki">szczegóły</button>
         <button data-note-edit="${n.id}" title="Edytuj">edytuj</button>
         <button data-note-del="${n.id}" title="Usuń">usuń</button>
       </span>
     </div>
   </article>`;
+}
+
+/** Pełna kartka w okienku: ustalenia z Gmaila, dowody, notatki, linki. */
+function noteDetails(n) {
+  if (!n) return;
+  modal.innerHTML = `<h3>${esc(n.title || 'Kartka')}</h3>
+    <div class="noteDetails note--${esc(n.color)}">
+      ${n.contact_emails ? `<div class="note__contact">${esc(n.contact_emails)}</div>` : '<div class="note__contact">E-mail klienta można dodać w edycji</div>'}
+      ${noteMailSummary(n.mail_summary)}
+      ${n.body ? `<div class="note__manual"><b>Moje notatki</b><pre class="note__body">${esc(n.body)}</pre></div>` : ''}
+      ${noteLinks(n.links)}
+      <div class="small muted">${n.source === 'poczta' ? 'Kartka z poczty · ' : ''}${n.due_date ? `Termin na kartce: ${esc(fmtDate(n.due_date))}` : ''}</div>
+    </div>
+    <div class="row end" style="margin-top:16px">
+      <button class="btn ghost" id="detEdit">Edytuj</button><button class="btn" id="detClose">Zamknij</button></div>`;
+  if (!modal.open) modal.showModal();
+  $('#detClose').onclick = () => modal.close();
+  $('#detEdit').onclick = () => { modal.close(); noteModal(n); };
 }
 
 /** Odnośniki dopisane przez skanowanie poczty: wątek, strona, social media. */
