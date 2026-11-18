@@ -126,6 +126,7 @@ app.use('/api/admin/board', require('./routes/board.routes'));
 app.use('/api/admin/quotes', require('./routes/quotes.routes').router);
 app.use('/api/admin/briefs', require('./routes/briefs.routes'));
 app.use('/api/admin/agents', require('./routes/agents.routes'));
+app.use('/api/admin/kampania', require('./routes/campaign.routes'));
 
 /*
  * Sam szkielet panelu (znaczniki, nawigacja, style) nie zawiera żadnych danych —

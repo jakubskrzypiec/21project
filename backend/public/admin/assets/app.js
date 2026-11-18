@@ -545,6 +545,127 @@ views['/ruch'] = async () => {
   odswiezajCo(120);
 };
 
+/* --- Kampania Meta (FB + IG) --- */
+const STATUS_META = {
+  ACTIVE: ['aktywna', 'ok'], PAUSED: ['wstrzymana', 'warn'], IN_PROCESS: ['w weryfikacji', 'warn'],
+  PENDING_REVIEW: ['w weryfikacji', 'warn'], WITH_ISSUES: ['problem', 'bad'], DISAPPROVED: ['odrzucona', 'bad'],
+  CAMPAIGN_PAUSED: ['kampania wstrzymana', 'warn'], ADSET_PAUSED: ['zestaw wstrzymany', 'warn'], ARCHIVED: ['zakończona', ''],
+};
+const statusMeta = (s) => {
+  const [txt, cls] = STATUS_META[s] || [s ? s.toLowerCase() : '—', ''];
+  return `<span class="tag ${cls}">${esc(txt)}</span>`;
+};
+const zlGr = (n) => (n == null ? '—' : `${new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(n)} zł`);
+
+/** Krótka ocena w jednym zdaniu, żeby nie trzeba było czytać tabel. */
+function ocenaKampanii(d) {
+  const r = d.razem;
+  if (!r || r.wydane < 1) return ['info', 'Kampania jeszcze nic nie wydała — Meta zwykle startuje po weryfikacji reklam (od kilku minut do kilku godzin).'];
+  if (d.tempo.minelo < 4) return ['info', `Faza uczenia (dzień ${d.tempo.minelo}). Przez pierwsze 4–5 dni nic nie zmieniaj — liczby dopiero się układają.`];
+  if (!r.leady && r.wydane >= 150) return ['bad', `Wydane ${zlGr(r.wydane)} i ani jednego leada. Sprawdź reklamy z najniższym CTR i rozważ wyłączenie najsłabszej.`];
+  if (r.kosztLeada != null && r.kosztLeada > d.celKosztuLeada * 1.5) return ['warn', `Lead kosztuje ${zlGr(r.kosztLeada)} — drożej niż cel ${zlGr(d.celKosztuLeada)}. Wyłącz reklamę z najwyższym kosztem leada.`];
+  if (r.kosztLeada != null && r.kosztLeada <= d.celKosztuLeada) return ['ok', `Dobrze: lead po ${zlGr(r.kosztLeada)} (cel ≤ ${zlGr(d.celKosztuLeada)}). Dzwoń do każdego w ciągu godziny.`];
+  return ['info', 'Kampania działa. Pilnuj kosztu leada i szybkiego kontaktu z każdym zgłoszeniem.'];
+}
+
+/** Leady z formularza Meta — z danymi do kontaktu, najnowsze na górze. */
+function tabelaLeadow(d) {
+  const naglowek = `<h2 class="sec">Leady z formularza (${fmtNum((d.leady || []).length)})</h2>`;
+  if (d.leadyBlad) {
+    return `${naglowek}<div class="notice warn">
+      Liczby kampanii działają, ale Meta nie oddała danych kontaktowych: ${esc(d.leadyBlad)}<br>
+      Token w Railway (<b>META_ACCESS_TOKEN</b>) potrzebuje uprawnienia <code>leads_retrieval</code> i dostępu do strony 21project.
+      Do tego czasu dane są w <a href="${esc(d.linkLeadow)}" target="_blank" rel="noopener">Leadach w Meta</a>.</div>`;
+  }
+  if (!d.leady?.length) return `${naglowek}<div class="card"><div class="empty">Jeszcze nikt nie wypełnił formularza.</div></div>`;
+  const swiezy = (k) => Date.now() - new Date(k) < 86400000;
+  return `${naglowek}<div class="card">
+    ${table(['Kiedy', 'Imię i nazwisko', 'Telefon', 'E-mail', 'Czym się zajmuje', 'Ma stronę?', 'Strona / portfolio', 'Reklama'], d.leady, (l) => `<tr>
+      <td>${swiezy(l.kiedy) ? '<span class="tag new">nowy</span> ' : ''}${fmtDateTime(l.kiedy)}</td>
+      <td><b>${esc(l.imie || '—')}</b>${l.inne.length ? `<div class="sub">${l.inne.map((x) => `${esc(x.pytanie)}: ${esc(x.odpowiedz)}`).join('<br>')}</div>` : ''}</td>
+      <td>${l.telefon ? `<a href="tel:${esc(l.telefon.replace(/\s/g, ''))}">${esc(l.telefon)}</a>` : '—'}</td>
+      <td>${l.email ? `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>` : '—'}</td>
+      <td>${esc(l.zawod || '—')}</td>
+      <td>${esc(l.maStrone || '—')}</td>
+      <td>${l.strona ? `<a href="${esc(/^https?:/i.test(l.strona) ? l.strona : `https://${l.strona}`)}" target="_blank" rel="noopener">${esc(l.strona)}</a>` : '—'}</td>
+      <td>${esc(l.reklama.replace(/^21P_/, ''))}</td></tr>`)}
+  </div>`;
+}
+
+views['/kampania'] = async () => {
+  view.innerHTML = '<div class="empty">Wczytywanie…</div>';
+  const odswiez = new URLSearchParams(location.hash.split('?')[1] || '').get('odswiez') === '1';
+  const d = await api(`/kampania${odswiez ? '?odswiez=1' : ''}`);
+  const t = d.tempo;
+
+  const naglowek = `
+    <h1 class="page">Kampania</h1>
+    <p class="sub">${esc(d.nazwa)} · Facebook + Instagram · ${fmtDate(d.start)} – ${fmtDate(d.koniec)}</p>
+    <div class="row" style="margin-bottom:18px">
+      <a class="btn sm" href="${esc(d.linkMenedzera)}" target="_blank" rel="noopener">Menedżer reklam</a>
+      <a class="btn ghost sm" href="${esc(d.linkLeadow)}" target="_blank" rel="noopener">Leady w Meta</a>
+      ${d.polaczono ? '<a class="btn ghost sm" href="#/kampania?odswiez=1">Odśwież dane</a>' : ''}
+    </div>`;
+
+  if (!d.polaczono) {
+    const dniKampanii = Math.max(1, Math.round((new Date(d.koniec) - new Date(d.start)) / 86400000) + 1);
+    view.innerHTML = `${naglowek}
+      <div class="notice warn">
+        Panel nie jest jeszcze połączony z Meta, więc nie widać wydatków ani leadów.
+        W Railway → zmienne serwisu dodaj <b>META_ACCESS_TOKEN</b> (token z uprawnieniem <code>ads_read</code>,
+        najlepiej token użytkownika systemowego z Business Managera) i zrób redeploy.
+      </div>
+      <div class="grid g4">
+        ${kpi(zlGr(d.budzet), 'budżet całkowity (twardy limit)')}
+        ${kpi(fmtNum(t.zostaloDni), 'dni do końca kampanii')}
+        ${kpi(zlGr(d.budzet / dniKampanii), 'planowo dziennie')}
+        ${kpi(`≤ ${zlGr(d.celKosztuLeada)}`, 'cel: koszt jednego leada')}
+      </div>
+      <div class="card" style="margin-top:1px"><h3>Co robić z leadami</h3>
+        <p>Każdy lead: telefon lub SMS w ciągu godziny, koncepcja pierwszego ekranu w 24–48 h, przypomnienie po 2 i 5 dniach.</p>
+      </div>`;
+    return;
+  }
+
+  const r = d.razem;
+  const [poziom, zdanie] = ocenaKampanii(d);
+  view.innerHTML = `${naglowek}
+    <div class="notice ${poziom === 'ok' ? 'info' : poziom}">${esc(zdanie)}</div>
+
+    <div class="grid g4">
+      ${kpi(fmtNum(r.leady), 'leadów z formularza')}
+      ${kpi(zlGr(r.kosztLeada), `koszt leada (cel ≤ ${zlGr(d.celKosztuLeada)})`)}
+      ${kpi(zlGr(r.wydane), `wydane z ${zlGr(d.budzet)}`)}
+      ${kpi(fmtNum(t.zostaloDni), 'dni do końca')}
+      ${kpi(`${r.ctr.toFixed(2)}%`, 'CTR (kliknięcia w link)')}
+      ${kpi(zlGr(r.cpm), 'koszt 1000 wyświetleń (CPM)')}
+      ${kpi(fmtNum(r.zasieg), 'osób zobaczyło reklamę')}
+      ${kpi(statusMeta(d.status), 'status kampanii')}
+    </div>
+
+    ${tabelaLeadow(d)}
+
+    <div class="card" style="margin-top:1px">
+      <h3>Budżet: ${zlGr(r.wydane)} z ${zlGr(d.budzet)} (${Math.round(t.procentBudzetu)}%)</h3>
+      <div class="bar"><i style="width:${t.procentBudzetu}%"></i></div>
+      <p class="sub" style="margin-top:10px">Średnio ${zlGr(t.srednioDziennie)} dziennie · zostało ${zlGr(t.zostaloBudzetu)} na ${t.zostaloDni} dni.</p>
+    </div>
+
+    <div class="card" style="margin-top:1px"><h3>Wydatki dzień po dniu</h3>
+      ${d.dni.length ? chart(d.dni, 'wydane') : '<div class="empty">Jeszcze brak danych dziennych.</div>'}
+    </div>
+
+    <h2 class="sec">Reklamy</h2>
+    <div class="card">
+      ${table(['Reklama', 'Status', 'Wydane', 'Leady', 'Koszt leada', 'CTR', 'CPM'], d.reklamy, (a) => `<tr>
+        <td>${esc(a.nazwa)}</td><td>${statusMeta(a.status)}</td><td>${zlGr(a.wydane)}</td>
+        <td>${fmtNum(a.leady)}</td><td>${zlGr(a.kosztLeada)}</td><td>${a.ctr.toFixed(2)}%</td><td>${zlGr(a.cpm)}</td></tr>`)}
+    </div>
+    <p class="sub">Dane z Meta, odświeżane co 10 minut · pobrano ${fmtDateTime(d.pobrano)}.</p>`;
+
+  odswiezajCo(600);
+};
+
 /* --- Poczta --- */
 const MAIL_VIEWS = [
   ['wszystko', 'Wszystko'],
