@@ -53,3 +53,24 @@ test('lead z formularza: dane kontaktowe i odpowiedzi na pytania', () => {
   assert.deepEqual(l.inne, []);
   assert.equal(l.reklama, '21P_V02_DARMOWA_KONCEPCJA');
 });
+
+test('lead z polskimi nazwami pól i odpowiedziami z podkreślnikami', () => {
+  const l = metaAds.lead({
+    id: '2', created_time: '2026-11-18T13:51:00+0000',
+    field_data: [
+      { name: 'czym_się_zajmujesz?', values: ['projektowanie_wnętrz'] },
+      { name: 'czy_masz_dziś_stronę_www?', values: ['nie_mam_strony'] },
+      { name: 'numer telefonu', values: ['+48600000000'] },
+      { name: 'imię i nazwisko', values: ['Jan Test'] },
+      { name: 'adres e-mail', values: ['jan@example.com'] },
+      { name: 'witryna internetowa', values: [''] },
+    ],
+  }, '21P_V03_WCHODZI_I_PISZE');
+  assert.equal(l.imie, 'Jan Test');
+  assert.equal(l.email, 'jan@example.com');
+  assert.equal(l.telefon, '+48600000000');
+  assert.equal(l.strona, '');
+  assert.equal(l.zawod, 'Projektowanie wnętrz');
+  assert.equal(l.maStrone, 'Nie mam strony');
+  assert.deepEqual(l.inne, []);
+});

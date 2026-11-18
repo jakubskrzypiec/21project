@@ -98,27 +98,39 @@ async function graph(path, params, token) {
  * Nazwy pól standardowych są stałe (full_name, email, phone_number, website);
  * pytania własne Meta nazywa od treści pytania, więc szukamy po fragmencie.
  */
+// Meta zwraca nazwy pól w języku formularza („adres e-mail”, „numer telefonu”)
+// albo po angielsku (email, phone_number) — rozpoznajemy oba warianty.
+const RODZAJE_POL = [
+  ['email', /e-?mail/i],
+  ['telefon', /phone|telefon/i],
+  ['strona', /website|witryn/i],
+  ['imie', /full_?name|imi[eę]|nazwisk/i],
+  ['zawod', /zajmujesz/i],
+  ['maStrone', /stron/i],
+];
+const rodzajPola = (nazwa) => (RODZAJE_POL.find(([, re]) => re.test(nazwa)) || [null])[0];
+
+/** Odpowiedzi z listy wyboru Meta oddaje jako klucze („nie_mam_strony”) — robimy z nich zdanie. */
+const ladnie = (v) => {
+  const s = String(v || '').replace(/_/g, ' ').trim();
+  return s && /_/.test(String(v)) ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+};
+
 function lead(l, nazwaReklamy) {
-  const pola = {};
-  for (const f of l.field_data || []) pola[f.name] = (f.values || []).join(', ');
-  const znajdz = (...frag) => {
-    const k = Object.keys(pola).find((key) => frag.some((x) => key.toLowerCase().includes(x)));
-    return k ? pola[k] : '';
-  };
-  const standard = ['full_name', 'email', 'phone_number', 'website'];
+  const wynik = { imie: '', email: '', telefon: '', strona: '', zawod: '', maStrone: '' };
+  const inne = [];
+  for (const f of l.field_data || []) {
+    const wartosc = (f.values || []).join(', ');
+    const rodzaj = rodzajPola(f.name || '');
+    if (rodzaj && !wynik[rodzaj]) wynik[rodzaj] = ['zawod', 'maStrone'].includes(rodzaj) ? ladnie(wartosc) : wartosc.trim();
+    // Wszystko, czego nie rozpoznaliśmy, i tak trafia do widoku — nic nie ginie.
+    else if (!rodzaj && wartosc) inne.push({ pytanie: String(f.name).replace(/_/g, ' '), odpowiedz: ladnie(wartosc) });
+  }
   return {
     id: l.id,
     kiedy: l.created_time,
-    imie: pola.full_name || znajdz('name', 'imi'),
-    email: pola.email || '',
-    telefon: pola.phone_number || znajdz('phone', 'telefon'),
-    strona: pola.website || '',
-    zawod: znajdz('zajmujesz'),
-    maStrone: znajdz('stron'),
-    // Wszystko, czego nie rozpoznaliśmy, i tak trafia do widoku — nic nie ginie.
-    inne: Object.entries(pola)
-      .filter(([k]) => !standard.includes(k) && !/zajmujesz|stron/i.test(k))
-      .map(([k, v]) => ({ pytanie: k.replace(/_/g, ' '), odpowiedz: v })),
+    ...wynik,
+    inne,
     reklama: nazwaReklamy || l.ad_name || '',
     platforma: l.platform || '',
   };
