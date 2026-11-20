@@ -410,6 +410,15 @@ function migrate() {
       results TEXT NOT NULL DEFAULT '[]'
     );
   `));
+  // Status i notatka do leadów z formularza Meta (same leady żyją w Meta — tu tylko nasze uwagi).
+  krok('karteczki leadów z kampanii', () => db.exec(`
+    CREATE TABLE IF NOT EXISTS meta_lead_notes (
+      lead_id TEXT PRIMARY KEY,
+      status TEXT NOT NULL DEFAULT 'nowy',
+      notatka TEXT NOT NULL DEFAULT '',
+      updated_at TEXT NOT NULL
+    );
+  `));
 }
 
 function init() {

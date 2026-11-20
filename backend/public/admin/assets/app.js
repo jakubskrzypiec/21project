@@ -578,18 +578,87 @@ function tabelaLeadow(d) {
       Do tego czasu dane są w <a href="${esc(d.linkLeadow)}" target="_blank" rel="noopener">Leadach w Meta</a>.</div>`;
   }
   if (!d.leady?.length) return `${naglowek}<div class="card"><div class="empty">Jeszcze nikt nie wypełnił formularza.</div></div>`;
-  const swiezy = (k) => Date.now() - new Date(k) < 86400000;
-  return `${naglowek}<div class="card">
-    ${table(['Kiedy', 'Imię i nazwisko', 'Telefon', 'E-mail', 'Czym się zajmuje', 'Ma stronę?', 'Strona / portfolio', 'Reklama'], d.leady, (l) => `<tr>
-      <td>${swiezy(l.kiedy) ? '<span class="tag new">nowy</span> ' : ''}${fmtDateTime(l.kiedy)}</td>
-      <td><b>${esc(l.imie || '—')}</b>${l.inne.length ? `<div class="sub">${l.inne.map((x) => `${esc(x.pytanie)}: ${esc(x.odpowiedz)}`).join('<br>')}</div>` : ''}</td>
-      <td>${l.telefon ? `<a href="tel:${esc(l.telefon.replace(/\s/g, ''))}">${esc(l.telefon)}</a>` : '—'}</td>
-      <td>${l.email ? `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>` : '—'}</td>
-      <td>${esc(l.zawod || '—')}</td>
-      <td>${esc(l.maStrone || '—')}</td>
-      <td>${l.strona ? `<a href="${esc(/^https?:/i.test(l.strona) ? l.strona : `https://${l.strona}`)}" target="_blank" rel="noopener">${esc(l.strona)}</a>` : '—'}</td>
-      <td>${esc(l.reklama.replace(/^21P_/, ''))}</td></tr>`)}
+  const statusy = d.statusy || Object.keys(ETAP_LEADA);
+  const ile = (s) => d.leady.filter((l) => (l.status || 'nowy') === s).length;
+  const filtry = `<div class="row" id="leadFiltry" style="margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <button class="btn sm" type="button" data-filtr="">Wszystkie (${d.leady.length})</button>
+    ${statusy.filter(ile).map((s) => `<button class="btn ghost sm" type="button" data-filtr="${s}">${esc(ETAP_LEADA[s]?.[0] || s)} (${ile(s)})</button>`).join('')}
   </div>`;
+  return `${naglowek}${filtry}<div class="grid g3" id="leadKarty">${d.leady.map((l) => karteczkaLeada(l, statusy)).join('')}</div>`;
+}
+
+/** Etapy pracy z leadem: [etykieta, kolor znacznika]. */
+const ETAP_LEADA = {
+  nowy: ['Nowy — zadzwoń', 'new'], nie_odbiera: ['Nie odbiera', 'warn'], zadzwoniono: ['Rozmowa była', ''],
+  spotkanie: ['Spotkanie umówione', 'ok'], wycena: ['Wycena wysłana', 'ok'], klient: ['Klient ✓', 'ok'], odpada: ['Odpada', 'bad'],
+};
+
+function karteczkaLeada(l, statusy) {
+  const swiezy = Date.now() - new Date(l.kiedy) < 86400000;
+  const [etykieta, kolor] = ETAP_LEADA[l.status] || ETAP_LEADA.nowy;
+  const link = (u) => (/^https?:/i.test(u) ? u : `https://${u}`);
+  const wiersz = (label, html) => (html ? `<div style="margin-top:6px"><span class="sub">${label}:</span> ${html}</div>` : '');
+  return `<div class="card leadCard" data-lead="${esc(l.id)}" data-status="${esc(l.status || 'nowy')}">
+    <div class="row" style="justify-content:space-between;align-items:flex-start;gap:8px">
+      <h3 style="margin:0">${esc(l.imie || 'Bez imienia')}</h3>
+      <span class="tag ${kolor}" data-etykieta>${esc(etykieta)}</span>
+    </div>
+    <div class="sub" style="margin-top:4px">${swiezy ? '<b>nowy</b> · ' : ''}${fmtDateTime(l.kiedy)} · ${esc(l.reklama.replace(/^21P_/, ''))}</div>
+    ${wiersz('Telefon', l.telefon ? `<a href="tel:${esc(l.telefon.replace(/\s/g, ''))}">${esc(l.telefon)}</a>` : '')}
+    ${wiersz('E-mail', l.email ? `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>` : '')}
+    ${wiersz('Zajmuje się', esc(l.zawod))}
+    ${wiersz('Strona www', esc(l.maStrone))}
+    ${wiersz('Portfolio', l.strona ? `<a href="${esc(link(l.strona))}" target="_blank" rel="noopener">${esc(l.strona)}</a>` : '')}
+    ${l.inne.map((x) => wiersz(esc(x.pytanie), esc(x.odpowiedz))).join('')}
+    <label class="f" style="margin:14px 0 8px">Etap
+      <select data-pole="status">${statusy.map((s) => `<option value="${s}" ${s === (l.status || 'nowy') ? 'selected' : ''}>${esc(ETAP_LEADA[s]?.[0] || s)}</option>`).join('')}</select>
+    </label>
+    <label class="f" style="margin:0">Notatka
+      <textarea data-pole="notatka" style="min-height:90px" placeholder="np. dzwonić po 16, chce stronę + SEO, wycena 4500 zł">${esc(l.notatka || '')}</textarea>
+    </label>
+    <div class="row" style="justify-content:space-between;margin-top:8px">
+      <span class="sub" data-zapis>${l.notatkaZmieniona ? `zapisano ${relTime(l.notatkaZmieniona)}` : ''}</span>
+      <button class="btn sm" type="button" data-zapisz>Zapisz notatkę</button>
+    </div>
+  </div>`;
+}
+
+/** Zapis statusu od razu po zmianie, notatki — przyciskiem albo po wyjściu z pola. */
+function wireKarteczki() {
+  const zapisz = async (karta, body) => {
+    const info = karta.querySelector('[data-zapis]');
+    info.textContent = 'zapisuję…';
+    try {
+      await api(`/kampania/leady/${karta.dataset.lead}`, { method: 'PATCH', body });
+      info.textContent = 'zapisano przed chwilą';
+      karta.dataset.notatkaZapisana = karta.querySelector('[data-pole="notatka"]').value;
+    } catch (err) {
+      info.textContent = 'nie zapisano';
+      toast(err.message, true);
+    }
+  };
+  document.querySelectorAll('.leadCard').forEach((karta) => {
+    const pole = karta.querySelector('[data-pole="notatka"]');
+    karta.dataset.notatkaZapisana = pole.value;
+    karta.querySelector('[data-pole="status"]').onchange = (e) => {
+      const [txt, kolor] = ETAP_LEADA[e.target.value] || ETAP_LEADA.nowy;
+      const tag = karta.querySelector('[data-etykieta]');
+      tag.textContent = txt;
+      tag.className = `tag ${kolor}`;
+      karta.dataset.status = e.target.value;
+      zapisz(karta, { status: e.target.value });
+    };
+    karta.querySelector('[data-zapisz]').onclick = () => zapisz(karta, { notatka: pole.value });
+    pole.onblur = () => { if (pole.value !== karta.dataset.notatkaZapisana) zapisz(karta, { notatka: pole.value }); };
+  });
+  document.querySelectorAll('#leadFiltry [data-filtr]').forEach((b) => {
+    b.onclick = () => {
+      document.querySelectorAll('#leadFiltry [data-filtr]').forEach((x) => x.classList.toggle('ghost', x !== b));
+      document.querySelectorAll('.leadCard').forEach((k) => {
+        k.style.display = !b.dataset.filtr || k.dataset.status === b.dataset.filtr ? '' : 'none';
+      });
+    };
+  });
 }
 
 views['/kampania'] = async () => {
@@ -663,7 +732,9 @@ views['/kampania'] = async () => {
     </div>
     <p class="sub">Dane z Meta, odświeżane co 10 minut · pobrano ${fmtDateTime(d.pobrano)}.</p>`;
 
-  odswiezajCo(600);
+  wireKarteczki();
+  // Nie odświeżamy w trakcie pisania notatki — przepadłby niezapisany tekst.
+  odswiezajCo(600, () => !document.activeElement?.matches?.('.leadCard textarea, .leadCard select'));
 };
 
 /* --- Poczta --- */

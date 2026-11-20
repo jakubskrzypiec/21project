@@ -113,7 +113,7 @@ const rodzajPola = (nazwa) => (RODZAJE_POL.find(([, re]) => re.test(nazwa)) || [
 /** Odpowiedzi z listy wyboru Meta oddaje jako klucze („nie_mam_strony”) — robimy z nich zdanie. */
 const ladnie = (v) => {
   const s = String(v || '').replace(/_/g, ' ').trim();
-  return s && /_/.test(String(v)) ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 };
 
 function lead(l, nazwaReklamy) {
